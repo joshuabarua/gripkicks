@@ -1,3 +1,14 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+jspm_packages/
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -39,3 +50,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.prettierignore
+.yarnrc.yml
