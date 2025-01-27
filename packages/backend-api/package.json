@@ -1,0 +1,13 @@
+{
+    "name": "backend-api",
+    "version": "1.0.0",
+    "main": "main.js",
+    "scripts": {
+        "start": "node main.js"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.48.1",
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2"
+    }
+}

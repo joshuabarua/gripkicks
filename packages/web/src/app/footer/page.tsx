@@ -8,7 +8,7 @@ export default function Footer() {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <Image.default
+      <Image
         aria-hidden
         src="/file.svg"
         alt="File icon"
@@ -23,7 +23,7 @@ export default function Footer() {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <Image.default
+      <Image
         aria-hidden
         src="/window.svg"
         alt="Window icon"
@@ -38,7 +38,7 @@ export default function Footer() {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <Image.default
+      <Image
         aria-hidden
         src="/globe.svg"
         alt="Globe icon"
