@@ -1,22 +1,42 @@
-import React from 'react';
+"use client"
+
+
+import React, { useEffect, useState } from 'react';
 import Footer from "./footer/page";
 import Navigation from "./navigation/page";
 // import { supabase } from '../../../../src/supabaseClient';
 
+interface User {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  phone: number;
+  // Add other fields as needed
+}
+
 export default function Home() {
 
-// async function fetchData() {
-//     const { data, error } = await supabase
-//         .from('users')
-//         .select('*');
+  const [users, setUsers] = useState<any[]>([]);
 
-//     if (error) {
-//         console.error('Error fetching data:', error);
-//     } else {
-//         console.log('Data:', data);
-//     }
-// }
-// fetchData();
+console.log("Data:", users);
+
+  useEffect(() => {
+    const fetchUsers = async (): Promise<void> => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   return (
     <div>
@@ -30,6 +50,14 @@ export default function Home() {
               We help you find the right fit based on our community of climbers and their shoe fit preferences. Discover the best climbing shoes tailored to your unique foot profile and climbing needs.
             </p>
 
+            <div>
+      <h1>Users List</h1>
+      <ul>
+        {users.map(user => (
+          <li key={user.id}>{user.username}</li>
+        ))}
+      </ul>
+    </div>
           </div>
         </main>
       </div>
