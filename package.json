@@ -1,0 +1,32 @@
+{
+  "name": "gripkicks",
+  "packageManager": "yarn@4.6.0",
+  "workspaces": [
+    "packages/web",
+    "packages/api",
+    "packages/app",
+    "packages/gkWeb",
+    "web"
+  ],
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "8.21.0",
+    "@typescript-eslint/parser": "8.21.0",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.6",
+    "postcss": "^8",
+    "prettier": "^3",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "format": "eslint --fix && prettier --write ."
+  },
+  "dependencies": {
+    "create-next-app": "^15.1.6"
+  }
+}
