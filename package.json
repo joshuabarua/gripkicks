@@ -25,7 +25,8 @@
   "scripts": {
     "lint": "eslint .",
     "format": "eslint --fix && prettier --write .",
-    "dev": "concurrently \"yarn workspace web dev\" \"yarn workspace backend-api start\""
+    "dev": "concurrently \"yarn workspace web dev\" \"yarn workspace backend-api start\"",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1",
@@ -33,6 +34,8 @@
     "create-next-app": "^15.1.6",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "zustand": "^5.0.3"
   }
 }
