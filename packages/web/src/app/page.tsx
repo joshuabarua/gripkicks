@@ -1,6 +1,5 @@
 "use client"
 
-
 import React, { useEffect, useState } from 'react';
 import Footer from "./footer/page";
 import Navigation from "./navigation/page";
