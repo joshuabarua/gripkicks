@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const Navigation = () => {
   return (
@@ -28,6 +29,11 @@ const Navigation = () => {
         <li>
           <Link href="/user-account" className="text-white hover:text-gray-400">
             User Account
+          </Link>
+        </li>
+        <li>
+          <Link href="/auth/login">
+            <Button className="text-white hover:text-gray-400">Login</Button>
           </Link>
         </li>
       </ul>
