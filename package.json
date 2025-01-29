@@ -30,12 +30,15 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1",
+    "backend-api": "workspace:^",
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "create-next-app": "^15.1.6",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
+    "workspace": "^0.0.1-preview.2",
     "zustand": "^5.0.3"
   }
 }
