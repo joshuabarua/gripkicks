@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,12 +13,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 
+interface LoginFormProps {
+  email: string;
+  setEmail: React.Dispatch<React.SetStateAction<string>>;
+  password: string;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+  handleSubmit: (event: React.FormEvent) => void;
+}
+
 export function LoginForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
-  return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+  email,
+  setEmail,
+  password,
+  setPassword,
+  handleSubmit,
+}: (React.ComponentPropsWithoutRef<"div">) & LoginFormProps) {
+  return(
+    <div className={cn("flex flex-col gap-6")}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -25,7 +38,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -33,6 +46,8 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="johndoe@example.com"
+                  onChange={(e) => setEmail(e.target.value)}
+value={email}
                   required
                 />
               </div>
@@ -46,9 +61,12 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" >
                 Login
               </Button>
               <Button variant="outline" className="w-full">

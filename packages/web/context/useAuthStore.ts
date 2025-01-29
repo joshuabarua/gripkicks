@@ -8,6 +8,7 @@ interface AuthState {
   logout: () => void;
 }
 
+
 const useAuthStore = create<AuthState>((set: (arg0: { isAuthenticated: boolean; user: any; }) => any) => ({
   isAuthenticated: false,
   user: null,

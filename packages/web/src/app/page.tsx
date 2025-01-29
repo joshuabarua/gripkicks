@@ -1,38 +1,35 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import Footer from "./footer/page";
-import Navigation from "./navigation/page";
 import { User, Users } from '../../types/user';
+import useSessionStore from '@/store/sessionStore';
 
 
 export default function Home() {
 
   const [users, setUsers] = useState<User[]>([]);
+  const sessionData = useSessionStore((state) => state.sessionData);
+  console.log('Session Data:', sessionData);
 
-console.log("Data:", users);
+  // useEffect(() => {
+  //   const fetchUsers = async (): Promise<void> => {
+  //     try {
+  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
+  //       if (!response.ok) {
+  //         throw new Error('Network response was not ok');
+  //       }
+  //       const data = await response.json();
+  //       setUsers(data);
+  //     } catch (error) {
+  //       console.error('Error fetching users:', error);
+  //     }
+  //   };
 
-  useEffect(() => {
-    const fetchUsers = async (): Promise<void> => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+  //   fetchUsers();
+  // }, []);
 
   return (
     <div>
-
-      <Navigation />
       <div className="flex items-center justify-center min-h-screen gap-8 sm:p-20">
         <main className="flex flex-col gap-4 row-start-2 items-center sm:items-start">
           <div className="flex flex-col items-center justify-center ">
@@ -42,17 +39,17 @@ console.log("Data:", users);
             </p>
 
             <div>
-      <h1>Users List</h1>
-      <ul>
-        {users.map(user => (
-          <li key={user.id}>{user.username}</li>
-        ))}
-      </ul>
-    </div>
+            </div>
+            <h1>Users List</h1>
+            <ul>
+              {users.map(user => (
+                <li key={user.id}>{user.username}</li>
+              ))}
+            </ul>
           </div>
         </main>
       </div>
-      <Footer />
     </div>
+
   );
 }
