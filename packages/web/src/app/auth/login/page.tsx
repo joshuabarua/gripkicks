@@ -10,48 +10,47 @@ import  useSessionStore from "@/store/sessionStore";
 export default function Login() {  
   const setSessionData = useSessionStore((state: { setSessionData: any; }) => state.setSessionData);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter();
 
-  const mutation = useMutation({
-    mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const response = await fetch('http://localhost:3001/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+  // const router = useRouter();
 
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
+  // const mutation = useMutation({
+  //   mutationFn: async ({ email, password }: { email: string; password: string }) => {
+  //     const response = await fetch('http://localhost:3001/login', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email, password }),
+  //     });
 
-      return response.json();
-    },
-    onSuccess: (data: { access_token: User; refresh_token: any; }) => {
-      console.log('Session Data:', data);
-      setSessionData(data); 
-      localStorage.setItem('sessionData', JSON.stringify(data));
+  //     if (!response.ok) {
+  //       throw new Error('Login failed');
+  //     }
 
-      router.push('/');
+  //     return response.json();
+  //   },
+  //   onSuccess: (data: { access_token: User; refresh_token: any; }) => {
+  //     console.log('Session Data:', data);
+  //     setSessionData(data); 
+  //     localStorage.setItem('sessionData', JSON.stringify(data));
 
-    },
-    onError: (error: any) => {
-      console.error('Error logging in:', error);
-    },
-  });
+  //     router.push('/');
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    mutation.mutate({ email, password });
-  };
+  //   },
+  //   onError: (error: any) => {
+  //     console.error('Error logging in:', error);
+  //   },
+  // });
+
+  // const handleSubmit = (event: React.FormEvent) => {
+  //   event.preventDefault();
+  //   mutation.mutate({ email, password });
+  // };
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <LoginForm handleSubmit={handleSubmit} email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
+        <LoginForm />
       </div>
     </div>
   )
