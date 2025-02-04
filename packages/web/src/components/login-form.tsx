@@ -1,6 +1,5 @@
 'use client'
-
-import { cn } from "@/lib/utils"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -9,26 +8,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Loader2, Key } from "lucide-react";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Link from "next/link"
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils"
+import { signIn } from "@/lib/client-auth";
+import { useState } from "react";
 
-interface LoginFormProps {
-  email: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-  password: string;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: (event: React.FormEvent) => void;
-}
+
 
 export function LoginForm({
-  email,
-  setEmail,
-  password,
-  setPassword,
-  handleSubmit,
-}: (React.ComponentPropsWithoutRef<"div">) & LoginFormProps) {
-  return(
+}: (React.ComponentPropsWithoutRef<"div">)) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const [rememberMe, setRememberMe] = useState(false);
+  return (
     <div className={cn("flex flex-col gap-6")}>
       <Card>
         <CardHeader>
@@ -38,7 +36,6 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -47,7 +44,7 @@ export function LoginForm({
                   type="email"
                   placeholder="johndoe@example.com"
                   onChange={(e) => setEmail(e.target.value)}
-value={email}
+                  value={email}
                   required
                 />
               </div>
@@ -62,26 +59,78 @@ value={email}
                   </a>
                 </div>
                 <Input id="password" type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required />
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required />
               </div>
-              <Button type="submit" className="w-full" >
-                Login
+
+              <div className="flex items-center gap-2">
+
+                <Checkbox
+                  id="remember"
+                  onClick={() => {
+                    setRememberMe(!rememberMe);
+                  }}
+                />
+                <Label htmlFor="remember">Remember me</Label>
+              </div>
+
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading}
+                onClick={async () => {
+                  await signIn.email({ email, password });
+                }}
+              >
+                {loading ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  "Login"
+                )}
               </Button>
-              <Button variant="outline" className="w-full">
-                Login with Google
-              </Button>
+              <div className={cn(
+                "w-full gap-2 flex items-center",
+                "justify-between flex-col"
+              )}>
+
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full gap-2"
+                  )}
+                  onClick={async () => {
+                    await signIn.social({
+                      provider: "google",
+
+                    });
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="12px"
+                    height="12px"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M11.99 13.9v-3.72h9.36c.14.63.25 1.22.25 2.05c0 5.71-3.83 9.77-9.6 9.77c-5.52 0-10-4.48-10-10S6.48 2 12 2c2.7 0 4.96.99 6.69 2.61l-2.84 2.76c-.72-.68-1.98-1.48-3.85-1.48c-3.31 0-6.01 2.75-6.01 6.12s2.7 6.12 6.01 6.12c3.83 0 5.24-2.65 5.5-4.22h-5.51z"
+                    ></path>
+                  </svg>
+                  Sign in with Google
+                </Button>
+              </div>
+
+
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account? {" "}
-          <Link href="/auth/sign-up">
-               <span className="underline underline-offset-4">
-                Sign up
-                </span> 
-          </Link>
+              <Link href="/auth/sign-up">
+                <span className="underline underline-offset-4">
+                  Sign up
+                </span>
+              </Link>
             </div>
-          </form>
         </CardContent>
       </Card>
     </div>
