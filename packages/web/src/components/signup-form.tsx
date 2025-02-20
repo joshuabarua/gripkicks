@@ -19,11 +19,11 @@ import { signUp } from "@/lib/client-auth";
 import { useRouter } from 'next/navigation';
 
 export function SignupForm() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -40,9 +40,9 @@ export function SignupForm() {
               <div className="grid gap-2">
                 <Label htmlFor="name">Full Name</Label>
                 <Input id="name" type="text" placeholder="John Doe" required onChange={(e) => {
-                  setFirstName(e.target.value);
+                  setUserName(e.target.value);
                 }}
-                  value={firstName} />
+                  value={userName} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -62,7 +62,8 @@ export function SignupForm() {
                 <Input id="password" type="password" onChange={(e) => {
                   setPassword(e.target.value);
                 }}
-                  value={password} required />
+                  value={password} required minLength={8}
+                  maxLength={32} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Confirm Password</Label>
@@ -73,33 +74,66 @@ export function SignupForm() {
                   onChange={(e) => setPasswordConfirmation(e.target.value)}
                   autoComplete="new-password"
                   placeholder="Confirm Password"
+                  minLength={8}
+                  maxLength={32}
+                  required
                 />
               </div>
+              {error && (
+                <div className="text-sm text-red-500 mt-2">
+                  {error}
+                </div>
+              )}
               <Button
                 type="submit"
                 className="w-full"
-                disabled={loading}
+                disabled={loading || !email || !password || !passwordConfirmation || password !== passwordConfirmation}
                 onClick={async () => {
-                  await signUp.email({
-                    email,
-                    password,
-                    name: `${firstName} ${lastName}`,
-                    callbackURL: "/dashboard",
-                    fetchOptions: {
-                      onResponse: () => {
-                        setLoading(false);
+                  try {
+                    setError(null);
+                    setLoading(true);
+
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                      throw new Error('Please enter a valid email address');
+                    }
+
+                    if (password !== passwordConfirmation) {
+                      throw new Error('Passwords do not match');
+                    }
+
+                    if (password.length < 8) {
+                      throw new Error('Password must be at least 8 characters');
+                    }
+
+                    await signUp.email({
+                      email,
+                      password,
+                      name: userName,
+                      callbackURL: "/dashboard",
+                      fetchOptions: {
+                        onResponse: () => {
+                          setLoading(false);
+                        },
+                        onRequest: () => {
+                          setLoading(true);
+                        },
+                        onError: (error: unknown) => {
+                          setLoading(false);
+                          const errorObj = error as { error?: { message: string }; message?: string };
+                          const message = errorObj?.error?.message || errorObj?.message || 'An error occurred during signup';
+                          setError(message);
+                          console.error('Signup error:', message);
+                        },
+                        onSuccess: async () => {
+                          router.push("/dashboard");
+                        },
                       },
-                      onRequest: () => {
-                        setLoading(true);
-                      },
-                      onError: (ctx: { error: { message: any; }; }) => {
-                        console.error(ctx.error.message);
-                      },
-                      onSuccess: async () => {
-                        router.push("/");
-                      },
-                    },
-                  });
+                    });
+                  } catch (err: any) {
+                    setLoading(false);
+                    setError(err.message);
+                  }
                 }}
               >
                 {loading ? (
