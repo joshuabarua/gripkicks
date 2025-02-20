@@ -13,8 +13,26 @@ const pool = new Pool({
 });
 
 pool.connect()
-    .then(() => {
+    .then(async () => {
         console.log('Successfully connected to database');
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS "public"."sessions" (
+                id BIGINT PRIMARY KEY,
+                user_id BIGINT REFERENCES "public"."users"(id) ON DELETE CASCADE,
+                expires_at TIMESTAMP WITH TIME ZONE,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS "public"."verification_tokens" (
+                token TEXT PRIMARY KEY,
+                user_id BIGINT REFERENCES "public"."users"(id) ON DELETE CASCADE,
+                type TEXT NOT NULL,
+                expires_at TIMESTAMP WITH TIME ZONE,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+        console.log('Auth tables initialized');
     })
     .catch((err) => {
         console.error('Database setup failed:', err);
@@ -22,17 +40,39 @@ pool.connect()
 
 export const auth = betterAuth({
     database: pool,
+    advanced: {
+        cookiePrefix: "gripkicks",
+        onError: (error: any) => {
+            console.error('Better Auth Error:', error);
+            if (error.cause) {
+                console.error('Cause:', error.cause);
+            }
+            if (error.stack) {
+                console.error('Stack:', error.stack);
+            }
+        },
+        tables: {
+            user: {
+                name: 'users',
+                columns: {
+                    id: 'id',
+                    name: 'username',
+                    email: 'email',
+                    password_hash: 'password_hash',
+                    email_verified: 'email_verified',
+                    created_at: 'created_at',
+                    updated_at: 'updated_at'
+                }
+            }
+        }
+    },
     emailAndPassword: {
         requireEmailVerification: false,
         enabled: true,
     },
     emailVerification: {
         sendVerificationEmail: async ({ user, url, token }, request) => {
-            //   await sendEmail({
-            //     to: user.email,
-            //     subject: "Verify your email address",
-            //     text: `Click the link to verify your email: ${url}`,
-            //   });
+            console.log('Verification URL:', url);
         },
         sendOnSignUp: true
     },
@@ -40,20 +80,6 @@ export const auth = betterAuth({
     plugins: [
         twoFactor(), username(), anonymous(), nextCookies()
     ],
-    advanced: {
-        cookiePrefix: "gripkicks",
-        onError: (error: any) => {
-            console.error('Auth error:', error);
-        },
-        tables: {
-            user: {
-                name: "users",
-                columns: {
-                    name: "username"
-                }
-            }
-        }
-    },
     socialProviders: {
         google: {
             clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -62,6 +88,8 @@ export const auth = betterAuth({
     },
     hooks: {
         before: createAuthMiddleware(async (ctx) => {
+            console.log('Auth request:', ctx.path, ctx.body);
+
             if (ctx.path !== "/sign-up/email") {
                 return;
             }
