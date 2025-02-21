@@ -19,14 +19,14 @@ pool.connect()
         await pool.query(`
             CREATE TABLE IF NOT EXISTS "public"."sessions" (
                 id BIGINT PRIMARY KEY,
-                user_id BIGINT REFERENCES "public"."users"(id) ON DELETE CASCADE,
+                user_id BIGINT REFERENCES "public"."user"(id) ON DELETE CASCADE,
                 expires_at TIMESTAMP WITH TIME ZONE,
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS "public"."verification_tokens" (
                 token TEXT PRIMARY KEY,
-                user_id BIGINT REFERENCES "public"."users"(id) ON DELETE CASCADE,
+                user_id BIGINT REFERENCES "public"."user"(id) ON DELETE CASCADE,
                 type TEXT NOT NULL,
                 expires_at TIMESTAMP WITH TIME ZONE,
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -53,7 +53,7 @@ export const auth = betterAuth({
         },
         tables: {
             user: {
-                name: 'users',
+                name: 'user',
                 columns: {
                     id: 'id',
                     name: 'username',
