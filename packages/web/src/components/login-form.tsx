@@ -18,6 +18,15 @@ import { signIn } from "@/lib/client-auth";
 import { SetStateAction, useState } from "react";
 import useSessionStore from "@/store/sessionStore";
 
+interface ErrorContext {
+  error: {
+    message: string;
+    code?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
 export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const router = useRouter();
@@ -42,7 +51,7 @@ export function LoginForm({
           onResponse: () => {
             setLoading(false);
           },
-          onError: (context) => {
+          onError: (context: ErrorContext) => {
             setError(context.error?.message || 'Authentication failed');
             setLoading(false);
           },
