@@ -1,19 +1,57 @@
 import { create } from 'zustand';
-import { User } from '../../types/user';
+import { signOut, useSession } from '@/lib/client-auth';
+import type { User } from '../../types/user';
+import React from 'react';
 
-interface AuthState {
-  isAuthenticated: boolean;
+interface AuthStore {
   user: User | null;
-  login: (user: User) => void;
-  logout: () => void;
+  isLoading: boolean;
+  error: Error | null;
+  initialized: boolean;
+  logout: () => Promise<void>;
 }
 
-
-const useAuthStore = create<AuthState>((set: (arg0: { isAuthenticated: boolean; user: any; }) => any) => ({
-  isAuthenticated: false,
+export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
-  login: (user: User) => set({ isAuthenticated: true, user }),
-  logout: () => set({ isAuthenticated: false, user: null }),
+  isLoading: true,
+  error: null,
+  initialized: false,
+  logout: async () => {
+    try {
+      await signOut();
+      set({ user: null });
+    } catch (error) {
+      set({ error: error as Error });
+    }
+  },
 }));
 
-export default useAuthStore;
+// Hook to sync auth state
+export const useAuth = () => {
+  const store = useAuthStore();
+  const session = useSession;
+  const set = useAuthStore.setState;
+
+  React.useEffect(() => {
+    const unsubscribe = session.subscribe((state) => {
+      set({
+        user: state.data?.user ?? null,
+        isLoading: state.isPending,
+        error: state.error,
+        initialized: true,
+      });
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  return {
+    user: store.user,
+    isLoading: store.isLoading,
+    error: store.error,
+    initialized: store.initialized,
+    logout: store.logout,
+  };
+};
