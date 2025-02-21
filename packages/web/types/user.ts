@@ -1,23 +1,22 @@
 // user.ts
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  email_verified: boolean;
-  image?: string;
-  password_hash: string;
-  created_at: Date;
-  updated_at: Date;
-  two_factor_enabled: boolean;
-  Session: Session[];
-  Account: Account[];
+  emailVerified: boolean;
+  image?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  two_factor_enabled?: boolean;
+  Session?: Session[];
+  Account?: Account[];
 }
 
 export interface Session {
   id: string;
   expires_at: Date;
   token: string;
-  user_id: number;
+  user_id: string;
   created_at: Date;
   updated_at: Date;
   ip_address: string;
@@ -29,14 +28,13 @@ export interface Account {
   id: string;
   account_id: string;
   provider_id: string;
-  user_id: number;
+  user_id: string;
   access_token: string;
-  refresh_token: string;
-  id_token: string;
-  access_token_expires_at: Date;
-  refresh_token_expires_at: Date;
-  scope: string;
-  password: string;
+  refresh_token?: string;
+  id_token?: string;
+  access_token_expires_at?: Date;
+  refresh_token_expires_at?: Date;
+  scope?: string;
   created_at: Date;
   updated_at: Date;
   user: User;

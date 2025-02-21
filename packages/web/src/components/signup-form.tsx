@@ -110,7 +110,7 @@ export function SignupForm() {
                       email,
                       password,
                       name: userName,
-                      callbackURL: "/dashboard",
+                      callbackURL: "/",
                       fetchOptions: {
                         onResponse: () => {
                           setLoading(false);
@@ -126,7 +126,7 @@ export function SignupForm() {
                           console.error('Signup error:', message);
                         },
                         onSuccess: async () => {
-                          router.push("/dashboard");
+                          router.push("/");
                         },
                       },
                     });

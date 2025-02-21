@@ -1,18 +1,25 @@
-'use client';
-
-import {create} from 'zustand';
+import { create } from 'zustand';
 
 interface SessionState {
   sessionData: any;
   setSessionData: (data: any) => void;
 }
 
-const useSessionStore = create<SessionState>((set: (arg0: { sessionData: any; }) => any) => ({
-    sessionData: JSON.parse(localStorage.getItem('sessionData') || 'null'),
-    setSessionData: (data) => {
-      set({ sessionData: data });
+const getInitialState = () => {
+  if (typeof window !== 'undefined') {
+    return JSON.parse(localStorage.getItem('sessionData') || 'null');
+  }
+  return null;
+};
+
+const useSessionStore = create<SessionState>((set) => ({
+  sessionData: getInitialState(),
+  setSessionData: (data) => {
+    set({ sessionData: data });
+    if (typeof window !== 'undefined') {
       localStorage.setItem('sessionData', JSON.stringify(data));
-    },
+    }
+  },
 }));
 
 export default useSessionStore;
