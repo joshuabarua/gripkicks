@@ -1,15 +1,16 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import { User, Users } from '../../types/user';
+import { User, } from '../../types/user';
 import useSessionStore from '@/store/sessionStore';
+import dynamic from 'next/dynamic';
 
 
 export default function Home() {
-
   const [users, setUsers] = useState<User[]>([]);
   const sessionData = useSessionStore((state) => state.sessionData);
   console.log('Session Data:', sessionData);
+  const Scene = dynamic(() => import('@/components/3d/Scene'), { ssr: false });
 
   // useEffect(() => {
   //   const fetchUsers = async (): Promise<void> => {
@@ -29,10 +30,14 @@ export default function Home() {
   // }, []);
 
   return (
-    <div>
+    <div className='h-full'>
       <div className="flex items-center justify-center min-h-screen gap-8 sm:p-20">
         <main className="flex flex-col gap-4 row-start-2 items-center sm:items-start">
           <div className="flex flex-col items-center justify-center ">
+            <div className='h-screen w-screen'>
+
+              <Scene />
+            </div>
             <h1 className="text-4xl font-bold mb-4">Welcome to GripKicks</h1>
             <p className="text-lg text-center max-w-md">
               We help you find the right fit based on our community of climbers and their shoe fit preferences. Discover the best climbing shoes tailored to your unique foot profile and climbing needs.
@@ -42,9 +47,9 @@ export default function Home() {
             </div>
             <h1>Users List</h1>
             <ul>
-              {users.map(user => (
+              {/* {users.map(user => (
                 <li key={user.id}>{user.username}</li>
-              ))}
+              ))} */}
             </ul>
           </div>
         </main>
