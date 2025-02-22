@@ -9,7 +9,6 @@ import Footer from "./footer/page";
 import Navigation from "./navigation/page";
 import localFont from 'next/font/local'
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,6 +27,12 @@ const basteleur = localFont({
 const sora = localFont({
   src: '../../public/fonts/Sora.ttf',
   variable: '--font-sora',
+
+})
+
+const tanker = localFont({
+  src: '../../public/fonts/Tanker-Regular.ttf',
+  variable: '--font-tanker',
 })
 
 const metadata: Metadata = {
@@ -43,14 +48,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`min-h-screen bg-background antialiased  ${basteleur.variable} ${sora.variable}`}
+        className={`min-h-screen bg-background antialiased  ${basteleur.variable} ${sora.variable} ${tanker.variable}`}
       >
         <QueryClientProvider client={queryClient}>
-          <main className="relative flex min-h-screen flex-col">
-            <Navigation />
-            {children}
-            <Footer />
-          </main>
+          <Navigation />
+          {children}
+          <Footer />
         </QueryClientProvider>
       </body>
     </html>
