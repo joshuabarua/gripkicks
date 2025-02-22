@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "github": {
+    "enabled": false
+  },
+  "builds": [
+    {
+      "src": "/packages/backend-api/main.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "/packages/web/*",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/packages/backend-api/main.js",
+      "methods": ["GET"]
+    }
+  ]
+}

@@ -1,44 +1,45 @@
 {
-  "name": "gripkicks",
-  "packageManager": "yarn@4.6.0",
-  "workspaces": [
-    "packages/web",
-    "packages/app",
-    "packages/backend-api",
-    "packages/sanity-cms"
-  ],
-  "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
-    "@types/node": "^22.10.10",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "@typescript-eslint/eslint-plugin": "8.21.0",
-    "@typescript-eslint/parser": "8.21.0",
-    "concurrently": "^9.1.2",
-    "eslint": "^9.19.0",
-    "eslint-config-next": "15.1.6",
-    "postcss": "^8.5.1",
-    "prettier": "^3.4.2",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.3"
-  },
-  "scripts": {
-    "lint": "eslint .",
-    "format": "eslint --fix && prettier --write .",
-    "dev": "concurrently \"yarn workspace web dev\" \"yarn workspace backend-api start\"",
-    "postinstall": "patch-package"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.48.1",
-    "backend-api": "workspace:^",
-    "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
-    "create-next-app": "^15.1.6",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "patch-package": "^8.0.0",
-    "postinstall-postinstall": "^2.1.0",
-    "workspace": "^0.0.1-preview.2",
-    "zustand": "^5.0.3"
-  }
+	"name": "gripkicks",
+	"packageManager": "yarn@4.6.0",
+	"workspaces": [
+		"packages/web",
+		"packages/app",
+		"packages/backend-api",
+		"packages/sanity-cms"
+	],
+	"private": true,
+	"devDependencies": {
+		"@eslint/eslintrc": "^3.2.0",
+		"@types/node": "^22.10.10",
+		"@types/react": "^19.0.8",
+		"@types/react-dom": "^19.0.3",
+		"@typescript-eslint/eslint-plugin": "8.21.0",
+		"@typescript-eslint/parser": "8.21.0",
+		"concurrently": "^9.1.2",
+		"eslint": "^9.19.0",
+		"eslint-config-next": "15.1.6",
+		"postcss": "^8.5.1",
+		"prettier": "^3.4.2",
+		"tailwindcss": "^3.4.17",
+		"typescript": "^5.7.3"
+	},
+	"scripts": {
+		"lint": "eslint .",
+		"format": "eslint --fix && prettier --write .",
+		"dev": "concurrently \"yarn workspace web dev\" \"yarn workspace backend-api start\"",
+		"postinstall": "patch-package"
+	},
+	"dependencies": {
+		"@supabase/supabase-js": "^2.48.1",
+		"backend-api": "workspace:^",
+		"body-parser": "^1.20.3",
+		"cors": "^2.8.5",
+		"create-next-app": "^15.1.6",
+		"dotenv": "^16.4.7",
+		"express": "^4.21.2",
+		"patch-package": "^8.0.0",
+		"postinstall-postinstall": "^2.1.0",
+		"workspace": "^0.0.1-preview.2",
+		"zustand": "^5.0.3"
+	}
 }
