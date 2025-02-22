@@ -12,6 +12,7 @@ const config: Config = {
 			fontFamily: {
 				basteleur: ['var(--font-basteleur)'],
 				sora: ['var(--font-sora)'],
+				tanker: ['var(--font-tanker)']
 			},
 			colors: {
 				background: 'hsl(var(--background))',

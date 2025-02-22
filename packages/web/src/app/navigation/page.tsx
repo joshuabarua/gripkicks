@@ -17,11 +17,11 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className="bg-transparent p-2 w-full">
+    <nav className="opacity-100 p-2 w-full z-4">
       <ul className="flex justify-between text-foreground">
         <li>
           <Link href="/">
-            <Button variant="ghost" className="font-basteleur">Grip Kicks</Button>
+            <h1 className="font-tanker text-2xl">Grip Kicks</h1>
           </Link>
         </li>
         <li>
