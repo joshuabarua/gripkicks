@@ -15,8 +15,8 @@ export default function Home() {
 
 
   return (
-    <main className="flex flex-col gap-4 row-start-2 items-center sm:items-start">
-      <div className='relative h-screen w-screen flex items-center justify-center flex-col'>
+    <main className="flex flex-col items-center dark:bg-dark-background dark:text-dark-foreground">
+      <div className='relative h-screen w-screen flex items-center justify-center flex-col dark:bg-dark-background dark:text-dark-foreground'>
         <Scene />
       </div>
     </main>

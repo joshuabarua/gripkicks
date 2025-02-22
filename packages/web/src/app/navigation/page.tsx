@@ -17,21 +17,16 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className="bg-gray-800 p-2 w-full">
-      <ul className="flex justify-around">
+    <nav className="bg-transparent p-2 w-full">
+      <ul className="flex justify-between text-foreground">
         <li>
           <Link href="/">
-            <Button className="text-white hover:text-gray-400">Home</Button>
-          </Link>
-        </li>
-        <li>
-          <Link href="/recommendations">
-            <Button className="text-white hover:text-gray-400">Recommendations</Button>
+            <Button variant="ghost" className="font-basteleur">Grip Kicks</Button>
           </Link>
         </li>
         <li>
           <Link href="/comfort-ranking">
-            <Button className="text-white hover:text-gray-400">Comfort Ranking</Button>
+            <Button className="font-sora" variant="ghost">Comfort Ranking</Button>
           </Link>
         </li>
         <li>
@@ -75,7 +70,7 @@ const Navigation: React.FC = () => {
             </div>
           ) : (
             <Link href="/auth/login">
-              <Button className="text-white hover:text-gray-400">Login</Button>
+              <Button className="font-sora" variant="outline">Login</Button>
             </Link>
           )}
         </li>
