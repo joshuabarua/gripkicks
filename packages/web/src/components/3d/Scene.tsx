@@ -10,7 +10,7 @@ import { Environment } from "@react-three/drei";
 const Scene = () => {
   return (
     <Canvas
-      style={{ backgroundColor: "black" }}
+      style={{ backgroundColor: "transparent" }}
       gl={{
         powerPreference: "high-performance",
         antialias: true,
