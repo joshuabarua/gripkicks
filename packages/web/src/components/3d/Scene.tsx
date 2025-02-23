@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import React from "react";
+import { Canvas } from "@react-three/fiber";
 import ShoeModel from "./ShoeModel";
 import { Environment } from "@react-three/drei";
-
-//TODO: Added alpha, drawBuffer- consider removal if buggy
 
 const Scene = () => {
   return (
