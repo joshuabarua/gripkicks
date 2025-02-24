@@ -94,60 +94,80 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
                     links.map((link, i: number) => {
                         const { title, href } = link;
                         return (
-                            <div key={`b_${i}`} className={"linkContainer"}>
+                            <motion.div
+                                key={`b_${i}`}
+                                className={"linkContainer"}
+                                custom={i}
+                                initial="initial"
+                                animate="enter"
+                                exit="exit"
+                                variants={perspective}
+                            >
                                 {title === "Logout" ? (
                                     <motion.div
-                                        className='font-sora'
-                                        custom={i}
-                                        initial="initial"
-                                        animate="enter"
-                                        exit="exit"
-                                        variants={perspective}
-                                        key={`f_${i}`}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            handleLogout?.();
-                                        }
-                                        }
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{
+                                            duration: 0.5,
+                                            delay: 0.1 + (i * 0.1),
+                                            ease: "easeInOut"
+                                        }}
                                     >
-                                        <Link href={href} >
+                                        <Link
+                                            href={href}
+                                            className='font-sora'
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleLogout?.();
+                                            }}
+                                        >
                                             {title}
                                         </Link>
                                     </motion.div>
                                 ) : (
-                                    <motion.div className='font-sora' variants={perspective}
-                                        custom={i}
-                                        initial="initial"
-                                        animate="enter"
-                                        exit="exit"
-                                        key={`f_${i}`}>
-                                        <Link href={href}>
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{
+                                            duration: 0.5,
+                                            delay: 0.1 + (i * 0.1),
+                                            ease: "easeInOut"
+                                        }}
+                                    >
+                                        <Link href={href} className='font-sora'>
                                             {title}
                                         </Link>
                                     </motion.div>
                                 )}
-                            </div>
+                            </motion.div>
                         )
                     })
                 }
                 <div className={"footer"}>
-                    {
-                        footerLinks.map((link, i) => {
-                            const { title, href } = link;
-                            return (
-                                <motion.a
-                                    variants={slideIn}
-                                    custom={i}
-                                    initial="initial"
-                                    animate="enter"
-                                    exit="exit"
-                                    key={`f_${i}`}
+                    {footerLinks.map((link, i) => {
+                        const { title, href } = link;
+                        return (
+                            <motion.div
+                                key={`f_${i}`}
+                                variants={slideIn}
+                                custom={i}
+                                initial="initial"
+                                animate="enter"
+                                exit="exit"
+                            >
+
+                                <Link
+                                    href={href}
+                                    onClick={title === "Logout" ? (e) => {
+                                        e.preventDefault();
+                                        handleLogout?.();
+                                    } : undefined}
                                 >
                                     {title}
-                                </motion.a>
-                            )
-                        })
-                    }
+                                </Link>
+                            </motion.div>
+                        )
+                    })}
                 </div>
             </div>
         </div >
