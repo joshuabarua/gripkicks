@@ -37,7 +37,7 @@ export default function NavButton({ isActive, toggleMenu }: NavButtonProps) {
 
 function PerspectiveText({ label }: PerspectiveTextProps) {
     return (
-        <div className={"nav-perspectiveText"}>
+        <div className={"nav-perspectiveText font-sora"}>
             <p>{label}</p>
             <p>{label}</p>
         </div>
