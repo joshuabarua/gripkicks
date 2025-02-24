@@ -35,38 +35,39 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <GlowArea className="w-full z-4 sticky top-0">
-      <Glow className="rounded-sm">
-        <nav className="p-2">
-          <ul className="flex justify-between text-foreground">
+    <nav className="p-2">
+      <ul className="flex justify-between text-foreground">
+        <GlowArea className="w-[120px] z-4 ">
+          <Glow color="whitesmoke" className="rounded-sm flex justify-center align-center">
             <li>
               <Link href="/">
                 <h1 className="font-tanker text-2xl hover:scale-105 duration-1000 ease-in-out">Grip Kicks</h1>
               </Link>
             </li>
-            <li>
-              {user ? (
-                <div className="relative">
-                  <motion.div
-                    className={"nav-menu "}
-                    variants={menu}
-                    animate={isActive ? "open" : "closed"}
-                    initial="closed"
-                  >
-                    <NavLinks handleLogout={handleLogout} />
-                  </motion.div>
-                  <NavButton isActive={isActive} toggleMenu={() => { setIsActive(!isActive) }} />
-                </div>
-              ) : (
-                <Link href="/auth/login">
-                  <Button className="font-sora" variant="ghost">Login</Button>
-                </Link>
-              )}
-            </li>
-          </ul>
-        </nav>
-      </Glow>
-    </GlowArea >
+          </Glow>
+        </GlowArea >
+        <li>
+          {user ? (
+            <div className="relative">
+              <motion.div
+                className={"nav-menu "}
+                variants={menu}
+                animate={isActive ? "open" : "closed"}
+                initial="closed"
+              >
+                <NavLinks handleLogout={handleLogout} />
+              </motion.div>
+              <NavButton isActive={isActive} toggleMenu={() => { setIsActive(!isActive) }} />
+            </div>
+          ) : (
+            <Link href="/auth/login">
+              <Button className="font-sora" variant="ghost">Login</Button>
+            </Link>
+          )}
+        </li>
+      </ul>
+    </nav>
+
   );
 };
 
