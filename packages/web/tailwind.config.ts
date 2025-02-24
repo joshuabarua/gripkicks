@@ -14,6 +14,9 @@ const config: Config = {
 				sora: ['var(--font-sora)'],
 				tanker: ['var(--font-tanker)']
 			},
+			transitionProperty: {
+				'filter': 'filter',
+			},
 			colors: {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
