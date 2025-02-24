@@ -4,23 +4,22 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/useAuthStore';
 import { Glow, GlowArea } from '@/components/ui/glow';
 import NavButton from '@/components/ui/nav-button';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import NavLinks from '@/components/ui/nav-links';
 
 const menu = {
   open: {
     width: "480px",
     height: "650px",
-    top: "-25px",
-    right: "-50px",
+    top: "-1px",
+    right: "0px",
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] }
-
   },
   closed: {
-    width: "1px",
+    width: "100px",
     height: " 750px",
     top: "-1px",
-    right: "-50px",
+    right: "-100px",
     transition: { duration: 0.75, delay: 0.35, type: "tween", ease: [0.76, 0, 0.24, 1] }
   }
 }
@@ -45,19 +44,24 @@ const Navigation: React.FC = () => {
               </Link>
             </li>
           </Glow>
-        </GlowArea >
+        </GlowArea>
         <li>
           {user ? (
             <div className="relative">
-              <motion.div
-                className={"nav-menu "}
-                variants={menu}
-                animate={isActive ? "open" : "closed"}
-                initial="closed"
-              >
-                <NavLinks handleLogout={handleLogout} />
-              </motion.div>
-              <NavButton isActive={isActive} toggleMenu={() => { setIsActive(!isActive) }} />
+              <AnimatePresence mode="wait">
+                {isActive && (
+                  <motion.div
+                    className="nav-menu"
+                    variants={menu}
+                    animate={isActive ? "open" : "closed"}
+                    initial="closed"
+                    exit="closed"
+                  >
+                    <NavLinks handleLogout={handleLogout} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <NavButton isActive={isActive} toggleMenu={() => setIsActive(!isActive)} />
             </div>
           ) : (
             <Link href="/auth/login">
@@ -67,7 +71,6 @@ const Navigation: React.FC = () => {
         </li>
       </ul>
     </nav>
-
   );
 };
 
