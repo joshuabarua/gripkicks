@@ -5,9 +5,11 @@ import { UserCircle2 } from 'lucide-react';
 import { useAuth } from '@/context/useAuthStore';
 import type { User } from '@/types/user';
 import { Glow, GlowArea } from '@/components/ui/glow';
+import NavButton from '@/components/ui/nav-button';
 
 const Navigation: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const { user, logout } = useAuth();
 
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
@@ -19,7 +21,7 @@ const Navigation: React.FC = () => {
 
   return (
     <GlowArea className="w-full z-4">
-      <Glow color="white " className="rounded-sm">
+      <Glow className="rounded-sm">
         <nav className="p-2">
           <ul className="flex justify-between text-foreground">
             <li>
@@ -27,60 +29,57 @@ const Navigation: React.FC = () => {
                 <h1 className="font-tanker text-2xl hover:scale-105 duration-1000 ease-in-out">Grip Kicks</h1>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link href="/comfort-ranking">
-                <Button className="font-sora hover:scale-105 duration-1000 ease-in-out" variant="ghost">Comfort Ranking</Button>
+                <Button className="font-sora hover:scale-105 duration-1000 ease-in-out" variant="outline">Comfort Ranking</Button>
               </Link>
-            </li>
+            </li> */}
             <li>
               {user ? (
                 <div className="relative">
-                  <button
-                    onClick={toggleDropdown}
-                    className="flex items-center focus:outline-accent hover:scale-105 duration-1000 ease-in-out"
-                    aria-label="User menu"
-                  >
-                    <UserCircle2 size={32} className="text-white" />
-                  </button>
+                  <NavButton isActive={isActive} toggleMenu={() => { setIsActive(!isActive) }} />
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
-                      <Link
-                        href="/profile"
-                        className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer"
-                      >
-                        Profile
-                      </Link>
-                      <Link
-                        href="/shoe-stash"
-                        className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer"
-                      >
-                        Shoe Stash
-                      </Link>
-                      <Link
-                        href="/foot-checker"
-                        className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer"
-                      >
-                        Foot Checker
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                      >
-                        Logout
-                      </button>
+                    <div className="navbar absolute right-0 mt-2 w-48 bg-background rounded-md shadow-lg z-20">
+                      <ul className='navbar-nav'>
+                        <Link
+                          href="/profile"
+                          className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                        >
+                          Profile
+                        </Link>
+                        <Link
+                          href="/shoe-stash"
+                          className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                        >
+                          Shoe Stash
+                        </Link>
+                        <Link
+                          href="/foot-checker"
+                          className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                        >
+                          Foot Checker
+                        </Link>
+                        <Button
+                          onClick={handleLogout}
+                          className="w-full text-left block px-4 py-2"
+                          variant="outline"
+                        >
+                          Logout
+                        </Button>
+                      </ul>
                     </div>
                   )}
                 </div>
               ) : (
                 <Link href="/auth/login">
-                  <Button className="font-sora" variant="outline">Login</Button>
+                  <Button className="font-sora" variant="ghost">Login</Button>
                 </Link>
               )}
             </li>
           </ul>
         </nav>
       </Glow>
-    </GlowArea>
+    </GlowArea >
   );
 };
 
