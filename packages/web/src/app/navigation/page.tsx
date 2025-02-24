@@ -51,7 +51,7 @@ const Navigation: React.FC = () => {
               <AnimatePresence mode="wait">
                 {isActive && (
                   <motion.div
-                    className="nav-menu"
+                    className="nav-menu "
                     variants={menu}
                     animate={isActive ? "open" : "closed"}
                     initial="closed"
