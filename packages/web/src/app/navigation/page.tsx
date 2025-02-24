@@ -11,15 +11,15 @@ const menu = {
   open: {
     width: "480px",
     height: "650px",
-    top: "-1px",
-    right: "0px",
+    top: "-25px",
+    right: "-25px",
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] }
   },
   closed: {
-    width: "100px",
-    height: " 750px",
-    top: "-1px",
-    right: "-100px",
+    width: "80px",
+    height: " 35px",
+    top: "-0px",
+    right: "-0px",
     transition: { duration: 0.75, delay: 0.35, type: "tween", ease: [0.76, 0, 0.24, 1] }
   }
 }
