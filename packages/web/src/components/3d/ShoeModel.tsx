@@ -1,9 +1,9 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, Suspense } from "react";
 import { useGLTF, Text, MeshTransmissionMaterial } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 
 export default function ShoeModel() {
-  const { nodes } = useGLTF("/shoe.glb");
+  const { nodes } = useGLTF("/compressed_shoe.glb");
   const { viewport } = useThree();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,40 +21,42 @@ export default function ShoeModel() {
   });
 
   return (
-    <group dispose={null} scale={viewport.width / 3.5}>
-      <Text
-        fontSize={0.8}
-        position={[0.01, .5, 0]}
-        font="fonts/Tanker-Regular.ttf"
-        color="rgb(255, 252, 242)"
-      >
-        Grip
-      </Text>
+    <Suspense fallback={null}>
+      <group dispose={null} scale={viewport.width / 3.5}>
+        <Text
+          fontSize={0.8}
+          position={[0.01, .5, 0]}
+          font="fonts/Tanker-Regular.ttf"
+          color="rgb(255, 252, 242)"
+        >
+          Grip
+        </Text>
 
-      <Text
-        fontSize={0.8}
-        position={[0, -.2, 0]}
-        font="fonts/Tanker-Regular.ttf"
-        color="rgb(255, 252, 242)"
-      >
-        Kicks
-      </Text>
+        <Text
+          fontSize={0.8}
+          position={[0, -.2, 0]}
+          font="fonts/Tanker-Regular.ttf"
+          color="rgb(255, 252, 242)"
+        >
+          Kicks
+        </Text>
 
-      <Text
-        fontSize={0.1}
-        position={[0, -.8, 0]}
-        font="fonts/Sora.ttf"
-        color="rgb(255, 252, 242)"
-        textAlign="center"
-      >
-        No fuss, community based climbing shoe finder
-      </Text>
+        <Text
+          fontSize={0.1}
+          position={[0, -.8, 0]}
+          font="fonts/Sora.ttf"
+          color="rgb(255, 252, 242)"
+          textAlign="center"
+        >
+          No fuss, community based climbing shoe finder
+        </Text>
 
-      <group ref={mesh}>
-        <mesh {...nodes.CimbingShoe} position={[0, -0.4, 0]}>
-          <MeshTransmissionMaterial thickness={.15} roughness={.15} chromaticAberration={0.08} ior={1.2} backside={true} transmission={1} />
-        </mesh>
-      </group>
-    </group >
+        <group ref={mesh}>
+          <mesh {...nodes.CimbingShoe} position={[0, -0.4, 0]}>
+            <MeshTransmissionMaterial thickness={.15} roughness={.15} chromaticAberration={0.08} ior={1.2} backside={true} transmission={1} />
+          </mesh>
+        </group>
+      </group >
+    </Suspense>
   );
 }
