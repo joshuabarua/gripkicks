@@ -21,6 +21,13 @@ const menu = {
     top: "-0px",
     right: "-0px",
     transition: { duration: 0.75, delay: 0.35, type: "tween", ease: [0.76, 0, 0.24, 1] }
+  },
+  closedText: {
+    width: "80px",
+    height: " 35px",
+    top: "-0px",
+    right: "-0px",
+    transition: { duration: 0.25, delay: 0.25, type: "tween", ease: [0.76, 0, 0.24, 1] }
   }
 }
 
@@ -34,7 +41,7 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className="p-2">
+    <nav className="p-2 mr-2">
       <ul className="flex justify-between text-foreground">
         <GlowArea className="w-[120px] z-4 ">
           <Glow color="whitesmoke" className="rounded-sm flex justify-center align-center">
