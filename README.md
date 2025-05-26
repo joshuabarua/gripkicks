@@ -98,6 +98,30 @@ interaction.
 For more information on using `useQuery`, visit the
 [TanStack Query documentation](https://tanstack.com/query/latest).
 
+## TODOs (Project Roadmap)
+
+1. **Secure Backend API Endpoints with Better Auth**
+   - Ensure all sensitive routes are protected with Better Auth middleware.
+   - Test token validation and error handling for unauthorized requests.
+
+2. **Update Frontend Data Fetching**
+   - Refactor all frontend queries and mutations (TanStack Query, fetch, etc.) to call the backend API only.
+   - Always include the Better Auth token in the `Authorization` header for protected requests.
+
+3. **Admin and User CRUD Features**
+   - Build/admin endpoints for managing shoes (create, update, delete).
+   - Add user profile management and ratings endpoints.
+
+4. **Type Sharing and Documentation**
+   - Move shared types/interfaces to a common package or folder for type safety across backend and frontend.
+   - Update documentation to reflect new API/data flow and authentication patterns.
+
+5. **Testing**
+   - Add integration tests for backend API endpoints (including auth).
+   - Add frontend tests for data fetching and UI flows.
+
+---
+
 ## Tech Stack
 
 - **Frontend**: Next.js 13 (App Router), React, TypeScript.
