@@ -20,7 +20,7 @@ export const links = [
     },
     {
         title: "Foot Lab",
-        href: "/footchecker"
+        href: "/foot-profile"
     },
     {
         title: "Logout",
