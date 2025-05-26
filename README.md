@@ -1,6 +1,6 @@
 # Climbing Shoe Recommender
 
-A web app that recommends climbing shoes based on foot shape, volume, and comfort, built with **Next.js**, **Sanity CMS**, and user authentication.
+A web app that recommends climbing shoes based on foot shape, volume, and comfort, built with **Next.js** and user authentication.
 
 ## Features
 
@@ -8,7 +8,7 @@ A web app that recommends climbing shoes based on foot shape, volume, and comfor
   - Egyptian/Roman/Greek/Germanic/Celtic foot shape detection.
   - Volume analysis (low, medium, high).
 - **Smart Recommendations**
-  - CMS-powered shoe database.
+  - Shoe database (local or API-powered).
   - Matching algorithm for foot characteristics and comfort.
 - **Comfort Ranking**
   - Comfort scores (1-5) for specific foot shapes and volumes.
@@ -17,7 +17,7 @@ A web app that recommends climbing shoes based on foot shape, volume, and comfor
   - Track recommendations.
   - Social login (Google/GitHub) + email/password.
 - **Admin Dashboard**
-  - Manage shoe database through Sanity CMS.
+  - Manage shoe database.
   - Add/update shoe specifications, images, and comfort rankings.
 
 ## State Management
