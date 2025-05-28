@@ -10,10 +10,12 @@ export default function ShoeModel() {
   const mesh = useRef<any>({});
   const animateFrame = useCallback((t: number) => {
     if (!mesh.current) return;
-    mesh.current.position.y = (Math.sin(t / .8)) / 10;
-    mesh.current.position.z = 0.2 + (Math.sin(t / 2.5)) / 8;
-    mesh.current.rotation.y = t / 2;
-    mesh.current.rotation.z = 0.3 + Math.sin(t / 4.5) / 2.5;
+    if (mesh.current.position && mesh.current.rotation) {
+      mesh.current.position.y = (Math.sin(t / .8)) / 10;
+      mesh.current.position.z = 0.2 + (Math.sin(t / 2.5)) / 8;
+      mesh.current.rotation.y = t / 2;
+      mesh.current.rotation.z = 0.3 + Math.sin(t / 4.5) / 2.5;
+    }
   }, []);
 
   useFrame((state) => {
