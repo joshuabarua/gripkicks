@@ -30,15 +30,15 @@ well-suited for client-side state management in React applications.
 ### Usage
 
 - **Client-Side Fetching**: Zustand is used to manage state related to
-  client-side fetching and user interactions. It provides a simple and efficient
+  client-side fetching and user interactions. provides a simple and efficient
   way to handle state updates in response to user actions and API calls. Think
   filters, preference, pagination.
 
 ### Benefits
 
 - **Lightweight**: Zustand is minimalistic and doesn't require boilerplate code,
-  making it easy to integrate into existing projects.
-- **Scalable**: It can handle complex state management needs without adding
+  making easy to integrate into existing projects.
+- **Scalable**: can handle complex state management needs without adding
   unnecessary complexity.
 
 For more information on Zustand, visit the
@@ -47,7 +47,7 @@ For more information on Zustand, visit the
 ## Validation with Zod
 
 This project uses Zod for schema validation and type inference. Zod provides a
-simple and powerful way to define and validate data schemas, ensuring that your
+simple and powerful way to define and validate data schemas, ensuring that
 application data adheres to expected formats and constraints.
 
 ### Usage
@@ -63,16 +63,16 @@ For more information on Zod, visit the
 
 ## Authentication with NextAuth
 
-NextAuth is used in this project to handle authentication. It provides a
-flexible and secure way to manage user authentication, supporting various
-providers and strategies.
+NextAuth is used in this project to handle authentication. provides a flexible
+and secure way to manage user authentication, supporting various providers and
+strategies.
 
 ### Usage
 
 - **User Authentication**: NextAuth is configured to authenticate users using
   providers such as Google, GitHub, and others, allowing for easy integration
   with popular authentication services.
-- **Session Management**: It manages user sessions, providing secure access to
+- **Session Management**: manages user sessions, providing secure access to
   authenticated routes and resources.
 
 For more information on NextAuth, visit the
@@ -101,20 +101,40 @@ For more information on using `useQuery`, visit the
 ## TODOs (Project Roadmap)
 
 1. **Secure Backend API Endpoints with Better Auth**
+
    - Ensure all sensitive routes are protected with Better Auth middleware.
    - Test token validation and error handling for unauthorized requests.
 
 2. **Update Frontend Data Fetching**
-   - Refactor all frontend queries and mutations (TanStack Query, fetch, etc.) to call the backend API only.
-   - Always include the Better Auth token in the `Authorization` header for protected requests.
+
+   - Refactor all frontend queries and mutations (TanStack Query, fetch, etc.)
+     to call the backend API only.
+   - Always include the Better Auth token in the `Authorization` header for
+     protected requests.
+   - WebGL warning: drawElementsInstanced: Drawing without vertex attrib 0 array
+     enabled forces the browser to do expensive emulation work when running on
+     desktop OpenGL platforms, for example on Mac. is preferable to always draw
+     with vertex attrib 0 array enabled, by using bindAttribLocation to bind
+     some always-used attribute to location 0.
+     - **How to address:**
+       - Ensure all meshes in GLTF/GLB 3D model have a valid `position`
+         attribute.
+       - When exporting model from Blender or another 3D editor, check that all
+         geometry includes vertex positions.
+       - If needed, re-export model with proper settings, or use code to verify
+         geometry attributes at runtime.
 
 3. **Admin and User CRUD Features**
+
    - Build/admin endpoints for managing shoes (create, update, delete).
    - Add user profile management and ratings endpoints.
 
 4. **Type Sharing and Documentation**
-   - Move shared types/interfaces to a common package or folder for type safety across backend and frontend.
-   - Update documentation to reflect new API/data flow and authentication patterns.
+
+   - Move shared types/interfaces to a common package or folder for type safety
+     across backend and frontend.
+   - Update documentation to reflect new API/data flow and authentication
+     patterns.
 
 5. **Testing**
    - Add integration tests for backend API endpoints (including auth).
