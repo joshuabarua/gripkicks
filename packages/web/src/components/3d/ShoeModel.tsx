@@ -3,7 +3,7 @@ import { useGLTF, Text, MeshTransmissionMaterial } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 
 export default function ShoeModel() {
-  const { nodes } = useGLTF("/compressed_shoe.glb");
+  const { nodes } = useGLTF("/HeroShoe.glb");
   const { viewport } = useThree();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
