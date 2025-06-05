@@ -5,7 +5,10 @@ import { getAuthInstance } from '@/services/authService';
 
 const router: Router = express.Router();
 
-router.use(createBetterAuthMiddleware(getAuthInstance()));
+router.use((req, res, next) => {
+  const middleware = createBetterAuthMiddleware(getAuthInstance());
+  middleware(req, res, next);
+});
 
 router.get('/', getAllUsers); 
 
