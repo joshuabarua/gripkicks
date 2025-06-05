@@ -1,52 +1,100 @@
-import { QueryClient, QueryFunction, useMutation, useQuery } from '@tanstack/react-query';
+import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { authClient, Session, AuthError } from './auth';
+import { User } from '../../types/user';
 
-const fetchSession: QueryFunction<unknown, readonly unknown[]> = async ({ queryKey, signal, meta }) => {
-    const [key, { email, password, googleToken }] = queryKey as [string, { email: string; password?: string; googleToken?: string; }];
-  const params = new URLSearchParams();
-  params.append('email', email);
-  if (password) params.append('password', password);
-  if (googleToken) params.append('googleToken', googleToken);
-
-  const response = await fetch(`/api/session?${params.toString()}`);
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
+const fetchSession = async (): Promise<Session | null> => {
+  return authClient.getSession();
+};
+const fetchCurrentUser = async (): Promise<User | null> => {
+  const session = await authClient.getSession();
+  return session?.user || null;
 };
 
-async function fetchUser({ queryKey }: { queryKey: (string | { email: string, password?: string, googleToken?: string })[] }) {
-    const [key, { email, password, googleToken }] = queryKey as [string, { email: string; password?: string; googleToken?: string; }];
-    const params = new URLSearchParams();
-    params.append('email', email);
-    if (password) params.append('password', password);
-    if (googleToken) params.append('googleToken', googleToken);
-  
-    const response = await fetch(`/api/login?${params.toString()}`);
-    if (!response.ok) {
-      throw new Error('Failed to login');
-    }
-    return response.json();
-  }
+const loginUser = async ({ 
+  email, 
+  password 
+}: { 
+  email: string; 
+  password: string;
+}): Promise<{ user: User; error?: AuthError }> => {
+  return authClient.login(email, password);
+};
+
+const signUpUser = async ({ 
+  email, 
+  password,
+  name
+}: { 
+  email: string; 
+  password: string;
+  name?: string;
+}): Promise<{ user: User; error?: AuthError }> => {
+  return authClient.signUp(email, password, name);
+};
+
+const signOutUser = async (): Promise<boolean> => {
+  return authClient.signOut();
+};
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: fetchSession,
-      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: true,
+    },
+  },
+});
 
+export function useSession() {
+  return useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+}
+
+export function useCurrentUser() {
+  return useQuery({
+    queryKey: ['currentUser'],
+    queryFn: fetchCurrentUser,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+}
+
+export function useLogin() {
+  return useMutation({
+    mutationFn: loginUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['session'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      queryClient.invalidateQueries({ queryKey: ['session'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     },
   });
+}
 
-export function useSession({ email, password, googleToken }: { email: string, password?: string, googleToken?: string }) {
-  return useQuery({
-    queryKey: ['session', { email, password, googleToken }],
-    queryFn: fetchSession
+export function useSignUp() {
+  return useMutation({
+    mutationFn: signUpUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['session'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      queryClient.invalidateQueries({ queryKey: ['session'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+    },
   });
-};
+}
 
-export function useUser({ email, password, googleToken }: { email: string, password?: string, googleToken?: string }) {
-  return useQuery({
-    queryKey: ['user', { email, password, googleToken }], 
-    queryFn: fetchUser
-});
-};
+export function useSignOut() {
+  return useMutation({
+    mutationFn: signOutUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['session'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      queryClient.invalidateQueries({ queryKey: ['session'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+    },
+  });
+}

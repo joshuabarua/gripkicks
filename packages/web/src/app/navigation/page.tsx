@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/context/useAuthStore';
+import { useSession } from '@/lib/queryClient';
 import { Glow, GlowArea } from '@/components/ui/glow';
 import NavButton from '@/components/ui/nav-button';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,12 +33,15 @@ const menu = {
 
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
-  const { user, logout } = useAuth();
-
-  const handleLogout = async () => {
-    setIsActive(false);
-    await logout();
-  };
+  
+  // Use our new session hook to check if user is authenticated
+  const { data: session } = useSession();
+  
+  // More strict check to ensure user is properly authenticated
+  const isAuthenticated = !!session?.user && session.isAuthenticated === true;
+  
+  // Function to close menu (used after logout)
+  const closeMenu = () => setIsActive(false);
 
   return (
     <nav className="p-2 mr-2">
@@ -53,8 +56,8 @@ const Navigation: React.FC = () => {
           </Glow>
         </GlowArea>
         <li>
-          {user ? (
-            <div className="relative">
+          {isAuthenticated ? (
+            <div className="relative flex items-center gap-2">
               <AnimatePresence mode="wait">
                 {isActive && (
                   <motion.div
@@ -64,7 +67,7 @@ const Navigation: React.FC = () => {
                     initial="closed"
                     exit="closed"
                   >
-                    <NavLinks handleLogout={handleLogout} />
+                    <NavLinks handleLogout={closeMenu} />
                   </motion.div>
                 )}
               </AnimatePresence>
