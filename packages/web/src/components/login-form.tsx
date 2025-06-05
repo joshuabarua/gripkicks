@@ -14,18 +14,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils"
-import { signIn } from "@/lib/client-auth";
-import { SetStateAction, useState } from "react";
+import { useLogin } from "@/lib/queryClient";
+import { useState } from "react";
 import useSessionStore from "@/store/sessionStore";
-
-interface ErrorContext {
-  error: {
-    message: string;
-    code?: string;
-    [key: string]: any;
-  };
-  [key: string]: any;
-}
 
 export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
@@ -33,45 +24,38 @@ export function LoginForm({
   const { setSessionData } = useSessionStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  
+  // Use TanStack Query for login mutation
+  const login = useLogin();
+  
+  // Derive state from query instead of useState
+  const loading = login.isPending;
+  const error = login.error ? 
+    (login.error instanceof Error ? login.error.message : 'Authentication failed') : 
+    null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-
+    
     try {
-      const response = await signIn.email({
-        email,
-        password,
-        callbackURL: "/",
-        fetchOptions: {
-          onResponse: () => {
-            setLoading(false);
-          },
-          onError: (context: ErrorContext) => {
-            setError(context.error?.message || 'Authentication failed');
-            setLoading(false);
-          },
-          onSuccess: async (session: any) => {
-            if (rememberMe) {
-              setSessionData({
-                email,
-                rememberMe: true,
-                lastLogin: new Date().toISOString()
-              });
-            } else {
-              setSessionData(null);
-            }
-            router.push("/");
-          },
-        },
-      });
+      const result = await login.mutateAsync({ email, password });
+      
+      if (!result.error) {
+        if (rememberMe) {
+          setSessionData({
+            email,
+            rememberMe: true,
+            lastLogin: new Date().toISOString()
+          });
+        } else {
+          setSessionData(null);
+        }
+        
+        router.push("/");
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      setLoading(false);
+      console.error("Login error:", err);
     }
   };
 
@@ -140,7 +124,7 @@ export function LoginForm({
               )}
             </Button>
             <div className="mt-4 text-center text-sm">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/auth/signup">
                 <span className="underline underline-offset-4">Sign up</span>
               </Link>

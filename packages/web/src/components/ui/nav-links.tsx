@@ -1,5 +1,6 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { SignOutButton } from '@/components/signout-button';
 
 interface NavLinksProps {
     handleLogout?: () => void;
@@ -113,16 +114,14 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
                                             ease: "easeInOut"
                                         }}
                                     >
-                                        <Link
-                                            href={href}
-                                            className='font-sora'
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleLogout?.();
-                                            }}
+                                        <SignOutButton 
+                                            variant="ghost" 
+                                            size="default" 
+                                            className="font-sora w-full justify-start p-0 hover:bg-transparent"
+                                            onClick={handleLogout}
                                         >
                                             {title}
-                                        </Link>
+                                        </SignOutButton>
                                     </motion.div>
                                 ) : (
                                     <motion.div

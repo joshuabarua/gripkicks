@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { signUp } from "@/lib/client-auth";
+import { useSignUp } from "@/lib/queryClient";
 import { useRouter } from 'next/navigation';
 
 export function SignupForm() {
@@ -23,9 +23,14 @@ export function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  
+  const signup = useSignUp();
+  
+  const loading = signup.isPending;
+  const error = signup.error ? 
+    (signup.error instanceof Error ? signup.error.message : 'Registration failed') : 
+    null;
 
   return (
     <div className={cn("flex flex-col gap-6")}>
@@ -88,11 +93,10 @@ export function SignupForm() {
                 type="submit"
                 className="w-full"
                 disabled={loading || !email || !password || !passwordConfirmation || password !== passwordConfirmation}
-                onClick={async () => {
+                onClick={async (e) => {
+                  e.preventDefault();
                   try {
-                    setError(null);
-                    setLoading(true);
-
+                    // Basic client-side validation
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(email)) {
                       throw new Error('Please enter a valid email address');
@@ -106,33 +110,17 @@ export function SignupForm() {
                       throw new Error('Password must be at least 8 characters');
                     }
 
-                    await signUp.email({
+                    const result = await signup.mutateAsync({
                       email,
                       password,
-                      name: userName,
-                      callbackURL: "/",
-                      fetchOptions: {
-                        onResponse: () => {
-                          setLoading(false);
-                        },
-                        onRequest: () => {
-                          setLoading(true);
-                        },
-                        onError: (error: unknown) => {
-                          setLoading(false);
-                          const errorObj = error as { error?: { message: string }; message?: string };
-                          const message = errorObj?.error?.message || errorObj?.message || 'An error occurred during signup';
-                          setError(message);
-                          console.error('Signup error:', message);
-                        },
-                        onSuccess: async () => {
-                          router.push("/");
-                        },
-                      },
+                      name: userName
                     });
-                  } catch (err: any) {
-                    setLoading(false);
-                    setError(err.message);
+                    
+                    if (!result.error) {
+                      router.push('/');
+                    }
+                  } catch (err) {
+                    console.error('Signup error:', err);
                   }
                 }}
               >

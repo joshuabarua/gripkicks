@@ -1,114 +1,161 @@
-import { betterAuth } from "better-auth";
-import { nextCookies } from "better-auth/next-js";
-import { twoFactor, username, anonymous, createAuthMiddleware } from "better-auth/plugins";
-import { Pool } from "pg";
+// Frontend auth client for communicating with our backend API
+import { User } from '../../types/user';
 
-if (!process.env.DIRECT_URL) {
-    throw new Error('DIRECT_URL environment variable is not set');
+// Use relative URLs for API routes to avoid CORS issues and work with the Next.js proxy
+// For direct backend calls in development, use this URL
+const API_BASE_URL = '';
+
+// Enable debug mode for network errors
+const DEBUG = process.env.NODE_ENV === 'development';
+
+// Auth error interface
+export interface AuthError {
+  status: number;
+  message: string;
 }
 
-const pool = new Pool({
-    connectionString: process.env.DIRECT_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false
-});
+// Session interface
+export interface Session {
+  user: User | null;
+  isAuthenticated: boolean;
+  expires?: string;
+}
 
-pool.connect()
-    .then(async () => {
-        console.log('Successfully connected to database');
-
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS "public"."sessions" (
-                id TEXT PRIMARY KEY,
-                user_id TEXT REFERENCES "public"."user"(id) ON DELETE CASCADE,
-                expires_at TIMESTAMP WITH TIME ZONE,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-            );
-
-            CREATE TABLE IF NOT EXISTS "public"."verification_tokens" (
-                token TEXT PRIMARY KEY,
-                user_id TEXT REFERENCES "public"."user"(id) ON DELETE CASCADE,
-                type TEXT NOT NULL,
-                expires_at TIMESTAMP WITH TIME ZONE,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
-        console.log('Auth tables initialized');
-    })
-    .catch((err) => {
-        console.error('Database setup failed:', err);
-    });
-
-export const auth = betterAuth({
-    database: pool,
-    advanced: {
-        cookiePrefix: "gripkicks",
-        onError: (error: any) => {
-            console.error('Better Auth Error:', error);
-            if (error.cause) {
-                console.error('Cause:', error.cause);
-            }
-            if (error.stack) {
-                console.error('Stack:', error.stack);
-            }
+// Auth client for interacting with our backend Better Auth API
+export const authClient = {
+  // Get the current user session
+  getSession: async (): Promise<Session | null> => {
+    try {
+      if (DEBUG) console.log('Fetching session from:', `${API_BASE_URL}/api/auth/session`);
+      
+      const response = await fetch(`${API_BASE_URL}/api/auth/session`, {
+        method: 'GET',
+        credentials: 'include', // Important for cookies
+        headers: {
+          'Content-Type': 'application/json',
         },
-        tables: {
-            user: {
-                name: 'user',
-                columns: {
-                    id: 'id',
-                    name: 'username',
-                    email: 'email',
-                    password_hash: 'password_hash',
-                    email_verified: 'email_verified',
-                    created_at: 'created_at',
-                    updated_at: 'updated_at'
-                }
-            }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Not authenticated
+          return { user: null, isAuthenticated: false };
         }
-    },
-    emailAndPassword: {
-        requireEmailVerification: false,
-        enabled: true,
-    },
-    emailVerification: {
-        sendVerificationEmail: async ({ user, url, token }, request) => {
-            console.log('Verification URL:', url);
-        },
-        sendOnSignUp: true
-    },
-    appName: "GripKicks",
-    plugins: [
-        twoFactor(), username(), anonymous(), nextCookies()
-    ],
-    socialProviders: {
-        google: {
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        },
-    },
-    hooks: {
-        before: createAuthMiddleware(async (ctx) => {
-            console.log('Auth request:', ctx.path, ctx.body);
+        throw new Error(`Session fetch failed: ${response.statusText}`);
+      }
 
-            if (ctx.path !== "/sign-up/email") {
-                return;
-            }
+      const data = await response.json();
+      return {
+        user: data.user,
+        isAuthenticated: !!data.user,
+        expires: data.expires,
+      };
+    } catch (error) {
+      console.error('Session fetch error:', error);
+      return { user: null, isAuthenticated: false };
+    }
+  },
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(ctx.body?.email)) {
-                return {
-                    response: {
-                        status: 400
-                    },
-                    body: {
-                        error: {
-                            message: "Please enter a valid email address"
-                        }
-                    },
-                    _flag: "json"
-                };
-            }
-        }),
-    },
-    secret: process.env.BETTER_AUTH_SECRET
-});
+  // Login with email and password
+  login: async (email: string, password: string): Promise<{ user: User; error?: AuthError }> => {
+    try {
+      if (DEBUG) console.log('Attempting login at:', `${API_BASE_URL}/api/auth/login`);
+      
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { 
+          user: null as unknown as User,
+          error: { 
+            status: response.status, 
+            message: data.message || 'Login failed' 
+          } 
+        };
+      }
+
+      return { user: data.user };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { 
+        user: null as unknown as User, 
+        error: { 
+          status: 500, 
+          message: 'An unexpected error occurred' 
+        } 
+      };
+    }
+  },
+
+  // Sign up with email and password
+  signUp: async (email: string, password: string, name?: string): Promise<{ user: User; error?: AuthError }> => {
+    try {
+      if (DEBUG) console.log('Attempting signup at:', `${API_BASE_URL}/api/auth/signup`);
+      
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, name }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { 
+          user: null as unknown as User, 
+          error: { 
+            status: response.status, 
+            message: data.message || 'Sign up failed' 
+          } 
+        };
+      }
+
+      return { user: data.user };
+    } catch (error) {
+      console.error('Sign up error:', error);
+      return { 
+        user: null as unknown as User, 
+        error: { 
+          status: 500, 
+          message: 'An unexpected error occurred' 
+        } 
+      };
+    }
+  },
+
+  // Sign out the current user
+  signOut: async (): Promise<boolean> => {
+    try {
+      if (DEBUG) console.log('Attempting sign out at:', `${API_BASE_URL}/api/auth/signout`);
+      
+      const response = await fetch(`${API_BASE_URL}/api/auth/signout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Sign out failed with status:', response.status, errorData);
+      }
+
+      return response.ok;
+    } catch (error) {
+      console.error('Sign out network error:', error);
+      return false;
+    }
+  },
+};
