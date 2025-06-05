@@ -2,7 +2,6 @@ import { PrismaClient, FootShape } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Top 8 brands starter set
 const starterShoes = [
   {
     name: "Solution",
@@ -152,7 +151,6 @@ const starterShoes = [
 
 async function main() {
   for (const shoe of starterShoes) {
-    // Upsert rubber technology
     const rubber = await prisma.rubberTechnology.upsert({
       where: {
         brand_compound: {
@@ -169,7 +167,6 @@ async function main() {
       }
     });
 
-    // Create shoe
     const newShoe = await prisma.shoe.create({
       data: {
         name: shoe.name,
@@ -183,7 +180,6 @@ async function main() {
       }
     });
 
-    // Add comfort rankings
     for (const cr of shoe.comfortRankings) {
       await prisma.comfortRanking.create({
         data: {
@@ -195,7 +191,6 @@ async function main() {
       });
     }
 
-    // Add foot shape compatibilities
     for (const fs of shoe.footShapeCompat) {
       await prisma.footShapeCompat.create({
         data: {

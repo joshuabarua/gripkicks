@@ -52,4 +52,4 @@ yarn-error.log*
 next-env.d.ts
 
 .prettierignore
-.yarnrc.yml
+# .yarnrc.yml
