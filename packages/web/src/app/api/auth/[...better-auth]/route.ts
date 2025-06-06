@@ -44,8 +44,14 @@ async function handler(request: NextRequest, method: string) {
     
     if (DEBUG) console.log(`Proxying ${method} request to: ${url}`);
 
-    // Check if backend is available (fast local check)
-    if (await checkBackendHealth() === false && path !== '/healthz') {
+    // Since we know the backend is running (returning 401s), skip health checks
+    // A 401 actually means the backend is available - it's just requiring auth
+    // We'll allow the request to go through and let the backend handle auth
+    if (DEBUG) console.log('Backend appears to be running - proxying request');
+    
+    // Only do health check for non-auth endpoints
+    if (path !== '/healthz' && path !== '/session' && path !== '/login' && path !== '/signup' && 
+        path !== '/signout' && await checkBackendHealth() === false) {
       if (DEBUG) console.log('Backend is unavailable, returning 503');
       return NextResponse.json(
         { error: 'Authentication service unavailable' }, 

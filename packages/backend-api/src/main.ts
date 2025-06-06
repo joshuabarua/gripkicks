@@ -19,7 +19,7 @@ async function startServer() {
     console.log('✅ Prisma client connected successfully.');
 
     const auth = initializeAuth(prisma);
-    console.log('Better Auth adapter:', auth);
+    // console.log('Better Auth adapter:', auth);
     setAuthInstance(auth);
     const betterAuthMiddleware = createBetterAuthMiddleware(auth);
 

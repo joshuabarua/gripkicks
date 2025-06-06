@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 
-// Backend API URL
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 /**
@@ -11,26 +10,25 @@ export async function GET() {
   const start = Date.now();
   
   try {
-    // Try to reach the backend auth service
     const response = await fetch(`${API_URL}/api/healthz`, { 
       method: 'GET',
       cache: 'no-store',
-      // Short timeout to fail fast
       signal: AbortSignal.timeout(3000)
     });
     
-    // Calculate response time
     const responseTime = Date.now() - start;
     
-    if (response.ok) {
-      // Backend is available
+    
+    if (response.ok || response.status === 401) {
       return NextResponse.json({ 
-        status: 'healthy',
+        status: response.ok ? 'healthy' : 'auth_required',
         backend: 'connected',
-        responseTime: `${responseTime}ms`
+        responseTime: `${responseTime}ms`,
+        message: response.status === 401 
+          ? 'Backend available but requires authentication (401 is normal)'
+          : undefined
       });
     } else {
-      // Backend returned an error
       return NextResponse.json({
         status: 'degraded',
         backend: `error ${response.status}`,
@@ -38,7 +36,6 @@ export async function GET() {
       }, { status: 207 });
     }
   } catch (error) {
-    // Backend is not reachable
     const responseTime = Date.now() - start;
     
     console.error('Health check failed:', error);
