@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,72 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id               String    @id @default(cuid())
-  name             String
-  email            String
-  emailVerified    Boolean   @default(false)
-  image            String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  twoFactorEnabled Boolean   @default(false)
-  isAdmin          Boolean   @default(false)
-  Session          Session[]
-  Account          Account[]
-
-  @@unique([email])
-  @@map("user")
-}
-
-model Session {
-  id        String   @id @default(cuid())
-  expiresAt DateTime
-  token     String   @unique
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("session")
-}
-
-model Account {
-  id           String    @id @default(cuid())
-  accountId    String
-  providerId   String
-  userId       String
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken  String?
-  refreshToken String?
-  idToken      String?
-  expiresAt    DateTime?
-  password     String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-
-  @@map("account")
-}
-
-model Verification {
-  id         String    @id @default(cuid())
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime? @default(now())
-  updatedAt  DateTime? @updatedAt
-
-  @@map("verification")
-}
-
-// --- Climbing Shoe Recommendation Models ---
 model Shoe {
-  id                 String              @id @default(uuid())
+  id                 String            @id @default(uuid())
   name               String
   brand              String
   imageUrl           String?
@@ -86,14 +16,14 @@ model Shoe {
   stiffness          String
   climbingDiscipline String
   volume             String
-  rubberTechnology   RubberTechnology?   @relation(fields: [rubberTechnologyId], references: [id])
   rubberTechnologyId String?
   comfortRankings    ComfortRanking[]
   footShapeCompat    FootShapeCompat[]
+  rubberTechnology   RubberTechnology? @relation(fields: [rubberTechnologyId], references: [id])
 }
 
 model RubberTechnology {
-  id         String   @id @default(uuid())
+  id         String @id @default(uuid())
   brand      String
   compound   String
   stickiness String
@@ -101,23 +31,79 @@ model RubberTechnology {
   shoes      Shoe[]
 
   @@unique([brand, compound])
-
 }
 
 model ComfortRanking {
-  id        String   @id @default(uuid())
-  shoe      Shoe     @relation(fields: [shoeId], references: [id])
+  id        String    @id @default(uuid())
   shoeId    String
   footShape FootShape
   volume    String
   score     Int
+  shoe      Shoe      @relation(fields: [shoeId], references: [id])
 }
 
 model FootShapeCompat {
-  id        String   @id @default(uuid())
-  shoe      Shoe     @relation(fields: [shoeId], references: [id])
+  id        String    @id @default(uuid())
   shoeId    String
   footShape FootShape
+  shoe      Shoe      @relation(fields: [shoeId], references: [id])
+}
+
+model Account {
+  id                 String    @id @map("id") @default(cuid())
+  userId            String    @map("userId")
+  type              String    @map("type")
+  provider          String    @map("provider")
+  providerAccountId String    @map("providerAccountId")
+  refresh_token     String?   @map("refresh_token")
+  access_token      String?   @map("access_token")
+  expires_at        Int?      @map("expires_at")
+  token_type        String?   @map("token_type")
+  scope             String?   @map("scope")
+  id_token          String?   @map("id_token")
+  session_state     String?   @map("session_state")
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime  @default(now()) @map("createdAt")
+  updatedAt         DateTime  @updatedAt @map("updatedAt")
+
+  @@map("Account")
+}
+
+model Session {
+  id           String   @id @map("id") @default(cuid())
+  sessionToken String   @unique @map("sessionToken")
+  userId       String   @map("userId")
+  expires      DateTime @map("expires")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now()) @map("createdAt")
+  updatedAt    DateTime @updatedAt @map("updatedAt")
+
+  @@map("Session")
+}
+
+model User {
+  id            String    @id @map("id") @default(cuid())
+  name          String?   @map("name")
+  email         String?   @unique @map("email")
+  emailVerified DateTime? @map("emailVerified")
+  image         String?   @map("image")
+  password      String?   @map("password")
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now()) @map("createdAt")
+  updatedAt     DateTime  @updatedAt @map("updatedAt")
+  isAdmin       Boolean   @default(false) @map("isAdmin")
+  twoFactorEnabled Boolean  @default(false) @map("twoFactorEnabled")
+
+  @@map("User")
+}
+
+model verificationtokens {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 enum FootShape {
@@ -127,4 +113,3 @@ enum FootShape {
   germanic
   celtic
 }
-

@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import { Hono } from 'hono';
 import {
   recommendShoes,
   // getShoeById,    
@@ -8,15 +8,15 @@ import {
   // deleteShoe    
 } from '@/controllers/shoesController'; 
 
-const router: Router = express.Router();
+const shoes = new Hono();
 
-router.post('/recommend', recommendShoes);
+shoes.post('/recommend', recommendShoes);
 
 // TODO: Implement standard CRUD routes for shoes
-// router.get('/', getAllShoes);
-// router.get('/:id', getShoeById);       
-// router.post('/', createShoe);    
-// router.put('/:id', updateShoe);    
-// router.delete('/:id', deleteShoe); 
+// shoes.get('/', getAllShoes);
+// shoes.get('/:id', getShoeById);       
+// shoes.post('/', createShoe);    
+// shoes.put('/:id', updateShoe);    
+// shoes.delete('/:id', deleteShoe); 
 
-export default router;
+export default shoes;

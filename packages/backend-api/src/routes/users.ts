@@ -1,15 +1,8 @@
-import express, { Router } from 'express';
-import { getAllUsers } from '@/controllers/userController'; 
-import createBetterAuthMiddleware from '@/middleware/better-auth'; 
-import { getAuthInstance } from '@/services/authService';
+import { Hono } from 'hono';
+import { getAllUsers } from '@/controllers/userController';
 
-const router: Router = express.Router();
+const users = new Hono();
 
-router.use((req, res, next) => {
-  const middleware = createBetterAuthMiddleware(getAuthInstance());
-  middleware(req, res, next);
-});
+users.get('/', getAllUsers);
 
-router.get('/', getAllUsers); 
-
-export default router;
+export default users;
