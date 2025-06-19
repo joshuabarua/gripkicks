@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import prisma from '@/db'; 
+import { Context } from 'hono';
+import prisma from '@/config/db.config';
 
 interface ComfortRanking {
   id: string;
@@ -24,11 +24,10 @@ interface RecommendShoesRequestBody {
   volume: string;
 }
 
-export const recommendShoes = async (req: Request<{}, {}, RecommendShoesRequestBody>, res: Response): Promise<void> => {
-  const { footShape, volume } = req.body;
+export const recommendShoes = async (c: Context): Promise<Response> => {
+  const { footShape, volume } = await c.req.json() as RecommendShoesRequestBody;
   if (!footShape || !volume) {
-    res.status(400).json({ error: 'footShape and volume are required in the request body.' });
-    return;
+    return c.json({ error: 'footShape and volume are required in the request body.' }, 400);
   }
 
   try {
@@ -48,99 +47,102 @@ export const recommendShoes = async (req: Request<{}, {}, RecommendShoesRequestB
       })
       .sort((a, b) => b.comfortScore - a.comfortScore);
 
-    res.json(recommended);
+    return c.json(recommended);
   } catch (error: any) {
     console.error('Error recommending shoes:', error);
-    res.status(500).json({ error: error.message || 'Failed to recommend shoes' });
+    return c.json({ error: error.message || 'Failed to recommend shoes' }, 500);
   }
 };
 
-export const getAllShoes = async (req: Request, res: Response): Promise<void> => {
+// TODO: Convert other CRUD operations to Hono when needed
+export const getAllShoes = async (c: Context): Promise<Response> => {
   try {
     const shoes = await prisma.shoe.findMany();
-    res.status(200).json(shoes);
+    return c.json(shoes);
   } catch (error: any) {
-    console.error('Error fetching all shoes:', error);
-    res.status(500).json({ error: error.message || 'Failed to fetch shoes' });
+    console.error('Error fetching shoes:', error);
+    return c.json({ error: error.message || 'Failed to fetch shoes' }, 500);
   }
 };
 
-export const getShoeById = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
-  const { id } = req.params;
+export const getShoeById = async (c: Context): Promise<Response> => {
+  const id = c.req.param('id');
+  if (!id) {
+    return c.json({ error: 'Shoe ID is required' }, 400);
+  }
+
   try {
-    const shoe = await prisma.shoe.findUnique({
-      where: { id },
-    });
-    if (shoe) {
-      res.status(200).json(shoe);
-    } else {
-      res.status(404).json({ error: 'Shoe not found' });
+    const shoe = await prisma.shoe.findUnique({ where: { id } });
+    if (!shoe) {
+      return c.json({ error: 'Shoe not found' }, 404);
     }
+    return c.json(shoe);
   } catch (error: any) {
-    console.error(`Error fetching shoe with id ${id}:`, error);
-    res.status(500).json({ error: error.message || 'Failed to fetch shoe' });
+    console.error('Error fetching shoe:', error);
+    return c.json({ error: error.message || 'Failed to fetch shoe' }, 500);
   }
 };
 
 interface CreateShoeRequestBody {
   name: string;
   brand: string;
-  imageUrl?: string | null; 
+  imageUrl?: string | null;
   aggressiveness: string;
   stiffness: string;
   climbingDiscipline: string;
   volume: string;
-  rubberTechnologyId?: string | null; 
+  rubberTechnologyId?: string | null;
 }
 
-export const createShoe = async (req: Request<{}, {}, CreateShoeRequestBody>, res: Response): Promise<void> => {
+export const createShoe = async (c: Context): Promise<Response> => {
   try {
-    const newShoe = await prisma.shoe.create({
-      data: req.body,
-    });
-    res.status(201).json(newShoe);
+    const body = await c.req.json() as CreateShoeRequestBody;
+    const shoe = await prisma.shoe.create({ data: body });
+    return c.json(shoe, 201);
   } catch (error: any) {
     console.error('Error creating shoe:', error);
-    res.status(500).json({ error: error.message || 'Failed to create shoe' });
+    return c.json({ error: error.message || 'Failed to create shoe' }, 500);
   }
 };
 
 interface UpdateShoeRequestBody {
   name?: string;
   brand?: string;
+  imageUrl?: string | null;
+  aggressiveness?: string;
+  stiffness?: string;
+  climbingDiscipline?: string;
+  volume?: string;
+  rubberTechnologyId?: string | null;
 }
 
-export const updateShoe = async (req: Request<{ id: string }, {}, UpdateShoeRequestBody>, res: Response): Promise<void> => {
-  const { id } = req.params;
+export const updateShoe = async (c: Context): Promise<Response> => {
+  const id = c.req.param('id');
+  if (!id) {
+    return c.json({ error: 'Shoe ID is required' }, 400);
+  }
+
   try {
-    const updatedShoe = await prisma.shoe.update({
-      where: { id },
-      data: req.body,
-    });
-    res.status(200).json(updatedShoe);
+    const body = await c.req.json() as UpdateShoeRequestBody;
+    const shoe = await prisma.shoe.update({ where: { id }, data: body });
+    return c.json(shoe);
   } catch (error: any) {
-    if ((error as any).code === 'P2025') {
-        res.status(404).json({ error: 'Shoe not found to update.' });
-    } else {
-        console.error(`Error updating shoe with id ${id}:`, error);
-        res.status(500).json({ error: error.message || 'Failed to update shoe' });
-    }
+    console.error('Error updating shoe:', error);
+    return c.json({ error: error.message || 'Failed to update shoe' }, 500);
   }
 };
 
-export const deleteShoe = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
-  const { id } = req.params;
+export const deleteShoe = async (c: Context): Promise<Response> => {
+  const id = c.req.param('id');
+  if (!id) {
+    return c.json({ error: 'Shoe ID is required' }, 400);
+  }
+
   try {
-    await prisma.shoe.delete({
-      where: { id },
-    });
-    res.status(204).send(); 
+    await prisma.shoe.delete({ where: { id } });
+    return c.json({ message: 'Shoe deleted successfully' });
   } catch (error: any) {
-    if ((error as any).code === 'P2025') {
-        res.status(404).json({ error: 'Shoe not found to delete.' });
-    } else {
-        console.error(`Error deleting shoe with id ${id}:`, error);
-        res.status(500).json({ error: error.message || 'Failed to delete shoe' });
-    }
+    console.error('Error deleting shoe:', error);
+    return c.json({ error: error.message || 'Failed to delete shoe' }, 500);
   }
 };

@@ -1,8 +1,7 @@
-import { Response } from 'express';
-import { AuthenticatedRequest } from '@/middleware/better-auth'; 
-import prisma from '@/db'; 
+import { Context } from 'hono';
+import prisma from '@/config/db.config';
 
-export const getAllUsers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getAllUsers = async (c: Context): Promise<Response> => {
   try {
     const users = await prisma.user.findMany({
       // select: {
@@ -14,9 +13,9 @@ export const getAllUsers = async (req: AuthenticatedRequest, res: Response): Pro
       // }
     });
 
-    res.status(200).json({ users });
+    return c.json({ users });
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json({ error: 'Failed to fetch users' });
+    return c.json({ error: 'Failed to fetch users' }, 500);
   }
 };
