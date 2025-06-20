@@ -1,6 +1,7 @@
 import { Context, Next } from 'hono'
 import { auth } from '@/config/auth.config'
 
+
 // Middleware to protect routes from unauthorized access
 export const protect = async (c: Context, next: Next) => {
     // Extract the session from the incoming request headers

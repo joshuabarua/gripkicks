@@ -5,9 +5,9 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { compress } from 'hono/compress'
 import { getRouterName, showRoutes } from 'hono/dev'
-import { auth } from './config/auth.config';
-import { errorHandler, notFound } from './middleware';
-import Users from './routes/users';
+import { auth } from '../config/auth.config';
+import { errorHandler, notFound } from '../middleware';
+import Users from '../routes/users.routes';
 
 const port = process.env?.PORT || 8000
 const API_BASE = process.env.API_BASE || '/api/v1'
@@ -24,9 +24,12 @@ app.use(compress({ encoding: 'gzip' }))
 app.use('*', cors());
 
 app.use('*', cors({
-  origin: 'http://localhost:3000',
+  origin: "http://localhost:3000",
+  allowHeaders: ["Content-Type", "Authorization"],
+  allowMethods: ["POST", "GET", "OPTIONS"],
+  exposeHeaders: ["Content-Length"],
+  maxAge: 600,
   credentials: true,
-  maxAge: 86400,
 }), async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
   c.set('user', session?.user ?? null);
@@ -34,21 +37,23 @@ app.use('*', cors({
   await next();
 });
 
+app.on(["POST", "GET"], API_BASE + "/auth/*", (c) => {
+  return auth.handler(c.req.raw);
+});
+
 // Health check
 app.get(API_BASE + '/health', (c) => {
-
   if (getRuntimeKey() === 'workerd') {
     return c.text('You are on Cloudflare')
   } else if (getRuntimeKey() === 'bun') {
     return c.text('You are on Bun')
   }
-
   return c.json({ status: 'ok', uptime: process.uptime(), message: `You are on ${getRuntimeKey()}, Hi! Welcome!` })
 })
 
 
 // Auth handler (all Better Auth endpoints)
-app.all('/api/auth/*', async (c) => auth.handler(c.req.raw));
+// app.all(API_BASE + '/auth/*', async (c) => auth.handler(c.req.raw));
 
 // Users Route
 app.route(API_BASE + '/users', Users)
@@ -59,27 +64,30 @@ app.onError(errorHandler)
 // Not Found Handler (standardized response)
 app.notFound(notFound)
 
+app.route(API_BASE + '/users', Users)
+
 //signup
-app.post('/api/auth/signup/', async (c) => {
+app.post(API_BASE + '/auth/signup', async (c) => {
   const body = await c.req.json();
+  console.log("BODY:>>>", body)
   const result = await auth.api.signUpEmail({ body });
   return c.json(result);
 });
 
-//login
-app.post('/api/auth/login/', async (c) => {
-  const body = await c.req.json();
-  const result = await auth.api.signInEmail({ body });
-  return c.json(result);
-});
+// //login
+// app.post(API_BASE + '/auth/login', async (c) => {
+//   const body = await c.req.json();
+//   const result = await auth.api.signInEmail({ body });
+//   return c.json(result);
+// });
 
-// Example: Session info endpoint
-app.get(API_BASE + '/session', (c) => {
-  const user = c.get('user');
-  const session = c.get('session');
-  if (!user) return c.body(null, 401);
-  return c.json({ user, session });
-});
+// // Example: Session info endpoint
+// app.get(API_BASE + '/session', (c) => {
+//   const user = c.get('user');
+//   const session = c.get('session');
+//   if (!user) return c.body(null, 401);
+//   return c.json({ user, session });
+// });
 
 
 // Start server on port 3001

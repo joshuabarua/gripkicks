@@ -1,5 +1,7 @@
 import { Context } from 'hono';
-import prisma from '@/config/db.config';
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 interface ComfortRanking {
   id: string;
