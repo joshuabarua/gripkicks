@@ -1,99 +1,64 @@
-import { env, getRuntimeKey } from 'hono/adapter'
-import { Hono } from 'hono';
-import { serve } from '@hono/node-server';
-import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
-import { compress } from 'hono/compress'
-import { getRouterName, showRoutes } from 'hono/dev'
-import { auth } from '../config/auth.config';
+import { showRoutes } from 'hono/dev';
 import { errorHandler, notFound } from '../middleware';
+import { auth } from '../config/auth.config';
 import Users from '../routes/users.routes';
+import createApp from '../lib/create-app';
+import { createServer } from 'http';
+import { Context } from 'hono';
 
-const port = process.env?.PORT || 8000
-const API_BASE = process.env.API_BASE || '/api/v1'
+// Initialize app with middleware
+const app = createApp();
 
-const app = new Hono<{
-  Variables: {
-    user: typeof auth.$Infer.Session.user | null;
-    session: typeof auth.$Infer.Session.session | null
-  }
-}>({ strict: false });
+// Set API base path
+const API_BASE = process.env.API_BASE || '/api/v1';
 
-app.use(logger());
-app.use(compress({ encoding: 'gzip' }))
-app.use('*', cors());
-
-app.use('*', cors({
-  origin: "http://localhost:3000",
-  allowHeaders: ["Content-Type", "Authorization"],
-  allowMethods: ["POST", "GET", "OPTIONS"],
-  exposeHeaders: ["Content-Length"],
-  maxAge: 600,
-  credentials: true,
-}), async (c, next) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
-  c.set('user', session?.user ?? null);
-  c.set('session', session?.session ?? null);
-  await next();
+// Health check endpoint
+app.get('/health', (c: Context) => {
+  return c.json({ 
+    status: 'ok', 
+    uptime: Math.floor(process.uptime() * 1000), // Convert to milliseconds
+    message: 'Welcome to the API!'
+  });
 });
 
-app.on(["POST", "GET"], API_BASE + "/auth/*", (c) => {
-  return auth.handler(c.req.raw);
-});
-
-// Health check
-app.get(API_BASE + '/health', (c) => {
-  if (getRuntimeKey() === 'workerd') {
-    return c.text('You are on Cloudflare')
-  } else if (getRuntimeKey() === 'bun') {
-    return c.text('You are on Bun')
-  }
-  return c.json({ status: 'ok', uptime: process.uptime(), message: `You are on ${getRuntimeKey()}, Hi! Welcome!` })
-})
-
-
-// Auth handler (all Better Auth endpoints)
-// app.all(API_BASE + '/auth/*', async (c) => auth.handler(c.req.raw));
-
-// Users Route
-app.route(API_BASE + '/users', Users)
-
-// Error Handler (improved to use err)
-app.onError(errorHandler)
-
-// Not Found Handler (standardized response)
-app.notFound(notFound)
-
-app.route(API_BASE + '/users', Users)
-
-//signup
-app.post(API_BASE + '/auth/signup', async (c) => {
+// Auth endpoints
+app.post('/auth/signup', async (c: Context) => {
   const body = await c.req.json();
-  console.log("BODY:>>>", body)
+  console.log('Signup request:', body);
   const result = await auth.api.signUpEmail({ body });
   return c.json(result);
 });
 
-// //login
-// app.post(API_BASE + '/auth/login', async (c) => {
-//   const body = await c.req.json();
-//   const result = await auth.api.signInEmail({ body });
-//   return c.json(result);
-// });
+// Better Auth handler for all /auth/* routes
+export const authHandler = async (c: Context) => {
+  return auth.handler(c.req.raw);
+};
 
-// // Example: Session info endpoint
-// app.get(API_BASE + '/session', (c) => {
-//   const user = c.get('user');
-//   const session = c.get('session');
-//   if (!user) return c.body(null, 401);
-//   return c.json({ user, session });
-// });
+// Register API routes with base path
+app.route(API_BASE, Users);
 
+// Register auth handler for all /api/v1/auth/* routes
+app.on(['POST', 'GET'], `${API_BASE}/auth/*`, authHandler);
 
-// Start server on port 3001
-serve({ fetch: app.fetch, port: Number(port), hostname: '0.0.0.0' });
+// Error handling
+app.onError(errorHandler);
+app.notFound(notFound);
 
-// Show Routes
-console.log(`🚀 API server running at http://localhost:${port}${API_BASE}`);
-// console.log(getRouterName(app))
-showRoutes(app)
+// Start server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+  const hostname = process.env.HOST || '0.0.0.0';
+
+  // Show all routes
+  console.log('Registered routes:');
+  console.log(showRoutes(app));
+
+  // Start Node.js server
+  const server = createServer(app.fetch);
+  server.listen(port, hostname, () => {
+    console.log(`Server started on http://${hostname}:${port}`);
+    console.log(`API base URL: ${API_BASE}`);
+  });
+}
+
+export default app;
