@@ -13,6 +13,8 @@
 		"resolveJsonModule": true,
 		"moduleResolution": "node",
 		"sourceMap": true,
+		"declaration": true,
+		"composite": true,
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["*"]
@@ -24,7 +26,9 @@
 		"routes/**/*",
 		"controllers/**/*",
 		"middleware/**/*",
-		"config/**/*"
+		"config/**/*",
+		"db/**/*",
+		"lib/**/*"
 	],
 	"exclude": ["node_modules", "**/*.spec.ts"]
 }

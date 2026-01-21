@@ -1,7 +1,9 @@
+'use client';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { useSession } from '@/lib/queryClient';
+import { useSession } from '@/lib/auth';
+import AuthButton from '@/components/auth-button';
 import { Glow, GlowArea } from '@/components/ui/glow';
 import NavButton from '@/components/ui/nav-button';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -34,11 +36,9 @@ const menu = {
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
   
-  // Use our new session hook to check if user is authenticated
-  const { data: session } = useSession();
-  
-  // More strict check to ensure user is properly authenticated
-  const isAuthenticated = !!session?.user && session.isAuthenticated === true;
+  // Use Better Auth session hook to check if user is authenticated
+  const { data: session, isPending } = useSession();
+  const isAuthenticated = !!session?.user;
   
   // Function to close menu (used after logout)
   const closeMenu = () => setIsActive(false);
@@ -56,7 +56,9 @@ const Navigation: React.FC = () => {
           </Glow>
         </GlowArea>
         <li>
-          {isAuthenticated ? (
+          {isPending ? (
+            <div className="h-9 w-20 animate-pulse bg-muted rounded" />
+          ) : isAuthenticated ? (
             <div className="relative flex items-center gap-2">
               <AnimatePresence mode="wait">
                 {isActive && (
@@ -74,9 +76,7 @@ const Navigation: React.FC = () => {
               <NavButton isActive={isActive} toggleMenu={() => setIsActive(!isActive)} />
             </div>
           ) : (
-            <Link href="/auth/login">
-              <Button className="font-sora" variant="ghost">Login</Button>
-            </Link>
+            <AuthButton />
           )}
         </li>
       </ul>

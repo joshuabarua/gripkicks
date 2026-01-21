@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from '@/lib/queryClient';
+import { useSession } from '@/lib/auth';
 import { useState, useEffect } from 'react';
 
 interface BackendStatusType {
@@ -12,7 +12,7 @@ interface BackendStatusType {
 }
 
 export function AuthDebug() {
-  const { data: session, isLoading, error } = useSession();
+  const { data: session, isPending: isLoading, error } = useSession();
   const [backendStatus, setBackendStatus] = useState<BackendStatusType | null>(null);
   const [isChecking, setIsChecking] = useState(false);
 
@@ -60,11 +60,9 @@ export function AuthDebug() {
         <div>
           {isLoading ? 'Loading...' : 
             error ? <span className="text-red-600">Error: {String(error)}</span> :
-            session ? (
-              <span className="text-green-600">
-                {session.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
-              </span>
-            ) : 'No Session'
+            session?.user ? (
+              <span className="text-green-600">Authenticated</span>
+            ) : <span className="text-yellow-600">Not Authenticated</span>
           }
         </div>
         

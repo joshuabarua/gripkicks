@@ -1,48 +1,48 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { nextCookies } from "better-auth/next-js";
-import prisma from '@/db/index';
+import prisma from '../db';
 
 export const auth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET!,
-  database: prismaAdapter(prisma, { provider: 'postgresql' }),
-  baseURL: process.env.APP_URL,
-  // Allow requests from the frontend development server
-  trustedOrigins: [process.env.APP_URL || 'http://localhost:3000'],
-  user: {
-    modelName: 'user',
-    additionalFields: {
-      isAdmin: { type: 'boolean', default: false, returned: true },
+  database: prismaAdapter(prisma, {
+    provider: 'postgresql',
+  }),
+  emailAndPassword: {
+    enabled: true,
+    async sendResetPassword(data, request) {
+      // TODO: Send an email to the user with a link to reset their password
+      console.log('Password reset requested for:', data.user.email);
     },
-    session: { expiresIn: 60 * 60 * 24 * 7, modelName: 'session' },
-    account: {
-      modelName: 'account',
-      accountLinking: {
-        enabled: true,
-        trustedProviders: ['google', 'email-password'],
-        allowDifferentEmails: false,
-        // sendAccountLinkingEmail: async ({ user, url, token }) => {
-        //   // Send account linking email
-        //   sendEmail({
-        //     to: user.email,
-        //     subject: 'Link your account',
-        //     text: `Click the link to confirm linking your account: ${url}`,
-        //   })
-        // },
-      },
-    },
-    emailAndPassword: {
-      enabled: true,
-      disableSignUp: false,
-      minPasswordLength: 8,
-      maxPasswordLength: 128,
-      autoSignIn: true,
-      requireEmailVerification: false,
-    },
-    plugins: [nextCookies()],
+  },
+  socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
   },
+  user: {
+    additionalFields: {
+      isAdmin: {
+        type: 'boolean',
+        required: false,
+        defaultValue: false,
+      },
+    },
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // 1 day - update session if older than this
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 5, // 5 minutes
+    },
+  },
+  trustedOrigins: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ],
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3001',
 });
+
+// Export type for Hono RPC
+export type Auth = typeof auth;

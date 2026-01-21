@@ -1,10 +1,10 @@
 'use client'
 
-import { useSignOut } from "@/lib/queryClient"
+import { signOut } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
 import { LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
-import useSessionStore from "@/store/sessionStore"
+import { useState } from "react"
 
 interface SignOutButtonProps {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
@@ -22,21 +22,27 @@ export function SignOutButton({
   onClick,
 }: SignOutButtonProps) {
   const router = useRouter()
-  const { setSessionData } = useSessionStore()
-  const signOut = useSignOut()
+  const [isPending, setIsPending] = useState(false)
 
-  const handleSignOut = () => {
-    signOut.mutate(undefined, {
-      onSuccess: () => {
-        if (onClick) {
-          onClick();
-        }
-        setSessionData(null)
-        router.push("/auth/login")
+  const handleSignOut = async () => {
+    await signOut({
+      fetchOptions: {
+        onRequest: () => {
+          setIsPending(true)
+        },
+        onResponse: () => {
+          setIsPending(false)
+        },
+        onSuccess: () => {
+          if (onClick) {
+            onClick()
+          }
+          router.push("/auth/login")
+        },
+        onError: (ctx) => {
+          console.error("Error signing out:", ctx.error)
+        },
       },
-      onError: (error: unknown) => {
-        console.error("Error signing out:", error)
-      }
     })
   }
 
@@ -46,9 +52,9 @@ export function SignOutButton({
       size={size} 
       className={className}
       onClick={handleSignOut}
-      disabled={signOut.isPending}
+      disabled={isPending}
     >
-      {signOut.isPending ? (
+      {isPending ? (
         <span className="flex items-center gap-2">
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
           {children || "Signing out..."}

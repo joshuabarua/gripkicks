@@ -1,5 +1,5 @@
 import { Context, Next } from 'hono'
-import { auth } from '@/config/auth.config'
+import { auth } from '../config/auth.config'
 
 
 // Middleware to protect routes from unauthorized access
@@ -46,7 +46,8 @@ export const isAdmin = async (c: Context, next: Next) => {
     }
 
     // Check if the user is an admin
-    if (!session.user.isAdmin) {
+    const user = session.user as typeof session.user & { isAdmin?: boolean };
+    if (!user.isAdmin) {
         return c.json(
             {
                 success: false,

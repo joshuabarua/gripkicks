@@ -1,15 +1,9 @@
-import { Hono } from 'hono';
-import { login, session } from '@/controllers/authController'; 
-import createBetterAuthMiddleware from '@/middleware/better-auth'; 
-import { getAuthInstance } from '@/services/authService';
+// Auth routes are now handled directly by Better Auth in main.ts
+// This file is kept for reference but is no longer used
+// All auth endpoints are available at /api/auth/*
+// - POST /api/auth/sign-up/email - Register with email/password
+// - POST /api/auth/sign-in/email - Login with email/password
+// - POST /api/auth/sign-out - Sign out
+// - GET /api/auth/session - Get current session
 
-const auth = new Hono();
-
-auth.post('/login', login);
-
-auth.get('/session', async (c, next) => {
-  const middleware = createBetterAuthMiddleware(getAuthInstance());
-  return middleware(c, next);
-}, session); 
-
-export default auth;
+export {};
