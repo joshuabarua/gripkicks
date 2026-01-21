@@ -5,7 +5,11 @@
     "scripts": {
         "start": "node dist/main.js",
         "build": "tsc",
-        "dev": "NODE_ENV=production ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts"
+        "dev": "NODE_ENV=production ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts",
+        "seed": "ts-node prisma/seed.ts"
+    },
+    "prisma": {
+        "seed": "ts-node prisma/seed.ts"
     },
     "dependencies": {
         "@hono/node-server": "^1.14.4",
