@@ -1,0 +1,34 @@
+{
+	"compilerOptions": {
+		"target": "ES2020",
+		"module": "commonjs",
+		"rootDir": ".",
+		"outDir": "./dist",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"jsx": "react-jsx",
+		"jsxImportSource": "hono/jsx",
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"declaration": true,
+		"composite": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["*"]
+		},
+		"types": ["node"]
+	},
+	"include": [
+		"src/**/*",
+		"routes/**/*",
+		"controllers/**/*",
+		"middleware/**/*",
+		"config/**/*",
+		"db/**/*",
+		"lib/**/*"
+	],
+	"exclude": ["node_modules", "**/*.spec.ts"]
+}

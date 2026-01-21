@@ -1,15 +1,25 @@
 {
     "name": "backend-api",
     "version": "1.0.0",
-    "main": "main.js",
+    "main": "dist/main.js",
     "scripts": {
-        "start": "node main.js"
+        "start": "node dist/main.js",
+        "build": "tsc",
+        "dev": "NODE_ENV=production ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts"
     },
     "dependencies": {
+        "@hono/node-server": "^1.14.4",
         "@prisma/client": "^6.8.2",
         "@supabase/supabase-js": "^2.48.1",
-        "better-auth": "^1.2.8",
+        "better-auth": "^1.4.17",
         "dotenv": "^16.4.7",
-        "express": "^4.21.2"
+        "hono": "^4.8.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.15.29",
+        "prisma": "^6.8.2",
+        "ts-node-dev": "^2.0.0",
+        "tsconfig-paths": "^4.2.0",
+        "typescript": "^5.8.3"
     }
 }
