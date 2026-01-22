@@ -23,7 +23,8 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@/types/*": ["./types/*"],
-			"backend-api/*": ["../backend-api/*"]
+			"backend-api/*": ["../backend-api/*"],
+			"convex/*": ["../../convex/*"]
 		}
 	},
 	"include": [
@@ -31,7 +32,8 @@
 		"**/*.ts",
 		"**/*.tsx",
 		".next/types/**/*.ts",
-		"types/**/*"
+		"types/**/*",
+		"../../convex/**/*.ts"
 	],
 	"exclude": ["node_modules"],
 	"references": [

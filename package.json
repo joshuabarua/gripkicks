@@ -34,6 +34,8 @@
 		"@supabase/supabase-js": "^2.48.1",
 		"backend-api": "workspace:^",
 		"body-parser": "^1.20.3",
+		"convex": "^1.31.6",
+		"convex-helpers": "^0.1.111",
 		"cors": "^2.8.5",
 		"create-next-app": "^15.1.6",
 		"dotenv": "^16.4.7",
