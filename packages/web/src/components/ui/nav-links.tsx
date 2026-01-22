@@ -12,7 +12,7 @@ export const links = [
         href: "/profile"
     },
     {
-        title: "Sole Sanctuary ",
+        title: "Sole Sanctuary",
         href: "/stash"
     },
     {
@@ -21,7 +21,7 @@ export const links = [
     },
     {
         title: "Foot Lab",
-        href: "/foot-profile"
+        href: "/footchecker"
     },
     {
         title: "Logout",

@@ -21,6 +21,8 @@ model Shoe {
   comfortRankings    ComfortRanking[]
   footShapeCompat    FootShapeCompat[]
   rubberTechnology   RubberTechnology? @relation(fields: [rubberTechnologyId], references: [id])
+  favoritedBy        User[]
+  ownedBy            UserShoe[]
 }
 
 model RubberTechnology {
@@ -105,17 +107,34 @@ enum FootShape {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  isAdmin       Boolean?
-  sessions      Session[]
-  accounts      Account[]
+  id              String     @id
+  name            String
+  email           String
+  emailVerified   Boolean
+  image           String?
+  createdAt       DateTime
+  updatedAt       DateTime
+  isAdmin         Boolean?
+  onboardingComplete Boolean @default(false)
+  footShape       FootShape?
+  favoriteShoeId  String?
+  favoriteShoe    Shoe?      @relation(fields: [favoriteShoeId], references: [id])
+  sessions        Session[]
+  accounts        Account[]
+  stash           UserShoe[]
 
   @@unique([email])
   @@map("user")
+}
+
+model UserShoe {
+  id        String   @id @default(cuid())
+  userId    String
+  shoeId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shoe      Shoe     @relation(fields: [shoeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, shoeId])
+  @@map("user_shoe")
 }

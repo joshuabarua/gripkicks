@@ -71,3 +71,145 @@ export const editProfile = async (c: Context): Promise<Response> => {
     return c.json({ success: false, message: 'Failed to update profile', error: String(error) }, 500);
   }
 };
+
+export const completeOnboarding = async (c: Context): Promise<Response> => {
+  const user = c.get('user');
+  if (!user || !user.id) {
+    return c.json({ success: false, message: 'Unauthorized', error: 'User not found in context' }, 401);
+  }
+  
+  try {
+    const body = await c.req.json();
+    const { footShape, favoriteShoeId } = body;
+    
+    // Validate footShape
+    const validFootShapes = ['egyptian', 'roman', 'greek', 'germanic', 'celtic'];
+    if (footShape && !validFootShapes.includes(footShape)) {
+      return c.json({ success: false, message: 'Invalid foot shape' }, 400);
+    }
+    
+    // Validate favoriteShoeId if provided
+    if (favoriteShoeId) {
+      const shoe = await prisma.shoe.findUnique({ where: { id: favoriteShoeId } });
+      if (!shoe) {
+        return c.json({ success: false, message: 'Shoe not found' }, 404);
+      }
+    }
+    
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        footShape: footShape || undefined,
+        favoriteShoeId: favoriteShoeId || undefined,
+        onboardingComplete: true,
+      },
+      include: {
+        favoriteShoe: true,
+      },
+    });
+    
+    return c.json({ 
+      success: true, 
+      message: 'Onboarding completed successfully', 
+      data: updatedUser 
+    });
+  } catch (error) {
+    console.error('Error completing onboarding:', error);
+    return c.json({ success: false, message: 'Failed to complete onboarding', error: String(error) }, 500);
+  }
+};
+
+export const getShoes = async (c: Context): Promise<Response> => {
+  try {
+    const shoes = await prisma.shoe.findMany({
+      include: {
+        rubberTechnology: true,
+      },
+      orderBy: [{ brand: 'asc' }, { name: 'asc' }],
+    });
+    return c.json({ success: true, data: shoes });
+  } catch (error) {
+    console.error('Error fetching shoes:', error);
+    return c.json({ success: false, message: 'Failed to fetch shoes', error: String(error) }, 500);
+  }
+};
+
+export const getUserStash = async (c: Context): Promise<Response> => {
+  const user = c.get('user');
+  if (!user || !user.id) {
+    return c.json({ success: false, message: 'Unauthorized' }, 401);
+  }
+  
+  try {
+    const stash = await prisma.userShoe.findMany({
+      where: { userId: user.id },
+      include: { shoe: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    return c.json({ success: true, data: stash });
+  } catch (error) {
+    console.error('Error fetching stash:', error);
+    return c.json({ success: false, message: 'Failed to fetch stash', error: String(error) }, 500);
+  }
+};
+
+export const addToStash = async (c: Context): Promise<Response> => {
+  const user = c.get('user');
+  if (!user || !user.id) {
+    return c.json({ success: false, message: 'Unauthorized' }, 401);
+  }
+  
+  try {
+    const body = await c.req.json();
+    const { shoeId } = body;
+    
+    if (!shoeId) {
+      return c.json({ success: false, message: 'Shoe ID is required' }, 400);
+    }
+    
+    // Check if shoe exists
+    const shoe = await prisma.shoe.findUnique({ where: { id: shoeId } });
+    if (!shoe) {
+      return c.json({ success: false, message: 'Shoe not found' }, 404);
+    }
+    
+    // Add to stash (upsert to handle duplicates)
+    const userShoe = await prisma.userShoe.upsert({
+      where: {
+        userId_shoeId: { userId: user.id, shoeId },
+      },
+      update: {},
+      create: { userId: user.id, shoeId },
+      include: { shoe: true },
+    });
+    
+    return c.json({ success: true, message: 'Added to stash', data: userShoe });
+  } catch (error) {
+    console.error('Error adding to stash:', error);
+    return c.json({ success: false, message: 'Failed to add to stash', error: String(error) }, 500);
+  }
+};
+
+export const removeFromStash = async (c: Context): Promise<Response> => {
+  const user = c.get('user');
+  if (!user || !user.id) {
+    return c.json({ success: false, message: 'Unauthorized' }, 401);
+  }
+  
+  try {
+    const shoeId = c.req.param('shoeId');
+    
+    if (!shoeId) {
+      return c.json({ success: false, message: 'Shoe ID is required' }, 400);
+    }
+    
+    await prisma.userShoe.deleteMany({
+      where: { userId: user.id, shoeId },
+    });
+    
+    return c.json({ success: true, message: 'Removed from stash' });
+  } catch (error) {
+    console.error('Error removing from stash:', error);
+    return c.json({ success: false, message: 'Failed to remove from stash', error: String(error) }, 500);
+  }
+};

@@ -4309,6 +4309,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hono@npm:^4.11.4":
+  version: 4.11.4
+  resolution: "hono@npm:4.11.4"
+  checksum: 10c0/19b5ebf28f89ad8e8d9fc465e9e9073026a344e15e841b5b251831b0ae3843e50c29328c95e69a0d7e2681c5b35e475445f4faf59d3d51c6c32a834a0211099a
+  languageName: node
+  linkType: hard
+
 "hono@npm:^4.8.0":
   version: 4.8.0
   resolution: "hono@npm:4.8.0"
@@ -7711,6 +7718,7 @@ __metadata:
     eslint: "npm:^9.19.0"
     eslint-config-next: "npm:15.1.6"
     framer-motion: "npm:^12.4.7"
+    hono: "npm:^4.11.4"
     init: "npm:^0.1.2"
     leva: "npm:^0.10.0"
     lucide-react: "npm:^0.474.0"
