@@ -1,188 +1,201 @@
-# Climbing Shoe Recommender
+# GripKicks - Climbing Shoe Recommender
 
 A web app that recommends climbing shoes based on foot shape, volume, and
-comfort, built with **Next.js** and user authentication.
+comfort, built with **Next.js**, **Convex**, and **Better Auth**.
 
 ## Features
 
-- **Foot Profile System**
-  - Egyptian/Roman/Greek/Germanic/Celtic foot shape detection.
-  - Volume analysis (low, medium, high).
+- **Sole Sanctuary** 🏔️
+  - Browse and manage your personal climbing shoe collection
+  - Search and filter 70+ climbing shoes from 10 major brands
+  - Track shoes you own with visual collection management
+
+- **Foot Lab** 👟
+  - Foot shape analysis (Egyptian/Roman/Greek/Germanic/Celtic)
+  - Volume analysis (low, medium, high)
+  - Personalized shoe recommendations based on foot profile
+
 - **Smart Recommendations**
-  - Shoe database (local or API-powered).
-  - Matching algorithm for foot characteristics and comfort.
-- **Comfort Ranking**
-  - Comfort scores (1-5) for specific foot shapes and volumes.
-- **User Accounts**
-  - Save multiple foot profiles.
-  - Track recommendations.
-  - Social login (Google/GitHub) + email/password.
-- **Admin Dashboard**
-  - Manage shoe database.
-  - Add/update shoe specifications, images, and comfort rankings.
+  - Comprehensive shoe database with detailed specifications
+  - Matching algorithm for foot characteristics and comfort
+  - Comfort rankings for specific foot shapes and volumes
 
-## State Management
+- **User Profiles** 👤
+  - Save foot profiles and favorite shoes
+  - Track climbing shoe collection
+  - Email/password and Google OAuth authentication
 
-This project uses Zustand for client-side related fetching. Zustand is a
-lightweight and flexible state management library that is particularly
-well-suited for client-side state management in React applications.
+- **3D Visualization** 🎨
+  - Interactive 3D shoe model with WebGL
+  - Context lost recovery for smooth rendering
+  - Responsive design with modern UI
 
-### Usage
+## Architecture
 
-- **Client-Side Fetching**: Zustand is used to manage state related to
-  client-side fetching and user interactions. provides a simple and efficient
-  way to handle state updates in response to user actions and API calls. Think
-  filters, preference, pagination.
+### Frontend (Next.js)
+- **Framework**: Next.js 15 with App Router
+- **UI**: Tailwind CSS with shadcn/ui components
+- **3D Graphics**: React Three Fiber with WebGL
+- **State Management**: TanStack Query for server state
+- **Authentication**: Better Auth React client
 
-### Benefits
+### Backend (Hono + Convex)
+- **API Framework**: Hono with TypeScript
+- **Database**: Convex (real-time, serverless)
+- **Authentication**: Better Auth with email/password + Google OAuth
+- **HTTP Router**: Convex HttpRouterWithHono integration
 
-- **Lightweight**: Zustand is minimalistic and doesn't require boilerplate code,
-  making easy to integrate into existing projects.
-- **Scalable**: can handle complex state management needs without adding
-  unnecessary complexity.
+### Data Flow
+```
+Frontend ↔ Convex Client ↔ Convex Functions (Queries/Mutations) ↔ Convex Database
+          ↘ Better Auth Client ↗
+```
 
-For more information on Zustand, visit the
-[Zustand GitHub repository](https://github.com/pmndrs/zustand).
+## Pages & Routes
 
-## Validation with Zod
+- **/** - Home page with 3D visualization
+- **/stash** - Sole Sanctuary - Manage your shoe collection
+- **/footchecker** - Foot Lab - Analyze foot shape and get recommendations
+- **/profile** - User profile management
+- **/auth/login** - Authentication page
+- **/api/v1/** - REST API endpoints (via Hono)
+- **/api/auth/** - Better Auth endpoints
 
-This project uses Zod for schema validation and type inference. Zod provides a
-simple and powerful way to define and validate data schemas, ensuring that
-application data adheres to expected formats and constraints.
+## Development
 
-### Usage
+### Prerequisites
+- Node.js 18+
+- Yarn (recommended)
+- Convex account (for deployment)
 
-- **Schema Validation**: Zod is used to validate incoming data from forms, API
-  requests, and other sources, ensuring that the data is correctly structured
-  and meets all required criteria.
-- **Type Inference**: Zod can infer TypeScript types from schemas, reducing
-  redundancy and improving type safety throughout the application.
+### Setup
 
-For more information on Zod, visit the
-[Zod GitHub repository](https://github.com/colinhacks/zod).
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/joshuabarua/gripkicks.git
+   cd gripkicks
+   ```
 
-## Authentication with NextAuth
+2. **Install dependencies**
+   ```bash
+   yarn install
+   ```
 
-NextAuth is used in this project to handle authentication. provides a flexible
-and secure way to manage user authentication, supporting various providers and
-strategies.
+3. **Environment variables**
+   ```bash
+   # Copy from .env.example
+   cp .env.example .env.local
+   
+   # Required variables:
+   NEXT_PUBLIC_CONVEX_URL=your-convex-url
+   NEXT_PUBLIC_API_URL=http://localhost:3001
+   BETTER_AUTH_SECRET=your-secret
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   ```
 
-### Usage
+4. **Start development servers**
+   ```bash
+   # Terminal 1: Start Convex backend
+   npx convex dev
+   
+   # Terminal 2: Start Hono API server
+   yarn workspace backend-api dev
+   
+   # Terminal 3: Start Next.js frontend
+   yarn workspace web dev
+   ```
 
-- **User Authentication**: NextAuth is configured to authenticate users using
-  providers such as Google, GitHub, and others, allowing for easy integration
-  with popular authentication services.
-- **Session Management**: manages user sessions, providing secure access to
-  authenticated routes and resources.
+### Deployment
 
-For more information on NextAuth, visit the
-[NextAuth.js documentation](https://next-auth.js.org/).
+- **Frontend**: Deployed on Vercel
+- **Backend**: Convex (serverless functions)
+- **Database**: Convex (real-time database)
 
-## Data Retrieval with TanStack
+## Database Schema
 
-For data operations performed on the backend, such as calculating scatter
-graphs, TanStack's `useQuery` can be used to efficiently retrieve this data in
-the frontend.
+### Convex Schema
+```typescript
+// Shoes table
+shoes: defineTable({
+  name: v.string(),
+  brand: v.string(),
+  imageUrl: v.optional(v.string()),
+  aggressiveness: v.string(),
+  stiffness: v.string(),
+  climbingDiscipline: v.string(),
+  volume: v.string(),
+  rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
+})
 
-- **Backend Calculations**: Complex data operations, like scatter graph
-  calculations, are handled on the backend to leverage server resources and
-  ensure efficient processing.
-- **Data Fetching with useQuery**: The `useQuery` hook from TanStack is utilized
-  to fetch the processed data from the backend, ensuring that the frontend
-  receives the data efficiently and with minimal latency.
+// Users table (Better Auth)
+users: defineTable({
+  name: v.string(),
+  email: v.string(),
+  emailVerified: v.boolean(),
+  image: v.optional(v.string()),
+  isAdmin: v.optional(v.boolean()),
+  onboardingComplete: v.boolean(),
+  footShape: v.optional(footShapeValidator),
+  favoriteShoeId: v.optional(v.id("shoes")),
+})
 
-This approach allows for a clear separation of concerns, with heavy computations
-offloaded to the server while the frontend focuses on rendering and user
-interaction.
-
-For more information on using `useQuery`, visit the
-[TanStack Query documentation](https://tanstack.com/query/latest).
-
-## TODOs (Project Roadmap)
-
-1. **Secure Backend API Endpoints with Better Auth**
-
-   - Ensure all sensitive routes are protected with Better Auth middleware.
-   - Test token validation and error handling for unauthorized requests.
-
-2. **Update Frontend Data Fetching**
-
-   - Refactor all frontend queries and mutations (TanStack Query, fetch, etc.)
-     to call the backend API only.
-   - Always include the Better Auth token in the `Authorization` header for
-     protected requests.
-   - WebGL warning: drawElementsInstanced: Drawing without vertex attrib 0 array
-     enabled forces the browser to do expensive emulation work when running on
-     desktop OpenGL platforms, for example on Mac. is preferable to always draw
-     with vertex attrib 0 array enabled, by using bindAttribLocation to bind
-     some always-used attribute to location 0.
-     - **How to address:**
-       - Ensure all meshes in GLTF/GLB 3D model have a valid `position`
-         attribute.
-       - When exporting model from Blender or another 3D editor, check that all
-         geometry includes vertex positions.
-       - If needed, re-export model with proper settings, or use code to verify
-         geometry attributes at runtime.
-
-3. **Admin and User CRUD Features**
-
-   - Build/admin endpoints for managing shoes (create, update, delete).
-   - Add user profile management and ratings endpoints.
-
-4. **Type Sharing and Documentation**
-
-   - Move shared types/interfaces to a common package or folder for type safety
-     across backend and frontend.
-   - Update documentation to reflect new API/data flow and authentication
-     patterns.
-
-5. **Testing**
-   - Add integration tests for backend API endpoints (including auth).
-   - Add frontend tests for data fetching and UI flows.
-
----
+// User's shoe collection
+userShoes: defineTable({
+  userId: v.id("users"),
+  shoeId: v.id("shoes"),
+})
+```
 
 ## Tech Stack
 
-- **Frontend**: Next.js 13 (App Router), React, TypeScript.
-<!-- - **CMS**: Sanity Studio (Content Modeling). -->
-- **Authentication**: NextAuth.js.
-- **Database**: SupabaseDB/PostgreSQL (via Prisma ORM).
-- **Styling**: Tailwind CSS.
-- **Deployment**: Vercel, Supabase.
+### Frontend
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **UI**: Tailwind CSS + shadcn/ui
+- **3D**: React Three Fiber + Three.js
+- **State**: TanStack Query
+- **Auth**: Better Auth React client
 
-## Schema Design
+### Backend
+- **API**: Hono framework
+- **Database**: Convex (real-time, serverless)
+- **Auth**: Better Auth (email/password + Google OAuth)
+- **Language**: TypeScript
 
-The Sanity schema includes the following fields for each shoe:
+### Infrastructure
+- **Deployment**: Vercel (frontend) + Convex (backend/database)
+- **Monorepo**: Yarn workspaces
+- **Package Management**: Yarn
 
-- **Basic Information**: Name, brand, image.
-- **Core Metrics**: Aggressiveness, stiffness, climbing discipline, volume.
-- **Rubber Technology**: Brand, compound, stickiness, durability.
-- **Comfort Ranking**: Comfort scores for specific foot shapes and volumes.
-- **Foot Shape Compatibility**: Array of compatible foot shapes.
+## Key Features Implemented
 
-Example shoe document:
+### ✅ Completed
+- **Convex Migration**: Full migration from Supabase/Prisma to Convex
+- **Sole Sanctuary**: Shoe collection management with 70+ shoes
+- **Foot Lab**: Foot shape analysis and recommendations
+- **User Profiles**: Profile management with onboarding
+- **3D Visualization**: WebGL shoe model with context recovery
+- **Authentication**: Better Auth integration with Google OAuth
 
-```json
-{
-	"_type": "shoe",
-	"name": "La Sportiva Solution",
-	"brand": "La Sportiva",
-	"image": { "asset": { "_ref": "image-abc123", "_type": "reference" } },
-	"aggressiveness": "aggressive",
-	"stiffness": "stiff",
-	"climbingDiscipline": "bouldering",
-	"volume": "medium",
-	"rubberTechnology": {
-		"brand": "vibram",
-		"compound": "xs-grip",
-		"stickiness": "high",
-		"durability": "medium"
-	},
-	"comfortRanking": [
-		{ "footShape": "egyptian", "volume": "low", "comfortScore": 4 },
-		{ "footShape": "roman", "volume": "medium", "comfortScore": 3 }
-	],
-	"footShapeCompatibility": ["egyptian", "roman"]
-}
-```
+### 🔄 In Progress
+- **Stash Persistence**: Connecting shoe collection to user accounts
+- **Real-time Updates**: Leveraging Convex real-time capabilities
+
+### 📋 TODO
+- **Admin Panel**: Manage shoe database
+- **Image Upload**: Add shoe images to database
+- **Advanced Filters**: More granular shoe filtering
+- **Community Features**: Share collections and reviews
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+MIT License - see LICENSE file for details
