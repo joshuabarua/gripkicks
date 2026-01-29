@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,16 +11,46 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
+import { fetchApi } from '@/lib/api-client';
+
+interface UserShoe {
+  _id: string;
+  shoeId: string;
+  shoe: {
+    _id: string;
+    name: string;
+    brand: string;
+  };
+}
 
 export default function StashPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
+  const [userShoes, setUserShoes] = useState<UserShoe[]>([]);
 
   // Fetch shoes from Convex
   const shoes = useQuery(api.shoes.list) ?? [];
   const loading = shoes.length === 0 && !shoes;
+
+  // Fetch user's stash from Hono API
+  useEffect(() => {
+    if (session?.user) {
+      fetchUserStash();
+    }
+  }, [session]);
+
+  const fetchUserStash = async () => {
+    try {
+      const response = await fetchApi<{ success: boolean; data: UserShoe[] }>('/api/v1/stash');
+      if (response.success) {
+        setUserShoes(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch user stash:', error);
+    }
+  };
 
   // Get unique brands from shoes
   const brands = [...new Set(shoes.map(s => s.brand))].sort();
@@ -34,15 +64,31 @@ export default function StashPage() {
     return matchesSearch && matchesBrand;
   });
 
-  // TODO: Implement stash functionality with user authentication
-  const userShoes: string[] = [];
-
   const toggleShoe = async (shoeId: string) => {
     if (!session?.user) return;
     setSaving(shoeId);
-    // TODO: Implement with Convex mutation once auth is integrated
-    console.log('Toggle shoe:', shoeId);
-    setTimeout(() => setSaving(null), 500);
+    
+    try {
+      const isOwned = userShoes.some(us => us.shoeId === shoeId);
+      
+      if (isOwned) {
+        // Remove from stash
+        await fetchApi(`/api/v1/stash/${shoeId}`, { method: 'DELETE' });
+      } else {
+        // Add to stash
+        await fetchApi('/api/v1/stash', {
+          method: 'POST',
+          body: JSON.stringify({ shoeId }),
+        });
+      }
+      
+      // Refresh stash
+      await fetchUserStash();
+    } catch (error) {
+      console.error('Failed to toggle shoe:', error);
+    } finally {
+      setSaving(null);
+    }
   };
 
   if (sessionLoading || loading) {
@@ -128,7 +174,7 @@ export default function StashPage() {
         {/* All Shoes Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredShoes.map(shoe => {
-            const isOwned = userShoes.includes(shoe._id);
+            const isOwned = userShoes.some(us => us.shoeId === shoe._id);
             const isSaving = saving === shoe._id;
 
             return (

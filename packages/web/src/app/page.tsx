@@ -1,107 +1,52 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { User } from "../../types/user";
+import React from "react";
 import useSessionStore from "@/store/sessionStore";
 import dynamic from "next/dynamic";
+import CharacterSelector from "@/components/3d/CharacterSelector";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const [users, setUsers] = useState<User[]>([]);
   const sessionData = useSessionStore((state) => state.sessionData);
+  const router = useRouter();
   console.log("Session Data:", sessionData);
-  const Scene = dynamic(() => import("@/components/3d/Scene"), { ssr: false });
+  
+  // Memoize Scene component to prevent re-renders
+  const Scene = React.useMemo(() => 
+    dynamic(() => import("@/components/3d/Scene"), { ssr: false }), 
+    []
+  );
 
-  const [hoveredSection, setHoveredSection] = useState<string | null>(null);
+  const handleCharacterSelect = (character: string) => {
+    if (character === 'foot') {
+      router.push('/footchecker');
+    } else if (character === 'shoe') {
+      router.push('/stash');
+    }
+  };
 
   return (
     <main className="flex flex-col items-center dark:bg-dark-background dark:text-dark-foreground">
-      {/* Hero Section - Original hero section */}
-      <div className="relative h-screen w-screen flex items-center justify-center flex-col dark:bg-dark-background dark:text-dark-foreground">
+      {/* Hero Section - Fixed to fit screen properly */}
+      <div className="relative h-[100vh] w-screen flex items-center justify-center flex-col dark:bg-dark-background dark:text-dark-foreground">
         <Scene />
       </div>
 
-      {/* Split Section - The new 50/50 "character selection" section */}
-      <div className="w-screen min-h-screen flex flex-col md:flex-row">
-        {/* Find My Foot Section */}
-        <Link
-          href="/footchecker"
-          className="block w-full md:w-1/2 min-h-[50vh] md:min-h-screen"
-        >
-          <motion.div
-            className="w-full h-full flex items-center justify-center p-8 relative overflow-hidden"
-            style={{
-              backgroundColor:
-                hoveredSection === "foot"
-                  ? "hsl(17, 93%, 59%)"
-                  : "hsl(17, 83%, 54%)",
-            }}
-            onHoverStart={() => setHoveredSection("foot")}
-            onHoverEnd={() => setHoveredSection(null)}
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.5, ease: [0.215, 0.61, 0.355, 1] }}
-          >
-            <motion.div
-              className="relative z-10 text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <h2 className="text-4xl md:text-6xl font-bold mb-4 text-white font-sora">
-                Find My Foot
-              </h2>
-              <p className="text-xl md:text-2xl text-white max-w-md">
-                Discover your perfect fit with our advanced foot scanning
-                technology
-              </p>
-            </motion.div>
+      {/* Spacer between hero and selection cards */}
+      <div className="h-16 md:h-24"></div>
 
-            {/* Placeholder for a foot icon or illustration */}
-            <div className="absolute bottom-10 right-10">
-              {/* Foot icon or illustration would go here */}
-            </div>
-          </motion.div>
-        </Link>
-
-        {/* My Favorite Shoe Section */}
-        <Link
-          href="/stash"
-          className="block w-full md:w-1/2 min-h-[50vh] md:min-h-screen"
-        >
-          <motion.div
-            className="w-full h-full flex items-center justify-center p-8 relative overflow-hidden"
-            style={{
-              backgroundColor:
-                hoveredSection === "shoe"
-                  ? "hsl(46, 100%, 92%)"
-                  : "hsl(46, 100%, 97%)",
-            }}
-            onHoverStart={() => setHoveredSection("shoe")}
-            onHoverEnd={() => setHoveredSection(null)}
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.5, ease: [0.215, 0.61, 0.355, 1] }}
-          >
-            <motion.div
-              className="relative z-10 text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <h2 className="text-4xl md:text-6xl font-bold mb-4 text-accent font-sora">
-                My Favorite Shoe
-              </h2>
-              <p className="text-xl md:text-2xl text-accent max-w-md">
-                Browse your collection and manage your favorite kicks
-              </p>
-            </motion.div>
-
-            {/* Placeholder for a shoe icon or illustration */}
-            <div className="absolute bottom-10 left-10">
-              {/* Shoe icon or illustration would go here */}
-            </div>
-          </motion.div>
-        </Link>
+      {/* Character Selector Section */}
+      <div className="w-full px-4 md:px-8 pb-16 relative">
+        {/* Background Text */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <h1 className="text-7xl md:text-9xl lg:text-[12rem] font-bold text-orange-500/10 font-sora select-none leading-none">
+            SELECTOR
+          </h1>
+        </div>
+        
+        <div className="max-w-4xl mx-auto relative z-10">
+          <CharacterSelector onSelectCharacter={handleCharacterSelect} />
+        </div>
       </div>
     </main>
   );

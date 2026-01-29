@@ -3,8 +3,11 @@ import { cors } from "hono/cors";
 import { HonoWithConvex, HttpRouterWithHono } from "convex-helpers/server/hono";
 import { ActionCtx } from "./_generated/server";
 import { api } from "./_generated/api";
+import { auth } from "./auth.config";
 
 const app: HonoWithConvex<ActionCtx> = new Hono();
+
+// Add Better Auth routes - will be handled automatically by Convex
 
 // CORS middleware
 app.use("/*", cors({
@@ -57,43 +60,38 @@ app.get("/api/v1/shoes/search/:term", async (c) => {
 
 // ============ USERS API ============
 
-// Get user profile (requires auth - will be handled by Better Auth middleware)
+// Get user profile (handled by existing backend-api)
 app.get("/api/v1/profile", async (c) => {
-  // TODO: Get user from Better Auth session
-  // For now, return placeholder
-  return c.json({ success: false, message: "Auth not configured yet" }, 401);
+  return c.json({ success: false, message: "Use backend-api for profile endpoints" }, 301);
 });
 
-// Update user profile
+// Update user profile (handled by existing backend-api)
 app.put("/api/v1/profile", async (c) => {
-  // TODO: Get user from Better Auth session
-  return c.json({ success: false, message: "Auth not configured yet" }, 401);
+  return c.json({ success: false, message: "Use backend-api for profile endpoints" }, 301);
 });
 
-// Complete onboarding
+// Complete onboarding (handled by existing backend-api)
 app.post("/api/v1/onboarding", async (c) => {
-  // TODO: Get user from Better Auth session
-  return c.json({ success: false, message: "Auth not configured yet" }, 401);
+  return c.json({ success: false, message: "Use backend-api for onboarding endpoints" }, 301);
 });
 
 // ============ STASH API ============
+// Note: Stash endpoints are handled by the existing backend-api with Better Auth
+// These are here for reference but should be redirected to backend-api
 
-// Get user's stash
+// Get user's stash (handled by existing backend-api)
 app.get("/api/v1/stash", async (c) => {
-  // TODO: Get user from Better Auth session
-  return c.json({ success: false, message: "Auth not configured yet" }, 401);
+  return c.json({ success: false, message: "Use backend-api for stash endpoints" }, 301);
 });
 
-// Add to stash
+// Add to stash (handled by existing backend-api)
 app.post("/api/v1/stash", async (c) => {
-  // TODO: Get user from Better Auth session
-  return c.json({ success: false, message: "Auth not configured yet" }, 401);
+  return c.json({ success: false, message: "Use backend-api for stash endpoints" }, 301);
 });
 
-// Remove from stash
+// Remove from stash (handled by existing backend-api)
 app.delete("/api/v1/stash/:shoeId", async (c) => {
-  // TODO: Get user from Better Auth session
-  return c.json({ success: false, message: "Auth not configured yet" }, 401);
+  return c.json({ success: false, message: "Use backend-api for stash endpoints" }, 301);
 });
 
 export default new HttpRouterWithHono(app);

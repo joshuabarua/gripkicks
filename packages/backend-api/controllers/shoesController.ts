@@ -1,7 +1,4 @@
 import { Context } from 'hono';
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 interface ComfortRanking {
   id: string;
@@ -33,22 +30,9 @@ export const recommendShoes = async (c: Context): Promise<Response> => {
   }
 
   try {
-    const shoes: ShoeWithComfortRankings[] = await prisma.shoe.findMany({
-      include: { comfortRankings: true }, // Assuming 'comfortRankings' is the relation field
-    });
-
-    const recommended: RecommendedShoe[] = shoes
-      .map(shoe => {
-        const scoreObj = shoe.comfortRankings.find(
-          cr => cr.footShape === footShape && cr.volume === volume
-        );
-        return {
-          ...shoe,
-          comfortScore: scoreObj ? scoreObj.score : 3,
-        };
-      })
-      .sort((a, b) => b.comfortScore - a.comfortScore);
-
+    // TODO: Replace with Convex query
+    // For now, return empty recommendations
+    const recommended: RecommendedShoe[] = [];
     return c.json(recommended);
   } catch (error: any) {
     console.error('Error recommending shoes:', error);
@@ -59,7 +43,8 @@ export const recommendShoes = async (c: Context): Promise<Response> => {
 // TODO: Convert other CRUD operations to Hono when needed
 export const getAllShoes = async (c: Context): Promise<Response> => {
   try {
-    const shoes = await prisma.shoe.findMany();
+    // TODO: Replace with Convex query
+    const shoes: any[] = [];
     return c.json(shoes);
   } catch (error: any) {
     console.error('Error fetching shoes:', error);
@@ -74,11 +59,8 @@ export const getShoeById = async (c: Context): Promise<Response> => {
   }
 
   try {
-    const shoe = await prisma.shoe.findUnique({ where: { id } });
-    if (!shoe) {
-      return c.json({ error: 'Shoe not found' }, 404);
-    }
-    return c.json(shoe);
+    // TODO: Replace with Convex query
+    return c.json({ error: 'Shoe not found' }, 404);
   } catch (error: any) {
     console.error('Error fetching shoe:', error);
     return c.json({ error: error.message || 'Failed to fetch shoe' }, 500);
@@ -99,8 +81,8 @@ interface CreateShoeRequestBody {
 export const createShoe = async (c: Context): Promise<Response> => {
   try {
     const body = await c.req.json() as CreateShoeRequestBody;
-    const shoe = await prisma.shoe.create({ data: body });
-    return c.json(shoe, 201);
+    // TODO: Replace with Convex mutation
+    return c.json({ ...body, id: 'temp-id' }, 201);
   } catch (error: any) {
     console.error('Error creating shoe:', error);
     return c.json({ error: error.message || 'Failed to create shoe' }, 500);
@@ -126,8 +108,8 @@ export const updateShoe = async (c: Context): Promise<Response> => {
 
   try {
     const body = await c.req.json() as UpdateShoeRequestBody;
-    const shoe = await prisma.shoe.update({ where: { id }, data: body });
-    return c.json(shoe);
+    // TODO: Replace with Convex mutation
+    return c.json({ id, ...body });
   } catch (error: any) {
     console.error('Error updating shoe:', error);
     return c.json({ error: error.message || 'Failed to update shoe' }, 500);
@@ -141,7 +123,7 @@ export const deleteShoe = async (c: Context): Promise<Response> => {
   }
 
   try {
-    await prisma.shoe.delete({ where: { id } });
+    // TODO: Replace with Convex mutation
     return c.json({ message: 'Shoe deleted successfully' });
   } catch (error: any) {
     console.error('Error deleting shoe:', error);

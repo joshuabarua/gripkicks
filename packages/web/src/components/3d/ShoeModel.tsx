@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, Suspense } from "react";
 import { useGLTF, Text, MeshTransmissionMaterial } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
+import { Mesh } from "three";
 
 export default function ShoeModel() {
   const { nodes } = useGLTF("/HeroShoe.glb");
@@ -58,7 +59,7 @@ export default function ShoeModel() {
             {...nodes.CimbingShoe} 
             position={[0, -0.4, 0]}
             // Ensure position attribute is bound to location 0 (fix for macOS)
-            geometry={nodes.CimbingShoe.geometry}
+            geometry={(nodes.CimbingShoe as Mesh).geometry}
           >
             <MeshTransmissionMaterial 
               thickness={.15} 

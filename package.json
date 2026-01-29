@@ -31,7 +31,6 @@
 		"postinstall": "patch-package"
 	},
 	"dependencies": {
-		"@supabase/supabase-js": "^2.48.1",
 		"backend-api": "workspace:^",
 		"body-parser": "^1.20.3",
 		"convex": "^1.31.6",

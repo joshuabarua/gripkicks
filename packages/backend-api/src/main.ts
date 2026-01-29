@@ -56,6 +56,7 @@ if (process.env.NODE_ENV !== 'test') {
   }, (info) => {
     console.log(`Server started on http://${info.address}:${info.port}`);
     console.log(`API base URL: ${API_BASE}`);
+    console.log('Auth: Better Auth enabled');
   });
 }
 

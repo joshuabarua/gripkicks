@@ -52,14 +52,9 @@ const Scene = () => {
           antialias: true,
           preserveDrawingBuffer: true,
           failIfMajorPerformanceCaveat: false,
-          // Fix for macOS WebGL vertex attrib 0 warning
-          alpha: true,
-          premultipliedAlpha: false,
         }}
         dpr={[1, 1.5]}
         onCreated={({ gl }) => {
-          // Ensure vertex attrib 0 is always enabled (fix for macOS)
-          gl.enableVertexAttribArray(0);
           gl.domElement.addEventListener('webglcontextlost', handleContextLost as EventListener);
           gl.domElement.addEventListener('webglcontextrestored', handleContextRestored);
         }}

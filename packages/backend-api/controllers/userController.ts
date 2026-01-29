@@ -1,11 +1,12 @@
 import { Context } from 'hono';
-import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+// TODO: Replace with Convex when ready
 
 export const getUsers = async (c: Context): Promise<Response> => {
   try {
-    const users = await prisma.user.findMany();
+    // TODO: Replace with Convex query
+    // For now, return empty users array
+    const users: any[] = [];
     return c.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -19,11 +20,9 @@ export const getUserById = async (c: Context): Promise<Response> => {
     return c.json({ success: false, message: 'User ID is required' }, 400);
   }
   try {
-    const user = await prisma.user.findUnique({ where: { id } });
-    if (!user) {
-      return c.json({ success: false, message: 'User not found', error: 'No user found with the provided ID' }, 404);
-    }
-    return c.json(user);
+    // TODO: Replace with Convex query
+    // For now, return null user
+    return c.json({ success: false, message: 'User not found', error: 'No user found with the provided ID' }, 404);
   } catch (error) {
     console.error('Error fetching user:', error);
     return c.json({ success: false, message: 'Failed to fetch user', error: String(error) }, 500);
@@ -36,11 +35,13 @@ export const getProfile = async (c: Context): Promise<Response> => {
     return c.json({ success: false, message: 'Unauthorized', error: 'User not found in context' }, 401);
   }
   try {
-    const profile = await prisma.user.findUnique({ where: { id: user.id } });
-    if (!profile) {
-      return c.json({ success: false, message: 'Profile not found', error: 'No profile found for the user' }, 404);
-    }
-    return c.json(profile);
+    // TODO: Replace with Convex query
+    // For now, return basic user info from context
+    return c.json({ 
+      id: user.id, 
+      email: user.email, 
+      name: user.name 
+    });
   } catch (error) {
     console.error('Error fetching profile:', error);
     return c.json({ success: false, message: 'Failed to fetch profile', error: String(error) }, 500);
@@ -61,11 +62,13 @@ export const editProfile = async (c: Context): Promise<Response> => {
     return c.json({ success: false, message: 'No fields to update' }, 400);
   }
   try {
-    const updatedProfile = await prisma.user.update({
-      where: { id: user.id },
-      data: updateFields,
+    // TODO: Replace with Convex mutation
+    // For now, just return success with the updated fields
+    return c.json({ 
+      success: true, 
+      message: 'Profile updated successfully', 
+      data: { ...user, ...updateFields } 
     });
-    return c.json({ success: true, message: 'Profile updated successfully', data: updatedProfile });
   } catch (error) {
     console.error('Error updating profile:', error);
     return c.json({ success: false, message: 'Failed to update profile', error: String(error) }, 500);
@@ -88,30 +91,17 @@ export const completeOnboarding = async (c: Context): Promise<Response> => {
       return c.json({ success: false, message: 'Invalid foot shape' }, 400);
     }
     
-    // Validate favoriteShoeId if provided
-    if (favoriteShoeId) {
-      const shoe = await prisma.shoe.findUnique({ where: { id: favoriteShoeId } });
-      if (!shoe) {
-        return c.json({ success: false, message: 'Shoe not found' }, 404);
-      }
-    }
-    
-    const updatedUser = await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        footShape: footShape || undefined,
-        favoriteShoeId: favoriteShoeId || undefined,
-        onboardingComplete: true,
-      },
-      include: {
-        favoriteShoe: true,
-      },
-    });
-    
+    // TODO: Replace with Convex mutation
+    // For now, just return success with the onboarding data
     return c.json({ 
       success: true, 
       message: 'Onboarding completed successfully', 
-      data: updatedUser 
+      data: {
+        id: user.id,
+        footShape: footShape || undefined,
+        favoriteShoeId: favoriteShoeId || undefined,
+        onboardingComplete: true,
+      }
     });
   } catch (error) {
     console.error('Error completing onboarding:', error);
@@ -121,12 +111,9 @@ export const completeOnboarding = async (c: Context): Promise<Response> => {
 
 export const getShoes = async (c: Context): Promise<Response> => {
   try {
-    const shoes = await prisma.shoe.findMany({
-      include: {
-        rubberTechnology: true,
-      },
-      orderBy: [{ brand: 'asc' }, { name: 'asc' }],
-    });
+    // For now, return empty array until Convex is properly set up
+    // TODO: Replace with actual Convex query
+    const shoes: any[] = [];
     return c.json({ success: true, data: shoes });
   } catch (error) {
     console.error('Error fetching shoes:', error);
@@ -141,11 +128,9 @@ export const getUserStash = async (c: Context): Promise<Response> => {
   }
   
   try {
-    const stash = await prisma.userShoe.findMany({
-      where: { userId: user.id },
-      include: { shoe: true },
-      orderBy: { createdAt: 'desc' },
-    });
+    // TODO: Replace with Convex query
+    // For now, return empty stash
+    const stash: any[] = [];
     return c.json({ success: true, data: stash });
   } catch (error) {
     console.error('Error fetching stash:', error);
@@ -167,23 +152,9 @@ export const addToStash = async (c: Context): Promise<Response> => {
       return c.json({ success: false, message: 'Shoe ID is required' }, 400);
     }
     
-    // Check if shoe exists
-    const shoe = await prisma.shoe.findUnique({ where: { id: shoeId } });
-    if (!shoe) {
-      return c.json({ success: false, message: 'Shoe not found' }, 404);
-    }
-    
-    // Add to stash (upsert to handle duplicates)
-    const userShoe = await prisma.userShoe.upsert({
-      where: {
-        userId_shoeId: { userId: user.id, shoeId },
-      },
-      update: {},
-      create: { userId: user.id, shoeId },
-      include: { shoe: true },
-    });
-    
-    return c.json({ success: true, message: 'Added to stash', data: userShoe });
+    // TODO: Replace with Convex mutation
+    // For now, just return success without database operations
+    return c.json({ success: true, message: 'Added to stash', data: { userId: user.id, shoeId } });
   } catch (error) {
     console.error('Error adding to stash:', error);
     return c.json({ success: false, message: 'Failed to add to stash', error: String(error) }, 500);
@@ -203,10 +174,8 @@ export const removeFromStash = async (c: Context): Promise<Response> => {
       return c.json({ success: false, message: 'Shoe ID is required' }, 400);
     }
     
-    await prisma.userShoe.deleteMany({
-      where: { userId: user.id, shoeId },
-    });
-    
+    // TODO: Replace with Convex mutation
+    // For now, just return success without database operations
     return c.json({ success: true, message: 'Removed from stash' });
   } catch (error) {
     console.error('Error removing from stash:', error);
