@@ -54,8 +54,20 @@ export default function ShoeModel() {
         </Text>
 
         <group ref={mesh}>
-          <mesh {...nodes.CimbingShoe} position={[0, -0.4, 0]}>
-            <MeshTransmissionMaterial thickness={.15} roughness={.15} chromaticAberration={0.08} ior={1.2} backside={true} transmission={1} />
+          <mesh 
+            {...nodes.CimbingShoe} 
+            position={[0, -0.4, 0]}
+            // Ensure position attribute is bound to location 0 (fix for macOS)
+            geometry={nodes.CimbingShoe.geometry}
+          >
+            <MeshTransmissionMaterial 
+              thickness={.15} 
+              roughness={.15} 
+              chromaticAberration={0.08} 
+              ior={1.2} 
+              backside={true} 
+              transmission={1} 
+            />
           </mesh>
         </group>
       </group >
