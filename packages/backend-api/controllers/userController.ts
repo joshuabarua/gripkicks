@@ -1,4 +1,5 @@
 import { Context } from 'hono';
+import { logApiError, createErrorResponse } from '../utils/errorLogger';
 
 export const getUsers = async (c: Context): Promise<Response> => {
   try {
@@ -89,8 +90,13 @@ export const editProfile = async (c: Context): Promise<Response> => {
       data: updatedUser 
     });
   } catch (error) {
-    console.error('Error updating profile:', error);
-    return c.json({ success: false, message: 'Failed to update profile', error: String(error) }, 500);
+    logApiError('Failed to update profile', error, {
+      method: 'PUT',
+      url: '/api/v1/profile',
+      userId: user.id,
+      body: updateFields
+    });
+    return c.json(createErrorResponse(error, 'Failed to update profile'), 500);
   }
 };
 
@@ -188,8 +194,12 @@ export const getUserStash = async (c: Context): Promise<Response> => {
     const stashData = await stashResponse.json();
     return c.json({ success: true, data: stashData.data || [] });
   } catch (error) {
-    console.error('Error fetching stash:', error);
-    return c.json({ success: false, message: 'Failed to fetch stash', error: String(error) }, 500);
+    logApiError('Failed to fetch stash', error, {
+      method: 'GET',
+      url: '/api/v1/stash',
+      userId: user.id
+    });
+    return c.json(createErrorResponse(error, 'Failed to fetch stash'), 500);
   }
 };
 
@@ -199,9 +209,11 @@ export const addToStash = async (c: Context): Promise<Response> => {
     return c.json({ success: false, message: 'Unauthorized' }, 401);
   }
   
+  let shoeId: string | undefined;
+  
   try {
     const body = await c.req.json();
-    const { shoeId } = body;
+    shoeId = body.shoeId;
     
     if (!shoeId) {
       return c.json({ success: false, message: 'Shoe ID is required' }, 400);
@@ -228,12 +240,12 @@ export const addToStash = async (c: Context): Promise<Response> => {
     if (!userResponse.ok || !userData?.data) {
       console.log('User not found in Convex, syncing first...');
       
-      // Sync user to Convex
-      const syncResponse = await fetch(`${convexUrl}/api/sync-user`, {
+      // Sync user to Convex with deduplication
+      const syncResponse = await fetch(`${convexUrl}/api/sync-user-deduplicated`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: user.id,
+          betterAuthId: user.id,
           email: user.email,
           name: user.name || '',
           image: user.image || '',
@@ -283,8 +295,13 @@ export const addToStash = async (c: Context): Promise<Response> => {
     const addData = await addResponse.json();
     return c.json({ success: true, message: 'Added to stash', data: addData });
   } catch (error) {
-    console.error('Error adding to stash:', error);
-    return c.json({ success: false, message: 'Failed to add to stash', error: String(error) }, 500);
+    logApiError('Failed to add to stash', error, {
+      method: 'POST',
+      url: '/api/v1/stash',
+      userId: user.id,
+      body: shoeId ? { shoeId } : undefined
+    });
+    return c.json(createErrorResponse(error, 'Failed to add to stash'), 500);
   }
 };
 
@@ -294,12 +311,13 @@ export const removeFromStash = async (c: Context): Promise<Response> => {
     return c.json({ success: false, message: 'Unauthorized' }, 401);
   }
   
+  const shoeId = c.req.param('shoeId');
+  
+  if (!shoeId) {
+    return c.json({ success: false, message: 'Shoe ID is required' }, 400);
+  }
+  
   try {
-    const shoeId = c.req.param('shoeId');
-    
-    if (!shoeId) {
-      return c.json({ success: false, message: 'Shoe ID is required' }, 400);
-    }
     
     // Get the Convex HTTP URL
     const convexUrl = process.env.CONVEX_HTTP_URL || process.env.CONVEX_SITE_URL || 
@@ -341,8 +359,12 @@ export const removeFromStash = async (c: Context): Promise<Response> => {
     
     return c.json({ success: true, message: 'Removed from stash' });
   } catch (error) {
-    console.error('Error removing from stash:', error);
-    return c.json({ success: false, message: 'Failed to remove from stash', error: String(error) }, 500);
+    logApiError('Failed to remove from stash', error, {
+      method: 'DELETE',
+      url: `/api/v1/stash/${shoeId}`,
+      userId: user.id
+    });
+    return c.json(createErrorResponse(error, 'Failed to remove from stash'), 500);
   }
 };
 
@@ -352,18 +374,53 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
     return c.json({ success: false, message: 'Unauthorized' }, 401);
   }
   
+  const userShoeId = c.req.param('userShoeId');
+  
+  if (!userShoeId) {
+    return c.json({ success: false, message: 'User shoe ID is required' }, 400);
+  }
+  
+  let body: any;
+  
   try {
-    const userShoeId = c.req.param('userShoeId');
-    const body = await c.req.json();
-    
-    if (!userShoeId) {
-      return c.json({ success: false, message: 'User shoe ID is required' }, 400);
-    }
+    body = await c.req.json();
     
     // Get the Convex HTTP URL
     const convexUrl = process.env.CONVEX_HTTP_URL || process.env.CONVEX_SITE_URL || 
       (process.env.CONVEX_URL?.replace('.convex.cloud', '.convex.site')) || 
       'http://localhost:3210';
+    
+    // Verify ownership before updating
+    const ownershipResponse = await fetch(`${convexUrl}/api/stash/verifyOwnership`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userShoeId: userShoeId,
+        betterAuthUserId: user.id
+      })
+    });
+    
+    if (!ownershipResponse.ok) {
+      const errorText = await ownershipResponse.text();
+      logApiError('Failed to verify ownership', new Error(errorText), {
+        method: 'POST',
+        url: '/api/stash/verifyOwnership',
+        userId: user.id,
+        body: { userShoeId }
+      });
+      return c.json(createErrorResponse(new Error(errorText), 'Failed to verify ownership'), 500);
+    }
+    
+    const ownershipData = await ownershipResponse.json();
+    if (!ownershipData.data?.owned) {
+      logApiError('Ownership verification failed', new Error(ownershipData.data?.reason || 'Access denied'), {
+        method: 'PUT',
+        url: `/api/v1/stash/${userShoeId}`,
+        userId: user.id,
+        body: body
+      });
+      return c.json({ success: false, message: 'You can only modify your own shoes' }, 403);
+    }
     
     // Update shoe stats directly by userShoeId
     const updateResponse = await fetch(`${convexUrl}/api/stash/updateUserShoeStats`, {
@@ -383,8 +440,14 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
     });
     
     if (!updateResponse.ok) {
-      console.error('Failed to update shoe stats in Convex:', await updateResponse.text());
-      return c.json({ success: false, message: 'Failed to update shoe stats' }, 500);
+      const errorText = await updateResponse.text();
+      logApiError('Failed to update shoe stats in Convex', new Error(errorText), {
+        method: 'POST',
+        url: '/api/stash/updateUserShoeStats',
+        userId: user.id,
+        body
+      });
+      return c.json(createErrorResponse(new Error(errorText), 'Failed to update shoe stats'), 500);
     }
     
     const updateData = await updateResponse.json();
@@ -394,7 +457,12 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
       data: updateData.data
     });
   } catch (error) {
-    console.error('Error updating shoe stats:', error);
-    return c.json({ success: false, message: 'Failed to update shoe stats', error: String(error) }, 500);
+    logApiError('Failed to update shoe stats', error, {
+      method: 'PUT',
+      url: `/api/v1/stash/${userShoeId}`,
+      userId: user.id,
+      body: body || undefined
+    });
+    return c.json(createErrorResponse(error, 'Failed to update shoe stats'), 500);
   }
 };

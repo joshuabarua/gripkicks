@@ -28,7 +28,8 @@
 		"middleware/**/*",
 		"config/**/*",
 		"db/**/*",
-		"lib/**/*"
+		"lib/**/*",
+		"utils/**/*"
 	],
 	"exclude": ["node_modules", "**/*.spec.ts"]
 }

@@ -117,5 +117,5 @@ export default defineSchema({
   })
     .index("by_userId", ["userId"])
     .index("by_shoeId", ["shoeId"])
-    .index("by_userId_shoeId", ["userId", "shoeId"]),
+    .index("by_userId_shoeId", ["userId", "shoeId"])
 });

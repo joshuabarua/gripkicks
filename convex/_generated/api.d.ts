@@ -19,6 +19,7 @@ import type * as seed from "../seed.js";
 import type * as shoes from "../shoes.js";
 import type * as stash from "../stash.js";
 import type * as users from "../users.js";
+import type * as utils_id from "../utils/id.js";
 
 import type {
   ApiFromModules,
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   shoes: typeof shoes;
   stash: typeof stash;
   users: typeof users;
+  "utils/id": typeof utils_id;
 }>;
 
 /**

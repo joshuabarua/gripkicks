@@ -59,6 +59,40 @@ app.post("/api/sync-user", async (c) => {
   }
 });
 
+// Sync user from Better Auth to Convex with deduplication
+app.post("/api/sync-user-deduplicated", async (c) => {
+  try {
+    const { betterAuthId, email, name, image, emailVerified } = await c.req.json();
+    
+    console.log('Convex: Deduplicated sync for user:', { betterAuthId, email, name, image, emailVerified });
+    
+    // Create or update user in Convex with deduplication
+    const userId = await c.env.runMutation(api.users.syncUserDeduplicated, {
+      betterAuthId,
+      email,
+      name: name || '',
+      image: image || '',
+      emailVerified: emailVerified || false,
+    });
+    
+    console.log('Convex: User synced with ID:', userId);
+    
+    return c.json({ 
+      success: true, 
+      message: 'User synced to Convex successfully (deduplicated)',
+      convexUserId: userId
+    });
+  } catch (error) {
+    console.error('Convex: Error syncing user:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    return c.json({ 
+      success: false, 
+      error: 'Failed to sync user to Convex',
+      details: message
+    }, 500);
+  }
+});
+
 // ============ SHOES API ============
 
 // Get all shoes
@@ -71,7 +105,7 @@ app.get("/api/v1/shoes", async (c) => {
 app.get("/api/v1/shoes/:id", async (c) => {
   const id = c.req.param("id");
   try {
-    const shoe = await c.env.runQuery(api.shoes.getById, { id: id as any });
+    const shoe = await c.env.runQuery(api.shoes.getById, { id: id as Id<"shoes"> });
     if (!shoe) {
       return c.json({ success: false, message: "Shoe not found" }, 404);
     }
@@ -162,7 +196,7 @@ app.post("/api/stash/getUserStash", async (c) => {
     }
     
     const stash = await c.env.runQuery(api.stash.getUserStash, { 
-      userId: userId as any 
+      userId: userId as Id<"users">
     });
     
     return c.json({ success: true, data: stash });
@@ -182,8 +216,8 @@ app.post("/api/stash/addToStash", async (c) => {
     }
     
     const userShoeId = await c.env.runMutation(api.stash.addToStash, {
-      userId: userId as any,
-      shoeId: shoeId as any
+      userId: userId as Id<"users">,
+      shoeId: shoeId as Id<"shoes">
     });
     
     return c.json({ success: true, data: { userShoeId } });
@@ -203,8 +237,8 @@ app.post("/api/stash/removeFromStash", async (c) => {
     }
     
     const removed = await c.env.runMutation(api.stash.removeFromStash, {
-      userId: userId as any,
-      shoeId: shoeId as any
+      userId: userId as Id<"users">,
+      shoeId: shoeId as Id<"shoes">
     });
     
     return c.json({ success: true, data: { removed } });
@@ -224,7 +258,7 @@ app.post("/api/users/update", async (c) => {
     }
     
     const updated = await c.env.runMutation(api.users.update, {
-      id: id as any,
+      id: id as Id<"users">,
       name,
       image,
       emailVerified,
@@ -249,7 +283,7 @@ app.post("/api/stash/updateUserShoeStats", async (c) => {
     }
     
     const updated = await c.env.runMutation(api.stash.updateUserShoeStats, {
-      userShoeId: userShoeId as any,
+      userShoeId: userShoeId as Id<"userShoes">,
       size,
       purchaseDate,
       condition,
@@ -263,6 +297,27 @@ app.post("/api/stash/updateUserShoeStats", async (c) => {
   } catch (error) {
     console.error("Error updating shoe stats:", error);
     return c.json({ success: false, message: "Failed to update shoe stats" }, 500);
+  }
+});
+
+// Verify ownership of user shoe
+app.post("/api/stash/verifyOwnership", async (c) => {
+  try {
+    const { userShoeId, betterAuthUserId } = await c.req.json();
+    
+    if (!userShoeId || !betterAuthUserId) {
+      return c.json({ success: false, message: "User shoe ID and Better Auth User ID are required" }, 400);
+    }
+    
+    const ownership = await c.env.runQuery(api.auth.verifyUserShoeOwnership, {
+      userShoeId: userShoeId as Id<"userShoes">,
+      betterAuthUserId
+    });
+    
+    return c.json({ success: true, data: ownership });
+  } catch (error) {
+    console.error("Error verifying ownership:", error);
+    return c.json({ success: false, message: "Failed to verify ownership" }, 500);
   }
 });
 

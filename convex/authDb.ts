@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
 
 // ============ USERS ============
 
@@ -147,7 +148,7 @@ export const createSession = mutation({
     
     const sessionId = await ctx.db.insert("sessions", {
       token: args.token,
-      userId: args.userId as any, // Cast to Id<"users">
+      userId: args.userId as Id<"users">,
       expiresAt: expiresAtTimestamp,
       ipAddress: args.ipAddress,
       userAgent: args.userAgent,
@@ -297,7 +298,7 @@ export const createAccount = mutation({
     // Convert any date fields to numbers
     const data = {
       ...rest,
-      userId: rest.userId as any, // Cast to Id<"users">
+      userId: rest.userId as Id<"users">,
       expiresAt: rest.expiresAt ? (typeof rest.expiresAt === 'string' ? new Date(rest.expiresAt).getTime() : rest.expiresAt) : undefined,
       accessTokenExpiresAt: rest.accessTokenExpiresAt ? (typeof rest.accessTokenExpiresAt === 'string' ? new Date(rest.accessTokenExpiresAt).getTime() : rest.accessTokenExpiresAt) : undefined,
       refreshTokenExpiresAt: rest.refreshTokenExpiresAt ? (typeof rest.refreshTokenExpiresAt === 'string' ? new Date(rest.refreshTokenExpiresAt).getTime() : rest.refreshTokenExpiresAt) : undefined,
