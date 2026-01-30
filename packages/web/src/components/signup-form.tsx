@@ -16,6 +16,21 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth";
 import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+
+// Zod schema for signup validation
+const signupSchema = z.object({
+  firstName: z.string().min(1, 'First name is required').max(50, 'First name must be less than 50 characters'),
+  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name must be less than 50 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  passwordConfirmation: z.string(),
+}).refine((data) => data.password === data.passwordConfirmation, {
+  message: "Passwords don't match",
+  path: ["passwordConfirmation"],
+});
+
+type SignupFormData = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
   const [firstName, setFirstName] = useState("");
@@ -99,14 +114,24 @@ export function SignupForm() {
             <Button
               type="submit"
               className="w-full"
-              disabled={loading || !email || !password || !passwordConfirmation || password !== passwordConfirmation}
+              disabled={loading}
               onClick={async (e) => {
                 e.preventDefault();
                 setError(null);
                 
-                // Client-side validation
-                if (password !== passwordConfirmation) {
-                  setError('Passwords do not match');
+                // Validate with Zod
+                const formData: SignupFormData = {
+                  firstName,
+                  lastName,
+                  email,
+                  password,
+                  passwordConfirmation,
+                };
+                
+                const validationResult = signupSchema.safeParse(formData);
+                if (!validationResult.success) {
+                  const firstError = validationResult.error.errors[0];
+                  setError(firstError.message);
                   return;
                 }
                 

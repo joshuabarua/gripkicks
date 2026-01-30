@@ -91,6 +91,17 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
           if (config.debugLogs) {
             console.log(`[ConvexAdapter] CREATE ${model}:`, data);
           }
+          
+          // Add betterAuthId for user model
+          if (model === 'user' && data.id) {
+            const dataWithBetterAuthId = {
+              ...data,
+              betterAuthId: data.id,
+            };
+            const result = await callConvex(model, 'create', dataWithBetterAuthId);
+            return result;
+          }
+          
           const result = await callConvex(model, 'create', data as Record<string, unknown>);
           return result;
         },

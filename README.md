@@ -5,7 +5,7 @@ comfort, built with **Next.js**, **Convex**, and **Better Auth**.
 
 ## Features
 
-- **Sole Sanctuary** 🏔️
+- **Shoe Sanctuary** 🏔️
   - Browse and manage your personal climbing shoe collection
   - Search and filter 70+ climbing shoes from 10 major brands
   - Track shoes you own with visual collection management
@@ -54,8 +54,9 @@ Frontend ↔ Convex Client ↔ Convex Functions (Queries/Mutations) ↔ Convex D
 ## Pages & Routes
 
 - **/** - Home page with 3D visualization
-- **/stash** - Sole Sanctuary - Manage your shoe collection
+- **/stash** - Shoe Sanctuary - Manage your shoe collection
 - **/footchecker** - Foot Lab - Analyze foot shape and get recommendations
+- **/findmyshoe** - Sole Mate - Find your perfect shoe match
 - **/profile** - User profile management
 - **/auth/login** - Authentication page
 - **/api/v1/** - REST API endpoints (via Hono)
@@ -172,7 +173,7 @@ userShoes: defineTable({
 
 ### ✅ Completed
 - **Convex Migration**: Full migration from Supabase/Prisma to Convex
-- **Sole Sanctuary**: Shoe collection management with 70+ shoes
+- **Shoe Sanctuary**: Shoe collection management with 70+ shoes
 - **Foot Lab**: Foot shape analysis and recommendations
 - **User Profiles**: Profile management with onboarding
 - **3D Visualization**: WebGL shoe model with context recovery

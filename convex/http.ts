@@ -97,6 +97,24 @@ app.get("/api/v1/shoes/search/:term", async (c) => {
 
 // ============ USERS API ============
 
+// Find user by Better Auth ID
+app.post("/api/users/findByBetterAuthId", async (c) => {
+  try {
+    const { betterAuthId } = await c.req.json();
+    
+    if (!betterAuthId) {
+      return c.json({ success: false, message: "Better Auth ID is required" }, 400);
+    }
+    
+    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+    
+    return c.json({ success: true, data: user });
+  } catch (error) {
+    console.error("Error finding user by Better Auth ID:", error);
+    return c.json({ success: false, message: "Failed to find user" }, 500);
+  }
+});
+
 // Get user profile (handled by existing backend-api)
 app.get("/api/v1/profile", async (c) => {
   return c.json({ success: false, message: "Use backend-api for profile endpoints" }, 301);
@@ -129,6 +147,123 @@ app.post("/api/v1/stash", async (c) => {
 // Remove from stash (handled by existing backend-api)
 app.delete("/api/v1/stash/:shoeId", async (c) => {
   return c.json({ success: false, message: "Use backend-api for stash endpoints" }, 301);
+});
+
+// ============ STASH INTERNAL API ============
+// These endpoints are for internal use by backend-api
+
+// Get user's stash (internal)
+app.post("/api/stash/getUserStash", async (c) => {
+  try {
+    const { userId } = await c.req.json();
+    
+    if (!userId) {
+      return c.json({ success: false, message: "User ID is required" }, 400);
+    }
+    
+    const stash = await c.env.runQuery(api.stash.getUserStash, { 
+      userId: userId as any 
+    });
+    
+    return c.json({ success: true, data: stash });
+  } catch (error) {
+    console.error("Error getting stash:", error);
+    return c.json({ success: false, message: "Failed to get stash" }, 500);
+  }
+});
+
+// Add to stash (internal)
+app.post("/api/stash/addToStash", async (c) => {
+  try {
+    const { userId, shoeId } = await c.req.json();
+    
+    if (!userId || !shoeId) {
+      return c.json({ success: false, message: "User ID and Shoe ID are required" }, 400);
+    }
+    
+    const userShoeId = await c.env.runMutation(api.stash.addToStash, {
+      userId: userId as any,
+      shoeId: shoeId as any
+    });
+    
+    return c.json({ success: true, data: { userShoeId } });
+  } catch (error) {
+    console.error("Error adding to stash:", error);
+    return c.json({ success: false, message: "Failed to add to stash" }, 500);
+  }
+});
+
+// Remove from stash (internal)
+app.post("/api/stash/removeFromStash", async (c) => {
+  try {
+    const { userId, shoeId } = await c.req.json();
+    
+    if (!userId || !shoeId) {
+      return c.json({ success: false, message: "User ID and Shoe ID are required" }, 400);
+    }
+    
+    const removed = await c.env.runMutation(api.stash.removeFromStash, {
+      userId: userId as any,
+      shoeId: shoeId as any
+    });
+    
+    return c.json({ success: true, data: { removed } });
+  } catch (error) {
+    console.error("Error removing from stash:", error);
+    return c.json({ success: false, message: "Failed to remove from stash" }, 500);
+  }
+});
+
+// Update user profile (internal)
+app.post("/api/users/update", async (c) => {
+  try {
+    const { id, name, image, emailVerified, footShape, footVolume } = await c.req.json();
+    
+    if (!id) {
+      return c.json({ success: false, message: "User ID is required" }, 400);
+    }
+    
+    const updated = await c.env.runMutation(api.users.update, {
+      id: id as any,
+      name,
+      image,
+      emailVerified,
+      footShape,
+      footVolume
+    });
+    
+    return c.json({ success: true, data: updated });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return c.json({ success: false, message: "Failed to update user" }, 500);
+  }
+});
+
+// Update user shoe stats (internal)
+app.post("/api/stash/updateUserShoeStats", async (c) => {
+  try {
+    const { userShoeId, size, purchaseDate, condition, notes, comfortScore, performanceRating, durabilityRating } = await c.req.json();
+    
+    if (!userShoeId) {
+      return c.json({ success: false, message: "User shoe ID is required" }, 400);
+    }
+    
+    const updated = await c.env.runMutation(api.stash.updateUserShoeStats, {
+      userShoeId: userShoeId as any,
+      size,
+      purchaseDate,
+      condition,
+      notes,
+      comfortScore,
+      performanceRating,
+      durabilityRating
+    });
+    
+    return c.json({ success: true, data: updated });
+  } catch (error) {
+    console.error("Error updating shoe stats:", error);
+    return c.json({ success: false, message: "Failed to update shoe stats" }, 500);
+  }
 });
 
 // ============ AUTH DATABASE API (for Better Auth adapter) ============

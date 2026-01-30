@@ -54,16 +54,19 @@ export default defineSchema({
 
   // Users (for Better Auth)
   users: defineTable({
-    name: v.string(),
     email: v.string(),
+    name: v.optional(v.string()),
     emailVerified: v.boolean(),
     image: v.optional(v.string()),
     isAdmin: v.optional(v.boolean()),
     onboardingComplete: v.boolean(),
+    betterAuthId: v.string(),
     footShape: v.optional(footShapeValidator),
+    footVolume: v.optional(v.string()),
     favoriteShoeId: v.optional(v.id("shoes")),
   })
-    .index("by_email", ["email"]),
+    .index("by_email", ["email"])
+    .index("by_betterAuthId", ["betterAuthId"]),
 
   // Accounts (for Better Auth)
   accounts: defineTable({
@@ -102,6 +105,15 @@ export default defineSchema({
   userShoes: defineTable({
     userId: v.id("users"),
     shoeId: v.id("shoes"),
+    // User's custom stats for this shoe
+    size: v.optional(v.string()),
+    purchaseDate: v.optional(v.string()),
+    condition: v.optional(v.string()),
+    notes: v.optional(v.string()),
+    // Comfort ranking fields
+    comfortScore: v.optional(v.number()), // 1-10 comfort rating
+    performanceRating: v.optional(v.number()), // 1-10 performance rating
+    durabilityRating: v.optional(v.number()), // 1-10 durability rating
   })
     .index("by_userId", ["userId"])
     .index("by_shoeId", ["shoeId"])

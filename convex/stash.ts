@@ -83,3 +83,38 @@ export const isInStash = query({
     return existing !== null;
   },
 });
+
+export const updateUserShoeStats = mutation({
+  args: {
+    userShoeId: v.id("userShoes"),
+    size: v.optional(v.string()),
+    purchaseDate: v.optional(v.string()),
+    condition: v.optional(v.string()),
+    notes: v.optional(v.string()),
+    // Comfort ranking fields
+    comfortScore: v.optional(v.number()),
+    performanceRating: v.optional(v.number()),
+    durabilityRating: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const { userShoeId, ...updateFields } = args;
+    
+    // Remove undefined fields
+    const fieldsToUpdate: Record<string, any> = {};
+    if (updateFields.size !== undefined) fieldsToUpdate.size = updateFields.size;
+    if (updateFields.purchaseDate !== undefined) fieldsToUpdate.purchaseDate = updateFields.purchaseDate;
+    if (updateFields.condition !== undefined) fieldsToUpdate.condition = updateFields.condition;
+    if (updateFields.notes !== undefined) fieldsToUpdate.notes = updateFields.notes;
+    // Comfort ranking fields
+    if (updateFields.comfortScore !== undefined) fieldsToUpdate.comfortScore = updateFields.comfortScore;
+    if (updateFields.performanceRating !== undefined) fieldsToUpdate.performanceRating = updateFields.performanceRating;
+    if (updateFields.durabilityRating !== undefined) fieldsToUpdate.durabilityRating = updateFields.durabilityRating;
+    
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      return null; // No fields to update
+    }
+    
+    await ctx.db.patch(userShoeId, fieldsToUpdate);
+    return await ctx.db.get(userShoeId);
+  },
+});

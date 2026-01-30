@@ -226,12 +226,17 @@ export default function ProfilePage() {
             {!profile?.onboardingComplete && (
               <div className="border-t pt-4">
                 <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
-                  <p className="text-sm text-amber-600 dark:text-amber-400">
-                    Complete your profile setup to get personalized shoe recommendations!
+                  <p className="text-sm text-amber-600 dark:text-amber-400 mb-2">
+                    Get personalized shoe recommendations in 3 simple steps:
                   </p>
+                  <ol className="text-sm text-amber-600 dark:text-amber-400 space-y-1 mb-3">
+                    <li>1. Set up your foot profile in Foot Lab</li>
+                    <li>2. Add your first shoe with comfort ratings</li>
+                    <li>3. Find your perfect match in Sole Mate</li>
+                  </ol>
                   <Link href="/footchecker">
                     <Button size="sm" className="mt-2">
-                      Complete Setup
+                      Start Setup
                     </Button>
                   </Link>
                 </div>

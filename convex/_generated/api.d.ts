@@ -11,7 +11,10 @@
 import type * as app from "../app.js";
 import type * as auth from "../auth.js";
 import type * as authDb from "../authDb.js";
+import type * as check from "../check.js";
+import type * as fix from "../fix.js";
 import type * as http from "../http.js";
+import type * as migrations from "../migrations.js";
 import type * as seed from "../seed.js";
 import type * as shoes from "../shoes.js";
 import type * as stash from "../stash.js";
@@ -27,7 +30,10 @@ declare const fullApi: ApiFromModules<{
   app: typeof app;
   auth: typeof auth;
   authDb: typeof authDb;
+  check: typeof check;
+  fix: typeof fix;
   http: typeof http;
+  migrations: typeof migrations;
   seed: typeof seed;
   shoes: typeof shoes;
   stash: typeof stash;

@@ -29,6 +29,7 @@ export const getById = query({
 
 export const create = mutation({
   args: {
+    betterAuthId: v.string(),
     name: v.string(),
     email: v.string(),
     emailVerified: v.boolean(),
@@ -38,6 +39,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     return await ctx.db.insert("users", {
       ...args,
+      isAdmin: args.isAdmin ?? false,
       onboardingComplete: false,
     });
   },
@@ -49,6 +51,8 @@ export const update = mutation({
     name: v.optional(v.string()),
     image: v.optional(v.string()),
     emailVerified: v.optional(v.boolean()),
+    footShape: v.optional(footShapeValidator),
+    footVolume: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
@@ -64,11 +68,13 @@ export const completeOnboarding = mutation({
   args: {
     userId: v.id("users"),
     footShape: footShapeValidator,
+    footVolume: v.optional(v.string()),
     favoriteShoeId: v.optional(v.id("shoes")),
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.userId, {
       footShape: args.footShape,
+      footVolume: args.footVolume,
       favoriteShoeId: args.favoriteShoeId,
       onboardingComplete: true,
     });
@@ -93,10 +99,10 @@ export const createOrUpdateFromBetterAuth = mutation({
     emailVerified: v.boolean(),
   },
   handler: async (ctx, args) => {
-    // Check if user already exists with this email
+    // Check if user already exists with this Better Auth ID
     const existingUser = await ctx.db
       .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
       .first();
 
     if (existingUser) {
@@ -113,6 +119,7 @@ export const createOrUpdateFromBetterAuth = mutation({
     } else {
       // Create new user
       const userId = await ctx.db.insert("users", {
+        betterAuthId: args.betterAuthId,
         email: args.email,
         name: args.name,
         image: args.image,
@@ -124,5 +131,20 @@ export const createOrUpdateFromBetterAuth = mutation({
       console.log("Convex: Created new user:", userId);
       return userId;
     }
+  },
+});
+
+export const findByBetterAuthId = query({
+  args: {
+    betterAuthId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Find user by their Better Auth ID using the index
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
+      .first();
+    
+    return user;
   },
 });

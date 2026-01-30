@@ -12,16 +12,16 @@ export const links = [
         href: "/profile"
     },
     {
-        title: "Sole Sanctuary",
+        title: "Foot Lab",
+        href: "/footchecker"
+    },
+    {
+        title: "Shoe Sanctuary",
         href: "/stash"
     },
     {
-        title: "Shoe Selector",
+        title: "Sole Mate",
         href: "/findmyshoe"
-    },
-    {
-        title: "Foot Lab",
-        href: "/footchecker"
     },
     {
         title: "Logout",
@@ -34,7 +34,7 @@ const footerLinks = [
         href: "/profile"
     },
     {
-        title: "Sole Sanctuary",
+        title: "Shoe Sanctuary",
         href: "/stash"
     }
 ]
