@@ -32,7 +32,9 @@
 		"postinstall": "patch-package"
 	},
 	"dependencies": {
+		"@convex-dev/better-auth": "^0.10.10",
 		"backend-api": "workspace:^",
+		"better-auth": "1.4.9",
 		"body-parser": "^1.20.3",
 		"convex": "^1.31.6",
 		"convex-helpers": "^0.1.111",

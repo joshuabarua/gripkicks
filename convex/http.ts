@@ -1,11 +1,10 @@
-import { httpRouter } from "convex/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HonoWithConvex, HttpRouterWithHono } from "convex-helpers/server/hono";
 import { ActionCtx } from "./_generated/server";
 import { api } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 
-const http = httpRouter();
 const app: HonoWithConvex<ActionCtx> = new Hono();
 
 // Better Auth routes are handled automatically by the @convex-dev/better-auth component
@@ -16,6 +15,9 @@ app.use("/*", cors({
   allowHeaders: ["Content-Type", "Authorization"],
   allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
+  exposeHeaders: ["Content-Length", "Set-Better-Auth-Cookie"],
+  maxAge: 600,
+
 }));
 
 // Health check
@@ -127,6 +129,120 @@ app.post("/api/v1/stash", async (c) => {
 // Remove from stash (handled by existing backend-api)
 app.delete("/api/v1/stash/:shoeId", async (c) => {
   return c.json({ success: false, message: "Use backend-api for stash endpoints" }, 301);
+});
+
+// ============ AUTH DATABASE API (for Better Auth adapter) ============
+
+// Generic auth database endpoint - handles all CRUD operations
+app.post("/api/auth-db/:model/:operation", async (c) => {
+  try {
+    const model = c.req.param("model");
+    const operation = c.req.param("operation");
+    const body = await c.req.json();
+    
+    console.log(`Convex AuthDB: ${operation} on ${model}`, body);
+    
+    let result: unknown = null;
+    
+    // Users
+    if (model === "user") {
+      if (operation === "create") {
+        result = await c.env.runMutation(api.authDb.createUser, body);
+      } else if (operation === "update") {
+        result = await c.env.runMutation(api.authDb.updateUser, {
+          id: body.id as Id<"users">,
+          ...body.data,
+        });
+      } else if (operation === "delete") {
+        await c.env.runMutation(api.authDb.deleteUser, { id: body.id as Id<"users"> });
+        result = { success: true };
+      } else if (operation === "findById") {
+        result = await c.env.runQuery(api.authDb.findUserById, { id: body.id as Id<"users"> });
+      } else if (operation === "findByEmail") {
+        result = await c.env.runQuery(api.authDb.findUserByEmail, { email: body.email });
+      }
+    }
+    
+    // Sessions
+    else if (model === "session") {
+      if (operation === "create") {
+        result = await c.env.runMutation(api.authDb.createSession, {
+          ...body,
+          userId: body.userId as Id<"users">,
+        });
+      } else if (operation === "update") {
+        result = await c.env.runMutation(api.authDb.updateSession, {
+          id: body.id as Id<"sessions">,
+          ...body.data,
+        });
+      } else if (operation === "delete") {
+        await c.env.runMutation(api.authDb.deleteSession, { id: body.id as Id<"sessions"> });
+        result = { success: true };
+      } else if (operation === "deleteByToken") {
+        await c.env.runMutation(api.authDb.deleteSessionByToken, { token: body.token });
+        result = { success: true };
+      } else if (operation === "deleteByUserId") {
+        const count = await c.env.runMutation(api.authDb.deleteSessionsByUserId, { userId: body.userId as Id<"users"> });
+        result = { success: true, count };
+      } else if (operation === "findById") {
+        result = await c.env.runQuery(api.authDb.findSessionById, { id: body.id as Id<"sessions"> });
+      } else if (operation === "findByToken") {
+        result = await c.env.runQuery(api.authDb.findSessionByToken, { token: body.token });
+      } else if (operation === "findByUserId") {
+        result = await c.env.runQuery(api.authDb.findSessionsByUserId, { userId: body.userId as Id<"users"> });
+      }
+    }
+    
+    // Accounts
+    else if (model === "account") {
+      if (operation === "create") {
+        result = await c.env.runMutation(api.authDb.createAccount, {
+          ...body,
+          userId: body.userId as Id<"users">,
+        });
+      } else if (operation === "update") {
+        result = await c.env.runMutation(api.authDb.updateAccount, {
+          id: body.id as Id<"accounts">,
+          ...body.data,
+        });
+      } else if (operation === "delete") {
+        await c.env.runMutation(api.authDb.deleteAccount, { id: body.id as Id<"accounts"> });
+        result = { success: true };
+      } else if (operation === "findById") {
+        result = await c.env.runQuery(api.authDb.findAccountById, { id: body.id as Id<"accounts"> });
+      } else if (operation === "findByUserId") {
+        result = await c.env.runQuery(api.authDb.findAccountByUserId, { userId: body.userId as Id<"users"> });
+      } else if (operation === "findByProviderAccountId") {
+        result = await c.env.runQuery(api.authDb.findAccountByProviderAndAccountId, {
+          providerId: body.providerId,
+          accountId: body.accountId,
+        });
+      }
+    }
+    
+    // Verifications
+    else if (model === "verification") {
+      if (operation === "create") {
+        result = await c.env.runMutation(api.authDb.createVerification, body);
+      } else if (operation === "update") {
+        result = await c.env.runMutation(api.authDb.updateVerification, {
+          id: body.id as Id<"verifications">,
+          ...body.data,
+        });
+      } else if (operation === "delete") {
+        await c.env.runMutation(api.authDb.deleteVerification, { id: body.id as Id<"verifications"> });
+        result = { success: true };
+      } else if (operation === "findByIdentifier") {
+        result = await c.env.runQuery(api.authDb.findVerificationByIdentifier, { identifier: body.identifier });
+      }
+    }
+    
+    return c.json({ success: true, data: result });
+  } catch (error) {
+    console.error('Convex AuthDB Error:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    return c.json({ success: false, error: message }, 500);
+  }
 });
 
 export default new HttpRouterWithHono(app);

@@ -1,7 +1,15 @@
 import { betterAuth } from 'better-auth';
+import { convexAdapter } from './convex-adapter';
+
+// Get Convex URL from environment
+const convexUrl = process.env.CONVEX_URL || 'https://peaceful-marten-189.convex.cloud';
 
 export const auth = betterAuth({
-  // Using session-only auth for now - no database adapter needed
+  // Use Convex as the database via HTTP adapter
+  database: convexAdapter({
+    convexUrl,
+    debugLogs: process.env.NODE_ENV !== 'production',
+  }),
   emailAndPassword: {
     enabled: true,
     async sendResetPassword(data, request) {

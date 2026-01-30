@@ -36,10 +36,6 @@ const footerLinks = [
     {
         title: "Sole Sanctuary",
         href: "/stash"
-    },
-    {
-        title: "Logout",
-        href: "#"
     }
 ]
 
@@ -157,10 +153,6 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
 
                                 <Link
                                     href={href}
-                                    onClick={title === "Logout" ? (e) => {
-                                        e.preventDefault();
-                                        handleLogout?.();
-                                    } : undefined}
                                 >
                                     {title}
                                 </Link>
