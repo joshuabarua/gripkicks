@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 
 export const auth = betterAuth({
-  // No database adapter - using session-only auth for now
+  // Using session-only auth for now - no database adapter needed
   emailAndPassword: {
     enabled: true,
     async sendResetPassword(data, request) {

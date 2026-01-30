@@ -82,3 +82,47 @@ export const list = query({
     return await ctx.db.query("users").collect();
   },
 });
+
+// Create or update user from Better Auth
+export const createOrUpdateFromBetterAuth = mutation({
+  args: {
+    betterAuthId: v.string(),
+    email: v.string(),
+    name: v.string(),
+    image: v.string(),
+    emailVerified: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    // Check if user already exists with this email
+    const existingUser = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .first();
+
+    if (existingUser) {
+      // Update existing user
+      await ctx.db.patch(existingUser._id, {
+        email: args.email,
+        name: args.name,
+        image: args.image,
+        emailVerified: args.emailVerified,
+      });
+      
+      console.log("Convex: Updated existing user:", existingUser._id);
+      return existingUser._id;
+    } else {
+      // Create new user
+      const userId = await ctx.db.insert("users", {
+        email: args.email,
+        name: args.name,
+        image: args.image,
+        emailVerified: args.emailVerified,
+        isAdmin: false,
+        onboardingComplete: false,
+      });
+      
+      console.log("Convex: Created new user:", userId);
+      return userId;
+    }
+  },
+});

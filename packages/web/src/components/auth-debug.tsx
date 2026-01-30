@@ -19,7 +19,7 @@ export function AuthDebug() {
   async function checkBackendHealth() {
     setIsChecking(true);
     try {
-      const response = await fetch('/api/auth/healthz');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/auth/healthz`);
       const data = await response.json();
       setBackendStatus(data);
     } catch (err) {

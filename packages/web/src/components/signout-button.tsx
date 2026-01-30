@@ -25,25 +25,37 @@ export function SignOutButton({
   const [isPending, setIsPending] = useState(false)
 
   const handleSignOut = async () => {
-    await signOut({
-      fetchOptions: {
-        onRequest: () => {
-          setIsPending(true)
+    console.log('SignOutButton: Starting sign out process...');
+    
+    try {
+      await signOut({
+        fetchOptions: {
+          onRequest: () => {
+            console.log('SignOutButton: Sign out request started');
+            setIsPending(true)
+          },
+          onResponse: () => {
+            console.log('SignOutButton: Sign out response received');
+            setIsPending(false)
+          },
+          onSuccess: () => {
+            console.log('SignOutButton: Sign out successful');
+            if (onClick) {
+              onClick()
+            }
+            router.push("/auth/login")
+          },
+          onError: (ctx) => {
+            console.error("SignOutButton: Error signing out:", ctx.error);
+            setIsPending(false);
+            // You might want to show a toast notification here
+          },
         },
-        onResponse: () => {
-          setIsPending(false)
-        },
-        onSuccess: () => {
-          if (onClick) {
-            onClick()
-          }
-          router.push("/auth/login")
-        },
-        onError: (ctx) => {
-          console.error("Error signing out:", ctx.error)
-        },
-      },
-    })
+      })
+    } catch (error) {
+      console.error('SignOutButton: Unexpected error:', error);
+      setIsPending(false);
+    }
   }
 
   return (

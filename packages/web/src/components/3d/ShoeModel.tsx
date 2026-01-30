@@ -4,7 +4,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Mesh } from "three";
 
 export default function ShoeModel() {
-  const { nodes } = useGLTF("/HeroShoe.glb");
+  const { nodes } = useGLTF("/glb/HeroShoe.glb");
   const { viewport } = useThree();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

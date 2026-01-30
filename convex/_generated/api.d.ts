@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as app from "../app.js";
+import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as seed from "../seed.js";
 import type * as shoes from "../shoes.js";
@@ -21,6 +23,8 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  app: typeof app;
+  auth: typeof auth;
   http: typeof http;
   seed: typeof seed;
   shoes: typeof shoes;

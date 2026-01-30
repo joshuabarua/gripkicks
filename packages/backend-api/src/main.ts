@@ -6,9 +6,11 @@ config({ path: resolve(__dirname, '../../../.env') });
 
 import { showRoutes } from 'hono/dev';
 import { serve } from '@hono/node-server';
+import { cors } from 'hono/cors';
 import { errorHandler, notFound } from '../middleware';
 import { auth } from '../config/auth.config';
 import Users from '../routes/users.routes';
+import AuthSync from '../routes/authSync.routes';
 import createApp from '../lib/create-app';
 import { Context } from 'hono';
 
@@ -17,6 +19,16 @@ const app = createApp();
 
 // Set API base path
 const API_BASE = process.env.API_BASE || '/api/v1';
+
+// Add CORS middleware for Better Auth routes
+app.use('/api/auth/*', cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  allowHeaders: ['Content-Type', 'Authorization'],
+  allowMethods: ['POST', 'GET', 'OPTIONS'],
+  exposeHeaders: ['Content-Length'],
+  maxAge: 600,
+  credentials: true,
+}));
 
 // Health check endpoint
 app.get('/health', (c: Context) => {
@@ -27,6 +39,15 @@ app.get('/health', (c: Context) => {
   });
 });
 
+// Better Auth health check endpoint
+app.get('/api/auth/healthz', (c: Context) => {
+  return c.json({ 
+    status: 'ok', 
+    service: 'better-auth',
+    message: 'Better Auth is running'
+  });
+});
+
 // Better Auth handler - handles all auth routes at /api/auth/*
 app.on(['GET', 'POST'], '/api/auth/*', async (c: Context) => {
   return auth.handler(c.req.raw);
@@ -34,6 +55,7 @@ app.on(['GET', 'POST'], '/api/auth/*', async (c: Context) => {
 
 // Register API routes with base path
 app.route(API_BASE, Users);
+app.route(API_BASE, AuthSync);
 
 // Error handling
 app.onError(errorHandler);

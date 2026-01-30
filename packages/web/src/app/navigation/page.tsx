@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth';
 import AuthButton from '@/components/auth-button';
@@ -35,6 +35,7 @@ const menu = {
 
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
+  const navRef = useRef<HTMLDivElement>(null);
   
   // Use Better Auth session hook to check if user is authenticated
   const { data: session, isPending } = useSession();
@@ -43,8 +44,25 @@ const Navigation: React.FC = () => {
   // Function to close menu (used after logout)
   const closeMenu = () => setIsActive(false);
 
+  // Add click outside listener
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setIsActive(false);
+      }
+    };
+
+    if (isActive) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isActive]);
+
   return (
-    <nav className="p-2 mr-2">
+    <nav ref={navRef} className="p-2 mr-2">
       <ul className="flex justify-between text-foreground">
         <GlowArea className="w-[120px] z-4 ">
           <Glow color="whitesmoke" className="rounded-sm flex justify-center align-center">

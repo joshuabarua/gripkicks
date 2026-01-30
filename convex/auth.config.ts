@@ -1,8 +1,9 @@
-import { convexAuth } from "@convex-dev/auth/server";
-import { Password } from "@convex-dev/auth/providers/password";
+// Convex auth is handled via the Better Auth backend (Hono). No Convex auth providers are used here.
+// This placeholder config keeps convex build happy without @convex-dev/auth.
+import type { AuthConfig } from "convex/server";
 
-export const { auth, signIn, signOut } = convexAuth({
-  providers: [
-    Password(),
-  ],
-});
+const authConfig: AuthConfig = {
+  providers: [],
+};
+
+export default authConfig;

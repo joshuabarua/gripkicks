@@ -1,13 +1,14 @@
+import { httpRouter } from "convex/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HonoWithConvex, HttpRouterWithHono } from "convex-helpers/server/hono";
 import { ActionCtx } from "./_generated/server";
 import { api } from "./_generated/api";
-import { auth } from "./auth.config";
 
+const http = httpRouter();
 const app: HonoWithConvex<ActionCtx> = new Hono();
 
-// Add Better Auth routes - will be handled automatically by Convex
+// Better Auth routes are handled automatically by the @convex-dev/better-auth component
 
 // CORS middleware
 app.use("/*", cors({
@@ -20,6 +21,40 @@ app.use("/*", cors({
 // Health check
 app.get("/health", (c) => {
   return c.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// Sync user from Better Auth to Convex
+app.post("/api/sync-user", async (c) => {
+  try {
+    const { id, email, name, image, emailVerified } = await c.req.json();
+    
+    console.log('Convex: Syncing user from Better Auth:', { id, email, name, image, emailVerified });
+    
+    // Create or update user in Convex
+    const userId = await c.env.runMutation(api.users.createOrUpdateFromBetterAuth, {
+      betterAuthId: id,
+      email,
+      name: name || '',
+      image: image || '',
+      emailVerified: emailVerified || false,
+    });
+    
+    console.log('Convex: User synced with ID:', userId);
+    
+    return c.json({ 
+      success: true, 
+      message: 'User synced to Convex successfully',
+      convexUserId: userId
+    });
+  } catch (error) {
+    console.error('Convex: Error syncing user:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    return c.json({ 
+      success: false, 
+      error: 'Failed to sync user to Convex',
+      details: message
+    }, 500);
+  }
 });
 
 // ============ SHOES API ============

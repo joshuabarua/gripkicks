@@ -10,8 +10,8 @@ interface CharacterSelectorProps {
 }
 
 const characters = [
-  { id: 'foot', name: 'Foot Lab', modelPath: '/foot.glb', scale: 0.8, color: 'from-orange-500 via-pink-500 to-purple-600' },
-  { id: 'shoe', name: 'Shoe Sanctuary', modelPath: '/drago.glb', scale: 1.2, color: 'from-blue-600 via-cyan-500 to-teal-400' },
+  { id: 'foot', name: 'Foot Lab', modelPath: '/glb/foot.glb', scale: 0.8, color: 'from-orange-500 via-pink-500 to-purple-600' },
+  { id: 'shoe', name: 'Shoe Sanctuary', modelPath: '/glb/drago.glb', scale: 1.2, color: 'from-blue-600 via-cyan-500 to-teal-400' },
 ];
 
 function RotatingCarousel({ selectedIndex }: { selectedIndex: number }) {

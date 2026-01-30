@@ -56,11 +56,11 @@ function AutoCenter({ modelPath, scale = 1 }: { modelPath: string; scale?: numbe
 }
 
 const shoeModels = [
-  { name: "Compressed Shoe", path: "/shoe_nomesh.glb", size: "33.7 KB", scale: 1 },
-  { name: "Hero Shoe", path: "/HeroShoe.glb", size: "39.1 KB", scale: 1 },
-  { name: "Climbing Shoe", path: "/drago.glb", size: "242.3 KB", scale: 1 },
-  { name: "Foot Model", path: "/foot.glb", size: "330.5 KB", scale: 1 },
-  { name: "Roman Foot", path: "/roman.glb", size: "1.2 MB", scale: 1 },
+  { name: "Compressed Shoe", path: "/glb/shoe_nomesh.glb", size: "33.7 KB", scale: 1 },
+  { name: "Hero Shoe", path: "/glb/HeroShoe.glb", size: "39.1 KB", scale: 1 },
+  { name: "Climbing Shoe", path: "/glb/drago.glb", size: "242.3 KB", scale: 1 },
+  { name: "Foot Model", path: "/glb/foot.glb", size: "330.5 KB", scale: 1 },
+  { name: "Roman Foot", path: "/glb/roman.glb", size: "1.2 MB", scale: 1 },
 ];
 
 export default function ShoeViewer() {
