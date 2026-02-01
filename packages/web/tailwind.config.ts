@@ -12,7 +12,8 @@ const config: Config = {
 			fontFamily: {
 				basteleur: ['var(--font-basteleur)'],
 				sora: ['var(--font-sora)'],
-				tanker: ['var(--font-tanker)']
+				tanker: ['var(--font-tanker)'],
+				'so-cloudy': ['var(--font-so-cloudy)']
 			},
 			transitionProperty: {
 				'filter': 'filter',

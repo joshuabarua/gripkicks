@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth';
 import AuthButton from '@/components/auth-button';
@@ -35,7 +35,9 @@ const menu = {
 
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const navRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Use Better Auth session hook to check if user is authenticated
   const { data: session, isPending } = useSession();
@@ -43,6 +45,38 @@ const Navigation: React.FC = () => {
   
   // Function to close menu (used after logout)
   const closeMenu = () => setIsActive(false);
+
+  // Handle mouse movement to show/hide navigation
+  const handleMouseMove = useCallback(() => {
+    setIsVisible(true);
+    
+    // Clear existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    // Set new timeout to hide navigation after 3 seconds of inactivity
+    timeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, 3000);
+  }, []);
+
+  // Set up mouse movement listener
+  useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    
+    // Initial timeout
+    timeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, 3000);
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [handleMouseMove]);
 
   // Add click outside listener
   useEffect(() => {
@@ -62,7 +96,13 @@ const Navigation: React.FC = () => {
   }, [isActive]);
 
   return (
-    <nav ref={navRef} className="p-2 mr-2">
+    <motion.nav 
+      ref={navRef} 
+      className="fixed top-0 left-0 right-0 z-50 p-2 mr-2 bg-background/80 backdrop-blur-sm border-b border-border"
+      initial={{ y: 0 }}
+      animate={{ y: isVisible ? 0 : -100 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+    >
       <ul className="flex justify-between text-foreground">
         <GlowArea className="w-[120px] z-4 ">
           <Glow color="whitesmoke" className="rounded-sm flex justify-center align-center">
@@ -98,7 +138,7 @@ const Navigation: React.FC = () => {
           )}
         </li>
       </ul>
-    </nav>
+    </motion.nav>
   );
 };
 

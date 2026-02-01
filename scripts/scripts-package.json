@@ -1,0 +1,9 @@
+{
+  "name": "shoe-scripts",
+  "version": "1.0.0",
+  "scripts": {
+    "generate-placeholders": "cd packages/backend-api && ts-node -r tsconfig-paths/register ../../scripts/generate-placeholders.ts",
+    "upload-images": "cd packages/backend-api && ts-node -r tsconfig-paths/register ../../scripts/upload-shoe-images.ts",
+    "scrape-images": "cd packages/backend-api && ts-node -r tsconfig-paths/register ../../scripts/scrape-shoe-images.ts"
+  }
+}

@@ -113,3 +113,21 @@ export const search = query({
       .collect();
   },
 });
+
+export const update = mutation({
+  args: { 
+    id: v.id("shoes"),
+    imageUrl: v.optional(v.string())
+  },
+  handler: async (ctx, args) => {
+    const { id, imageUrl } = args;
+    
+    // Check if shoe exists before updating
+    const shoe = await ctx.db.get(id);
+    if (!shoe) {
+      throw new Error("Shoe not found");
+    }
+    
+    return await ctx.db.patch(id, { imageUrl });
+  },
+});

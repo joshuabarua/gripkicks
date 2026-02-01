@@ -1,9 +1,16 @@
 import { Context, Next } from 'hono'
 import { auth } from '../config/auth.config'
+import type { User } from 'better-auth/types'
 
+type AuthContext = Context<{
+    Variables: {
+        user: User;
+        session: any;
+    }
+}>
 
 // Middleware to protect routes from unauthorized access
-export const protect = async (c: Context, next: Next) => {
+export const protect = async (c: AuthContext, next: Next) => {
     // Extract the session from the incoming request headers
     const session = await auth.api.getSession({ headers: c.req.raw.headers })
 
@@ -29,7 +36,7 @@ export const protect = async (c: Context, next: Next) => {
 }
 
 // Middleware to protect admin routes
-export const isAdmin = async (c: Context, next: Next) => {
+export const isAdmin = async (c: AuthContext, next: Next) => {
     // Extract the session from the incoming request headers
     const session = await auth.api.getSession({ headers: c.req.raw.headers })
 

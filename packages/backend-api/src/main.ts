@@ -11,6 +11,7 @@ import { errorHandler, notFound } from '../middleware';
 import { auth } from '../config/auth.config';
 import Users from '../routes/users.routes';
 import AuthSync from '../routes/authSync.routes';
+import ImageKitRoute from '../routes/imagekit';
 import createApp from '../lib/create-app';
 import { Context } from 'hono';
 
@@ -56,6 +57,7 @@ app.on(['GET', 'POST'], '/api/auth/*', async (c: Context) => {
 // Register API routes with base path
 app.route(API_BASE, Users);
 app.route(API_BASE, AuthSync);
+app.route('/api', ImageKitRoute);
 
 // Error handling
 app.onError(errorHandler);
