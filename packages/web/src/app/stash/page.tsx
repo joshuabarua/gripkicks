@@ -80,7 +80,7 @@ export default function ShoeSanctuaryPage() {
         method: 'POST',
         body: JSON.stringify({ shoeId }),
       });
-      
+
       if (response.success) {
         await fetchUserStash();
         setIsAddDialogOpen(false);
@@ -120,7 +120,7 @@ export default function ShoeSanctuaryPage() {
         method: 'PUT',
         body: JSON.stringify(editForm),
       });
-      
+
       if (response.success) {
         await fetchUserStash();
         setEditingShoe(null);
@@ -138,7 +138,7 @@ export default function ShoeSanctuaryPage() {
   const removeShoe = async (shoeId: string) => {
     try {
       const response = await fetchApi<ApiResponse<void>>(`/api/v1/stash/${shoeId}`, { method: 'DELETE' });
-      
+
       if (response.success) {
         await fetchUserStash();
         setSelectedShoe(null);
@@ -186,16 +186,16 @@ export default function ShoeSanctuaryPage() {
   }
 
   return (
-    <div className="relative min-h-svh w-full overflow-hidden flex items-center justify-center">
+    <div className="relative min-h-svh w-full overflow-hidden">
       {/* Cloud background image */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: 'url("/imgs/clouds/clouds 4.png")' }}
       />
-      
+
       {/* Floating clouds animation - between background and content */}
       <CloudBackground />
-      
+
       {/* Overlay for better text visibility */}
       <div className="absolute inset-0 bg-gradient-to-b from-blue-400/20 via-blue-300/20 to-blue-200/20" />
 
@@ -235,7 +235,7 @@ export default function ShoeSanctuaryPage() {
                       className="pl-10 bg-gray-800/50 text-gray-100 placeholder:text-gray-500 border-gray-600 focus:border-gray-500"
                     />
                   </div>
-                  
+
                   <div className="max-h-60 overflow-y-auto space-y-2">
                     {searchResults.map((shoe) => (
                       <div
@@ -251,7 +251,7 @@ export default function ShoeSanctuaryPage() {
                       </div>
                     ))}
                   </div>
-                  
+
                   {searchQuery.length > 2 && searchResults.length === 0 && (
                     <p className="text-center text-gray-400 py-4">
                       No shoes found. Try searching for climbing shoe brands like &quot;La Sportiva&quot;, &quot;Scarpa&quot;, or &quot;Five Ten&quot;.
@@ -265,7 +265,7 @@ export default function ShoeSanctuaryPage() {
       </div>
 
       {/* Floating shoes - centered grouped by brand */}
-      <div className="relative z-10 w-full h-full flex items-center justify-center"></div>
+      <div className="absolute inset-0 z-10 flex items-center justify-center">
         <div className="relative w-full max-w-6xl h-[600px] flex items-center justify-center">
           <div className="flex flex-wrap justify-center gap-8">
             {Object.entries(
@@ -290,18 +290,19 @@ export default function ShoeSanctuaryPage() {
                 </div>
               </div>
             ))}
-          
-          {userShoes.length === 0 && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white/60">
-              <Footprints className="w-16 h-16 mb-4" />
-              <p className="text-xl">Your sanctuary is empty</p>
-              <p className="text-sm">Click &quot;Add Shoe&quot; to start your collection.</p>
-            </div>
-          )}
+
+            {userShoes.length === 0 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white/60">
+                <Footprints className="w-16 h-16 mb-4" />
+                <p className="text-xl">Your sanctuary is empty</p>
+                <p className="text-sm">Click &quot;Add Shoe&quot; to start your collection.</p>
+              </div>
+            )}
+          </div>
         </div>
+
       </div>
 
-      {/* Shoe detail dialog */}
       <AnimatePresence>
         {selectedShoe && !editingShoe && (
           <Dialog open={!!selectedShoe} onOpenChange={() => setSelectedShoe(null)}>
@@ -321,7 +322,7 @@ export default function ShoeSanctuaryPage() {
                   </Button>
                 </div>
               </DialogHeader>
-              
+
               <div className="space-y-4">
                 {selectedShoe.size && (
                   <div>
@@ -329,29 +330,28 @@ export default function ShoeSanctuaryPage() {
                     <p className="font-medium">{selectedShoe.size}</p>
                   </div>
                 )}
-                
+
                 {selectedShoe.purchaseDate && (
                   <div>
                     <Label className="text-sm text-gray-400">Purchase Date</Label>
                     <p className="font-medium">{selectedShoe.purchaseDate}</p>
                   </div>
                 )}
-                
+
                 {selectedShoe.condition && (
                   <div>
                     <Label className="text-sm text-gray-400">Condition</Label>
                     <p className="font-medium">{selectedShoe.condition}</p>
                   </div>
                 )}
-                
+
                 {selectedShoe.notes && (
                   <div>
                     <Label className="text-sm text-gray-400">Notes</Label>
                     <p className="font-medium">{selectedShoe.notes}</p>
                   </div>
                 )}
-                
-                {/* Comfort Rankings Display */}
+
                 {(selectedShoe.comfortScore || selectedShoe.performanceRating || selectedShoe.durabilityRating) && (
                   <div className="border-t border-gray-700 pt-4">
                     <h3 className="text-sm font-medium text-gray-300 mb-3">Comfort Rankings</h3>
@@ -371,7 +371,7 @@ export default function ShoeSanctuaryPage() {
                           </div>
                         </div>
                       )}
-                      
+
                       {selectedShoe.performanceRating && (
                         <div>
                           <Label className="text-sm text-gray-400">Performance</Label>
@@ -387,7 +387,7 @@ export default function ShoeSanctuaryPage() {
                           </div>
                         </div>
                       )}
-                      
+
                       {selectedShoe.durabilityRating && (
                         <div>
                           <Label className="text-sm text-gray-400">Durability</Label>
@@ -406,7 +406,7 @@ export default function ShoeSanctuaryPage() {
                     </div>
                   </div>
                 )}
-                
+
                 <div className="flex gap-2 pt-4">
                   <Button
                     variant="outline"
@@ -439,5 +439,5 @@ export default function ShoeSanctuaryPage() {
         updateShoeStats={updateShoeStats}
       />
     </div>
-  )
+  );
 }

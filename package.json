@@ -29,6 +29,7 @@
 		"format": "eslint --fix && prettier --write .",
 		"dev": "dotenv -e .env -- concurrently \"yarn workspace web dev\" \"yarn workspace backend-api dev\"",
 		"dev:convex": "dotenv -e .env -- concurrently \"yarn workspace web dev\" \"yarn workspace backend-api dev\" \"npx convex dev\"",
+		"dev:backend": "dotenv -e .env -- concurrently \"yarn workspace backend-api dev\" \"npx convex dev\"",
 		"postinstall": "patch-package"
 	},
 	"dependencies": {

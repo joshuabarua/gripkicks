@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth';
-import { convexAdapter } from './convex-adapter';
+import convexAdapter from './convex-adapter';
 
 // Get Convex URL from environment
 const convexUrl = process.env.CONVEX_URL || 'https://peaceful-marten-189.convex.cloud';
