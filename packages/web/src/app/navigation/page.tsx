@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useSession } from '@/lib/auth';
 import AuthButton from '@/components/auth-button';
 import { Glow, GlowArea } from '@/components/ui/glow';
@@ -38,6 +39,7 @@ const Navigation: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
   const navRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pathname = usePathname();
   
   // Use Better Auth session hook to check if user is authenticated
   const { data: session, isPending } = useSession();
@@ -55,10 +57,10 @@ const Navigation: React.FC = () => {
       clearTimeout(timeoutRef.current);
     }
     
-    // Set new timeout to hide navigation after 3 seconds of inactivity
+    // Set new timeout to hide navigation after 8 seconds of inactivity
     timeoutRef.current = setTimeout(() => {
       setIsVisible(false);
-    }, 3000);
+    }, 8000);
   }, []);
 
   // Set up mouse movement listener
@@ -68,7 +70,7 @@ const Navigation: React.FC = () => {
     // Initial timeout
     timeoutRef.current = setTimeout(() => {
       setIsVisible(false);
-    }, 3000);
+    }, 8000);
     
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
@@ -77,6 +79,11 @@ const Navigation: React.FC = () => {
       }
     };
   }, [handleMouseMove]);
+
+  // Close menu when route changes
+  useEffect(() => {
+    setIsActive(false);
+  }, [pathname]);
 
   // Add click outside listener
   useEffect(() => {
@@ -98,7 +105,8 @@ const Navigation: React.FC = () => {
   return (
     <motion.nav 
       ref={navRef} 
-      className="fixed top-0 left-0 right-0 z-50 p-2 mr-2 bg-background/80 backdrop-blur-sm border-b border-border"
+      className="fixed top-0 left-0 right-0 z-50 p-2 bg-background/99 backdrop-blur-sm border-b-2 border-white"
+      style={{ borderImage: 'none', borderColor: 'rgba(255, 255, 255, 0.8)' }}
       initial={{ y: 0 }}
       animate={{ y: isVisible ? 0 : -100 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}

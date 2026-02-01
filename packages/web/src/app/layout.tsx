@@ -47,9 +47,7 @@ export default function RootLayout({
           <ToastProvider>
             <ImageKitProvider>
               <Navigation />
-              <div className="pt-16">
-                {children}
-              </div>
+              {children}
               <Footer />
               <ToastContainer />
             </ImageKitProvider>
