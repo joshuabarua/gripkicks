@@ -2,16 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   ORIENTATION-BASED DESIGN SYSTEM
+   Uses CSS variables that auto-adjust based on 
+   portrait/landscape orientation
+   ============================================ */
+
+:root {
+	/* Base design dimensions */
+	--design-width-portrait: 430;
+	--design-height-portrait: 932;
+	--design-width-landscape: 1440;
+	--design-height-landscape: 900;
+
+	/* Dynamic scale factors - calculated via JS in OrientationProvider */
+	--scale: 1;
+	--scale-x: 1;
+	--scale-y: 1;
+
+	/* Orientation state (set by JS) */
+	--is-portrait: 1;
+	--is-landscape: 0;
+
+	/* Fluid spacing units */
+	--space-xs: calc(4px * var(--scale));
+	--space-sm: calc(8px * var(--scale));
+	--space-md: calc(16px * var(--scale));
+	--space-lg: calc(24px * var(--scale));
+	--space-xl: calc(32px * var(--scale));
+	--space-2xl: calc(48px * var(--scale));
+	--space-3xl: calc(64px * var(--scale));
+
+	/* Fluid font sizes */
+	--text-xs: calc(12px * var(--scale));
+	--text-sm: calc(14px * var(--scale));
+	--text-base: calc(16px * var(--scale));
+	--text-lg: calc(18px * var(--scale));
+	--text-xl: calc(20px * var(--scale));
+	--text-2xl: calc(24px * var(--scale));
+	--text-3xl: calc(30px * var(--scale));
+	--text-4xl: calc(36px * var(--scale));
+	--text-5xl: calc(48px * var(--scale));
+	--text-6xl: calc(60px * var(--scale));
+	--text-7xl: calc(72px * var(--scale));
+	--text-8xl: calc(96px * var(--scale));
+	--text-9xl: calc(128px * var(--scale));
+
+	/* Title sizes with appropriate line height */
+	--title-sm: clamp(24px, calc(30px * var(--scale)), 48px);
+	--title-md: clamp(36px, calc(48px * var(--scale)), 72px);
+	--title-lg: clamp(48px, calc(72px * var(--scale)), 120px);
+	--title-xl: clamp(60px, calc(96px * var(--scale)), 160px);
+	--title-2xl: clamp(72px, calc(128px * var(--scale)), 200px);
+
+	/* Title line heights - larger values prevent overlap */
+	--title-leading: 1.1;
+
+	/* Line heights */
+	--leading-none: 1;
+	--leading-tight: 0.9;
+	--leading-snug: 0.95;
+	--leading-normal: 1.2;
+	--leading-relaxed: 1.4;
+
+	/* Container widths */
+	--container-sm: calc(640px * var(--scale));
+	--container-md: calc(768px * var(--scale));
+	--container-lg: calc(1024px * var(--scale));
+	--container-xl: calc(1280px * var(--scale));
+}
+
+/* Portrait orientation defaults */
+@media (orientation: portrait) {
+	:root {
+		--is-portrait: 1;
+		--is-landscape: 0;
+	}
+}
+
+/* Landscape orientation defaults */
+@media (orientation: landscape) {
+	:root {
+		--is-portrait: 0;
+		--is-landscape: 1;
+	}
+}
+
 body {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Fix for SoCloudy font character mapping */
 @font-face {
-	font-family: 'SoCloudy';
-	src: url('/fonts/SoCloudy.otf') format('opentype');
+	font-family: "SoCloudy";
+	src: url("/fonts/SoCloudy.otf") format("opentype");
 	font-display: swap;
-	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+		U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+		U+FEFF, U+FFFD;
 }
 
 @layer base {

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useOrientationScale } from '@/hooks/useOrientationScale';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -23,7 +22,6 @@ import CloudBackground from '@/components/CloudBackground';
 export default function ShoeSanctuaryPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const toast = useToast();
-  const { isPortrait, isLandscape, scale, orientation } = useOrientationScale();
   const [userShoes, setUserShoes] = useState<UserShoe[]>([]);
   const [selectedShoe, setSelectedShoe] = useState<UserShoe | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -180,7 +178,7 @@ export default function ShoeSanctuaryPage() {
     return (
       <div className="flex min-h-svh w-full items-center justify-center p-6">
         <div className="text-center text-white">
-          <h1 className="text-3xl font-bold mb-4 font-so-cloudy uppercase leading-[0.9]" style={{ fontSize: 'clamp(40px, 10vw, 60px)', lineHeight: 0.9 }}>Shoe Sanctuary</h1>
+          <h1 className="text-title-md font-bold mb-4 font-so-cloudy uppercase">Shoe Sanctuary</h1>
           <p>Please log in to view your shoe sanctuary</p>
         </div>
       </div>
@@ -205,18 +203,7 @@ export default function ShoeSanctuaryPage() {
       <div className="absolute top-0 left-0 right-0 z-20 p-6" style={{ paddingTop: '160px' }}>
         <div className="flex justify-center items-center">
           <div className="text-center">
-            <h1
-              className="text-4xl font-bold text-white mb-0 font-so-cloudy uppercase leading-[0.9]"
-              style={{
-                fontSize: isPortrait
-                  ? `clamp(60px, 15vh, ${136 * scale}px)`
-                  : `clamp(40px, 8vw, ${100 * scale}px)`,
-                position: 'relative',
-                display: 'inline-block',
-                lineHeight: 0.9,
-                transform: `scale(${Math.min(scale, 1.2)})`
-              }}
-            >
+            <h1 className="text-title-xl font-bold text-white mb-0 font-so-cloudy uppercase relative inline-block">
               Shoe Sanctuary
               <svg style={{ position: 'absolute', bottom: '-50px', left: 0, width: '100%', height: '10px' }} viewBox="0 0 200 10" preserveAspectRatio="none">
                 <path d="M0,5 Q25,0 50,5 T100,5 T150,5 T200,5" stroke="white" strokeWidth="2" fill="none" />
@@ -279,21 +266,8 @@ export default function ShoeSanctuaryPage() {
 
       {/* Floating shoes - centered grouped by brand */}
       <div className="absolute inset-0 z-10 flex items-center justify-center">
-        <div
-          className="relative w-full h-[600px] flex items-center justify-center"
-          style={{
-            maxWidth: isPortrait ? '100%' : '1200px',
-            height: isPortrait ? '50vh' : '600px',
-            padding: isPortrait ? '20px' : '40px'
-          }}
-        >
-          <div
-            className="flex flex-wrap justify-center gap-8"
-            style={{
-              gap: isPortrait ? `${16 * scale}px` : '32px',
-              transform: `scale(${Math.min(scale, 1.1)})`
-            }}
-          >
+        <div className="relative w-full max-w-fluid-xl h-[50vh] min-h-[400px] flex items-center justify-center p-fluid-lg">
+          <div className="flex flex-wrap justify-center gap-fluid-lg">
             {Object.entries(
               userShoes.reduce((acc: Record<string, UserShoe[]>, shoe: UserShoe) => {
                 const brand = shoe.shoe.brand;
@@ -301,10 +275,10 @@ export default function ShoeSanctuaryPage() {
                 acc[brand].push(shoe);
                 return acc;
               }, {} as Record<string, UserShoe[]>)
-            ).map(([brand, shoes]: [string, UserShoe[]], brandIndex: number) => (
-              <div key={brand} className="relative">
-                <p className="text-white/60 text-lg font-so-cloudy uppercase mb-2 text-center">{brand}</p>
-                <div className="relative w-[300px] h-[300px]">
+            ).map(([brand, shoes]: [string, UserShoe[]]) => (
+              <div key={brand} className="flex flex-col items-center">
+                <p className="text-3xl font-so-cloudy uppercase mb-4 text-center font-bold text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.3)' }}>{brand}</p>
+                <div className="flex flex-wrap justify-center gap-4">
                   {shoes.map((shoe: UserShoe, index: number) => (
                     <CloudShoe
                       key={shoe._id}
@@ -464,6 +438,6 @@ export default function ShoeSanctuaryPage() {
         setEditingShoe={setEditingShoe}
         updateShoeStats={updateShoeStats}
       />
-    </div>
+    </div >
   );
 }

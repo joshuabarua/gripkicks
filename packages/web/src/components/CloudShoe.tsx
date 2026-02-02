@@ -13,11 +13,7 @@ interface CloudShoeProps {
 export default function CloudShoe({ shoe, onClick, index }: CloudShoeProps) {
   return (
     <motion.div
-      className="absolute cursor-pointer group"
-      style={{
-        left: `${20 + (index * 15) % 60}px`,
-        top: `${20 + (index * 10) % 60}px`,
-      }}
+      className="relative cursor-pointer group"
       animate={{
         y: [0, -3, 0],
       }}
@@ -29,50 +25,40 @@ export default function CloudShoe({ shoe, onClick, index }: CloudShoeProps) {
         delay: index * 0.5,
       }}
       onClick={onClick}
-      whileHover={{ 
+      whileHover={{
         rotate: 5,
       }}
       whileTap={{}}
     >
       {/* Shoe content */}
-      <div className="relative z-10 flex flex-col items-center justify-center w-64 h-64">
-        <div className="relative w-52 h-52 mb-2">
+      <div className="relative z-10 flex flex-col items-center justify-center w-48 h-48">
+        <div className="relative w-44 h-44">
           {/* White circular background */}
           <div className="absolute inset-0 bg-white rounded-full shadow-lg"></div>
-          {/* Shoe image with rounded corners and feathered edges */}
-          <div className="absolute inset-6 overflow-hidden rounded-3xl">
-            {/* Subtle gradient overlays for feathered edge effect */}
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-white/10 via-white/3 to-transparent pointer-events-none z-10" />
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-white/10 via-white/3 to-transparent pointer-events-none z-10" />
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-l from-white/10 via-white/3 to-transparent pointer-events-none z-10" />
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-white/10 via-white/3 to-transparent pointer-events-none z-10" />
-            {/* Subtle radial gradient for center fade */}
-            <div className="absolute inset-0 rounded-3xl pointer-events-none z-10" 
-                 style={{
-                   background: 'radial-gradient(circle at center, transparent 80%, rgba(255,255,255,0.05) 100%)'
-                 }} />
-            {/* Shoe name overlay inside image */}
-            <div className="absolute inset-x-0 bottom-2 z-20">
-              <div className="bg-black/40 backdrop-blur-sm px-1 py-0.5 rounded mx-2">
-                <p className="text-[10px] text-white text-center font-so-cloudy uppercase whitespace-nowrap leading-tight">
-                  {shoe.shoe.name}
-                </p>
-              </div>
-            </div>
+          {/* Shoe image - reduced inset for less cropping */}
+          <div className="absolute inset-2 overflow-hidden rounded-full">
             <ShoeImage
               brand={shoe.shoe.brand}
               shoeName={shoe.shoe.name}
               imageUrl={shoe.shoe.imageUrl}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
               transformation={[
                 {
-                  height: 160,
-                  width: 160,
+                  height: 200,
+                  width: 200,
                   format: "auto",
                   quality: 90
                 }
               ]}
             />
+          </div>
+          {/* Shoe name inside the circle at bottom */}
+          <div className="absolute bottom-3 inset-x-0 z-20 flex justify-center">
+            <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm">
+              <p className="text-xs text-gray-800 text-center font-so-cloudy uppercase whitespace-nowrap leading-tight font-semibold">
+                {shoe.shoe.name}
+              </p>
+            </div>
           </div>
         </div>
       </div>

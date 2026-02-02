@@ -9,6 +9,7 @@ import ImageKitProvider from '@/components/ImageKitProvider';
 import { ToastProvider } from '@/components/ui/toast';
 import { ToastContainer } from '@/components/ui/toast-container';
 import { useUserSync } from '@/hooks/useUserSync';
+import { OrientationInitializer } from '@/components/OrientationInitializer';
 
 const basteleur = localFont({
   src: '../../public/fonts/Basteleur-Bold.otf',
@@ -44,6 +45,7 @@ export default function RootLayout({
         className={`min-h-screen bg-background antialiased ${basteleur.variable} ${sora.variable} ${tanker.variable} ${soCloudy.variable}`}
       >
         <Providers>
+          <OrientationInitializer />
           <ToastProvider>
             <ImageKitProvider>
               <Navigation />
