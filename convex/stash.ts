@@ -98,7 +98,7 @@ export const updateUserShoeStats = mutation({
   },
   handler: async (ctx, args) => {
     const { userShoeId, ...updateFields } = args;
-    
+
     // Remove undefined fields
     const fieldsToUpdate: Record<string, any> = {};
     if (updateFields.size !== undefined) fieldsToUpdate.size = updateFields.size;
@@ -109,12 +109,22 @@ export const updateUserShoeStats = mutation({
     if (updateFields.comfortScore !== undefined) fieldsToUpdate.comfortScore = updateFields.comfortScore;
     if (updateFields.performanceRating !== undefined) fieldsToUpdate.performanceRating = updateFields.performanceRating;
     if (updateFields.durabilityRating !== undefined) fieldsToUpdate.durabilityRating = updateFields.durabilityRating;
-    
+
     if (Object.keys(fieldsToUpdate).length === 0) {
       return null; // No fields to update
     }
-    
+
     await ctx.db.patch(userShoeId, fieldsToUpdate);
     return await ctx.db.get(userShoeId);
+  },
+});
+
+export const deleteUserShoe = mutation({
+  args: {
+    userShoeId: v.id("userShoes"),
+  },
+  handler: async (ctx, args) => {
+    // Delete the userShoe document
+    await ctx.db.delete(args.userShoeId);
   },
 });

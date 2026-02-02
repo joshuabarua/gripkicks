@@ -1,4 +1,5 @@
 import { mutation } from "./_generated/server";
+import { v } from "convex/values";
 
 const climbingShoes = [
   // La Sportiva
@@ -154,12 +155,77 @@ export const seedDatabase = mutation({
   },
 });
 
+export const deleteShoeByName = mutation({
+  args: {
+    name: v.string(),
+    brand: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Find the shoe by name and brand
+    const shoe = await ctx.db
+      .query("shoes")
+      .withIndex("by_brand", (q) => q.eq("brand", args.brand))
+      .filter((q) => q.eq(q.field("name"), args.name))
+      .first();
+
+    if (!shoe) {
+      return { success: false, message: "Shoe not found" };
+    }
+
+    // Delete related foot shape compatibilities
+    const footShapeComps = await ctx.db
+      .query("footShapeCompat")
+      .withIndex("by_shoe", (q) => q.eq("shoeId", shoe._id))
+      .collect();
+
+    for (const compat of footShapeComps) {
+      await ctx.db.delete(compat._id);
+    }
+
+    // Delete related user shoes (stashed items)
+    const userShoes = await ctx.db
+      .query("userShoes")
+      .filter((q) => q.eq(q.field("shoeId"), shoe._id))
+      .collect();
+
+    for (const userShoe of userShoes) {
+      await ctx.db.delete(userShoe._id);
+    }
+
+    // Delete the shoe itself
+    await ctx.db.delete(shoe._id);
+
+    return {
+      success: true,
+      message: `Deleted ${args.name} by ${args.brand} and related data`,
+      deletedFootShapeComps: footShapeComps.length,
+      deletedUserShoes: userShoes.length
+    };
+  },
+});
+
+export const updateShoeImageUrl = mutation({
+  args: {
+    id: v.id("shoes"),
+    imageUrl: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const shoe = await ctx.db.get(args.id);
+    if (!shoe) {
+      throw new Error("Shoe not found");
+    }
+
+    await ctx.db.patch(args.id, { imageUrl: args.imageUrl });
+    return await ctx.db.get(args.id);
+  },
+});
+
 export const clearDatabase = mutation({
   args: {},
   handler: async (ctx) => {
     // Delete all data (use with caution!)
     const tables = ["footShapeCompat", "comfortRankings", "userShoes", "shoes", "rubberTechnologies"] as const;
-    
+
     for (const table of tables) {
       const docs = await ctx.db.query(table).collect();
       for (const doc of docs) {

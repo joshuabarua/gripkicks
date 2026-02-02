@@ -29,9 +29,9 @@ app.get("/health", (c) => {
 app.post("/api/sync-user", async (c) => {
   try {
     const { id, email, name, image, emailVerified } = await c.req.json();
-    
+
     console.log('Convex: Syncing user from Better Auth:', { id, email, name, image, emailVerified });
-    
+
     // Create or update user in Convex
     const userId = await c.env.runMutation(api.users.createOrUpdateFromBetterAuth, {
       betterAuthId: id,
@@ -40,19 +40,19 @@ app.post("/api/sync-user", async (c) => {
       image: image || '',
       emailVerified: emailVerified || false,
     });
-    
+
     console.log('Convex: User synced with ID:', userId);
-    
-    return c.json({ 
-      success: true, 
+
+    return c.json({
+      success: true,
       message: 'User synced to Convex successfully',
       convexUserId: userId
     });
   } catch (error) {
     console.error('Convex: Error syncing user:', error);
     const message = error instanceof Error ? error.message : String(error);
-    return c.json({ 
-      success: false, 
+    return c.json({
+      success: false,
       error: 'Failed to sync user to Convex',
       details: message
     }, 500);
@@ -63,9 +63,9 @@ app.post("/api/sync-user", async (c) => {
 app.post("/api/sync-user-deduplicated", async (c) => {
   try {
     const { betterAuthId, email, name, image, emailVerified } = await c.req.json();
-    
+
     console.log('Convex: Deduplicated sync for user:', { betterAuthId, email, name, image, emailVerified });
-    
+
     // Create or update user in Convex with deduplication
     const userId = await c.env.runMutation(api.users.syncUserDeduplicated, {
       betterAuthId,
@@ -74,19 +74,19 @@ app.post("/api/sync-user-deduplicated", async (c) => {
       image: image || '',
       emailVerified: emailVerified || false,
     });
-    
+
     console.log('Convex: User synced with ID:', userId);
-    
-    return c.json({ 
-      success: true, 
+
+    return c.json({
+      success: true,
       message: 'User synced to Convex successfully (deduplicated)',
       convexUserId: userId
     });
   } catch (error) {
     console.error('Convex: Error syncing user:', error);
     const message = error instanceof Error ? error.message : String(error);
-    return c.json({ 
-      success: false, 
+    return c.json({
+      success: false,
       error: 'Failed to sync user to Convex',
       details: message
     }, 500);
@@ -135,13 +135,13 @@ app.get("/api/v1/shoes/search/:term", async (c) => {
 app.post("/api/users/findByBetterAuthId", async (c) => {
   try {
     const { betterAuthId } = await c.req.json();
-    
+
     if (!betterAuthId) {
       return c.json({ success: false, message: "Better Auth ID is required" }, 400);
     }
-    
+
     const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
-    
+
     return c.json({ success: true, data: user });
   } catch (error) {
     console.error("Error finding user by Better Auth ID:", error);
@@ -190,15 +190,15 @@ app.delete("/api/v1/stash/:shoeId", async (c) => {
 app.post("/api/stash/getUserStash", async (c) => {
   try {
     const { userId } = await c.req.json();
-    
+
     if (!userId) {
       return c.json({ success: false, message: "User ID is required" }, 400);
     }
-    
-    const stash = await c.env.runQuery(api.stash.getUserStash, { 
+
+    const stash = await c.env.runQuery(api.stash.getUserStash, {
       userId: userId as Id<"users">
     });
-    
+
     return c.json({ success: true, data: stash });
   } catch (error) {
     console.error("Error getting stash:", error);
@@ -210,16 +210,16 @@ app.post("/api/stash/getUserStash", async (c) => {
 app.post("/api/stash/addToStash", async (c) => {
   try {
     const { userId, shoeId } = await c.req.json();
-    
+
     if (!userId || !shoeId) {
       return c.json({ success: false, message: "User ID and Shoe ID are required" }, 400);
     }
-    
+
     const userShoeId = await c.env.runMutation(api.stash.addToStash, {
       userId: userId as Id<"users">,
       shoeId: shoeId as Id<"shoes">
     });
-    
+
     return c.json({ success: true, data: { userShoeId } });
   } catch (error) {
     console.error("Error adding to stash:", error);
@@ -231,16 +231,16 @@ app.post("/api/stash/addToStash", async (c) => {
 app.post("/api/stash/removeFromStash", async (c) => {
   try {
     const { userId, shoeId } = await c.req.json();
-    
+
     if (!userId || !shoeId) {
       return c.json({ success: false, message: "User ID and Shoe ID are required" }, 400);
     }
-    
+
     const removed = await c.env.runMutation(api.stash.removeFromStash, {
       userId: userId as Id<"users">,
       shoeId: shoeId as Id<"shoes">
     });
-    
+
     return c.json({ success: true, data: { removed } });
   } catch (error) {
     console.error("Error removing from stash:", error);
@@ -252,11 +252,11 @@ app.post("/api/stash/removeFromStash", async (c) => {
 app.post("/api/users/update", async (c) => {
   try {
     const { id, name, image, emailVerified, footShape, footVolume } = await c.req.json();
-    
+
     if (!id) {
       return c.json({ success: false, message: "User ID is required" }, 400);
     }
-    
+
     const updated = await c.env.runMutation(api.users.update, {
       id: id as Id<"users">,
       name,
@@ -265,7 +265,7 @@ app.post("/api/users/update", async (c) => {
       footShape,
       footVolume
     });
-    
+
     return c.json({ success: true, data: updated });
   } catch (error) {
     console.error("Error updating user:", error);
@@ -277,11 +277,11 @@ app.post("/api/users/update", async (c) => {
 app.post("/api/stash/updateUserShoeStats", async (c) => {
   try {
     const { userShoeId, size, purchaseDate, condition, notes, comfortScore, performanceRating, durabilityRating } = await c.req.json();
-    
+
     if (!userShoeId) {
       return c.json({ success: false, message: "User shoe ID is required" }, 400);
     }
-    
+
     const updated = await c.env.runMutation(api.stash.updateUserShoeStats, {
       userShoeId: userShoeId as Id<"userShoes">,
       size,
@@ -292,7 +292,7 @@ app.post("/api/stash/updateUserShoeStats", async (c) => {
       performanceRating,
       durabilityRating
     });
-    
+
     return c.json({ success: true, data: updated });
   } catch (error) {
     console.error("Error updating shoe stats:", error);
@@ -304,20 +304,80 @@ app.post("/api/stash/updateUserShoeStats", async (c) => {
 app.post("/api/stash/verifyOwnership", async (c) => {
   try {
     const { userShoeId, betterAuthUserId } = await c.req.json();
-    
+
     if (!userShoeId || !betterAuthUserId) {
       return c.json({ success: false, message: "User shoe ID and Better Auth User ID are required" }, 400);
     }
-    
+
     const ownership = await c.env.runQuery(api.auth.verifyUserShoeOwnership, {
       userShoeId: userShoeId as Id<"userShoes">,
       betterAuthUserId
     });
-    
+
     return c.json({ success: true, data: ownership });
   } catch (error) {
     console.error("Error verifying ownership:", error);
     return c.json({ success: false, message: "Failed to verify ownership" }, 500);
+  }
+});
+
+// Delete user shoe (internal)
+app.post("/api/stash/deleteUserShoe", async (c) => {
+  try {
+    const { userShoeId } = await c.req.json();
+
+    if (!userShoeId) {
+      return c.json({ success: false, message: "User shoe ID is required" }, 400);
+    }
+
+    await c.env.runMutation(api.stash.deleteUserShoe, {
+      userShoeId: userShoeId as Id<"userShoes">
+    });
+
+    return c.json({ success: true, data: { deleted: true } });
+  } catch (error) {
+    console.error("Error deleting user shoe:", error);
+    return c.json({ success: false, message: "Failed to delete user shoe" }, 500);
+  }
+});
+
+// Delete shoe by name (admin)
+app.post("/api/shoes/deleteByName", async (c) => {
+  try {
+    const { name, brand } = await c.req.json();
+
+    if (!name || !brand) {
+      return c.json({ success: false, message: "Name and brand are required" }, 400);
+    }
+
+    const result = await c.env.runMutation(api.seed.deleteShoeByName, { name, brand });
+
+    return c.json(result);
+  } catch (error) {
+    console.error("Error deleting shoe:", error);
+    return c.json({ success: false, message: "Failed to delete shoe" }, 500);
+  }
+});
+
+// Update shoe image URL
+app.post("/api/shoes/updateImageUrl", async (c) => {
+  try {
+    const { id, imageUrl } = await c.req.json();
+
+    if (!id || !imageUrl) {
+      return c.json({ success: false, message: "ID and imageUrl are required" }, 400);
+    }
+
+    // Use the seed's update function directly
+    const updated = await c.env.runMutation(api.seed.updateShoeImageUrl, {
+      id: id as Id<"shoes">,
+      imageUrl
+    });
+
+    return c.json({ success: true, data: updated });
+  } catch (error) {
+    console.error("Error updating shoe image URL:", error);
+    return c.json({ success: false, message: "Failed to update shoe image URL" }, 500);
   }
 });
 
@@ -329,11 +389,11 @@ app.post("/api/auth-db/:model/:operation", async (c) => {
     const model = c.req.param("model");
     const operation = c.req.param("operation");
     const body = await c.req.json();
-    
+
     console.log(`Convex AuthDB: ${operation} on ${model}`, body);
-    
+
     let result: unknown = null;
-    
+
     // Users
     if (model === "user") {
       if (operation === "create") {
@@ -352,7 +412,7 @@ app.post("/api/auth-db/:model/:operation", async (c) => {
         result = await c.env.runQuery(api.authDb.findUserByEmail, { email: body.email });
       }
     }
-    
+
     // Sessions
     else if (model === "session") {
       if (operation === "create") {
@@ -382,7 +442,7 @@ app.post("/api/auth-db/:model/:operation", async (c) => {
         result = await c.env.runQuery(api.authDb.findSessionsByUserId, { userId: body.userId as Id<"users"> });
       }
     }
-    
+
     // Accounts
     else if (model === "account") {
       if (operation === "create") {
@@ -409,7 +469,7 @@ app.post("/api/auth-db/:model/:operation", async (c) => {
         });
       }
     }
-    
+
     // Verifications
     else if (model === "verification") {
       if (operation === "create") {
@@ -426,7 +486,7 @@ app.post("/api/auth-db/:model/:operation", async (c) => {
         result = await c.env.runQuery(api.authDb.findVerificationByIdentifier, { identifier: body.identifier });
       }
     }
-    
+
     return c.json({ success: true, data: result });
   } catch (error) {
     console.error('Convex AuthDB Error:', error);
