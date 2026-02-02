@@ -85,7 +85,7 @@ export default function SoleMatePage() {
     let filtered = mockAggregatedRatings;
 
     if (searchQuery) {
-      filtered = filtered.filter(r => 
+      filtered = filtered.filter(r =>
         r.shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         r.shoe.brand.toLowerCase().includes(searchQuery.toLowerCase())
       );

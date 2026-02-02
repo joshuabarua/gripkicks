@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Save, HelpCircle, ChevronDown } from 'lucide-react';
+import { Save, HelpCircle, ChevronDown, Trash2 } from 'lucide-react';
 import { shoeSizes, conditions, type ShoeSizeOption } from '@/constants/shoe-data';
 import type { UserShoe } from '@/types/api';
 import type { EditFormData } from '@/schemas/shoe-schema';
@@ -17,6 +17,7 @@ interface EditShoeDialogProps {
   setEditForm: (form: EditFormData) => void;
   setEditingShoe: (shoe: UserShoe | null) => void;
   updateShoeStats: () => void;
+  removeShoe?: () => void;
 }
 
 export default function EditShoeDialog({
@@ -25,6 +26,7 @@ export default function EditShoeDialog({
   setEditForm,
   setEditingShoe,
   updateShoeStats,
+  removeShoe,
 }: EditShoeDialogProps) {
   return (
     <AnimatePresence>
@@ -37,7 +39,7 @@ export default function EditShoeDialog({
                 {editingShoe.shoe.name} - {editingShoe.shoe.brand}
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -65,7 +67,7 @@ export default function EditShoeDialog({
                     })}
                   </select>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="condition">Condition</Label>
                   <select
@@ -82,7 +84,7 @@ export default function EditShoeDialog({
                     ))}
                   </select>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="purchaseDate">Purchase Date</Label>
                   <Input
@@ -93,7 +95,7 @@ export default function EditShoeDialog({
                     className="bg-gray-800/50 text-gray-100 border-gray-600 focus:border-gray-500"
                   />
                 </div>
-                
+
                 <div>
                   <div className="flex items-center gap-2">
                     <Label htmlFor="comfortScore">Comfort (1-10)</Label>
@@ -115,7 +117,7 @@ export default function EditShoeDialog({
                     className="bg-gray-800/50 text-gray-100 placeholder:text-gray-500 border-gray-600 focus:border-gray-500"
                   />
                 </div>
-                
+
                 <div className="relative">
                   <div className="flex items-center gap-2">
                     <Label htmlFor="performanceRating">Performance (1-10)</Label>
@@ -137,7 +139,7 @@ export default function EditShoeDialog({
                     className="bg-gray-800/50 text-gray-100 placeholder:text-gray-500 border-gray-600 focus:border-gray-500"
                   />
                 </div>
-                
+
                 <div>
                   <div className="flex items-center gap-2">
                     <Label htmlFor="durabilityRating">Durability (1-10)</Label>
@@ -160,7 +162,7 @@ export default function EditShoeDialog({
                   />
                 </div>
               </div>
-              
+
               {/* Collapsible Notes Section */}
               <div className="border-t border-gray-700">
                 <button
@@ -184,7 +186,7 @@ export default function EditShoeDialog({
                   </div>
                 )}
               </div>
-              
+
               <div className="flex gap-2 pt-4">
                 <Button
                   variant="outline"
@@ -193,6 +195,15 @@ export default function EditShoeDialog({
                 >
                   Cancel
                 </Button>
+                {removeShoe && (
+                  <Button
+                    variant="destructive"
+                    onClick={removeShoe}
+                    className="px-4"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
                 <Button
                   className="flex-1"
                   onClick={updateShoeStats}

@@ -1,21 +1,24 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Search, X, Edit2, Footprints } from 'lucide-react';
+import { Plus, Search, Footprints, Sparkles } from 'lucide-react';
+import ShoeImage from '@/components/ShoeImage';
+import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth';
-import { AnimatePresence } from 'framer-motion';
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import { fetchApi } from '@/lib/api-client';
+import { shoeCache } from '@/lib/cache';
 import { useToast } from "@/components/ui/toast";
 import type { UserShoe, GetStashResponse } from "@/types/api";
 import { editFormSchema, type EditFormData } from '@/schemas/shoe-schema';
+import { Crown, Clock, Heart } from 'lucide-react';
 import CloudShoe from '@/components/CloudShoe';
 import EditShoeDialog from '@/components/EditShoeDialog';
+import ShoeStatsModal from '@/components/ShoeStatsModal';
 import CloudBackground from '@/components/CloudBackground';
 
 
@@ -23,10 +26,13 @@ export default function ShoeSanctuaryPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const toast = useToast();
   const [userShoes, setUserShoes] = useState<UserShoe[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedShoe, setSelectedShoe] = useState<UserShoe | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [editingShoe, setEditingShoe] = useState<UserShoe | null>(null);
+  const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [editForm, setEditForm] = useState<EditFormData>({
     size: undefined,
     purchaseDate: undefined,
@@ -43,18 +49,33 @@ export default function ShoeSanctuaryPage() {
   const allShoes = useMemo(() => shoesData ?? [], [shoesData]);
 
   const fetchUserStash = useCallback(async () => {
+    setIsLoading(true);
     try {
+      // Try to get from cache first
+      const cacheKey = `user-stash-${session?.user?.id}`;
+      const cachedData = shoeCache.get<GetStashResponse>(cacheKey);
+
+      if (cachedData) {
+        setUserShoes(cachedData.data || []);
+        setIsLoading(false);
+        return;
+      }
+
       const response = await fetchApi<GetStashResponse>('/api/v1/stash');
       if (response.success && response.data) {
         setUserShoes(response.data);
+        // Cache the response for 5 minutes
+        shoeCache.set(cacheKey, response, 5 * 60 * 1000);
       } else {
         toast.addToast(response.error || 'Failed to load your shoe collection', 'error');
       }
     } catch (error) {
       console.error('Failed to fetch user stash:', error);
       toast.addToast('Failed to load your shoe collection', 'error');
+    } finally {
+      setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, session?.user?.id]);
 
   // Fetch user's stash from Hono API
   useEffect(() => {
@@ -63,16 +84,100 @@ export default function ShoeSanctuaryPage() {
     }
   }, [session, fetchUserStash]);
 
+  // Get unique brands
+  const uniqueBrands = useMemo(() => {
+    const brands = [...new Set(allShoes.map(shoe => shoe.brand))].sort();
+    return brands;
+  }, [allShoes]);
+
+  // Calculate shoe rankings based on comfort score
+  const shoeRankings = useMemo(() => {
+    const ranked = [...userShoes].sort((a, b) => {
+      // Sort by comfort score (descending), then performance, then durability
+      const comfortDiff = (b.comfortScore || 0) - (a.comfortScore || 0);
+      if (comfortDiff !== 0) return comfortDiff;
+
+      const perfDiff = (b.performanceRating || 0) - (a.performanceRating || 0);
+      if (perfDiff !== 0) return perfDiff;
+
+      return (b.durabilityRating || 0) - (a.durabilityRating || 0);
+    });
+
+    const rankings = new Map<string, number>();
+    ranked.forEach((shoe, index) => {
+      rankings.set(shoe._id, index + 1);
+    });
+
+    return rankings;
+  }, [userShoes]);
+
+  // Calculate special shoe labels
+  const specialLabels = useMemo(() => {
+    if (userShoes.length <= 1) return {};
+
+    const labels: Record<string, { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode }> = {};
+
+    // Most comfortable (highest comfort score)
+    const mostComfy = userShoes.reduce((prev, current) =>
+      (current.comfortScore || 0) > (prev.comfortScore || 0) ? current : prev
+    );
+    if (mostComfy.comfortScore && mostComfy.comfortScore > 0) {
+      labels[mostComfy._id] = {
+        type: 'most-comfy',
+        icon: <Heart className="w-3 h-3" />
+      };
+    }
+
+    // Oldest shoe (earliest purchase date)
+    const shoesWithDate = userShoes.filter(shoe => shoe.purchaseDate);
+    if (shoesWithDate.length > 0) {
+      const oldest = shoesWithDate.reduce((prev, current) =>
+        new Date(current.purchaseDate!).getTime() < new Date(prev.purchaseDate!).getTime() ? current : prev
+      );
+      labels[oldest._id] = {
+        type: 'oldest',
+        icon: <Clock className="w-3 h-3" />
+      };
+    }
+
+    // Most worn (placeholder for future wear tracking)
+    // For now, we'll use the shoe with the lowest condition
+    const shoesWithCondition = userShoes.filter(shoe => shoe.condition);
+    if (shoesWithCondition.length > 0) {
+      const conditionOrder = { 'worn': 0, 'fair': 1, 'good': 2, 'excellent': 3, 'new': 4 };
+      const mostWorn = shoesWithCondition.reduce((prev, current) => {
+        const prevOrder = conditionOrder[current.condition as keyof typeof conditionOrder] ?? 999;
+        const currentOrder = conditionOrder[prev.condition as keyof typeof conditionOrder] ?? 999;
+        return currentOrder < prevOrder ? current : prev;
+      });
+      labels[mostWorn._id] = {
+        type: 'most-worn',
+        icon: <Crown className="w-3 h-3" />
+      };
+    }
+
+    return labels;
+  }, [userShoes]);
+
   // Search for shoes
   const searchResults = useMemo(() => {
+    let results = allShoes;
+
+    // Filter by brand if selected
+    if (selectedBrand !== 'all') {
+      results = results.filter(shoe => shoe.brand === selectedBrand);
+    }
+
+    // Filter by search query
     if (searchQuery.length > 2) {
-      return allShoes.filter(shoe =>
+      results = results.filter(shoe =>
         shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         shoe.brand.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    return [];
-  }, [searchQuery, allShoes]);
+
+    return results;
+  }, [searchQuery, allShoes, selectedBrand]);
 
   const addShoeToSanctuary = async (shoeId: string) => {
     try {
@@ -82,6 +187,8 @@ export default function ShoeSanctuaryPage() {
       });
 
       if (response.success) {
+        // Clear cache when adding new shoe
+        shoeCache.clear();
         await fetchUserStash();
         setIsAddDialogOpen(false);
         setSearchQuery('');
@@ -103,6 +210,27 @@ export default function ShoeSanctuaryPage() {
     error?: string;
   }
 
+  const removeShoeFromStash = async (shoeId: string) => {
+    try {
+      const response = await fetchApi<ApiResponse<null>>(`/api/v1/stash/${shoeId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.success) {
+        shoeCache.clear();
+        await fetchUserStash();
+        setIsStatsModalOpen(false);
+        setSelectedShoe(null);
+        toast.addToast('Shoe removed from your sanctuary', 'success');
+      } else {
+        toast.addToast(response.error || 'Failed to remove shoe', 'error');
+      }
+    } catch (error) {
+      console.error('Failed to remove shoe:', error);
+      toast.addToast('Failed to remove shoe from sanctuary', 'error');
+    }
+  };
+
   const updateShoeStats = async () => {
     if (!editingShoe) return;
 
@@ -122,6 +250,8 @@ export default function ShoeSanctuaryPage() {
       });
 
       if (response.success) {
+        // Clear cache when updating shoe
+        shoeCache.clear();
         await fetchUserStash();
         setEditingShoe(null);
         setSelectedShoe(null);
@@ -135,36 +265,6 @@ export default function ShoeSanctuaryPage() {
     }
   };
 
-  const removeShoe = async (shoeId: string) => {
-    try {
-      const response = await fetchApi<ApiResponse<void>>(`/api/v1/stash/${shoeId}`, { method: 'DELETE' });
-
-      if (response.success) {
-        await fetchUserStash();
-        setSelectedShoe(null);
-        toast.addToast('Shoe removed from your sanctuary', 'success');
-      } else {
-        toast.addToast(response.error || 'Failed to remove shoe', 'error');
-      }
-    } catch (error) {
-      console.error('Failed to remove shoe:', error);
-      toast.addToast('Failed to remove shoe', 'error');
-    }
-  };
-
-  const openEditDialog = (shoe: UserShoe) => {
-    setEditingShoe(shoe);
-    setEditForm({
-      size: shoe.size || undefined,
-      purchaseDate: shoe.purchaseDate || undefined,
-      condition: shoe.condition || undefined,
-      notes: shoe.notes || undefined,
-      showNotes: !!shoe.notes,
-      comfortScore: shoe.comfortScore,
-      performanceRating: shoe.performanceRating,
-      durabilityRating: shoe.durabilityRating,
-    });
-  };
 
   if (sessionLoading) {
     return (
@@ -199,245 +299,241 @@ export default function ShoeSanctuaryPage() {
       {/* Overlay for better text visibility */}
       <div className="absolute inset-0 bg-gradient-to-b from-blue-400/20 via-blue-300/20 to-blue-200/20" />
 
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-20 p-6" style={{ paddingTop: '160px' }}>
-        <div className="flex justify-center items-center">
+      {/* Header and Content Container */}
+      <div className="absolute top-0 left-0 right-0 bottom-0 z-20 p-6" >
+        <div className="flex flex-col items-center justify-around max-w-7xl mx-auto h-full">
+          {/* Title Section */}
           <div className="text-center">
             <h1 className="text-title-xl font-bold text-white mb-0 font-so-cloudy uppercase relative inline-block">
               Shoe Sanctuary
-              <svg style={{ position: 'absolute', bottom: '-50px', left: 0, width: '100%', height: '10px' }} viewBox="0 0 200 10" preserveAspectRatio="none">
+              <svg style={{ position: 'absolute', left: 0, width: '100%', height: '10px' }} viewBox="0 0 200 10" preserveAspectRatio="none">
                 <path d="M0,5 Q25,0 50,5 T100,5 T150,5 T200,5" stroke="white" strokeWidth="2" fill="none" />
               </svg>
             </h1>
           </div>
-          <div className="absolute right-6">
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+
+          {/* Floating Add Shoe Button */}
+          <div className="flex items-center justify-between flex-col h-fit w-full ">
+            <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
+              setIsAddDialogOpen(open);
+              if (!open) {
+                setSelectedBrand('all');
+                setSearchQuery('');
+              }
+            }}>
               <DialogTrigger asChild>
-                <Button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border border-white/30">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Shoe
-                </Button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-full blur-lg group-hover:blur-xl transition-all duration-300 opacity-75 group-hover:opacity-100"></div>
+                  <div className="relative bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white rounded-full px-8 py-2 shadow-2xl flex items-center gap-3 border-2 border-white/30">
+                    <Sparkles className="w-6 h-6 animate-pulse" />
+                    <span className="font-bold text-lg uppercase tracking-wide">Add Your Dream Shoes</span>
+                    <Sparkles className="w-6 h-6 animate-pulse" />
+                  </div>
+                </motion.button>
               </DialogTrigger>
-              <DialogContent className="bg-gray-900/95 backdrop-blur-sm text-gray-100 border border-gray-700 max-w-md">
+              <DialogContent className="bg-gradient-to-br from-blue-900/95 via-purple-900/95 to-pink-900/95 backdrop-blur-sm text-gray-100 border border-white/30 max-w-2xl shadow-2xl">
                 <DialogHeader>
-                  <DialogTitle className="text-gray-100 font-so-cloudy uppercase">Add New Shoe</DialogTitle>
-                  <DialogDescription className="text-gray-400">
-                    Search for climbing shoes to add to your sanctuary
+                  <DialogTitle className="text-gray-100 font-so-cloudy uppercase text-2xl text-center flex items-center justify-center gap-2">
+                    <Sparkles className="w-6 h-6 text-yellow-400" />
+                    Add New Shoe
+                    <Sparkles className="w-6 h-6 text-yellow-400" />
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-300 text-center">
+                    Discover and add climbing shoes to your sanctuary ✨
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
-                      placeholder="Search by shoe name or brand..."
+                      placeholder="🔍 Search for your dream shoes..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 bg-gray-800/50 text-gray-100 placeholder:text-gray-500 border-gray-600 focus:border-gray-500"
+                      className="pl-12 bg-white/10 text-gray-100 placeholder:text-gray-400 border-white/20 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20 rounded-lg h-12 text-lg"
                     />
                   </div>
 
-                  <div className="max-h-60 overflow-y-auto space-y-2">
+                  <div className="flex items-center gap-3">
+                    <Label className="text-sm text-gray-300 font-medium">Filter by Brand:</Label>
+                    <select
+                      value={selectedBrand}
+                      onChange={(e) => setSelectedBrand(e.target.value)}
+                      className="flex-1 bg-white/10 text-gray-100 border border-white/20 rounded-lg px-4 py-2 text-sm focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/20"
+                    >
+                      <option value="all">🌟 All Brands</option>
+                      {uniqueBrands.map(brand => (
+                        <option key={brand} value={brand}>{brand}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="max-h-96 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                     {searchResults.map((shoe) => (
                       <div
                         key={shoe._id}
-                        className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 cursor-pointer transition-colors border border-gray-700"
+                        className="flex items-center justify-between p-4 rounded-xl bg-white/10 hover:bg-white/20 cursor-pointer transition-all duration-300 border border-white/20 hover:border-yellow-400/50 hover:scale-[1.02] group"
                         onClick={() => addShoeToSanctuary(shoe._id)}
                       >
-                        <div>
-                          <p className="font-medium">{shoe.name}</p>
-                          <p className="text-sm text-gray-400">{shoe.brand}</p>
+                        <div className="flex items-center gap-4">
+                          {/* Shoe image */}
+                          <div className="w-16 h-16 bg-white/20 rounded-lg overflow-hidden flex-shrink-0">
+                            <ShoeImage
+                              brand={shoe.brand}
+                              shoeName={shoe.name}
+                              imageUrl={shoe.imageUrl}
+                              className="w-full h-full object-contain p-2"
+                              transformation={[
+                                {
+                                  height: 64,
+                                  width: 64,
+                                  format: "auto",
+                                  quality: 75
+                                }
+                              ]}
+                            />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-lg group-hover:text-yellow-400 transition-colors">{shoe.name}</p>
+                            <p className="text-sm text-gray-300">{shoe.brand}</p>
+                          </div>
                         </div>
-                        <Plus className="w-5 h-5" />
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-400 group-hover:text-yellow-400 transition-colors">Click to add</span>
+                          <Plus className="w-6 h-6 group-hover:text-yellow-400 group-hover:rotate-90 transition-all duration-300" />
+                        </div>
                       </div>
                     ))}
                   </div>
 
                   {searchQuery.length > 2 && searchResults.length === 0 && (
-                    <p className="text-center text-gray-400 py-4">
-                      No shoes found. Try searching for climbing shoe brands like &quot;La Sportiva&quot;, &quot;Scarpa&quot;, or &quot;Five Ten&quot;.
-                    </p>
+                    <div className="text-center py-8">
+                      <Footprints className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                      <p className="text-gray-300 text-lg">No shoes found 😔</p>
+                      <p className="text-sm text-gray-400 mt-2">Try searching for brands like &quot;La Sportiva&quot;, &quot;Scarpa&quot;, or &quot;Five Ten&quot;</p>
+                    </div>
                   )}
                 </div>
               </DialogContent>
             </Dialog>
-          </div>
-        </div>
-      </div>
 
-      {/* Floating shoes - centered grouped by brand */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center">
-        <div className="relative w-full max-w-fluid-xl h-[50vh] min-h-[400px] flex items-center justify-center p-fluid-lg">
-          <div className="flex flex-wrap justify-center gap-fluid-lg">
-            {Object.entries(
-              userShoes.reduce((acc: Record<string, UserShoe[]>, shoe: UserShoe) => {
-                const brand = shoe.shoe.brand;
-                if (!acc[brand]) acc[brand] = [];
-                acc[brand].push(shoe);
-                return acc;
-              }, {} as Record<string, UserShoe[]>)
-            ).map(([brand, shoes]: [string, UserShoe[]]) => (
-              <div key={brand} className="flex flex-col items-center">
-                <p className="text-3xl font-so-cloudy uppercase mb-4 text-center font-bold text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.3)' }}>{brand}</p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  {shoes.map((shoe: UserShoe, index: number) => (
-                    <CloudShoe
-                      key={shoe._id}
-                      shoe={shoe}
-                      onClick={() => setSelectedShoe(shoe)}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            {userShoes.length === 0 && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white/60">
-                <Footprints className="w-16 h-16 mb-4" />
-                <p className="text-xl">Your sanctuary is empty</p>
-                <p className="text-sm">Click &quot;Add Shoe&quot; to start your collection.</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-      </div>
-
-      <AnimatePresence>
-        {selectedShoe && !editingShoe && (
-          <Dialog open={!!selectedShoe} onOpenChange={() => setSelectedShoe(null)}>
-            <DialogContent className="bg-gray-900/95 backdrop-blur-sm text-gray-100 border border-gray-700 max-w-md">
-              <DialogHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <DialogTitle className="text-xl text-gray-100 font-so-cloudy uppercase">{selectedShoe.shoe.name}</DialogTitle>
-                    <DialogDescription className="text-gray-400">{selectedShoe.shoe.brand}</DialogDescription>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openEditDialog(selectedShoe)}
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </DialogHeader>
-
-              <div className="space-y-4">
-                {selectedShoe.size && (
-                  <div>
-                    <Label className="text-sm text-gray-400">Size</Label>
-                    <p className="font-medium">{selectedShoe.size}</p>
-                  </div>
-                )}
-
-                {selectedShoe.purchaseDate && (
-                  <div>
-                    <Label className="text-sm text-gray-400">Purchase Date</Label>
-                    <p className="font-medium">{selectedShoe.purchaseDate}</p>
-                  </div>
-                )}
-
-                {selectedShoe.condition && (
-                  <div>
-                    <Label className="text-sm text-gray-400">Condition</Label>
-                    <p className="font-medium">{selectedShoe.condition}</p>
-                  </div>
-                )}
-
-                {selectedShoe.notes && (
-                  <div>
-                    <Label className="text-sm text-gray-400">Notes</Label>
-                    <p className="font-medium">{selectedShoe.notes}</p>
-                  </div>
-                )}
-
-                {(selectedShoe.comfortScore || selectedShoe.performanceRating || selectedShoe.durabilityRating) && (
-                  <div className="border-t border-gray-700 pt-4">
-                    <h3 className="text-sm font-medium text-gray-300 mb-3">Comfort Rankings</h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      {selectedShoe.comfortScore && (
-                        <div>
-                          <Label className="text-sm text-gray-400">Comfort</Label>
-                          <div className="flex items-center">
-                            <span className="font-medium mr-2">{selectedShoe.comfortScore}/10</span>
-                            <div className="flex">
-                              {[...Array(10)].map((_, i) => (
-                                <span key={i} className={`text-xs ${i < (selectedShoe.comfortScore || 0) ? 'text-yellow-400' : 'text-gray-600'}`}>
-                                  ★
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {selectedShoe.performanceRating && (
-                        <div>
-                          <Label className="text-sm text-gray-400">Performance</Label>
-                          <div className="flex items-center">
-                            <span className="font-medium mr-2">{selectedShoe.performanceRating}/10</span>
-                            <div className="flex">
-                              {[...Array(10)].map((_, i) => (
-                                <span key={i} className={`text-xs ${i < (selectedShoe.performanceRating || 0) ? 'text-blue-400' : 'text-gray-600'}`}>
-                                  ★
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {selectedShoe.durabilityRating && (
-                        <div>
-                          <Label className="text-sm text-gray-400">Durability</Label>
-                          <div className="flex items-center">
-                            <span className="font-medium mr-2">{selectedShoe.durabilityRating}/10</span>
-                            <div className="flex">
-                              {[...Array(10)].map((_, i) => (
-                                <span key={i} className={`text-xs ${i < (selectedShoe.durabilityRating || 0) ? 'text-green-400' : 'text-gray-600'}`}>
-                                  ★
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
+            {/* Floating shoes - centered grouped by brand */}
+            <div className="flex-1 flex items-center justify-center">
+              <div className="relative w-full max-w-fluid-xl h-full flex items-center justify-center p-fluid-lg">
+                <div className="flex flex-wrap justify-center gap-fluid-lg">
+                  {Object.entries(
+                    userShoes.reduce((acc: Record<string, UserShoe[]>, shoe: UserShoe) => {
+                      const brand = shoe.shoe.brand;
+                      if (!acc[brand]) acc[brand] = [];
+                      acc[brand].push(shoe);
+                      return acc;
+                    }, {} as Record<string, UserShoe[]>)
+                  ).map(([brand, shoes]: [string, UserShoe[]]) => (
+                    <div key={brand} className="flex flex-col items-center">
+                      <p className="text-3xl font-so-cloudy uppercase mb-4 text-center font-bold text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.3)' }}>{brand}</p>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {shoes.map((shoe: UserShoe, index: number) => (
+                          <CloudShoe
+                            key={shoe._id}
+                            shoe={shoe}
+                            onClick={() => {
+                              setSelectedShoe(shoe);
+                              setIsStatsModalOpen(true);
+                            }}
+                            index={index}
+                            rank={shoeRankings.get(shoe._id)}
+                            specialLabel={specialLabels[shoe._id]}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  ))}
 
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => openEditDialog(selectedShoe)}
-                  >
-                    <Edit2 className="w-4 h-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    className="flex-1"
-                    onClick={() => removeShoe(selectedShoe._id)}
-                  >
-                    <X className="w-4 h-4 mr-2" />
-                    Remove
-                  </Button>
+                  {isLoading && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white/60">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
+                      <p className="text-xl">Loading your sanctuary...</p>
+                    </div>
+                  )}
+
+                  {!isLoading && userShoes.length === 0 && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white/60">
+                      <Footprints className="w-16 h-16 mb-4" />
+                      <p className="text-xl">Your sanctuary is empty</p>
+                      <p className="text-sm">Click &quot;Add Shoe&quot; to start your collection.</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </DialogContent>
-          </Dialog>
-        )}
-      </AnimatePresence>
+            </div >
 
-      <EditShoeDialog
-        editingShoe={editingShoe}
-        editForm={editForm}
-        setEditForm={setEditForm}
-        setEditingShoe={setEditingShoe}
-        updateShoeStats={updateShoeStats}
-      />
-    </div >
+            <ShoeStatsModal
+              shoe={selectedShoe}
+              fullShoe={selectedShoe ? allShoes.find(s => s._id === selectedShoe.shoeId) : undefined}
+              isOpen={isStatsModalOpen}
+              onClose={() => {
+                setIsStatsModalOpen(false);
+                setSelectedShoe(null);
+              }}
+              rank={selectedShoe ? shoeRankings.get(selectedShoe._id) : undefined}
+              onToggleFavourite={selectedShoe ? async () => {
+                try {
+                  const response = await fetchApi(`/api/v1/stash/${selectedShoe._id}/favourite`, { method: 'POST' });
+                  if (response) {
+                    // Update the selectedShoe state to trigger re-render
+                    setSelectedShoe(prev => prev ? { ...prev, isFavourite: !prev.isFavourite } : null);
+                    // Also update the userShoes array to update the cloud shoes immediately
+                    setUserShoes(prev => prev.map(shoe =>
+                      shoe._id === selectedShoe._id
+                        ? { ...shoe, isFavourite: !shoe.isFavourite }
+                        : shoe
+                    ));
+                    await fetchUserStash();
+                  }
+                } catch {
+                  toast.addToast('Failed to update favourite status', 'error');
+                }
+              } : undefined}
+              onEditShoe={selectedShoe ? () => {
+                setEditingShoe(selectedShoe);
+                setEditForm({
+                  size: selectedShoe.size || undefined,
+                  purchaseDate: selectedShoe.purchaseDate || undefined,
+                  condition: selectedShoe.condition || undefined,
+                  notes: selectedShoe.notes || undefined,
+                  showNotes: false,
+                  comfortScore: selectedShoe.comfortScore || undefined,
+                  performanceRating: selectedShoe.performanceRating || undefined,
+                  durabilityRating: selectedShoe.durabilityRating || undefined,
+                });
+                setIsStatsModalOpen(false);
+              } : undefined}
+              onRemoveShoe={selectedShoe ? () => {
+                if (confirm('Are you sure you want to remove this shoe from your sanctuary?')) {
+                  removeShoeFromStash(selectedShoe._id);
+                }
+              } : undefined}
+            />
+
+            <EditShoeDialog
+              editingShoe={editingShoe}
+              editForm={editForm}
+              setEditForm={setEditForm}
+              setEditingShoe={setEditingShoe}
+              updateShoeStats={updateShoeStats}
+              removeShoe={editingShoe ? () => {
+                if (confirm('Are you sure you want to remove this shoe from your sanctuary?')) {
+                  removeShoeFromStash(editingShoe._id);
+                  setEditingShoe(null);
+                }
+              } : undefined}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

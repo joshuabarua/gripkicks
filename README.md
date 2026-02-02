@@ -6,21 +6,25 @@ comfort, built with **Next.js**, **Convex**, and **Better Auth**.
 ## Features
 
 - **Shoe Sanctuary** 🏔️
+
   - Browse and manage your personal climbing shoe collection
   - Search and filter 70+ climbing shoes from 10 major brands
   - Track shoes you own with visual collection management
 
 - **Foot Lab** 👟
+
   - Foot shape analysis (Egyptian/Roman/Greek/Germanic/Celtic)
   - Volume analysis (low, medium, high)
   - Personalized shoe recommendations based on foot profile
 
 - **Smart Recommendations**
+
   - Comprehensive shoe database with detailed specifications
   - Matching algorithm for foot characteristics and comfort
   - Comfort rankings for specific foot shapes and volumes
 
 - **User Profiles** 👤
+
   - Save foot profiles and favorite shoes
   - Track climbing shoe collection
   - Email/password and Google OAuth authentication
@@ -33,19 +37,24 @@ comfort, built with **Next.js**, **Convex**, and **Better Auth**.
 ## Architecture
 
 ### Frontend (Next.js)
+
 - **Framework**: Next.js 15 with App Router
 - **UI**: Tailwind CSS with shadcn/ui components
 - **3D Graphics**: React Three Fiber with WebGL
-- **State Management**: TanStack Query for server state
+- **State Management**: TanStack Query for server state, Zustand for client
+  state
 - **Authentication**: Better Auth React client
+- **Responsive Design**: Orientation-based fluid design system
 
 ### Backend (Hono + Convex)
+
 - **API Framework**: Hono with TypeScript
 - **Database**: Convex (real-time, serverless)
 - **Authentication**: Better Auth with email/password + Google OAuth
 - **HTTP Router**: Convex HttpRouterWithHono integration
 
 ### Data Flow
+
 ```
 Frontend ↔ Convex Client ↔ Convex Functions (Queries/Mutations) ↔ Convex Database
           ↘ Better Auth Client ↗
@@ -62,9 +71,121 @@ Frontend ↔ Convex Client ↔ Convex Functions (Queries/Mutations) ↔ Convex D
 - **/api/v1/** - REST API endpoints (via Hono)
 - **/api/auth/** - Better Auth endpoints
 
+## Orientation-Based Responsive Design System
+
+### Overview
+
+GripKicks uses a custom orientation-based responsive design system that
+dynamically scales UI elements based on screen orientation (portrait/landscape)
+rather than fixed breakpoints. This eliminates the need for media queries and
+provides a smooth, consistent experience across all devices.
+
+### How It Works
+
+#### 1. CSS Variables
+
+The system sets dynamic CSS variables based on screen dimensions:
+
+```css
+:root {
+	--scale: 1; /* Dynamic scale factor */
+	--scale-x: 1; /* Horizontal scale */
+	--scale-y: 1; /* Vertical scale */
+	--is-portrait: 1; /* Boolean flag */
+	--is-landscape: 0; /* Boolean flag */
+
+	/* Fluid spacing */
+	--space-xs: calc(8px * var(--scale));
+	--space-sm: calc(12px * var(--scale));
+	--space-md: calc(16px * var(--scale));
+	/* ... */
+
+	/* Fluid font sizes */
+	--text-sm: calc(14px * var(--scale));
+	--text-md: calc(16px * var(--scale));
+	/* ... */
+
+	/* Title sizes with tight line height */
+	--title-sm: clamp(24px, calc(30px * var(--scale)), 48px);
+	--title-md: clamp(36px, calc(48px * var(--scale)), 72px);
+	/* ... */
+}
+```
+
+#### 2. Zustand Store
+
+A Zustand store manages orientation state and updates CSS variables:
+
+```typescript
+// src/stores/orientationStore.ts
+export const useOrientationStore = create<OrientationState>((set) => ({
+	isPortrait: true,
+	scale: 1,
+	initialize: () => {
+		// Updates CSS variables on resize/orientation change
+		const updateOrientation = () => {
+			const scale = calculateScale();
+			document.documentElement.style.setProperty("--scale", scale.toString());
+			// ... update other variables
+		};
+		window.addEventListener("resize", updateOrientation);
+	},
+}));
+```
+
+#### 3. Tailwind Utilities
+
+Custom Tailwind classes use the CSS variables:
+
+```typescript
+// tailwind.config.ts
+theme: {
+  extend: {
+    fontSize: {
+      'fluid-sm': 'var(--text-sm)',
+      'fluid-md': 'var(--text-md)',
+      'title-sm': ['var(--title-sm)', { lineHeight: '1.1' }],
+      'title-xl': ['var(--title-xl)', { lineHeight: '1.1' }],
+    },
+    spacing: {
+      'fluid-sm': 'var(--space-sm)',
+      'fluid-md': 'var(--space-md)',
+      'fluid-lg': 'var(--space-lg)',
+    },
+  },
+}
+```
+
+### Usage Examples
+
+```tsx
+// Instead of media queries, use fluid classes:
+<h1 className="text-title-xl">Big Title</h1>
+<p className="text-fluid-lg">Responsive text</p>
+<div className="p-fluid-md gap-fluid-sm">Responsive spacing</div>
+<div className="max-w-fluid-lg">Responsive container</div>
+
+// Access orientation state in components:
+import { useOrientationStore } from '@/stores/orientationStore';
+
+function MyComponent() {
+  const { isPortrait, scale } = useOrientationStore();
+  return <div>{isPortrait ? 'Portrait' : 'Landscape'}</div>;
+}
+```
+
+### Benefits
+
+- **No media queries** - Everything scales automatically
+- **Smooth transitions** - Elements resize proportionally
+- **Consistent experience** - Same relative sizing across devices
+- **Performance** - CSS variables are faster than JavaScript calculations
+- **Maintainable** - Single source of truth for responsive values
+
 ## Development
 
 ### Prerequisites
+
 - Node.js 18+
 - Yarn (recommended)
 - Convex account (for deployment)
@@ -72,21 +193,24 @@ Frontend ↔ Convex Client ↔ Convex Functions (Queries/Mutations) ↔ Convex D
 ### Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/joshuabarua/gripkicks.git
    cd gripkicks
    ```
 
 2. **Install dependencies**
+
    ```bash
    yarn install
    ```
 
 3. **Environment variables**
+
    ```bash
    # Copy from .env.example
    cp .env.example .env.local
-   
+
    # Required variables:
    NEXT_PUBLIC_CONVEX_URL=your-convex-url
    NEXT_PUBLIC_API_URL=http://localhost:3001
@@ -96,13 +220,14 @@ Frontend ↔ Convex Client ↔ Convex Functions (Queries/Mutations) ↔ Convex D
    ```
 
 4. **Start development servers**
+
    ```bash
    # Terminal 1: Start Convex backend
    npx convex dev
-   
+
    # Terminal 2: Start Hono API server
    yarn workspace backend-api dev
-   
+
    # Terminal 3: Start Next.js frontend
    yarn workspace web dev
    ```
@@ -116,41 +241,43 @@ Frontend ↔ Convex Client ↔ Convex Functions (Queries/Mutations) ↔ Convex D
 ## Database Schema
 
 ### Convex Schema
+
 ```typescript
 // Shoes table
 shoes: defineTable({
-  name: v.string(),
-  brand: v.string(),
-  imageUrl: v.optional(v.string()),
-  aggressiveness: v.string(),
-  stiffness: v.string(),
-  climbingDiscipline: v.string(),
-  volume: v.string(),
-  rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
-})
+	name: v.string(),
+	brand: v.string(),
+	imageUrl: v.optional(v.string()),
+	aggressiveness: v.string(),
+	stiffness: v.string(),
+	climbingDiscipline: v.string(),
+	volume: v.string(),
+	rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
+});
 
 // Users table (Better Auth)
 users: defineTable({
-  name: v.string(),
-  email: v.string(),
-  emailVerified: v.boolean(),
-  image: v.optional(v.string()),
-  isAdmin: v.optional(v.boolean()),
-  onboardingComplete: v.boolean(),
-  footShape: v.optional(footShapeValidator),
-  favoriteShoeId: v.optional(v.id("shoes")),
-})
+	name: v.string(),
+	email: v.string(),
+	emailVerified: v.boolean(),
+	image: v.optional(v.string()),
+	isAdmin: v.optional(v.boolean()),
+	onboardingComplete: v.boolean(),
+	footShape: v.optional(footShapeValidator),
+	favoriteShoeId: v.optional(v.id("shoes")),
+});
 
 // User's shoe collection
 userShoes: defineTable({
-  userId: v.id("users"),
-  shoeId: v.id("shoes"),
-})
+	userId: v.id("users"),
+	shoeId: v.id("shoes"),
+});
 ```
 
 ## Tech Stack
 
 ### Frontend
+
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **UI**: Tailwind CSS + shadcn/ui
@@ -159,12 +286,14 @@ userShoes: defineTable({
 - **Auth**: Better Auth React client
 
 ### Backend
+
 - **API**: Hono framework
 - **Database**: Convex (real-time, serverless)
 - **Auth**: Better Auth (email/password + Google OAuth)
 - **Language**: TypeScript
 
 ### Infrastructure
+
 - **Deployment**: Vercel (frontend) + Convex (backend/database)
 - **Monorepo**: Yarn workspaces
 - **Package Management**: Yarn
@@ -172,6 +301,7 @@ userShoes: defineTable({
 ## Key Features Implemented
 
 ### ✅ Completed
+
 - **Convex Migration**: Full migration from Supabase/Prisma to Convex
 - **Shoe Sanctuary**: Shoe collection management with 70+ shoes
 - **Foot Lab**: Foot shape analysis and recommendations
@@ -180,14 +310,19 @@ userShoes: defineTable({
 - **Authentication**: Better Auth integration with Google OAuth
 
 ### 🔄 In Progress
+
 - **Stash Persistence**: Connecting shoe collection to user accounts
 - **Real-time Updates**: Leveraging Convex real-time capabilities
 
 ### 📋 TODO
+
 - **Admin Panel**: Manage shoe database
 - **Image Upload**: Add shoe images to database
 - **Advanced Filters**: More granular shoe filtering
 - **Community Features**: Share collections and reviews
+- **Loading States**: Improve UX with loading indicators
+- **Shoe Rankings**: Game-like stats display for shoes
+- **Brand Filters**: Quick brand filtering in search
 
 ## Contributing
 

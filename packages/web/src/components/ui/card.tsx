@@ -3,7 +3,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const Card = React.forwardRef<
-  HTMLDivElement,
+  React.ComponentRef<"div">,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
@@ -18,7 +18,7 @@ const Card = React.forwardRef<
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<
-  HTMLDivElement,
+  React.ComponentRef<"div">,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
@@ -30,7 +30,7 @@ const CardHeader = React.forwardRef<
 CardHeader.displayName = "CardHeader"
 
 const CardTitle = React.forwardRef<
-  HTMLDivElement,
+  React.ComponentRef<"div">,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
@@ -42,7 +42,7 @@ const CardTitle = React.forwardRef<
 CardTitle.displayName = "CardTitle"
 
 const CardDescription = React.forwardRef<
-  HTMLDivElement,
+  React.ComponentRef<"div">,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
@@ -54,7 +54,7 @@ const CardDescription = React.forwardRef<
 CardDescription.displayName = "CardDescription"
 
 const CardContent = React.forwardRef<
-  HTMLDivElement,
+  React.ComponentRef<"div">,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
@@ -62,7 +62,7 @@ const CardContent = React.forwardRef<
 CardContent.displayName = "CardContent"
 
 const CardFooter = React.forwardRef<
-  HTMLDivElement,
+  React.ComponentRef<"div">,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div

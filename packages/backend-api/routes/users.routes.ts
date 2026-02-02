@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { getUsers, getUserById, getProfile, editProfile, completeOnboarding, getShoes, getUserStash, addToStash, removeFromStash, updateUserShoeStats } from '../controllers/userController'
+import { getUsers, getUserById, getProfile, editProfile, completeOnboarding, getShoes, getUserStash, addToStash, removeFromStash, updateUserShoeStats, toggleFavourite } from '../controllers/userController'
 import { isAdmin, protect } from '../middleware/auth.middlewares'
 
 const Users = new Hono()
@@ -23,6 +23,7 @@ Users.get('/shoes', getShoes)
 Users.get('/stash', protect, getUserStash)
 Users.post('/stash', protect, addToStash)
 Users.put('/stash/:userShoeId', protect, updateUserShoeStats)
+Users.post('/stash/:userShoeId/favourite', protect, toggleFavourite)
 Users.delete('/stash/:shoeId', protect, removeFromStash)
 
 // Get Single User

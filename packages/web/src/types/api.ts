@@ -51,15 +51,14 @@ export interface UserShoe {
     brand: string;
     imageUrl?: string;
   };
-  // User's custom stats
   size?: string;
   purchaseDate?: string;
   condition?: string;
   notes?: string;
-  // Comfort ranking fields
-  comfortScore?: number; // 1-10 comfort rating
-  performanceRating?: number; // 1-10 performance rating
-  durabilityRating?: number; // 1-10 durability rating
+  comfortScore?: number;
+  performanceRating?: number;
+  durabilityRating?: number;
+  isFavourite?: boolean;
 }
 
 export interface CreateUserShoeRequest {

@@ -300,6 +300,25 @@ app.post("/api/stash/updateUserShoeStats", async (c) => {
   }
 });
 
+app.post("/api/stash/toggleFavourite", async (c) => {
+  try {
+    const { userShoeId } = await c.req.json();
+
+    if (!userShoeId) {
+      return c.json({ success: false, message: "User shoe ID is required" }, 400);
+    }
+
+    const updated = await c.env.runMutation(api.stash.toggleFavourite, {
+      userShoeId: userShoeId as Id<"userShoes">
+    });
+
+    return c.json({ success: true, data: updated });
+  } catch (error) {
+    console.error("Error toggling favourite:", error);
+    return c.json({ success: false, message: "Failed to toggle favourite" }, 500);
+  }
+});
+
 // Verify ownership of user shoe
 app.post("/api/stash/verifyOwnership", async (c) => {
   try {

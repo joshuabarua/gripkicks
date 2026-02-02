@@ -396,12 +396,10 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
   try {
     body = await c.req.json();
 
-    // Get the Convex HTTP URL
     const convexUrl = process.env.CONVEX_HTTP_URL || process.env.CONVEX_SITE_URL ||
       (process.env.CONVEX_URL?.replace('.convex.cloud', '.convex.site')) ||
       'http://localhost:3210';
 
-    // Verify ownership before updating
     const ownershipResponse = await fetch(`${convexUrl}/api/stash/verifyOwnership`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -433,7 +431,6 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
       return c.json({ success: false, message: 'You can only modify your own shoes' }, 403);
     }
 
-    // Update shoe stats directly by userShoeId
     const updateResponse = await fetch(`${convexUrl}/api/stash/updateUserShoeStats`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -443,7 +440,6 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
         purchaseDate: body.purchaseDate,
         condition: body.condition,
         notes: body.notes,
-        // Comfort ranking fields
         comfortScore: body.comfortScore ? parseInt(body.comfortScore) : undefined,
         performanceRating: body.performanceRating ? parseInt(body.performanceRating) : undefined,
         durabilityRating: body.durabilityRating ? parseInt(body.durabilityRating) : undefined
@@ -475,5 +471,68 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
       body: body || undefined
     });
     return c.json(createErrorResponse(error, 'Failed to update shoe stats'), 500);
+  }
+};
+
+export const toggleFavourite = async (c: Context): Promise<Response> => {
+  const user = c.get('user');
+  if (!user || !user.id) {
+    return c.json({ success: false, message: 'Unauthorized' }, 401);
+  }
+
+  const userShoeId = c.req.param('userShoeId');
+
+  if (!userShoeId) {
+    return c.json({ success: false, message: 'User shoe ID is required' }, 400);
+  }
+
+  try {
+    const convexUrl = process.env.CONVEX_HTTP_URL || process.env.CONVEX_SITE_URL ||
+      (process.env.CONVEX_URL?.replace('.convex.cloud', '.convex.site')) ||
+      'http://localhost:3210';
+
+    const ownershipResponse = await fetch(`${convexUrl}/api/stash/verifyOwnership`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userShoeId: userShoeId,
+        betterAuthUserId: user.id
+      })
+    });
+
+    if (!ownershipResponse.ok) {
+      const errorText = await ownershipResponse.text();
+      return c.json(createErrorResponse(new Error(errorText), 'Failed to verify ownership'), 500);
+    }
+
+    const ownershipData = await ownershipResponse.json();
+    if (!ownershipData.data?.owned) {
+      return c.json({ success: false, message: 'You can only modify your own shoes' }, 403);
+    }
+
+    const toggleResponse = await fetch(`${convexUrl}/api/stash/toggleFavourite`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userShoeId })
+    });
+
+    if (!toggleResponse.ok) {
+      const errorText = await toggleResponse.text();
+      return c.json(createErrorResponse(new Error(errorText), 'Failed to toggle favourite'), 500);
+    }
+
+    const toggleData = await toggleResponse.json();
+    return c.json({
+      success: true,
+      message: 'Favourite status updated',
+      data: toggleData.data
+    });
+  } catch (error) {
+    logApiError('Failed to toggle favourite', error, {
+      method: 'POST',
+      url: `/api/v1/stash/${userShoeId}/favourite`,
+      userId: user.id
+    });
+    return c.json(createErrorResponse(error, 'Failed to toggle favourite'), 500);
   }
 };

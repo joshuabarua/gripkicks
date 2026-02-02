@@ -20,6 +20,11 @@ export default defineSchema({
     climbingDiscipline: v.string(),
     volume: v.string(),
     rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
+    // Average ratings from all users
+    avgComfortScore: v.optional(v.number()),
+    avgPerformanceRating: v.optional(v.number()),
+    avgDurabilityRating: v.optional(v.number()),
+    totalRatings: v.optional(v.number()), // Number of users who rated this shoe
   })
     .index("by_brand", ["brand"])
     .index("by_name", ["name"])
@@ -105,15 +110,14 @@ export default defineSchema({
   userShoes: defineTable({
     userId: v.id("users"),
     shoeId: v.id("shoes"),
-    // User's custom stats for this shoe
     size: v.optional(v.string()),
     purchaseDate: v.optional(v.string()),
     condition: v.optional(v.string()),
     notes: v.optional(v.string()),
-    // Comfort ranking fields
-    comfortScore: v.optional(v.number()), // 1-10 comfort rating
-    performanceRating: v.optional(v.number()), // 1-10 performance rating
-    durabilityRating: v.optional(v.number()), // 1-10 durability rating
+    comfortScore: v.optional(v.number()),
+    performanceRating: v.optional(v.number()),
+    durabilityRating: v.optional(v.number()),
+    isFavourite: v.optional(v.boolean()),
   })
     .index("by_userId", ["userId"])
     .index("by_shoeId", ["shoeId"])

@@ -22,11 +22,11 @@ export default function CloudBackground() {
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
-    
+
     const handleResize = debounce(() => {
       setWindowWidth(window.innerWidth);
     }, 250); // 250ms debounce
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [debounce]);
@@ -56,10 +56,10 @@ export default function CloudBackground() {
         const direction = index % 2 === 0 ? 'left' : 'right';
         const initialX = direction === 'left' ? -600 : windowWidth + 600;
         const finalX = direction === 'left' ? windowWidth + 600 : -600;
-        
+
         // Assign unique vertical position from our array
         const verticalPos = verticalPositions[index % verticalPositions.length];
-        
+
         return (
           <motion.div
             key={index}
@@ -74,12 +74,12 @@ export default function CloudBackground() {
               delay: cloud.delay,
             }}
           >
-            <Image 
-              src={cloud.src} 
-              alt="Cloud" 
+            <Image
+              src={cloud.src}
+              alt="Cloud"
               width={cloud.size}
-              height={400}
-              style={{ maxHeight: '400px', width: 'auto' }}
+              height={cloud.size * 0.6} // Maintain aspect ratio
+              style={{ maxHeight: '400px', width: 'auto', height: 'auto' }}
               priority={false}
             />
           </motion.div>
