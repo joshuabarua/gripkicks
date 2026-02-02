@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { SignOutButton } from '@/components/signout-button';
+import { useSession } from '@/lib/auth';
 
 interface NavLinksProps {
     handleLogout?: () => void;
 }
 
-export const links = [
+const baseLinks = [
     {
         title: "Profile",
         href: "/profile"
@@ -84,6 +85,13 @@ const slideIn = {
 }
 
 export default function NavLinks({ handleLogout }: NavLinksProps) {
+    const { data: session } = useSession();
+    const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
+
+    const links = isAdmin
+        ? [...baseLinks.slice(0, -1), { title: "Admin", href: "/admin" }, baseLinks[baseLinks.length - 1]]
+        : baseLinks;
+
     return (
         <div className={"nav"}>
             <div className={"body"}>
@@ -110,9 +118,9 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
                                             ease: "easeInOut"
                                         }}
                                     >
-                                        <SignOutButton 
-                                            variant="ghost" 
-                                            size="default" 
+                                        <SignOutButton
+                                            variant="ghost"
+                                            size="default"
                                             className="font-sora w-full justify-start p-0 hover:bg-transparent"
                                             onClick={handleLogout}
                                         >

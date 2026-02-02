@@ -6,7 +6,7 @@ export const list = query({
   args: {},
   handler: async (ctx) => {
     const shoes = await ctx.db.query("shoes").collect();
-    
+
     // Get rubber technology for each shoe
     const shoesWithRubber = await Promise.all(
       shoes.map(async (shoe) => {
@@ -16,7 +16,7 @@ export const list = query({
         return { ...shoe, rubberTechnology };
       })
     );
-    
+
     return shoesWithRubber.sort((a, b) => {
       const brandCompare = a.brand.localeCompare(b.brand);
       if (brandCompare !== 0) return brandCompare;
@@ -30,16 +30,16 @@ export const getById = query({
   handler: async (ctx, args) => {
     const shoe = await ctx.db.get(args.id);
     if (!shoe) return null;
-    
+
     const rubberTechnology = shoe.rubberTechnologyId
       ? await ctx.db.get(shoe.rubberTechnologyId)
       : null;
-    
+
     const footShapeCompat = await ctx.db
       .query("footShapeCompat")
       .withIndex("by_shoe", (q) => q.eq("shoeId", args.id))
       .collect();
-    
+
     return { ...shoe, rubberTechnology, footShapeCompat };
   },
 });
@@ -61,13 +61,13 @@ export const getCompatibleWithFootShape = query({
       .query("footShapeCompat")
       .withIndex("by_footShape", (q) => q.eq("footShape", args.footShape))
       .collect();
-    
+
     const shoes = await Promise.all(
       compatEntries.map(async (entry) => {
         return await ctx.db.get(entry.shoeId);
       })
     );
-    
+
     return shoes.filter(Boolean);
   },
 });
@@ -77,6 +77,7 @@ export const create = mutation({
     name: v.string(),
     brand: v.string(),
     imageUrl: v.optional(v.string()),
+    gender: v.optional(v.union(v.literal("men"), v.literal("women"), v.literal("kids"), v.literal("unisex"))),
     aggressiveness: v.string(),
     stiffness: v.string(),
     climbingDiscipline: v.string(),
@@ -86,16 +87,16 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const { footShapeCompat, ...shoeData } = args;
-    
+
     const shoeId = await ctx.db.insert("shoes", shoeData);
-    
+
     // Add foot shape compatibility entries
     if (footShapeCompat) {
       for (const footShape of footShapeCompat) {
         await ctx.db.insert("footShapeCompat", { shoeId, footShape });
       }
     }
-    
+
     return shoeId;
   },
 });
@@ -106,7 +107,7 @@ export const search = query({
     if (!args.searchTerm) {
       return await ctx.db.query("shoes").collect();
     }
-    
+
     return await ctx.db
       .query("shoes")
       .withSearchIndex("search_shoes", (q) => q.search("name", args.searchTerm))
@@ -115,19 +116,52 @@ export const search = query({
 });
 
 export const update = mutation({
-  args: { 
+  args: {
     id: v.id("shoes"),
-    imageUrl: v.optional(v.string())
+    name: v.optional(v.string()),
+    brand: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+    gender: v.optional(v.union(v.literal("men"), v.literal("women"), v.literal("kids"), v.literal("unisex"))),
+    aggressiveness: v.optional(v.string()),
+    stiffness: v.optional(v.string()),
+    climbingDiscipline: v.optional(v.string()),
+    volume: v.optional(v.string()),
+    rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
   },
   handler: async (ctx, args) => {
-    const { id, imageUrl } = args;
-    
-    // Check if shoe exists before updating
+    const { id, ...updates } = args;
+
     const shoe = await ctx.db.get(id);
     if (!shoe) {
       throw new Error("Shoe not found");
     }
-    
-    return await ctx.db.patch(id, { imageUrl });
+
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([, v]) => v !== undefined)
+    );
+
+    return await ctx.db.patch(id, filteredUpdates);
+  },
+});
+
+export const remove = mutation({
+  args: { id: v.id("shoes") },
+  handler: async (ctx, args) => {
+    const shoe = await ctx.db.get(args.id);
+    if (!shoe) {
+      throw new Error("Shoe not found");
+    }
+
+    const footShapeCompat = await ctx.db
+      .query("footShapeCompat")
+      .withIndex("by_shoe", (q) => q.eq("shoeId", args.id))
+      .collect();
+
+    for (const compat of footShapeCompat) {
+      await ctx.db.delete(compat._id);
+    }
+
+    await ctx.db.delete(args.id);
+    return { success: true };
   },
 });

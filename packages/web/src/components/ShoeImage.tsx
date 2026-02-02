@@ -1,5 +1,5 @@
 import { IKImage } from "imagekitio-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Transformation } from "imagekit-javascript/dist/src/interfaces/Transformation";
 
 interface ShoeImageProps {
@@ -30,11 +30,28 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
       quality: 80
     }
   ],
-  fallbackImage = "/placeholder-shoe.svg",
+  fallbackImage = "/imgs/placeholder_shoe.png",
   ...props
 }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+    setImageLoading(true);
+    setLoadingTimeout(false);
+  }, [imageUrl, brand, shoeName]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (imageLoading) {
+        setLoadingTimeout(true);
+        setImageLoading(false);
+      }
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [imageLoading, imageUrl, brand, shoeName]);
 
   // Normalize brand name for folder structure (underscores)
   const normalizeBrand = (brand: string): string => {
@@ -45,47 +62,38 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
       .replace(/^_|_$/g, '');
   };
 
-  // Generate possible image paths
   const generateImagePath = (): string => {
     const normalizedBrand = normalizeBrand(brand);
-    
-    // If we have an imageUrl from the database, use it
+
     if (imageUrl) {
-      // If it's already a full ImageKit URL, extract the path after the domain
       if (imageUrl.startsWith('https://ik.imagekit.io/')) {
         const url = new URL(imageUrl);
         let path = url.pathname;
-        // Remove leading slash and any ID prefix
-        path = path.substring(1); // Remove leading /
+        path = path.substring(1);
         if (path.startsWith('ie871bk0r/')) {
           path = path.substring('ie871bk0r/'.length);
         }
         return path;
       }
-      // If it's already just a path (no domain), use as is
       if (!imageUrl.startsWith('http') && !imageUrl.includes('://')) {
         let path = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
-        // Remove ID prefix if present
         if (path.startsWith('ie871bk0r/')) {
           path = path.substring('ie871bk0r/'.length);
         }
         return path;
       }
-      // If it's some other format, treat it as a path
       return imageUrl;
     }
-    
-    // Default path structure: gripkicks/imgs/shoes/{brand}/{shoe-name}
+
     if (shoeName) {
       const normalizedName = shoeName
         .toLowerCase()
-        .replace(/[^a-z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-      return `gripkicks/imgs/shoes/${normalizedBrand}/${normalizedName}.jpg`;
+        .replace(/[^a-z0-9]/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '');
+      return `gripkicks/imgs/shoes/${normalizedBrand}/${normalizedName}_m1.jpg`;
     }
-    
-    // Fallback to brand folder
+
     return `gripkicks/imgs/shoes/${normalizedBrand}/default.jpg`;
   };
 
@@ -102,13 +110,13 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
     setImageLoading(false);
   };
 
-  // If image failed to load, show fallback
-  if (imageError) {
+  // If image failed to load or timed out, show fallback
+  if (imageError || loadingTimeout) {
     return (
       <div className={className}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img 
-          src={fallbackImage} 
+        <img
+          src={fallbackImage}
           alt={`${brand} ${shoeName || ''}`}
           className="w-full h-full"
           onError={(e) => {
@@ -122,16 +130,16 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className={`relative w-full h-full ${className}`}>
       {imageLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-full">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
         </div>
       )}
       <IKImage
         path={imagePath}
         transformation={transformation}
-        className={`w-full h-full ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300 ${className}`}
+        className={`w-full h-full object-contain ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         onError={handleError}
         onLoad={handleLoad}
         alt={`${brand} ${shoeName || ''}`}

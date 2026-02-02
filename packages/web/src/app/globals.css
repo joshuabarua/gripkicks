@@ -183,9 +183,7 @@ a {
 /** NAV BAR STYLES */
 
 .nav-button {
-	position: absolute;
-	top: -1;
-	right: 0;
+	position: relative;
 	width: 80px;
 	height: 35px;
 	cursor: pointer;

@@ -15,16 +15,16 @@ export default defineSchema({
     name: v.string(),
     brand: v.string(),
     imageUrl: v.optional(v.string()),
+    gender: v.optional(v.union(v.literal("men"), v.literal("women"), v.literal("kids"), v.literal("unisex"))),
     aggressiveness: v.string(),
     stiffness: v.string(),
     climbingDiscipline: v.string(),
     volume: v.string(),
     rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
-    // Average ratings from all users
     avgComfortScore: v.optional(v.number()),
     avgPerformanceRating: v.optional(v.number()),
     avgDurabilityRating: v.optional(v.number()),
-    totalRatings: v.optional(v.number()), // Number of users who rated this shoe
+    totalRatings: v.optional(v.number()),
   })
     .index("by_brand", ["brand"])
     .index("by_name", ["name"])

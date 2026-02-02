@@ -5,7 +5,6 @@ import { Star, Edit, Trash2, X } from 'lucide-react';
 interface ShoeStatsHeaderProps {
   shoeName: string;
   shoeBrand: string;
-  rank?: number;
   isFavourite?: boolean;
   onToggleFavourite?: () => void;
   onEditShoe?: () => void;
@@ -16,7 +15,6 @@ interface ShoeStatsHeaderProps {
 export default function ShoeStatsHeader({
   shoeName,
   shoeBrand,
-  rank,
   isFavourite,
   onToggleFavourite,
   onEditShoe,
@@ -58,16 +56,9 @@ export default function ShoeStatsHeader({
         </button>
       </div>
 
-      <div className="flex items-center gap-4">
-        {rank && (
-          <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full shadow-lg border-3 border-white">
-            <span className="text-white text-xl font-bold">#{rank}</span>
-          </div>
-        )}
-        <div>
-          <h2 className="text-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
-          <p className="text-orange-100">{shoeBrand}</p>
-        </div>
+      <div>
+        <h2 className="text-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
+        <p className="text-orange-100">{shoeBrand}</p>
       </div>
     </div>
   );

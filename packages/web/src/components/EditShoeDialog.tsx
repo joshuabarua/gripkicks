@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Save, HelpCircle, ChevronDown, Trash2 } from 'lucide-react';
 import { shoeSizes, conditions, type ShoeSizeOption } from '@/constants/shoe-data';
 import type { UserShoe } from '@/types/api';
@@ -90,9 +90,9 @@ export default function EditShoeDialog({
                   <Input
                     id="purchaseDate"
                     type="date"
-                    value={editForm.purchaseDate || ''}
+                    value={editForm.purchaseDate ? new Date(editForm.purchaseDate).toISOString().split('T')[0] : ''}
                     onChange={(e) => setEditForm({ ...editForm, purchaseDate: e.target.value })}
-                    className="bg-gray-800/50 text-gray-100 border-gray-600 focus:border-gray-500"
+                    className="bg-gray-800/50 text-white border-gray-600 focus:border-gray-500 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
                   />
                 </div>
 

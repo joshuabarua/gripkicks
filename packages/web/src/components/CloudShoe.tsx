@@ -11,12 +11,33 @@ interface CloudShoeProps {
   shoe: UserShoe;
   onClick: () => void;
   index: number;
-  rank?: number;
   specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode };
-  totalShoes?: number;
 }
 
-export default function CloudShoe({ shoe, onClick, index, rank, specialLabel, totalShoes }: CloudShoeProps) {
+// Tooltip component
+const Tooltip: React.FC<{ children: React.ReactNode; text: string }> = ({ children, text }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  return (
+    <div className="relative inline-block">
+      <div
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+      >
+        {children}
+      </div>
+      {isVisible && (
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black/80 text-white text-xs rounded whitespace-nowrap z-50">
+          {text}
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+            <div className="border-4 border-transparent border-t-black/80"></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudShoeProps) {
   const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
 
@@ -70,66 +91,65 @@ export default function CloudShoe({ shoe, onClick, index, rank, specialLabel, to
       whileTap={{}}
     >
       {/* Shoe content */}
-      <div className="relative z-10 flex flex-col items-center justify-center w-48 h-48">
-        {/* Action icons - only show if more than one shoe */}
-        {totalShoes && totalShoes > 1 && (
+      <div className="relative z-10 flex flex-col items-center justify-center w-fit h-fit">
+        {/* Action icons */}
+        {(shoe.isFavourite || specialLabel) && (
           <>
-            {/* Rank badge */}
-            {rank && (
-              <div className="absolute -top-[-15px] -right-[-45px] z-30">
-                <div className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
-                  #{rank}
-                </div>
-              </div>
-            )}
-
             {/* Favourite star */}
             {shoe.isFavourite && (
               <div className="absolute -top-[-15px] -right-[-25px] z-30">
-                <div className="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
-                  <Star className="w-3 h-3 fill-current" />
-                </div>
+                <Tooltip text="Favorite shoe">
+                  <div className="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
+                    <Star className="w-3 h-3 fill-current" />
+                  </div>
+                </Tooltip>
               </div>
             )}
 
             {/* Special label badge */}
             {specialLabel && (
               <div className="absolute -top-[-15px] -right-[-65px] z-30">
-                <div className={`rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white ${specialLabel.type === 'most-comfy' ? 'bg-pink-500 text-white' :
-                  specialLabel.type === 'oldest' ? 'bg-blue-500 text-white' :
-                    'bg-purple-500 text-white'
-                  }`}>
-                  {specialLabel.icon}
-                </div>
+                <Tooltip text={
+                  specialLabel.type === 'most-comfy' ? 'Most comfortable shoe' :
+                    specialLabel.type === 'oldest' ? 'Oldest shoe' :
+                      'Most worn shoe'
+                }>
+                  <div className={`rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white ${specialLabel.type === 'most-comfy' ? 'bg-pink-500 text-white' :
+                    specialLabel.type === 'oldest' ? 'bg-blue-500 text-white' :
+                      'bg-purple-500 text-white'
+                    }`}>
+                    {specialLabel.icon}
+                  </div>
+                </Tooltip>
               </div>
             )}
           </>
         )}
 
-        <div className="relative w-44 h-44">
+        <div className="relative w-64 h-64">
           {/* White circular background */}
           <div className="absolute inset-0 bg-white rounded-full shadow-lg"></div>
-          {/* Shoe image - reduced inset for less cropping */}
-          <div className="absolute inset-2 overflow-hidden rounded-full">
+          {/* Shoe image - with circular clipping mask */}
+          <div className="absolute inset-2 overflow-hidden rounded-full bg-white">
             {isInView && (
               <ShoeImage
                 brand={shoe.shoe.brand}
                 shoeName={shoe.shoe.name}
                 imageUrl={shoe.shoe.imageUrl}
-                className={`w-full h-full object-contain transition-opacity duration-300`}
+                className=""
                 transformation={[
                   {
-                    height: 200,
-                    width: 200,
+                    height: 300,
+                    width: 300,
                     format: "auto",
-                    quality: 75
+                    quality: 80
                   }
                 ]}
               />
             )}
           </div>
           {/* Shoe name inside the circle at bottom */}
-          <div className="absolute bottom-3 inset-x-0 z-20 flex justify-center">
+          <div className="absolute bottom-4 inset-x-0 z-20 flex justify-center">
             <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm">
               <p className="text-xs text-gray-800 text-center font-so-cloudy uppercase whitespace-nowrap leading-tight font-semibold">
                 {shoe.shoe.name}

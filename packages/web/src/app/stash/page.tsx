@@ -328,48 +328,42 @@ export default function ShoeSanctuaryPage() {
             }}>
               <DialogTrigger asChild>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="relative group"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-2"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-full blur-lg group-hover:blur-xl transition-all duration-300 opacity-75 group-hover:opacity-100"></div>
-                  <div className="relative bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white rounded-full px-8 py-2 shadow-2xl flex items-center gap-3 border-2 border-white/30">
-                    <Sparkles className="w-6 h-6 animate-pulse" />
-                    <span className="font-bold text-lg uppercase tracking-wide">Add Your Dream Shoes</span>
-                    <Sparkles className="w-6 h-6 animate-pulse" />
-                  </div>
+                  <Plus className="w-5 h-5" />
+                  <span>Add Shoe</span>
                 </motion.button>
               </DialogTrigger>
-              <DialogContent className="bg-gradient-to-br from-blue-900/95 via-purple-900/95 to-pink-900/95 backdrop-blur-sm text-gray-100 border border-white/30 max-w-2xl shadow-2xl">
+              <DialogContent className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-500 text-gray-100 border border-white/30 max-w-2xl shadow-2xl">
                 <DialogHeader>
-                  <DialogTitle className="text-gray-100 font-so-cloudy uppercase text-2xl text-center flex items-center justify-center gap-2">
-                    <Sparkles className="w-6 h-6 text-yellow-400" />
+                  <DialogTitle className="text-white font-so-cloudy uppercase text-2xl text-center">
                     Add New Shoe
-                    <Sparkles className="w-6 h-6 text-yellow-400" />
                   </DialogTitle>
-                  <DialogDescription className="text-gray-300 text-center">
-                    Discover and add climbing shoes to your sanctuary ✨
+                  <DialogDescription className="text-white/80 text-center">
+                    Search and add climbing shoes to your collection
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-6">
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60" />
                     <Input
-                      placeholder="🔍 Search for your dream shoes..."
+                      placeholder="Search for shoes..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-12 bg-white/10 text-gray-100 placeholder:text-gray-400 border-white/20 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20 rounded-lg h-12 text-lg"
+                      className="pl-12 bg-white/20 text-white placeholder:text-white/60 border-white/30 focus:border-white focus:ring-2 focus:ring-white/20 rounded-lg h-12 text-lg"
                     />
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Label className="text-sm text-gray-300 font-medium">Filter by Brand:</Label>
+                    <Label className="text-sm text-white/80 font-medium">Filter by Brand:</Label>
                     <select
                       value={selectedBrand}
                       onChange={(e) => setSelectedBrand(e.target.value)}
-                      className="flex-1 bg-white/10 text-gray-100 border border-white/20 rounded-lg px-4 py-2 text-sm focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/20"
+                      className="flex-1 bg-white/20 text-white border border-white/30 rounded-lg px-4 py-2 text-sm focus:border-white focus:outline-none focus:ring-2 focus:ring-white/20"
                     >
-                      <option value="all">🌟 All Brands</option>
+                      <option value="all">All Brands</option>
                       {uniqueBrands.map(brand => (
                         <option key={brand} value={brand}>{brand}</option>
                       ))}
@@ -380,7 +374,7 @@ export default function ShoeSanctuaryPage() {
                     {searchResults.map((shoe) => (
                       <div
                         key={shoe._id}
-                        className="flex items-center justify-between p-4 rounded-xl bg-white/10 hover:bg-white/20 cursor-pointer transition-all duration-300 border border-white/20 hover:border-yellow-400/50 hover:scale-[1.02] group"
+                        className="flex items-center justify-between p-4 rounded-xl bg-white/10 hover:bg-white/20 cursor-pointer transition-all duration-300 border border-white/20 hover:border-white/50 hover:scale-[1.02] group"
                         onClick={() => addShoeToSanctuary(shoe._id)}
                       >
                         <div className="flex items-center gap-4">
@@ -402,13 +396,13 @@ export default function ShoeSanctuaryPage() {
                             />
                           </div>
                           <div>
-                            <p className="font-semibold text-lg group-hover:text-yellow-400 transition-colors">{shoe.name}</p>
-                            <p className="text-sm text-gray-300">{shoe.brand}</p>
+                            <p className="font-semibold text-lg text-white group-hover:text-white transition-colors">{shoe.name}</p>
+                            <p className="text-sm text-white/70">{shoe.brand}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-400 group-hover:text-yellow-400 transition-colors">Click to add</span>
-                          <Plus className="w-6 h-6 group-hover:text-yellow-400 group-hover:rotate-90 transition-all duration-300" />
+                          <span className="text-xs text-white/60 group-hover:text-white transition-colors">Click to add</span>
+                          <Plus className="w-6 h-6 text-white group-hover:rotate-90 transition-all duration-300" />
                         </div>
                       </div>
                     ))}
@@ -449,9 +443,7 @@ export default function ShoeSanctuaryPage() {
                               setIsStatsModalOpen(true);
                             }}
                             index={index}
-                            rank={shoeRankings.get(shoe._id)}
                             specialLabel={specialLabels[shoe._id]}
-                            totalShoes={userShoes.length}
                           />
                         ))}
                       </div>
@@ -488,20 +480,23 @@ export default function ShoeSanctuaryPage() {
                 setIsStatsModalOpen(false);
                 setSelectedShoe(null);
               }}
+              userShoes={userShoes}
               rank={selectedShoe ? shoeRankings.get(selectedShoe._id) : undefined}
               onToggleFavourite={selectedShoe ? async () => {
                 try {
                   const response = await fetchApi(`/api/v1/stash/${selectedShoe._id}/favourite`, { method: 'POST' });
                   if (response) {
+                    const newFavStatus = !selectedShoe.isFavourite;
                     // Update the selectedShoe state to trigger re-render
-                    setSelectedShoe(prev => prev ? { ...prev, isFavourite: !prev.isFavourite } : null);
+                    setSelectedShoe(prev => prev ? { ...prev, isFavourite: newFavStatus } : null);
                     // Also update the userShoes array to update the cloud shoes immediately
                     setUserShoes(prev => prev.map(shoe =>
                       shoe._id === selectedShoe._id
-                        ? { ...shoe, isFavourite: !shoe.isFavourite }
+                        ? { ...shoe, isFavourite: newFavStatus }
                         : shoe
                     ));
                     await fetchUserStash();
+                    toast.addToast(newFavStatus ? 'Added to favorites!' : 'Removed from favorites', 'success');
                   }
                 } catch {
                   toast.addToast('Failed to update favourite status', 'error');

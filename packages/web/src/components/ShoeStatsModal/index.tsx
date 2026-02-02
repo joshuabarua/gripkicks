@@ -1,15 +1,40 @@
 'use client';
 
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { UserShoe } from '@/types/api';
 import { calculateDefaultStats } from './utils';
-import ShoeStatsHeader from './ShoeStatsHeader';
 import ShoeTags from './ShoeTags';
 import RatingInfoTooltip from './RatingInfoTooltip';
 import PersonalStatsSection from './PersonalStatsSection';
 import CommunityStatsSection from './CommunityStatsSection';
 import AdditionalInfo from './AdditionalInfo';
+import ShoeImage from '@/components/ShoeImage';
+import { Star, Crown, Clock, Heart, Edit, Trash2, X } from 'lucide-react';
+
+// Tooltip component
+const BadgeTooltip: React.FC<{ children: React.ReactNode; text: string }> = ({ children, text }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  return (
+    <div className="relative inline-block">
+      <div
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+      >
+        {children}
+      </div>
+      {isVisible && (
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black/80 text-white text-xs rounded whitespace-nowrap z-50">
+          {text}
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+            <div className="border-4 border-transparent border-t-black/80"></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface ShoeStatsModalProps {
   shoe: UserShoe | null;
@@ -21,8 +46,8 @@ interface ShoeStatsModalProps {
     rubberTechnology?: {
       compound: string;
     } | null;
-    name: string;
-    brand: string;
+    name?: string;
+    brand?: string;
     avgComfortScore?: number;
     avgPerformanceRating?: number;
     avgDurabilityRating?: number;
@@ -36,6 +61,7 @@ interface ShoeStatsModalProps {
   onToggleFavourite?: () => void;
   onEditShoe?: () => void;
   onRemoveShoe?: () => void;
+  userShoes?: UserShoe[];
 }
 
 export default function ShoeStatsModal({
@@ -46,7 +72,8 @@ export default function ShoeStatsModal({
   rank,
   onToggleFavourite,
   onEditShoe,
-  onRemoveShoe
+  onRemoveShoe,
+  userShoes
 }: ShoeStatsModalProps) {
   if (!shoe) return null;
 
@@ -92,16 +119,127 @@ export default function ShoeStatsModal({
             View detailed rank and ratings for the {shoeName} climbing shoe including comfort, performance, and durability ratings.
           </DialogDescription>
 
-          <ShoeStatsHeader
-            shoeName={shoeName}
-            shoeBrand={shoeBrand}
-            rank={rank}
-            isFavourite={shoe.isFavourite}
-            onToggleFavourite={onToggleFavourite}
-            onEditShoe={onEditShoe}
-            onRemoveShoe={onRemoveShoe}
-            onClose={onClose}
-          />
+          <div className="relative bg-gradient-to-r from-orange-600/20 to-amber-600/20 p-6 border-b border-white/30">
+            {/* Action buttons */}
+            <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+              {onToggleFavourite && (
+                <button
+                  onClick={onToggleFavourite}
+                  className="text-gray-300 hover:text-yellow-400 transition-colors"
+                >
+                  <Star className={`w-5 h-5 ${shoe.isFavourite ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+                </button>
+              )}
+              {onEditShoe && (
+                <button
+                  onClick={onEditShoe}
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  <Edit className="w-5 h-5" />
+                </button>
+              )}
+              {onRemoveShoe && (
+                <button
+                  onClick={onRemoveShoe}
+                  className="text-gray-300 hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className="text-gray-300 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {/* Shoe Image - Curved */}
+              <div className="w-28 h-28 flex-shrink-0 rounded-full overflow-hidden bg-white/20 p-1">
+                <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                  <ShoeImage
+                    brand={shoeBrand}
+                    shoeName={shoeName}
+                    imageUrl={shoe.shoe.imageUrl}
+                    className="w-full h-full object-contain"
+                    transformation={[
+                      {
+                        height: 200,
+                        width: 200,
+                        format: "auto",
+                        quality: 80
+                      }
+                    ]}
+                  />
+                </div>
+              </div>
+
+              {/* Title and badges inline */}
+              <div className="flex items-center justify-center gap-4">
+                <div>
+                  <div className="flex items-center gap-10">
+                    <h2 className="text-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
+                    {/* Rank and badges inline with title */}
+                    <div className="flex items-center gap-2">
+                      {/* Rank badge */}
+                      {rank && (
+                        <BadgeTooltip text={`Rank #${rank} in your collection`}>
+                          <div className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
+                            #{rank}
+                          </div>
+                        </BadgeTooltip>
+                      )}
+                      {/* Favourite star */}
+                      {shoe.isFavourite && (
+                        <BadgeTooltip text="Favorite shoe">
+                          <div className="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
+                            <Star className="w-3 h-3 fill-current" />
+                          </div>
+                        </BadgeTooltip>
+                      )}
+                      {/* Most comfortable */}
+                      {userShoes && userShoes.length > 1 && shoe.comfortScore && shoe.comfortScore > 0 && shoe === userShoes.reduce((prev: UserShoe, current: UserShoe) =>
+                        (current.comfortScore || 0) > (prev.comfortScore || 0) ? current : prev
+                      ) && (
+                          <BadgeTooltip text="Most comfortable shoe">
+                            <div className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
+                              <Heart className="w-3 h-3 fill-current" />
+                            </div>
+                          </BadgeTooltip>
+                        )}
+                      {/* Oldest shoe */}
+                      {userShoes && userShoes.length > 1 && shoe.purchaseDate && shoe === [...userShoes].filter(s => s.purchaseDate).reduce((prev: UserShoe, current: UserShoe) =>
+                        new Date(current.purchaseDate!).getTime() < new Date(prev.purchaseDate!).getTime() ? current : prev
+                      ) && (
+                          <BadgeTooltip text="Oldest shoe">
+                            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
+                              <Clock className="w-3 h-3" />
+                            </div>
+                          </BadgeTooltip>
+                        )}
+                      {/* Most worn */}
+                      {userShoes && userShoes.length > 1 && shoe.condition && shoe === [...userShoes].filter(s => s.condition).reduce((prev: UserShoe, current: UserShoe) => {
+                        const conditionOrder = { 'worn': 0, 'fair': 1, 'good': 2, 'excellent': 3, 'new': 4 };
+                        const prevOrder = conditionOrder[current.condition as keyof typeof conditionOrder] ?? 999;
+                        const currentOrder = conditionOrder[prev.condition as keyof typeof conditionOrder] ?? 999;
+                        return currentOrder < prevOrder ? current : prev;
+                      }) && (
+                          <BadgeTooltip text="Most worn shoe">
+                            <div className="bg-purple-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
+                              <Crown className="w-3 h-3 fill-current" />
+                            </div>
+                          </BadgeTooltip>
+                        )}
+                    </div>
+                  </div>
+                  <p className="text-orange-100">{shoeBrand}</p>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
 
           <div className="p-6 space-y-6">
             <ShoeTags
