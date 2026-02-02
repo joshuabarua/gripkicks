@@ -9,6 +9,8 @@ interface CommunityStatsSectionProps {
   comfortScore: number;
   performanceRating: number;
   durabilityRating: number;
+  popularityCount?: number;
+  totalShoesInDatabase?: number;
 }
 
 export default function CommunityStatsSection({
@@ -16,14 +18,31 @@ export default function CommunityStatsSection({
   totalRatings,
   comfortScore,
   performanceRating,
-  durabilityRating
+  durabilityRating,
+  popularityCount,
+  totalShoesInDatabase
 }: CommunityStatsSectionProps) {
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-semibold text-white mb-3">Community Stats</h3>
+      <h3 className="text-lg font-semibold text-white mb-3">Community Rank</h3>
       {showCommunityAverages ? (
         <>
           <p className="text-sm text-green-400 mb-3">Based on {totalRatings} user ratings</p>
+          {popularityCount && popularityCount > 100 && (
+            <div className="mb-3 p-2 bg-white/10 rounded-lg">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-white">Popularity</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-white">
+                    {popularityCount} climbers
+                  </span>
+                  <span className="text-xs text-white/70">
+                    ({totalShoesInDatabase ? ((popularityCount / totalShoesInDatabase) * 100).toFixed(1) : '0'}% of all shoes)
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="space-y-4">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -31,7 +50,7 @@ export default function CommunityStatsSection({
               transition={{ delay: 0.4 }}
             >
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-white/90">Comfort</span>
+                <span className="text-sm text-white">Comfort</span>
                 <span className="text-sm font-bold text-white">{comfortScore.toFixed(1)}/10</span>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
@@ -50,7 +69,7 @@ export default function CommunityStatsSection({
               transition={{ delay: 0.5 }}
             >
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-white/90">Performance</span>
+                <span className="text-sm text-white">Performance</span>
                 <span className="text-sm font-bold text-white">{performanceRating.toFixed(1)}/10</span>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
@@ -69,7 +88,7 @@ export default function CommunityStatsSection({
               transition={{ delay: 0.6 }}
             >
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-white/90">Durability</span>
+                <span className="text-sm text-white">Durability</span>
                 <span className="text-sm font-bold text-white">{durabilityRating.toFixed(1)}/10</span>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
@@ -94,7 +113,7 @@ export default function CommunityStatsSection({
           <div className="blur-sm opacity-50 space-y-4">
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-white/90">Comfort</span>
+                <span className="text-sm text-white">Comfort</span>
                 <span className="text-sm font-bold text-white">?/10</span>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
@@ -103,7 +122,7 @@ export default function CommunityStatsSection({
             </div>
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-white/90">Performance</span>
+                <span className="text-sm text-white">Performance</span>
                 <span className="text-sm font-bold text-white">?/10</span>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
@@ -112,7 +131,7 @@ export default function CommunityStatsSection({
             </div>
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-white/90">Durability</span>
+                <span className="text-sm text-white">Durability</span>
                 <span className="text-sm font-bold text-white">?/10</span>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">

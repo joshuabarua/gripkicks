@@ -16,12 +16,12 @@ export default function RatingInfoTooltip({
 }: RatingInfoTooltipProps) {
   const getMessage = () => {
     if (showCommunityAverages) {
-      return `Community averages from ${totalRatings} users. Add your rating to help improve accuracy!`;
+      return `Community score from ${totalRatings} users. Add your rating to help improve accuracy!`;
     }
     if (!hasUserRatings) {
-      return "These are calculated baseline stats based on shoe characteristics. Add your own ratings to help others!";
+      return "This is a calculated baseline rank based on shoe characteristics. Add your own ratings to help others!";
     }
-    return "Your personal ratings. Community averages will show once 3+ users rate this shoe.";
+    return "Your personal rank. Community score will show once 3+ users rate this shoe.";
   };
 
   return (

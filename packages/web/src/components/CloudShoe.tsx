@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
 import type { UserShoe } from "@/types/api";
+import { calculateDefaultStats } from '@/components/ShoeStatsModal/utils';
 
 interface CloudShoeProps {
   shoe: UserShoe;
@@ -12,11 +13,21 @@ interface CloudShoeProps {
   index: number;
   rank?: number;
   specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode };
+  totalShoes?: number;
 }
 
-export default function CloudShoe({ shoe, onClick, index, rank, specialLabel }: CloudShoeProps) {
+export default function CloudShoe({ shoe, onClick, index, rank, specialLabel, totalShoes }: CloudShoeProps) {
   const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
+
+  // Calculate average score
+  const avgScore = (() => {
+    const defaultStats = calculateDefaultStats({});
+    const comfort = shoe.comfortScore || defaultStats.comfort;
+    const performance = shoe.performanceRating || defaultStats.performance;
+    const durability = shoe.durabilityRating || defaultStats.durability;
+    return ((comfort + performance + durability) / 3).toFixed(1);
+  })();
 
   useEffect(() => {
     if (isInView) return; // Don't re-observe if already in view
@@ -60,34 +71,39 @@ export default function CloudShoe({ shoe, onClick, index, rank, specialLabel }: 
     >
       {/* Shoe content */}
       <div className="relative z-10 flex flex-col items-center justify-center w-48 h-48">
-        {/* Rank badge - shows on hover */}
-        {rank && (
-          <div className="absolute -top-2 -right-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-lg border-2 border-white">
-              #{rank}
-            </div>
-          </div>
-        )}
+        {/* Action icons - only show if more than one shoe */}
+        {totalShoes && totalShoes > 1 && (
+          <>
+            {/* Rank badge */}
+            {rank && (
+              <div className="absolute -top-[-15px] -right-[-45px] z-30">
+                <div className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
+                  #{rank}
+                </div>
+              </div>
+            )}
 
-        {/* Favourite star */}
-        {shoe.isFavourite && (
-          <div className="absolute -top-[-15px] -right-[-25px] z-30">
-            <div className="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
-              <Star className="w-3 h-3 fill-current" />
-            </div>
-          </div>
-        )}
+            {/* Favourite star */}
+            {shoe.isFavourite && (
+              <div className="absolute -top-[-15px] -right-[-25px] z-30">
+                <div className="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
+                  <Star className="w-3 h-3 fill-current" />
+                </div>
+              </div>
+            )}
 
-        {/* Special label badge */}
-        {specialLabel && (
-          <div className="absolute -top-2 -left-2 z-30">
-            <div className={`rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white ${specialLabel.type === 'most-comfy' ? 'bg-pink-500 text-white' :
-              specialLabel.type === 'oldest' ? 'bg-blue-500 text-white' :
-                'bg-purple-500 text-white'
-              }`}>
-              {specialLabel.icon}
-            </div>
-          </div>
+            {/* Special label badge */}
+            {specialLabel && (
+              <div className="absolute -top-[-15px] -right-[-65px] z-30">
+                <div className={`rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white ${specialLabel.type === 'most-comfy' ? 'bg-pink-500 text-white' :
+                  specialLabel.type === 'oldest' ? 'bg-blue-500 text-white' :
+                    'bg-purple-500 text-white'
+                  }`}>
+                  {specialLabel.icon}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <div className="relative w-44 h-44">
@@ -118,6 +134,12 @@ export default function CloudShoe({ shoe, onClick, index, rank, specialLabel }: 
               <p className="text-xs text-gray-800 text-center font-so-cloudy uppercase whitespace-nowrap leading-tight font-semibold">
                 {shoe.shoe.name}
               </p>
+            </div>
+          </div>
+          {/* Average score - shows on hover */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-black/80 backdrop-blur-sm rounded-full px-3 py-2">
+              <p className="text-white text-sm font-bold">{avgScore}/10</p>
             </div>
           </div>
         </div>

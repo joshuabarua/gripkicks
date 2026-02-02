@@ -16,6 +16,7 @@ import type * as fix from "../fix.js";
 import type * as http from "../http.js";
 import type * as migrations from "../migrations.js";
 import type * as migrations_updateShoeRatings from "../migrations/updateShoeRatings.js";
+import type * as popularity from "../popularity.js";
 import type * as seed from "../seed.js";
 import type * as shoes from "../shoes.js";
 import type * as stash from "../stash.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   migrations: typeof migrations;
   "migrations/updateShoeRatings": typeof migrations_updateShoeRatings;
+  popularity: typeof popularity;
   seed: typeof seed;
   shoes: typeof shoes;
   stash: typeof stash;

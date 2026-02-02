@@ -27,6 +27,8 @@ interface ShoeStatsModalProps {
     avgPerformanceRating?: number;
     avgDurabilityRating?: number;
     totalRatings?: number;
+    popularityCount?: number;
+    totalShoesInDatabase?: number;
   } | null;
   isOpen: boolean;
   onClose: () => void;
@@ -61,6 +63,8 @@ export default function ShoeStatsModal({
   const avgComfortScore = hasFullShoe ? fullShoe?.avgComfortScore : undefined;
   const avgPerformanceRating = hasFullShoe ? fullShoe?.avgPerformanceRating : undefined;
   const avgDurabilityRating = hasFullShoe ? fullShoe?.avgDurabilityRating : undefined;
+  const popularityCount = hasFullShoe ? fullShoe?.popularityCount : undefined;
+  const totalShoesInDatabase = hasFullShoe ? fullShoe?.totalShoesInDatabase : undefined;
 
   const defaultStats = calculateDefaultStats({ aggressiveness, climbingDiscipline, stiffness });
   const showCommunityAverages = !!(totalRatings && totalRatings >= 3);
@@ -82,10 +86,10 @@ export default function ShoeStatsModal({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-500 text-gray-100 border border-white/30 max-w-2xl p-0 overflow-hidden">
           <DialogTitle className="sr-only">
-            Shoe Stats - {shoeName}
+            Shoe Rank - {shoeName}
           </DialogTitle>
           <DialogDescription className="sr-only">
-            View detailed statistics and ratings for the {shoeName} climbing shoe including comfort, performance, and durability ratings.
+            View detailed rank and ratings for the {shoeName} climbing shoe including comfort, performance, and durability ratings.
           </DialogDescription>
 
           <ShoeStatsHeader
@@ -127,6 +131,8 @@ export default function ShoeStatsModal({
               comfortScore={comfortScore}
               performanceRating={performanceRating}
               durabilityRating={durabilityRating}
+              popularityCount={popularityCount}
+              totalShoesInDatabase={totalShoesInDatabase}
             />
 
             <AdditionalInfo

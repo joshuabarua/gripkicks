@@ -17,9 +17,18 @@ export default function PersonalStatsSection({
   durabilityRating,
   defaultStats
 }: PersonalStatsSectionProps) {
+  const hasDefaultScore = !comfortScore && !performanceRating && !durabilityRating;
+
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-semibold text-white mb-3">Your Personal Stats</h3>
+      <h3 className="text-lg font-semibold text-white mb-3">
+        Personal Rank
+        {hasDefaultScore && (
+          <span className="text-sm font-normal text-white/70 ml-2">
+            (Default: {((defaultStats.comfort + defaultStats.performance + defaultStats.durability) / 3).toFixed(1)})
+          </span>
+        )}
+      </h3>
       <div className="grid grid-cols-3 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -29,15 +38,9 @@ export default function PersonalStatsSection({
         >
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="w-5 h-5 text-yellow-400" />
-            <span className="text-sm text-white/90">Comfort</span>
-            {!comfortScore && (
-              <span className="text-xs text-white/90">(avg)</span>
-            )}
-            {comfortScore && (
-              <span className="text-xs text-blue-400">(your rating)</span>
-            )}
+            <span className="text-sm text-white">Comfort</span>
           </div>
-          <div className={`text-3xl font-bold ${comfortScore ? 'text-white' : 'text-gray-400'}`}>
+          <div className="text-3xl font-bold text-white">
             {(comfortScore || defaultStats.comfort).toFixed(1)}
           </div>
         </motion.div>
@@ -50,15 +53,9 @@ export default function PersonalStatsSection({
         >
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-5 h-5 text-blue-400" />
-            <span className="text-sm text-white/90">Performance</span>
-            {!performanceRating && (
-              <span className="text-xs text-white/90">(avg)</span>
-            )}
-            {performanceRating && (
-              <span className="text-xs text-blue-400">(your rating)</span>
-            )}
+            <span className="text-sm text-white">Performance</span>
           </div>
-          <div className={`text-3xl font-bold ${performanceRating ? 'text-white' : 'text-gray-400'}`}>
+          <div className="text-3xl font-bold text-white">
             {(performanceRating || defaultStats.performance).toFixed(1)}
           </div>
         </motion.div>
@@ -71,15 +68,9 @@ export default function PersonalStatsSection({
         >
           <div className="flex items-center gap-2 mb-2">
             <Shield className="w-5 h-5 text-green-400" />
-            <span className="text-sm text-white/90">Durability</span>
-            {!durabilityRating && (
-              <span className="text-xs text-white/90">(avg)</span>
-            )}
-            {durabilityRating && (
-              <span className="text-xs text-blue-400">(your rating)</span>
-            )}
+            <span className="text-sm text-white">Durability</span>
           </div>
-          <div className={`text-3xl font-bold ${durabilityRating ? 'text-white' : 'text-gray-400'}`}>
+          <div className="text-3xl font-bold text-white">
             {(durabilityRating || defaultStats.durability).toFixed(1)}
           </div>
         </motion.div>

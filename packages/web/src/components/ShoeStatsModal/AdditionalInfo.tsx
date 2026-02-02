@@ -10,7 +10,7 @@ interface AdditionalInfoProps {
 
 export default function AdditionalInfo({ size, condition, purchaseDate }: AdditionalInfoProps) {
   const hasAnyInfo = size || condition || purchaseDate;
-  
+
   if (!hasAnyInfo) return null;
 
   return (
@@ -22,20 +22,20 @@ export default function AdditionalInfo({ size, condition, purchaseDate }: Additi
     >
       {size && (
         <div className="flex justify-between">
-          <span className="text-white/90">Size</span>
-          <span className="font-medium">{size}</span>
+          <span className="text-white">Size</span>
+          <span className="font-medium text-white">{size}</span>
         </div>
       )}
       {condition && (
         <div className="flex justify-between">
-          <span className="text-white/90">Condition</span>
-          <span className="font-medium capitalize">{condition}</span>
+          <span className="text-white">Condition</span>
+          <span className="font-medium capitalize text-white">{condition}</span>
         </div>
       )}
       {purchaseDate && (
         <div className="flex justify-between">
-          <span className="text-white/90">Purchase Date</span>
-          <span className="font-medium">{new Date(purchaseDate).toLocaleDateString()}</span>
+          <span className="text-white">Purchase Date</span>
+          <span className="font-medium text-white">{new Date(purchaseDate).toLocaleDateString()}</span>
         </div>
       )}
     </motion.div>

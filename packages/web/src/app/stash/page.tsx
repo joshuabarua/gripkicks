@@ -29,10 +29,10 @@ export default function ShoeSanctuaryPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedShoe, setSelectedShoe] = useState<UserShoe | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [editingShoe, setEditingShoe] = useState<UserShoe | null>(null);
-  const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [editForm, setEditForm] = useState<EditFormData>({
     size: undefined,
     purchaseDate: undefined,
@@ -47,6 +47,11 @@ export default function ShoeSanctuaryPage() {
   // Fetch all shoes from Convex
   const shoesData = useQuery(api.shoes.list);
   const allShoes = useMemo(() => shoesData ?? [], [shoesData]);
+
+  // Fetch popularity data for all shoes
+  const popularityData = useQuery(api.popularity.getAllShoesPopularity);
+  const popularityMap = popularityData ? new Map(popularityData.map(p => [p.shoeId, p.count])) : new Map();
+  const totalShoesInDatabase = popularityData ? popularityData.reduce((sum, p) => sum + p.count, 0) : 0;
 
   const fetchUserStash = useCallback(async () => {
     setIsLoading(true);
@@ -446,6 +451,7 @@ export default function ShoeSanctuaryPage() {
                             index={index}
                             rank={shoeRankings.get(shoe._id)}
                             specialLabel={specialLabels[shoe._id]}
+                            totalShoes={userShoes.length}
                           />
                         ))}
                       </div>
@@ -472,7 +478,11 @@ export default function ShoeSanctuaryPage() {
 
             <ShoeStatsModal
               shoe={selectedShoe}
-              fullShoe={selectedShoe ? allShoes.find(s => s._id === selectedShoe.shoeId) : undefined}
+              fullShoe={selectedShoe ? {
+                ...allShoes.find(s => s._id === selectedShoe.shoeId),
+                popularityCount: popularityMap.get(selectedShoe.shoeId),
+                totalShoesInDatabase
+              } : undefined}
               isOpen={isStatsModalOpen}
               onClose={() => {
                 setIsStatsModalOpen(false);
