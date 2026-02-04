@@ -18,10 +18,10 @@ export const apiClient = hc(apiBaseUrl, {
 });
 
 // Helper function for API calls returning ResultAsync
-export async function fetchApi<T>(
+export function fetchApi<T>(
   path: string,
   options?: RequestInit
-): Promise<ResultAsync<T, ApiError>> {
+): ResultAsync<T, ApiError> {
   return ResultAsync.fromPromise(
     (async () => {
       const res = await fetch(`${apiBaseUrl}${path}`, {

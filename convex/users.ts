@@ -95,6 +95,7 @@ export const update = mutation({
   args: {
     id: v.id("users"),
     name: v.optional(v.string()),
+    phone: v.optional(v.string()),
     image: v.optional(v.string()),
     emailVerified: v.optional(v.boolean()),
     footShape: v.optional(footShapeValidator),

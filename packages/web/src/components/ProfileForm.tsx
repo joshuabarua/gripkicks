@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
-import { useMutation } from '@/hooks/useAsync';
+'use client'
+
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { useMutation, useAsync } from '@/hooks/useAsync';
 import { fetchApi } from '@/lib/api-client';
 import { ApiError } from '@/lib/errors';
+import { ResultAsync } from 'neverthrow';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, CheckCircle2, AlertCircle, User } from 'lucide-react';
 
-interface ProfileData {
-  name: string;
-  phone?: string;
-  image?: string;
-}
+const profileSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
+  phone: z.string().optional().refine(
+    (val) => !val || /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/.test(val),
+    { message: 'Please enter a valid phone number' }
+  ),
+  image: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
+});
+
+type ProfileData = z.infer<typeof profileSchema>;
 
 export function ProfileForm() {
   const [formData, setFormData] = useState<ProfileData>({
@@ -15,20 +30,58 @@ export function ProfileForm() {
     phone: '',
     image: '',
   });
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
 
-  const updateProfile = (data: ProfileData) => {
-    return fetchApi<void>('/api/v1/profile', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-  };
+  // Fetch current profile data on mount
+  const profileLoader = useAsync<ProfileData>();
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const result = await profileLoader.execute(() => 
+        fetchApi<ProfileData>('/api/v1/profile')
+      );
+      
+      if (result.isOk()) {
+        const profileData = result.value;
+        setFormData({
+          name: profileData.name || '',
+          phone: profileData.phone || '',
+          image: profileData.image || '',
+        });
+        setImageError(false);
+      }
+    };
+
+    loadProfile();
+  }, [profileLoader]);
+
+  const updateProfile = (data: ProfileData): ResultAsync<void, ApiError> =>
+    ResultAsync.fromPromise(
+      fetchApi<void>('/api/v1/profile', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }).then((resultAsync) => resultAsync.match(
+        (value) => value,
+        (error) => { throw error; }
+      )),
+      (error) => error as ApiError
+    );
 
   const { error, isLoading, isSuccess, isError, mutate, reset } = useMutation(updateProfile);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError(null);
     
-    const result = await mutate(formData);
+    const validationResult = profileSchema.safeParse(formData);
+    if (!validationResult.success) {
+      const firstError = validationResult.error.issues[0];
+      setValidationError(firstError.message);
+      return;
+    }
+    
+    const result = await mutate(validationResult.data);
     
     if (result.isOk()) {
       console.log('Profile updated successfully');
@@ -41,104 +94,146 @@ export function ProfileForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-          Phone
-        </label>
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="image" className="block text-sm font-medium text-gray-700">
-          Image URL
-        </label>
-        <input
-          type="url"
-          id="image"
-          name="image"
-          value={formData.image}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-
-      {isError && error && (
-        <div className={`rounded-md p-4 ${
-          getErrorSeverity(error) === 'error' ? 'bg-red-50' :
-          getErrorSeverity(error) === 'warning' ? 'bg-yellow-50' :
-          'bg-blue-50'
-        }`}>
-          <h3 className={`text-sm font-medium ${
-            getErrorSeverity(error) === 'error' ? 'text-red-800' :
-            getErrorSeverity(error) === 'warning' ? 'text-yellow-800' :
-            'text-blue-800'
-          }`}>
-            {getErrorSeverity(error) === 'error' ? 'Error' :
-             getErrorSeverity(error) === 'warning' ? 'Warning' :
-             'Notice'}
-          </h3>
-          <p className={`mt-2 text-sm ${
-            getErrorSeverity(error) === 'error' ? 'text-red-700' :
-            getErrorSeverity(error) === 'warning' ? 'text-yellow-700' :
-            'text-blue-700'
-          }`}>
-            {getErrorDisplayMessage(error)}
-          </p>
+    <Card className="max-w-2xl">
+      <CardHeader>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            {formData.image && !imageError ? (
+              <Image 
+                src={formData.image} 
+                alt="Profile" 
+                width={64}
+                height={64}
+                className="h-16 w-16 rounded-full object-cover"
+                onError={() => setImageError(true)}
+              />
+            ) : null}
+            {(!formData.image || imageError) && (
+              <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="h-8 w-8 text-gray-500" />
+              </div>
+            )}
+          </div>
+          <div>
+            <CardTitle className="text-2xl">Profile Settings</CardTitle>
+            <CardDescription>Update your profile information</CardDescription>
+          </div>
         </div>
-      )}
+      </CardHeader>
+      <CardContent>
+        {profileLoader.isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid gap-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="John Doe"
+              value={formData.name}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
 
-      {isSuccess && (
-        <div className="rounded-md bg-green-50 p-4">
-          <h3 className="text-sm font-medium text-green-800">Success</h3>
-          <p className="mt-2 text-sm text-green-700">
-            Profile updated successfully!
-          </p>
-        </div>
-      )}
+          <div className="grid gap-2">
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="+1 (555) 123-4567"
+              value={formData.phone}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
 
-      <div className="flex space-x-2">
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="flex-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-        >
-          {isLoading ? 'Saving...' : 'Save Profile'}
-        </button>
+          <div className="grid gap-2">
+            <Label htmlFor="image">Profile Image URL</Label>
+            <Input
+              id="image"
+              name="image"
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              value={formData.image}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
 
-        {(isSuccess || isError) && (
-          <button
-            type="button"
-            onClick={reset}
-            className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Reset
-          </button>
+          {validationError && (
+            <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4" />
+              {validationError}
+            </div>
+          )}
+
+          {isError && error && (
+            <div className={`flex items-center gap-2 rounded-md p-3 text-sm ${
+              getErrorSeverity(error) === 'error' ? 'bg-destructive/10 text-destructive' :
+              getErrorSeverity(error) === 'warning' ? 'bg-yellow-50 text-yellow-800' :
+              'bg-blue-50 text-blue-800'
+            }`}>
+              <AlertCircle className="h-4 w-4" />
+              <div>
+                <p className="font-medium">
+                  {getErrorSeverity(error) === 'error' ? 'Error' :
+                   getErrorSeverity(error) === 'warning' ? 'Warning' :
+                   'Notice'}
+                </p>
+                <p className="mt-1">{getErrorDisplayMessage(error)}</p>
+              </div>
+            </div>
+          )}
+
+          {isSuccess && (
+            <div className="flex items-center gap-2 rounded-md bg-green-50 p-3 text-sm text-green-800">
+              <CheckCircle2 className="h-4 w-4" />
+              <div>
+                <p className="font-medium">Success</p>
+                <p className="mt-1">Profile updated successfully!</p>
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-2 pt-2">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="flex-1"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Save Profile'
+              )}
+            </Button>
+
+            {(isSuccess || isError || validationError) && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  reset();
+                  setValidationError(null);
+                }}
+              >
+                Reset
+              </Button>
+            )}
+          </div>
+        </form>
         )}
-      </div>
-    </form>
+      </CardContent>
+    </Card>
   );
 }
 

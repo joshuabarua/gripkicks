@@ -9,6 +9,10 @@ interface NavLinksProps {
 
 const baseLinks = [
     {
+        title: "Dashboard",
+        href: "/dashboard"
+    },
+    {
         title: "Profile",
         href: "/profile"
     },
@@ -25,11 +29,19 @@ const baseLinks = [
         href: "/findmyshoe"
     },
     {
+        title: "3D Selector",
+        href: "/selector"
+    },
+    {
         title: "Logout",
         href: "#"
     }
 ]
 const footerLinks = [
+    {
+        title: "Dashboard",
+        href: "/dashboard"
+    },
     {
         title: "Profile",
         href: "/profile"

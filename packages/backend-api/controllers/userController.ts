@@ -3,6 +3,7 @@ import { logApiError, createErrorResponse } from '../utils/errorLogger';
 import { userService } from '../services/user.service';
 import { resultToHonoResponse } from '../utils/response';
 import { UnauthorizedError } from '../src/lib/errors';
+import { findUserByBetterAuthId, updateUserInConvex, getConvexUrl, fetchWithTimeout } from '../utils/convexHelper';
 
 export const getUsers = async (c: Context): Promise<Response> => {
   try {
@@ -34,12 +35,29 @@ export const getUserById = async (c: Context): Promise<Response> => {
 export const getProfile = async (c: Context): Promise<Response> => {
   const user = c.get('user');
   if (!user || !user.id) {
-    const result = await userService.getUserById('');
-    return resultToHonoResponse(c, result);
+    return c.json({ success: false, message: 'Unauthorized', error: 'User not found in context' }, 401);
   }
 
-  const result = await userService.getUserById(user.id);
-  return resultToHonoResponse(c, result);
+  try {
+    // Find user in Convex using Better Auth ID
+    const userResult = await findUserByBetterAuthId(user.id);
+    
+    if (!userResult.success) {
+      return c.json({ success: false, message: 'User not found' }, 404);
+    }
+
+    return c.json({
+      success: true,
+      data: userResult.data
+    });
+  } catch (error) {
+    logApiError('Failed to get profile', error, {
+      method: 'GET',
+      url: '/api/v1/profile',
+      userId: user.id
+    });
+    return c.json(createErrorResponse(error, 'Failed to get profile'), 500);
+  }
 };
 
 export const editProfile = async (c: Context): Promise<Response> => {
@@ -58,31 +76,24 @@ export const editProfile = async (c: Context): Promise<Response> => {
     return c.json({ success: false, message: 'No fields to update' }, 400);
   }
   try {
-    // Call Convex mutation to update user
-    const convexUrl = process.env.CONVEX_URL;
-    if (!convexUrl) {
-      throw new Error('CONVEX_URL not configured');
+    // Find user in Convex using Better Auth ID
+    const userResult = await findUserByBetterAuthId(user.id);
+    
+    if (!userResult.success) {
+      return c.json({ success: false, message: 'User not found' }, 404);
     }
 
-    const updateResponse = await fetch(`${convexUrl}/api/users/update`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: user.id,
-        ...updateFields
-      })
-    });
-
-    if (!updateResponse.ok) {
-      console.error('Failed to update user in Convex:', await updateResponse.text());
+    // Update the user using the Convex user ID
+    const updateResult = await updateUserInConvex(userResult.data._id, updateFields);
+    
+    if (!updateResult.success) {
       return c.json({ success: false, message: 'Failed to update profile' }, 500);
     }
 
-    const updatedUser = await updateResponse.json();
     return c.json({
       success: true,
       message: 'Profile updated successfully',
-      data: updatedUser
+      data: updateResult.data
     });
   } catch (error) {
     logApiError('Failed to update profile', error, {
@@ -111,8 +122,23 @@ export const completeOnboarding = async (c: Context): Promise<Response> => {
       return c.json({ success: false, message: 'Invalid foot shape' }, 400);
     }
 
-    // TODO: Replace with Convex mutation
-    // For now, just return success with the onboarding data
+    // Find user in Convex using Better Auth ID
+    const userResult = await findUserByBetterAuthId(user.id);
+    
+    if (!userResult.success) {
+      return c.json({ success: false, message: 'User not found' }, 404);
+    }
+
+    // Update user with onboarding data
+    const updateResult = await updateUserInConvex(userResult.data._id, {
+      footShape: footShape || undefined,
+      onboardingComplete: true
+    });
+
+    if (!updateResult.success) {
+      return c.json({ success: false, message: 'Failed to complete onboarding' }, 500);
+    }
+
     return c.json({
       success: true,
       message: 'Onboarding completed successfully',
@@ -124,8 +150,12 @@ export const completeOnboarding = async (c: Context): Promise<Response> => {
       }
     });
   } catch (error) {
-    console.error('Error completing onboarding:', error);
-    return c.json({ success: false, message: 'Failed to complete onboarding', error: String(error) }, 500);
+    logApiError('Failed to complete onboarding', error, {
+      method: 'POST',
+      url: '/api/v1/users/onboarding',
+      userId: user.id,
+    });
+    return c.json(createErrorResponse(error, 'Failed to complete onboarding'), 500);
   }
 };
 
@@ -148,13 +178,10 @@ export const getUserStash = async (c: Context): Promise<Response> => {
   }
 
   try {
-    // Get the Convex HTTP URL
-    const convexUrl = process.env.CONVEX_HTTP_URL || process.env.CONVEX_SITE_URL ||
-      (process.env.CONVEX_URL?.replace('.convex.cloud', '.convex.site')) ||
-      'http://localhost:3210';
+    const convexUrl = getConvexUrl();
 
     // Try to get user's Convex ID
-    let userResponse = await fetch(`${convexUrl}/api/users/findByBetterAuthId`, {
+    let userResponse = await fetchWithTimeout(`${convexUrl}/api/users/findByBetterAuthId`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ betterAuthId: user.id })
@@ -175,7 +202,7 @@ export const getUserStash = async (c: Context): Promise<Response> => {
     }
 
     // Get user's stash
-    const stashResponse = await fetch(`${convexUrl}/api/stash/getUserStash`, {
+    const stashResponse = await fetchWithTimeout(`${convexUrl}/api/stash/getUserStash`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: userData.data._id })

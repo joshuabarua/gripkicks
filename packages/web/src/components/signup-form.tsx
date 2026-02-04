@@ -151,7 +151,7 @@ export function SignupForm() {
                       setError(ctx.error.message);
                     },
                     onSuccess: () => {
-                      router.push("/");
+                      router.push("/onboarding");
                     },
                   },
                 });
@@ -170,7 +170,7 @@ export function SignupForm() {
               onClick={async () => {
                 await signIn.social({
                   provider: "google",
-                  callbackURL: "/",
+                  callbackURL: "/onboarding",
                   fetchOptions: {
                     onRequest: () => {
                       setLoading(true);
