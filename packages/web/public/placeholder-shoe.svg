@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
-  <rect width="400" height="300" fill="#f3f4f6"/>
-  <path d="M200 80 C160 80, 140 100, 140 130 C140 160, 160 180, 200 180 C240 180, 260 160, 260 130 C260 100, 240 80, 200 80 Z" fill="#d1d5db"/>
-  <path d="M170 130 L170 160 M180 130 L180 160 M190 130 L190 160 M200 130 L200 160 M210 130 L210 160 M220 130 L220 160 M230 130 L230 160" stroke="#9ca3af" stroke-width="2"/>
-  <text x="50%" y="220" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#9ca3af">Shoe Image</text>
-</svg>

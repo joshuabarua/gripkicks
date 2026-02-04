@@ -11,6 +11,7 @@ import { ToastContainer } from '@/components/ui/toast-container';
 import { useUserSync } from '@/hooks/useUserSync';
 import { OrientationInitializer } from '@/components/OrientationInitializer';
 import { OnboardingGuard } from '@/components/OnboardingGuard';
+import { PageTransition } from '@/components/PageTransition';
 
 const basteleur = localFont({
   src: '../../public/fonts/Basteleur-Bold.otf',
@@ -49,11 +50,13 @@ export default function RootLayout({
           <OrientationInitializer />
           <ToastProvider>
             <ImageKitProvider>
-              <OnboardingGuard>
-                <Navigation />
-                {children}
-                <Footer />
-              </OnboardingGuard>
+              <PageTransition>
+                <OnboardingGuard>
+                  <Navigation />
+                  {children}
+                  <Footer />
+                </OnboardingGuard>
+              </PageTransition>
               <ToastContainer />
             </ImageKitProvider>
           </ToastProvider>
