@@ -3,20 +3,20 @@
 import React from "react";
 import { useSession } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
+import dynamic from "next/dynamic";
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Footprints, Plus, Star, ArrowRight, Sparkles } from 'lucide-react';
-import { fetchApi } from '@/lib/api-client';
+
+// Dynamically import the 3D scene for better performance
+const Scene = dynamic(() => import("@/components/3d/Scene"), { 
+  ssr: false,
+  loading: () => <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+});
 
 export default function Home() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-
-  // Dynamically import the 3D scene for better performance
-  const Scene = React.useMemo(() => 
-    dynamic(() => import("@/components/3d/Scene"), { ssr: false }), 
-    []
-  );
 
   // Show loading while checking session
   if (isPending) {
@@ -32,14 +32,14 @@ export default function Home() {
     return (
       <main className="flex flex-col items-center dark:bg-dark-background dark:text-dark-foreground">
         {/* Hero Section */}
-        <section className="relative h-[100vh] w-screen flex items-center justify-center overflow-hidden dark:bg-dark-background dark:text-dark-foreground">
-          <div className="absolute inset-0">
+        <section className="relative h-[150vh] w-screen flex items-end justify-center overflow-hidden dark:bg-dark-background dark:text-dark-foreground">
+          <div className="absolute inset-0 mb-[50vh]">
             <Scene />
           </div>
           
-          <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+          <div className="relative z-10 text-center px-6 max-w-4xl mx-auto mb-20">
             <div className="mb-8">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6">
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 ">
                 Find Your Perfect
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500">
                   Climbing Shoe
