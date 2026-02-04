@@ -109,9 +109,38 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
         update: async ({ model, where, update }) => {
           // Better Auth passes where clause with field conditions
           // We need to find the record first, then update by ID
-          const id = where[0]?.value;
+          const field = where[0]?.field;
+          const value = where[0]?.value;
+          
+          if (!field || value === undefined) {
+            throw new Error('Update requires a field and value');
+          }
+          
+          let id: string | undefined;
+          
+          // Special handling for session updates by token
+          if (model === 'session' && field === 'token') {
+            // Find the session by token first
+            const session = await callConvex(model, 'findByToken', { token: value });
+            if (config.debugLogs) {
+              console.log('[ConvexAdapter] Found session:', session);
+            }
+            // The session.id is already a proper Convex ID
+            id = session?.id;
+          } else if (field === 'id' || field === '_id') {
+            id = value as string;
+          } else {
+            // For other fields, we'd need to implement specific lookups
+            console.warn(`[ConvexAdapter] Update by ${field} not implemented for ${model}`);
+            return null;
+          }
+          
           if (!id) {
-            throw new Error('Update requires an ID');
+            throw new Error('Record not found for update');
+          }
+          
+          if (config.debugLogs) {
+            console.log('[ConvexAdapter] Updating session with ID:', id);
           }
           
           const result = await callConvex(model, 'update', { id, data: update });
@@ -119,10 +148,36 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
         },
 
         updateMany: async ({ model, where, update }) => {
-          // For updateMany, we'd need to find all matching records and update them
-          // This is a simplified implementation
-          console.warn('[ConvexAdapter] updateMany not fully implemented');
-          return 0;
+          // Better Auth rarely uses updateMany, but we can implement basic support
+          // by finding records and updating them individually
+          try {
+            if (!where || where.length === 0) {
+              console.warn('[ConvexAdapter] updateMany requires where clause');
+              return 0;
+            }
+
+            // For session model, handle specific cases
+            if (model === 'session') {
+              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+              if (userIdWhere) {
+                const sessions = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                if (Array.isArray(sessions)) {
+                  let updateCount = 0;
+                  for (const session of sessions) {
+                    await callConvex(model, 'update', { id: session.id, data: update });
+                    updateCount++;
+                  }
+                  return updateCount;
+                }
+              }
+            }
+
+            console.warn(`[ConvexAdapter] updateMany not fully implemented for model: ${model}`);
+            return 0;
+          } catch (error) {
+            console.error('[ConvexAdapter] updateMany error:', error);
+            return 0;
+          }
         },
 
         delete: async ({ model, where }) => {
@@ -149,8 +204,9 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             }
           }
           
-          console.warn('[ConvexAdapter] deleteMany not fully implemented for:', model, where);
-          return 0;
+          // TODO: Implement deleteMany for other models
+          console.warn(`[ConvexAdapter] deleteMany not implemented for model: ${model}, where:`, where);
+          throw new Error('deleteMany operation not supported for this configuration');
         },
 
         findOne: async ({ model, where }) => {
@@ -201,31 +257,83 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
         },
 
         findMany: async ({ model, where, limit, offset, sortBy }) => {
-          // For findMany, we need specific implementations
-          if (model === 'session' && where && where.length > 0) {
-            const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
-            if (userIdWhere) {
-              const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
-              return Array.isArray(result) ? result : [];
+          try {
+            // Handle session queries
+            if (model === 'session' && where && where.length > 0) {
+              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+              if (userIdWhere) {
+                const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                let records = Array.isArray(result) ? result : [];
+                
+                // Apply limit and offset if provided
+                if (offset) records = records.slice(offset);
+                if (limit) records = records.slice(0, limit);
+                
+                return records;
+              }
             }
-          }
-          
-          if (model === 'account' && where && where.length > 0) {
-            const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
-            if (userIdWhere) {
-              const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
-              return Array.isArray(result) ? result : [];
+            
+            // Handle account queries
+            if (model === 'account' && where && where.length > 0) {
+              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+              if (userIdWhere) {
+                const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                let records = Array.isArray(result) ? result : [];
+                
+                // Apply limit and offset if provided
+                if (offset) records = records.slice(offset);
+                if (limit) records = records.slice(0, limit);
+                
+                return records;
+              }
             }
+            
+            // For other cases, return empty array (Better Auth typically doesn't need these)
+            if (config.debugLogs) {
+              console.log(`[ConvexAdapter] findMany called for ${model} with unsupported where clause:`, where);
+            }
+            return [];
+          } catch (error) {
+            console.error('[ConvexAdapter] findMany error:', error);
+            return [];
           }
-          
-          console.warn('[ConvexAdapter] findMany not fully implemented for:', model, where);
-          return [];
         },
 
         count: async ({ model, where }) => {
-          // Simplified count implementation
-          const results = await callConvex(model, 'findMany', { where });
-          return Array.isArray(results) ? results.length : 0;
+          try {
+            // Better Auth rarely uses count, but we can implement basic support
+            // by using findMany and counting the results
+            if (!where || where.length === 0) {
+              console.warn('[ConvexAdapter] count without where clause not supported');
+              return 0;
+            }
+
+            // For session model
+            if (model === 'session') {
+              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+              if (userIdWhere) {
+                const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                return Array.isArray(result) ? result.length : 0;
+              }
+            }
+
+            // For account model
+            if (model === 'account') {
+              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+              if (userIdWhere) {
+                const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                return Array.isArray(result) ? result.length : 0;
+              }
+            }
+
+            if (config.debugLogs) {
+              console.log(`[ConvexAdapter] count called for ${model} with unsupported where clause:`, where);
+            }
+            return 0;
+          } catch (error) {
+            console.error('[ConvexAdapter] count error:', error);
+            return 0;
+          }
         },
 
         options: config,

@@ -1,5 +1,8 @@
 import { Context } from 'hono';
 import { logApiError, createErrorResponse } from '../utils/errorLogger';
+import { userService } from '../services/user.service';
+import { resultToHonoResponse } from '../utils/response';
+import { UnauthorizedError } from '../src/lib/errors';
 
 export const getUsers = async (c: Context): Promise<Response> => {
   try {
@@ -31,20 +34,12 @@ export const getUserById = async (c: Context): Promise<Response> => {
 export const getProfile = async (c: Context): Promise<Response> => {
   const user = c.get('user');
   if (!user || !user.id) {
-    return c.json({ success: false, message: 'Unauthorized', error: 'User not found in context' }, 401);
+    const result = await userService.getUserById('');
+    return resultToHonoResponse(c, result);
   }
-  try {
-    // TODO: Replace with Convex query
-    // For now, return basic user info from context
-    return c.json({
-      id: user.id,
-      email: user.email,
-      name: user.name
-    });
-  } catch (error) {
-    console.error('Error fetching profile:', error);
-    return c.json({ success: false, message: 'Failed to fetch profile', error: String(error) }, 500);
-  }
+
+  const result = await userService.getUserById(user.id);
+  return resultToHonoResponse(c, result);
 };
 
 export const editProfile = async (c: Context): Promise<Response> => {

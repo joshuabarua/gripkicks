@@ -112,11 +112,11 @@ const Navigation: React.FC = () => {
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
       <ul className="flex justify-between items-center text-foreground">
-        <GlowArea className="w-[90px] z-4">
+        <GlowArea className="w-[120px] z-4">
           <Glow color="whitesmoke" className="rounded-sm flex justify-center items-center">
             <li>
               <Link href="/">
-                <h1 className="font-tanker text-2xl hover:scale-105 duration-1000 ease-in-out">Grip Kicks</h1>
+                <h1 className="font-tanker text-2xl hover:scale-105 duration-1000 ease-in-out whitespace-nowrap">Grip Kicks</h1>
               </Link>
             </li>
           </Glow>

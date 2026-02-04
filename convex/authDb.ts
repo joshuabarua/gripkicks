@@ -174,15 +174,24 @@ export const updateSession = mutation({
   args: {
     id: v.id("sessions"),
     token: v.optional(v.string()),
-    expiresAt: v.optional(v.number()),
+    expiresAt: v.optional(v.union(v.number(), v.string())),
     ipAddress: v.optional(v.string()),
     userAgent: v.optional(v.string()),
+    updatedAt: v.optional(v.any()), // Allow updatedAt but don't store it
   },
   handler: async (ctx, args) => {
-    const { id, ...updates } = args;
+    const { id, updatedAt, ...updates } = args;
+    
+    // Convert expiresAt to number if it's a string
+    if (updates.expiresAt && typeof updates.expiresAt === 'string') {
+      updates.expiresAt = new Date(updates.expiresAt).getTime();
+    }
+    
+    // Filter out undefined values and updatedAt (we don't store updatedAt)
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, val]) => val !== undefined)
     );
+    
     await ctx.db.patch(id, filteredUpdates);
     const session = await ctx.db.get(id);
     return session ? {
