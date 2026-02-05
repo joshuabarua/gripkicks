@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Search } from 'lucide-react'
-import { ShoeImage } from '@/components/ShoeImage'
+import ShoeImage from '@/components/ShoeImage'
 import { fetchApi } from '@/lib/api-client'
 import type { Shoe } from '@/types/api'
 
@@ -40,9 +39,10 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
     setIsLoading(true)
     try {
       const response = await fetchApi<Shoe[]>('/api/v1/users/shoes')
-      if (response.success && response.data) {
-        setShoes(response.data)
-        setSearchResults(response.data.slice(0, 10))
+      if (response.isOk()) {
+        const shoes = response.value
+        setShoes(shoes)
+        setSearchResults(shoes.slice(0, 10))
       }
     } catch (error) {
       console.error('Failed to fetch shoes:', error)

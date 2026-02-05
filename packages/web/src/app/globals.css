@@ -305,3 +305,40 @@ a {
 		}
 	}
 }
+
+/* Gradient animation for text */
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.animate-gradient {
+	background-size: 200% 200%;
+	animation: gradient 6s ease infinite;
+}
+
+/* Slow spin animation for background elements */
+@keyframes spin-slow {
+	from {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
+.animate-spin-slow {
+	animation: spin-slow 20s linear infinite;
+}
+
+/* Delay utility */
+.delay-1000 {
+	animation-delay: 1000ms;
+}

@@ -36,7 +36,7 @@ const menu = {
 
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
@@ -48,8 +48,8 @@ const Navigation: React.FC = () => {
   // Function to close menu (used after logout)
   const closeMenu = () => setIsActive(false);
 
-  // Handle mouse movement to show/hide navigation
-  const handleMouseMove = useCallback(() => {
+  // Handle mouse movement and scroll to show navigation
+  const handleUserActivity = useCallback(() => {
     setIsVisible(true);
 
     // Clear existing timeout
@@ -57,28 +57,25 @@ const Navigation: React.FC = () => {
       clearTimeout(timeoutRef.current);
     }
 
-    // Set new timeout to hide navigation after 8 seconds of inactivity
+    // Set new timeout to hide navigation after 3 seconds of inactivity
     timeoutRef.current = setTimeout(() => {
       setIsVisible(false);
-    }, 8000);
+    }, 3000);
   }, []);
 
-  // Set up mouse movement listener
+  // Set up mouse movement and scroll listeners
   useEffect(() => {
-    document.addEventListener('mousemove', handleMouseMove);
-
-    // Initial timeout
-    timeoutRef.current = setTimeout(() => {
-      setIsVisible(false);
-    }, 8000);
+    document.addEventListener('mousemove', handleUserActivity);
+    window.addEventListener('scroll', handleUserActivity, { passive: true });
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousemove', handleUserActivity);
+      window.removeEventListener('scroll', handleUserActivity);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [handleMouseMove]);
+  }, [handleUserActivity]);
 
   // Close menu when route changes
   useEffect(() => {
@@ -107,7 +104,7 @@ const Navigation: React.FC = () => {
       ref={navRef}
       className="fixed top-0 left-0 right-0 z-50 p-4 bg-background/99 backdrop-blur-sm border-b-2 border-white"
       style={{ borderImage: 'none', borderColor: 'rgba(255, 255, 255, 0.8)' }}
-      initial={{ y: 0 }}
+      initial={{ y: -100 }}
       animate={{ y: isVisible ? 0 : -100 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >

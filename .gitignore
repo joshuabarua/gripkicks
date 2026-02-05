@@ -55,3 +55,10 @@ next-env.d.ts
 
 .prettierignore
 # .yarnrc.yml
+
+# Skill files
+SKILL.md
+
+# License files
+LICENSE*
+license*

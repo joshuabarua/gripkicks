@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
@@ -14,13 +14,12 @@ import {
   ChevronRight, 
   ChevronLeft,
   User,
-  Camera,
   Star,
   Sparkles
 } from 'lucide-react'
 import Link from 'next/link'
 import { fetchApi } from '@/lib/api-client'
-import { ShoeImage } from '@/components/ShoeImage'
+import ShoeImage from '@/components/ShoeImage'
 import { ShoeSearch } from '@/components/ShoeSearch'
 import { shoeSizes } from '@/constants/shoe-data'
 import { Label } from '@/components/ui/label'
@@ -63,13 +62,13 @@ export default function OnboardingPage() {
   const [footShape, setFootShape] = useState('')
   const [footVolume, setFootVolume] = useState('')
 
-  const steps: { key: OnboardingStep; title: string; description: string }[] = [
-    { key: 'welcome', title: 'Welcome to GripKicks', description: 'Let\'s set up your profile' },
+  const steps = useMemo(() => [
+    { key: 'welcome', title: 'Welcome to GripKicks', description: 'Let&apos;s set up your profile' },
     { key: 'profile', title: 'Your Profile', description: 'Tell us about yourself' },
     { key: 'foot-data', title: 'Foot Profile', description: 'Help us understand your feet' },
     { key: 'first-shoe', title: 'Your First Shoe', description: 'Add a climbing shoe to your collection' },
-    { key: 'complete', title: 'All Set!', description: 'You\'re ready to climb' }
-  ]
+    { key: 'complete', title: 'All Set!', description: 'You&apos;re ready to climb' }
+  ] as const, [])
 
   useEffect(() => {
     if (!sessionLoading && !session?.user) {
@@ -80,7 +79,7 @@ export default function OnboardingPage() {
     // Calculate progress based on current step
     const stepIndex = steps.findIndex(s => s.key === currentStep)
     setProgress(((stepIndex + 1) / steps.length) * 100)
-  }, [currentStep, session, sessionLoading, router])
+  }, [currentStep, session, sessionLoading, router, steps])
 
   const handleNext = async () => {
     if (currentStep === 'profile') {
@@ -249,7 +248,7 @@ export default function OnboardingPage() {
                     </div>
                   </div>
                   <Button onClick={handleNext} size="lg" className="w-full">
-                    Let's Get Started
+                    Let&apos;s Get Started
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
                 </CardContent>
@@ -306,7 +305,7 @@ export default function OnboardingPage() {
                   <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
                     <Footprints className="w-8 h-8 text-purple-600" />
                   </div>
-                  <CardTitle>What's Your Foot Shape?</CardTitle>
+                  <CardTitle>What&apos;s Your Foot Shape?</CardTitle>
                   <CardDescription>
                     This helps us recommend shoes that will fit you best
                   </CardDescription>
@@ -430,7 +429,7 @@ export default function OnboardingPage() {
                         </div>
                         <div>
                           <Label htmlFor="condition">Condition</Label>
-                          <Select value={shoeFormData.condition} onValueChange={(value: any) => setShoeFormData({ ...shoeFormData, condition: value })}>
+                          <Select value={shoeFormData.condition} onValueChange={(value: string) => setShoeFormData({ ...shoeFormData, condition: value })}>
                             <SelectTrigger>
                               <SelectValue />
                             </SelectTrigger>
@@ -516,7 +515,7 @@ export default function OnboardingPage() {
                   <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <CheckCircle2 className="w-10 h-10 text-white" />
                   </div>
-                  <CardTitle className="text-3xl font-bold">You're All Set!</CardTitle>
+                  <CardTitle className="text-3xl font-bold">You&apos;re All Set!</CardTitle>
                   <CardDescription className="text-lg">
                     Your profile is ready and you can start exploring
                   </CardDescription>

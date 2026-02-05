@@ -22,9 +22,9 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
         return
       }
 
-      // Don't redirect if already on auth, onboarding, or selector pages
-      const publicPaths = ['/auth', '/onboarding', '/selector']
-      if (publicPaths.some(path => window.location.pathname.startsWith(path))) {
+      // Don't redirect if already on auth, onboarding, selector, or home pages
+      const publicPaths = ['/auth', '/onboarding', '/selector', '/']
+      if (publicPaths.some(path => window.location.pathname === path || window.location.pathname.startsWith(path))) {
         setIsCheckingOnboarding(false)
         return
       }
@@ -39,11 +39,6 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
           // If user hasn't completed onboarding, redirect to onboarding
           if (!profileData.onboardingComplete) {
             router.push('/onboarding')
-          } else if (profileData.onboardingComplete) {
-            // If onboarding is complete and user is on home, redirect to dashboard
-            if (window.location.pathname === '/') {
-              router.push('/dashboard')
-            }
           }
         }
       } catch (error) {
