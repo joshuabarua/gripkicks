@@ -44,7 +44,7 @@ export default function ShoeModel() {
           Kicks
         </Text>
 
-        <Text
+        {/* <Text
           fontSize={0.1}
           position={[0, -.8, 0]}
           font="fonts/Sora.ttf"
@@ -52,7 +52,7 @@ export default function ShoeModel() {
           textAlign="center"
         >
           No fuss, community based climbing shoe finder
-        </Text>
+        </Text> */}
 
         <group ref={mesh}>
           <mesh 

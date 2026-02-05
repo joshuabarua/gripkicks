@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { fetchApi } from '@/lib/api-client';
 import type { UserShoe } from '@/types/api';
+import { FullPageLoading } from '@/components/ui/loading';
 
 interface Profile {
   name?: string;
@@ -58,11 +59,7 @@ export default function Dashboard() {
   };
 
   if (isPending || isLoading) {
-    return (
-      <div className="flex min-h-svh w-full items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <FullPageLoading />;
   }
 
   if (!session?.user) {

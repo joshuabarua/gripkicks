@@ -16,6 +16,7 @@ import { ProfileImageUpload } from '@/components/ProfileImageUpload';
 import { PasswordChangeForm } from '@/components/PasswordChangeForm';
 import { EmailChangeForm } from '@/components/EmailChangeForm';
 import { AccountDeletion } from '@/components/AccountDeletion';
+import { FullPageLoading } from '@/components/ui/loading';
 
 interface UserProfile {
   id: string;
@@ -99,11 +100,7 @@ export default function ProfilePage() {
   };
 
   if (sessionLoading || loading) {
-    return (
-      <div className="flex min-h-svh w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <FullPageLoading text="Loading Profile" />;
   }
 
   if (!session?.user) {

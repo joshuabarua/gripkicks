@@ -20,6 +20,7 @@ import CloudShoe from '@/components/CloudShoe';
 import EditShoeDialog from '@/components/EditShoeDialog';
 import ShoeStatsModal from '@/components/ShoeStatsModal';
 import CloudBackground from '@/components/CloudBackground';
+import { FullPageLoading, LoadingBar } from '@/components/ui/loading';
 
 
 export default function ShoeSanctuaryPage() {
@@ -272,11 +273,7 @@ export default function ShoeSanctuaryPage() {
 
 
   if (sessionLoading) {
-    return (
-      <div className="flex min-h-svh w-full items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-      </div>
-    );
+    return <FullPageLoading text="Loading Sanctuary" />;
   }
 
   if (!session?.user) {
@@ -452,8 +449,19 @@ export default function ShoeSanctuaryPage() {
 
                   {isLoading && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-white/60">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-                      <p className="text-xl">Loading your sanctuary...</p>
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          {[0, 1, 2].map((i) => (
+                            <div
+                              key={i}
+                              className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"
+                              style={{ animationDelay: `${i * 0.15}s` }}
+                            />
+                          ))}
+                        </div>
+                        <span className="font-mono text-[10px] text-white/60 tracking-[0.2em]">[LOADING SANCTUARY]</span>
+                        <LoadingBar size="lg" />
+                      </div>
                     </div>
                   )}
 
