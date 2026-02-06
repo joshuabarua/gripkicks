@@ -1,11 +1,16 @@
 import { betterAuth } from 'better-auth';
+import { polar, checkout, portal, webhooks } from '@polar-sh/better-auth';
+import { Polar } from '@polar-sh/sdk';
 import convexAdapter from './convex-adapter';
 
-// Get Convex URL from environment
 const convexUrl = process.env.CONVEX_URL || 'https://peaceful-marten-189.convex.cloud';
 
+const polarClient = new Polar({
+  accessToken: process.env.POLAR_ACCESS_TOKEN,
+  server: (process.env.POLAR_ENVIRONMENT as 'sandbox' | 'production') || 'sandbox',
+});
+
 export const auth = betterAuth({
-  // Use Convex as the database via HTTP adapter
   database: convexAdapter({
     convexUrl,
     debugLogs: process.env.NODE_ENV !== 'production',
@@ -13,7 +18,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     async sendResetPassword(data, request) {
-      // TODO: Send an email to the user with a link to reset their password
       console.log('Password reset requested for:', data.user.email);
     },
   },
@@ -33,11 +37,11 @@ export const auth = betterAuth({
     },
   },
   session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day - update session if older than this
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
     cookieCache: {
       enabled: true,
-      maxAge: 60 * 5, // 5 minutes
+      maxAge: 60 * 5,
     },
   },
   trustedOrigins: [
@@ -46,7 +50,30 @@ export const auth = betterAuth({
   ],
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3001',
+  plugins: [
+    polar({
+      client: polarClient,
+      createCustomerOnSignUp: true,
+      use: [
+        checkout({
+          products: [
+            { productId: process.env.POLAR_PRODUCT_MONTHLY || '', slug: 'monthly' },
+            { productId: process.env.POLAR_PRODUCT_YEARLY || '', slug: 'yearly' },
+            { productId: process.env.POLAR_PRODUCT_LIFETIME || '', slug: 'lifetime' },
+          ],
+          successUrl: '/pricing/success?checkout_id={CHECKOUT_ID}',
+          authenticatedUsersOnly: true,
+        }),
+        portal(),
+        webhooks({
+          secret: process.env.POLAR_WEBHOOK_SECRET!,
+          onPayload: async (payload) => {
+            console.log('[Polar Webhook]', payload.type);
+          },
+        }),
+      ],
+    }),
+  ],
 });
 
-// Export type for Hono RPC
 export type Auth = typeof auth;

@@ -35,13 +35,13 @@ export default function CloudBackground() {
 
   // Generate random positions for clouds
   const clouds = [
-    { src: "/imgs/clouds/cloud1.png", size: 400, opacity: 0.9, duration: 60, delay: 0 },
-    { src: "/imgs/clouds/cloud2.png", size: 350, opacity: 0.85, duration: 45, delay: 8 },
-    { src: "/imgs/clouds/cloud3.png", size: 380, opacity: 0.88, duration: 55, delay: 15 },
-    { src: "/imgs/clouds/cloud4.png", size: 420, opacity: 0.92, duration: 50, delay: 22 },
-    { src: "/imgs/clouds/cloud5.png", size: 360, opacity: 0.87, duration: 48, delay: 5 },
-    { src: "/imgs/clouds/cloud1.png", size: 450, opacity: 0.95, duration: 65, delay: 12 },
-    { src: "/imgs/clouds/cloud3.png", size: 330, opacity: 0.83, duration: 40, delay: 18 }
+    { src: "/imgs/clouds/cloud1.png", size: 400, opacity: 1, duration: 60, delay: 0 },
+    { src: "/imgs/clouds/cloud2.png", size: 350, opacity: 1, duration: 45, delay: 8 },
+    { src: "/imgs/clouds/cloud3.png", size: 380, opacity: 1, duration: 55, delay: 15 },
+    { src: "/imgs/clouds/cloud4.png", size: 420, opacity: 1, duration: 50, delay: 22 },
+    { src: "/imgs/clouds/cloud5.png", size: 360, opacity: 1, duration: 48, delay: 5 },
+    { src: "/imgs/clouds/cloud1.png", size: 450, opacity: 1, duration: 65, delay: 12 },
+    { src: "/imgs/clouds/cloud3.png", size: 330, opacity: 1, duration: 40, delay: 18 }
   ];
 
   // Vertical positions spread out to prevent overlap

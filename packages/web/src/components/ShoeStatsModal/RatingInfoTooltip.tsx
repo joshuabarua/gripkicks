@@ -27,13 +27,13 @@ export default function RatingInfoTooltip({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="flex items-center gap-2 text-sm text-white/80 cursor-help">
-          <Info className="w-4 h-4" />
+        <div className="flex items-center gap-2 text-xs text-neutral-500 cursor-help font-sora">
+          <Info className="w-3.5 h-3.5 text-orange-500/50" />
           <span>{getMessage()}</span>
         </div>
       </TooltipTrigger>
-      <TooltipContent className="bg-gray-900 border border-gray-700">
-        <p>Rate your shoes on comfort, performance, and durability to help the community make better choices.</p>
+      <TooltipContent className="bg-neutral-900 border border-neutral-700">
+        <p className="font-sora text-neutral-300">Rate your shoes on comfort, performance, and durability to help the community make better choices.</p>
       </TooltipContent>
     </Tooltip>
   );

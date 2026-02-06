@@ -114,7 +114,7 @@ export function SignupForm() {
             const formData: SignupFormData = { firstName, lastName, email, password, passwordConfirmation };
             const validationResult = signupSchema.safeParse(formData);
             if (!validationResult.success) {
-              setError(validationResult.error.errors[0].message);
+              setError(validationResult.error.issues[0].message);
               return;
             }
             

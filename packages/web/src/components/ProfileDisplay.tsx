@@ -113,7 +113,7 @@ function ErrorDisplay({ error, onRetry }: ErrorDisplayProps) {
       }`}>
         {getErrorMessage(error)}
       </p>
-      {error.details && (
+      {error.details != null && (
         <details className="mt-2">
           <summary className="text-sm opacity-75 cursor-pointer">Details</summary>
           <pre className="mt-1 text-xs overflow-auto">

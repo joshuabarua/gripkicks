@@ -6,6 +6,7 @@ import { fetchApi } from '@/lib/api-client';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Search, Star, Users, TrendingUp, Footprints, ArrowUpRight } from 'lucide-react';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { FullPageLoading } from '@/components/ui/loading';
 
 interface UserProfile {
@@ -232,9 +233,11 @@ export default function SoleMatePage() {
             >
               <div className="bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-3xl p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center">
-                    <Users className="w-5 h-5 text-orange-500" />
-                  </div>
+                  <AnimatedIcon animation="pulse" trigger="scroll">
+                    <div className="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                      <Users className="w-5 h-5 text-orange-500" />
+                    </div>
+                  </AnimatedIcon>
                   <div>
                     <h2 className="font-tanker text-xl text-white">SOLE SIBLING SPOTLIGHT</h2>
                     <p className="font-sora text-xs text-neutral-400">Climbers with your exact foot profile love these shoes!</p>
@@ -285,9 +288,11 @@ export default function SoleMatePage() {
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-orange-500" />
-              </div>
+              <AnimatedIcon animation="float" trigger="scroll">
+                <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-orange-500" />
+                </div>
+              </AnimatedIcon>
               <h2 className="font-tanker text-2xl text-white">ALL RECOMMENDATIONS</h2>
             </div>
             <div className="space-y-3">

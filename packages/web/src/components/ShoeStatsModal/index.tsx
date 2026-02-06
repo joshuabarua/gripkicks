@@ -13,7 +13,6 @@ import AdditionalInfo from './AdditionalInfo';
 import ShoeImage from '@/components/ShoeImage';
 import { Star, Crown, Clock, Heart, Edit, Trash2, X } from 'lucide-react';
 
-// Tooltip component
 const BadgeTooltip: React.FC<{ children: React.ReactNode; text: string }> = ({ children, text }) => {
   const [isVisible, setIsVisible] = useState(false);
   return (
@@ -25,10 +24,10 @@ const BadgeTooltip: React.FC<{ children: React.ReactNode; text: string }> = ({ c
         {children}
       </div>
       {isVisible && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black/80 text-white text-xs rounded whitespace-nowrap z-50">
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 bg-neutral-900 text-white text-xs rounded-lg whitespace-nowrap z-50 border border-orange-500/20 shadow-xl">
           {text}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-            <div className="border-4 border-transparent border-t-black/80"></div>
+            <div className="border-4 border-transparent border-t-neutral-900"></div>
           </div>
         </div>
       )}
@@ -111,7 +110,7 @@ export default function ShoeStatsModal({
   return (
     <TooltipProvider>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-500 text-gray-100 border border-white/30 max-w-2xl p-0 overflow-hidden">
+        <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-2xl p-0 overflow-hidden rounded-3xl shadow-2xl shadow-orange-500/5">
           <DialogTitle className="sr-only">
             Shoe Rank - {shoeName}
           </DialogTitle>
@@ -119,45 +118,47 @@ export default function ShoeStatsModal({
             View detailed rank and ratings for the {shoeName} climbing shoe including comfort, performance, and durability ratings.
           </DialogDescription>
 
-          <div className="relative bg-gradient-to-r from-orange-600/20 to-amber-600/20 p-6 border-b border-white/30">
-            {/* Action buttons */}
-            <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+          <div className="relative p-6 border-b border-neutral-800">
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+            </div>
+
+            <div className="absolute top-4 right-4 flex items-center gap-1.5 z-10">
               {onToggleFavourite && (
                 <button
                   onClick={onToggleFavourite}
-                  className="text-gray-300 hover:text-yellow-400 transition-colors"
+                  className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
                 >
-                  <Star className={`w-5 h-5 ${shoe.isFavourite ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+                  <Star className={`w-4 h-4 ${shoe.isFavourite ? 'fill-orange-500 text-orange-500' : 'text-neutral-500'}`} />
                 </button>
               )}
               {onEditShoe && (
                 <button
                   onClick={onEditShoe}
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
                 >
-                  <Edit className="w-5 h-5" />
+                  <Edit className="w-4 h-4 text-neutral-400" />
                 </button>
               )}
               {onRemoveShoe && (
                 <button
                   onClick={onRemoveShoe}
-                  className="text-gray-300 hover:text-red-400 transition-colors"
+                  className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-red-900/50 flex items-center justify-center transition-colors"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-4 h-4 text-neutral-400 hover:text-red-400" />
                 </button>
               )}
               <button
                 onClick={onClose}
-                className="text-gray-300 hover:text-white transition-colors"
+                className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 text-neutral-400" />
               </button>
             </div>
 
-            <div className="flex items-center gap-4">
-              {/* Shoe Image - Curved */}
-              <div className="w-28 h-28 flex-shrink-0 rounded-full overflow-hidden bg-white/20 p-1">
-                <div className="w-full h-full rounded-full overflow-hidden bg-white">
+            <div className="relative flex items-center gap-5">
+              <div className="w-28 h-28 flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 p-1">
+                <div className="w-full h-full rounded-xl overflow-hidden bg-white">
                   <ShoeImage
                     brand={shoeBrand}
                     shoeName={shoeName}
@@ -175,68 +176,58 @@ export default function ShoeStatsModal({
                 </div>
               </div>
 
-              {/* Title and badges inline */}
-              <div className="flex items-center justify-center gap-4">
-                <div>
-                  <div className="flex items-center gap-10">
-                    <h2 className="text-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
-                    {/* Rank and badges inline with title */}
-                    <div className="flex items-center gap-2">
-                      {/* Rank badge */}
-                      {rank && (
-                        <BadgeTooltip text={`Rank #${rank} in your collection`}>
-                          <div className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
-                            #{rank}
+              <div>
+                <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-1">[SHOE_STATS]</p>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h2 className="text-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
+                  <div className="flex items-center gap-1.5">
+                    {rank && (
+                      <BadgeTooltip text={`Rank #${rank} in your collection`}>
+                        <div className="bg-orange-500 text-black text-[10px] font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                          #{rank}
+                        </div>
+                      </BadgeTooltip>
+                    )}
+                    {shoe.isFavourite && (
+                      <BadgeTooltip text="Favorite shoe">
+                        <div className="bg-orange-500/20 text-orange-500 rounded-full w-6 h-6 flex items-center justify-center border border-orange-500/30">
+                          <Star className="w-3 h-3 fill-current" />
+                        </div>
+                      </BadgeTooltip>
+                    )}
+                    {userShoes && userShoes.length > 1 && shoe.comfortScore && shoe.comfortScore > 0 && shoe === userShoes.reduce((prev: UserShoe, current: UserShoe) =>
+                      (current.comfortScore || 0) > (prev.comfortScore || 0) ? current : prev
+                    ) && (
+                        <BadgeTooltip text="Most comfortable shoe">
+                          <div className="bg-pink-500/20 text-pink-400 rounded-full w-6 h-6 flex items-center justify-center border border-pink-500/30">
+                            <Heart className="w-3 h-3 fill-current" />
                           </div>
                         </BadgeTooltip>
                       )}
-                      {/* Favourite star */}
-                      {shoe.isFavourite && (
-                        <BadgeTooltip text="Favorite shoe">
-                          <div className="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
-                            <Star className="w-3 h-3 fill-current" />
+                    {userShoes && userShoes.length > 1 && shoe.purchaseDate && shoe === [...userShoes].filter(s => s.purchaseDate).reduce((prev: UserShoe, current: UserShoe) =>
+                      new Date(current.purchaseDate!).getTime() < new Date(prev.purchaseDate!).getTime() ? current : prev
+                    ) && (
+                        <BadgeTooltip text="Oldest shoe">
+                          <div className="bg-blue-500/20 text-blue-400 rounded-full w-6 h-6 flex items-center justify-center border border-blue-500/30">
+                            <Clock className="w-3 h-3" />
                           </div>
                         </BadgeTooltip>
                       )}
-                      {/* Most comfortable */}
-                      {userShoes && userShoes.length > 1 && shoe.comfortScore && shoe.comfortScore > 0 && shoe === userShoes.reduce((prev: UserShoe, current: UserShoe) =>
-                        (current.comfortScore || 0) > (prev.comfortScore || 0) ? current : prev
-                      ) && (
-                          <BadgeTooltip text="Most comfortable shoe">
-                            <div className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
-                              <Heart className="w-3 h-3 fill-current" />
-                            </div>
-                          </BadgeTooltip>
-                        )}
-                      {/* Oldest shoe */}
-                      {userShoes && userShoes.length > 1 && shoe.purchaseDate && shoe === [...userShoes].filter(s => s.purchaseDate).reduce((prev: UserShoe, current: UserShoe) =>
-                        new Date(current.purchaseDate!).getTime() < new Date(prev.purchaseDate!).getTime() ? current : prev
-                      ) && (
-                          <BadgeTooltip text="Oldest shoe">
-                            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
-                              <Clock className="w-3 h-3" />
-                            </div>
-                          </BadgeTooltip>
-                        )}
-                      {/* Most worn */}
-                      {userShoes && userShoes.length > 1 && shoe.condition && shoe === [...userShoes].filter(s => s.condition).reduce((prev: UserShoe, current: UserShoe) => {
-                        const conditionOrder = { 'worn': 0, 'fair': 1, 'good': 2, 'excellent': 3, 'new': 4 };
-                        const prevOrder = conditionOrder[current.condition as keyof typeof conditionOrder] ?? 999;
-                        const currentOrder = conditionOrder[prev.condition as keyof typeof conditionOrder] ?? 999;
-                        return currentOrder < prevOrder ? current : prev;
-                      }) && (
-                          <BadgeTooltip text="Most worn shoe">
-                            <div className="bg-purple-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
-                              <Crown className="w-3 h-3 fill-current" />
-                            </div>
-                          </BadgeTooltip>
-                        )}
-                    </div>
+                    {userShoes && userShoes.length > 1 && shoe.condition && shoe === [...userShoes].filter(s => s.condition).reduce((prev: UserShoe, current: UserShoe) => {
+                      const conditionOrder = { 'worn': 0, 'fair': 1, 'good': 2, 'excellent': 3, 'new': 4 };
+                      const prevOrder = conditionOrder[current.condition as keyof typeof conditionOrder] ?? 999;
+                      const currentOrder = conditionOrder[prev.condition as keyof typeof conditionOrder] ?? 999;
+                      return currentOrder < prevOrder ? current : prev;
+                    }) && (
+                        <BadgeTooltip text="Most worn shoe">
+                          <div className="bg-purple-500/20 text-purple-400 rounded-full w-6 h-6 flex items-center justify-center border border-purple-500/30">
+                            <Crown className="w-3 h-3 fill-current" />
+                          </div>
+                        </BadgeTooltip>
+                      )}
                   </div>
-                  <p className="text-orange-100">{shoeBrand}</p>
                 </div>
-
-
+                <p className="text-neutral-500 font-sora text-sm mt-1">{shoeBrand}</p>
               </div>
             </div>
           </div>

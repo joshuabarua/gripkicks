@@ -5,6 +5,7 @@ import { useSession } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import dynamic from "next/dynamic";
 import { ArrowUpRight, Footprints, Zap, Target } from 'lucide-react';
+import { AnimatedNavIcon } from '@/components/ui/AnimatedNavIcon';
 import { motion } from 'framer-motion';
 import { FullPageLoading } from '@/components/ui/loading';
 
@@ -105,7 +106,7 @@ export default function HomeCreative() {
               viewport={{ once: true }}
               className="col-span-6 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between"
             >
-              <Zap className="w-8 h-8 text-orange-500" />
+              <AnimatedNavIcon icon={<Zap className="w-8 h-8 text-orange-500" />} animation="pulse" size={32} />
               <div>
                 <div className="font-tanker text-5xl text-white">100%</div>
                 <p className="font-sora text-neutral-500 text-sm mt-1">Community powered</p>
@@ -120,9 +121,7 @@ export default function HomeCreative() {
               viewport={{ once: true }}
               className="col-span-6 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between group hover:border-orange-500/30 transition-colors"
             >
-              <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                <Footprints className="w-6 h-6 text-orange-500" />
-              </div>
+              <AnimatedNavIcon icon={<div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center"><Footprints className="w-6 h-6 text-orange-500" /></div>} animation="wiggle" size={48} />
               <div>
                 <h4 className="font-tanker text-xl text-white mb-1">Foot Lab</h4>
                 <p className="font-sora text-neutral-500 text-xs">Community-driven foot profiling</p>
@@ -136,9 +135,7 @@ export default function HomeCreative() {
               viewport={{ once: true }}
               className="col-span-6 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between group hover:border-orange-500/30 transition-colors"
             >
-              <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                <Target className="w-6 h-6 text-orange-500" />
-              </div>
+              <AnimatedNavIcon icon={<div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center"><Target className="w-6 h-6 text-orange-500" /></div>} animation="spin" size={48} />
               <div>
                 <h4 className="font-tanker text-xl text-white mb-1">Smart Match</h4>
                 <p className="font-sora text-neutral-500 text-xs">Personalized recommendations</p>

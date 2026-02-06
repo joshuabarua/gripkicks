@@ -18,24 +18,24 @@ export default function AdditionalInfo({ size, condition, purchaseDate }: Additi
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.8 }}
-      className="border-t border-white/20 pt-4 space-y-2"
+      className="border-t border-neutral-800 pt-4 space-y-2"
     >
       {size && (
         <div className="flex justify-between">
-          <span className="text-white">Size</span>
-          <span className="font-medium text-white">{size}</span>
+          <span className="text-neutral-400 font-sora text-sm">Size</span>
+          <span className="font-medium text-white font-mono text-sm">{size}</span>
         </div>
       )}
       {condition && (
         <div className="flex justify-between">
-          <span className="text-white">Condition</span>
-          <span className="font-medium capitalize text-white">{condition}</span>
+          <span className="text-neutral-400 font-sora text-sm">Condition</span>
+          <span className="font-medium capitalize text-white font-mono text-sm">{condition}</span>
         </div>
       )}
       {purchaseDate && (
         <div className="flex justify-between">
-          <span className="text-white">Purchase Date</span>
-          <span className="font-medium text-white">{new Date(purchaseDate).toLocaleDateString()}</span>
+          <span className="text-neutral-400 font-sora text-sm">Purchase Date</span>
+          <span className="font-medium text-white font-mono text-sm">{new Date(purchaseDate).toLocaleDateString()}</span>
         </div>
       )}
     </motion.div>

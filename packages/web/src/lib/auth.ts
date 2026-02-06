@@ -1,12 +1,11 @@
 import { createAuthClient } from 'better-auth/react';
+import { polarClient } from '@polar-sh/better-auth/client';
 
-// Better Auth client configuration
-// Points to the backend API where Better Auth is running
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  plugins: [polarClient()],
 });
 
-// Export commonly used methods
 export const {
   signIn,
   signUp,

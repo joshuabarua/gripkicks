@@ -33,12 +33,12 @@ export function ProfileForm() {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
 
-  // Fetch current profile data on mount
   const profileLoader = useAsync<ProfileData>();
+  const { execute: loadProfileData } = profileLoader;
 
   useEffect(() => {
     const loadProfile = async () => {
-      const result = await profileLoader.execute(() => 
+      const result = await loadProfileData(() => 
         fetchApi<ProfileData>('/api/v1/profile')
       );
       
@@ -54,7 +54,7 @@ export function ProfileForm() {
     };
 
     loadProfile();
-  }, [profileLoader]);
+  }, [loadProfileData]);
 
   const updateProfile = (data: ProfileData): ResultAsync<void, ApiError> =>
     ResultAsync.fromPromise(

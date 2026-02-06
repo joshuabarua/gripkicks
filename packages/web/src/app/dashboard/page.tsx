@@ -18,6 +18,7 @@ import { fetchApi } from '@/lib/api-client';
 import type { UserShoe } from '@/types/api';
 import { FullPageLoading } from '@/components/ui/loading';
 import ShoeImage from '@/components/ShoeImage';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 
 interface Profile {
   name?: string;
@@ -62,7 +63,7 @@ export default function Dashboard() {
 
       const shoesResult = await fetchApi<UserShoe[]>('/api/v1/stash');
       if (shoesResult.isOk()) {
-        setUserShoes(shoesResult.value);
+        setUserShoes(Array.isArray(shoesResult.value) ? shoesResult.value : []);
       }
     } catch (error) {
       console.error('Failed to load user data:', error);
@@ -84,7 +85,7 @@ export default function Dashboard() {
   const avgComfort = userShoes.length > 0 
     ? (userShoes.reduce((acc, shoe) => acc + (shoe.comfortScore || 0), 0) / userShoes.length).toFixed(1)
     : '-';
-  const favCount = userShoes.filter(shoe => shoe.isFavourite).length;
+  const favCount = Array.isArray(userShoes) ? userShoes.filter(shoe => shoe.isFavourite).length : 0;
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
@@ -118,9 +119,11 @@ export default function Dashboard() {
               transition={{ duration: 0.5 }}
               className="col-span-12 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between"
             >
-              <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                <Plus className="w-6 h-6 text-orange-500" />
-              </div>
+              <AnimatedIcon animation="pop" trigger="scroll" delay={0}>
+                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+                  <Plus className="w-6 h-6 text-orange-500" />
+                </div>
+              </AnimatedIcon>
               <div>
                 <div className="font-tanker text-5xl text-white">{userShoes.length}</div>
                 <p className="font-sora text-neutral-500 text-sm mt-1">Total Shoes</p>
@@ -138,7 +141,9 @@ export default function Dashboard() {
                 <div className="font-tanker text-3xl text-white">{favCount}</div>
                 <p className="font-sora text-neutral-500 text-xs">Favorites</p>
               </div>
-              <Heart className="w-8 h-8 text-orange-500" />
+              <AnimatedIcon animation="pulse" trigger="both" delay={0.1}>
+                <Heart className="w-8 h-8 text-orange-500" />
+              </AnimatedIcon>
             </motion.div>
 
             {/* Avg Comfort */}
@@ -152,7 +157,9 @@ export default function Dashboard() {
                 <div className="font-tanker text-3xl text-white">{avgComfort}</div>
                 <p className="font-sora text-neutral-500 text-xs">Avg Comfort</p>
               </div>
-              <Star className="w-8 h-8 text-orange-500" />
+              <AnimatedIcon animation="float" trigger="both" delay={0.15}>
+                <Star className="w-8 h-8 text-orange-500" />
+              </AnimatedIcon>
             </motion.div>
 
             {/* Foot Shape */}
@@ -166,7 +173,9 @@ export default function Dashboard() {
                 <div className="font-tanker text-2xl text-white capitalize">{profile?.footShape || 'Not set'}</div>
                 <p className="font-sora text-neutral-500 text-xs">Foot Shape</p>
               </div>
-              <Footprints className="w-8 h-8 text-orange-500" />
+              <AnimatedIcon animation="bounce" trigger="both" delay={0.2}>
+                <Footprints className="w-8 h-8 text-orange-500" />
+              </AnimatedIcon>
             </motion.div>
 
             {/* Match Accuracy */}
@@ -180,7 +189,9 @@ export default function Dashboard() {
                 <div className="font-tanker text-3xl text-white">98%</div>
                 <p className="font-sora text-neutral-500 text-xs">Match Accuracy</p>
               </div>
-              <Zap className="w-8 h-8 text-orange-500" />
+              <AnimatedIcon animation="spin" trigger="both" delay={0.25}>
+                <Zap className="w-8 h-8 text-orange-500" />
+              </AnimatedIcon>
             </motion.div>
           </div>
 
@@ -200,14 +211,10 @@ export default function Dashboard() {
                 onClick={() => router.push('/stash')}
                 className="col-span-12 md:col-span-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 flex flex-col justify-between cursor-pointer group relative overflow-hidden min-h-[180px]"
               >
-                <motion.div 
-                  className="absolute inset-0 opacity-10"
-                  style={{
-                    backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, black 10px, black 20px)'
-                  }}
-                  animate={{ backgroundPosition: ['0px 0px', '40px 40px'] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                />
+                <div className="absolute inset-0 opacity-20">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-black/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+                  <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
+                </div>
                 <div className="relative flex justify-between items-start">
                   <div>
                     <p className="font-mono text-[10px] text-black/60 mb-2">[COLLECTION]</p>
@@ -230,9 +237,11 @@ export default function Dashboard() {
                 className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
               >
                 <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-orange-500" />
-                  </div>
+                  <AnimatedIcon animation="float" trigger="hover">
+                    <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+                      <TrendingUp className="w-6 h-6 text-orange-500" />
+                    </div>
+                  </AnimatedIcon>
                   <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
                 </div>
                 <div>
@@ -249,9 +258,11 @@ export default function Dashboard() {
                 className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
               >
                 <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                    <Footprints className="w-6 h-6 text-orange-500" />
-                  </div>
+                  <AnimatedIcon animation="bounce" trigger="hover">
+                    <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+                      <Footprints className="w-6 h-6 text-orange-500" />
+                    </div>
+                  </AnimatedIcon>
                   <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
                 </div>
                 <div>
@@ -268,9 +279,11 @@ export default function Dashboard() {
                 className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
               >
                 <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                    <Activity className="w-6 h-6 text-orange-500" />
-                  </div>
+                  <AnimatedIcon animation="pulse" trigger="hover">
+                    <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+                      <Activity className="w-6 h-6 text-orange-500" />
+                    </div>
+                  </AnimatedIcon>
                   <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
                 </div>
                 <div>

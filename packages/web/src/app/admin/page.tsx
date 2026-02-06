@@ -146,6 +146,7 @@ export default function AdminDashboard() {
       stiffness: 'medium',
       climbingDiscipline: 'sport',
       volume: 'medium',
+      rubberTechnologyId: undefined,
     });
   };
 

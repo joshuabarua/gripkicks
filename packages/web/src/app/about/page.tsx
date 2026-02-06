@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Heart, Mountain, Users, Footprints, ArrowUpRight } from 'lucide-react';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import Link from 'next/link';
 
 const fadeUp = {
@@ -112,9 +113,11 @@ export default function AboutPage() {
                 viewport={{ once: true }}
                 className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 group hover:border-orange-500/20 transition-colors"
               >
-                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
-                  <card.icon className="w-6 h-6 text-orange-500" />
-                </div>
+                <AnimatedIcon animation="pop" trigger="scroll" delay={i * 0.1}>
+                  <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
+                    <card.icon className="w-6 h-6 text-orange-500" />
+                  </div>
+                </AnimatedIcon>
                 <h3 className="font-tanker text-xl mb-3">{card.title}</h3>
                 <p className="font-sora text-sm text-neutral-500 leading-relaxed">{card.body}</p>
               </motion.div>

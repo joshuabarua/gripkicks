@@ -2,58 +2,35 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { SignOutButton } from '@/components/signout-button';
 import { useSession } from '@/lib/auth';
+import { LayoutDashboard, Settings, Footprints, Archive, Heart, Box, Info, Shield, LogOut, Crown } from 'lucide-react';
+import { AnimatedNavIcon } from '@/components/ui/AnimatedNavIcon';
+import type { LucideIcon } from 'lucide-react';
+
+type IconAnimation = 'bounce' | 'wiggle' | 'pulse' | 'spin' | 'pop' | 'shake';
 
 interface NavLinksProps {
     handleLogout?: () => void;
 }
 
-const baseLinks = [
-    {
-        title: "Dashboard",
-        href: "/dashboard"
-    },
-    {
-        title: "Profile",
-        href: "/profile"
-    },
-    {
-        title: "Foot Lab",
-        href: "/footchecker"
-    },
-    {
-        title: "Shoe Sanctuary",
-        href: "/stash"
-    },
-    {
-        title: "Sole Mate",
-        href: "/findmyshoe"
-    },
-    {
-        title: "3D Selector",
-        href: "/selector"
-    },
-    {
-        title: "About",
-        href: "/about"
-    },
-    {
-        title: "Logout",
-        href: "#"
-    }
+interface NavItem {
+    title: string;
+    href: string;
+    icon: LucideIcon;
+    animation: IconAnimation;
+}
+
+const mainLinks: NavItem[] = [
+    { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, animation: 'bounce' },
+    { title: "Foot Lab", href: "/footchecker", icon: Footprints, animation: 'wiggle' },
+    { title: "Shoe Sanctuary", href: "/stash", icon: Archive, animation: 'pop' },
+    { title: "Sole Mate", href: "/findmyshoe", icon: Heart, animation: 'pulse' },
 ]
-const footerLinks = [
-    {
-        title: "Dashboard",
-        href: "/dashboard"
-    },
-    {
-        title: "About",
-        href: "/about"
-    },
-    {
-        title: "Privacy",
-        href: "/privacy"
-    }
+
+const secondaryLinks: NavItem[] = [
+    { title: "Profile", href: "/profile", icon: Settings, animation: 'spin' },
+    { title: "3D Selector", href: "/selector", icon: Box, animation: 'wiggle' },
+    { title: "About", href: "/about", icon: Info, animation: 'bounce' },
+    { title: "Privacy", href: "/privacy", icon: Shield, animation: 'shake' },
 ]
 
 const perspective = {
@@ -80,6 +57,7 @@ const perspective = {
         transition: { duration: 0.6, type: "linear", ease: [0.76, 0, 0.24, 1] }
     }
 }
+
 const slideIn = {
     initial: {
         opacity: 0,
@@ -104,87 +82,76 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
     const { data: session } = useSession();
     const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
 
-    const links = isAdmin
-        ? [...baseLinks.slice(0, -1), { title: "Admin", href: "/admin" }, baseLinks[baseLinks.length - 1]]
-        : baseLinks;
+    const adminLink: NavItem = { title: "Admin", href: "/admin", icon: Crown, animation: 'pop' };
 
     return (
-        <div className={"nav"}>
-            <div className={"body"}>
-                {
-                    links.map((link, i: number) => {
-                        const { title, href } = link;
-                        return (
-                            <motion.div
-                                key={`b_${i}`}
-                                className={"linkContainer"}
-                                custom={i}
-                                initial="initial"
-                                animate="enter"
-                                exit="exit"
-                                variants={perspective}
-                            >
-                                {title === "Logout" ? (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{
-                                            duration: 0.5,
-                                            delay: 0.1 + (i * 0.1),
-                                            ease: "easeInOut"
-                                        }}
-                                    >
-                                        <SignOutButton
-                                            variant="ghost"
-                                            size="default"
-                                            className="font-sora w-full justify-start p-0 hover:bg-transparent"
-                                            onClick={handleLogout}
-                                        >
-                                            {title}
-                                        </SignOutButton>
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{
-                                            duration: 0.5,
-                                            delay: 0.1 + (i * 0.1),
-                                            ease: "easeInOut"
-                                        }}
-                                    >
-                                        <Link href={href} className='font-sora'>
-                                            {title}
-                                        </Link>
-                                    </motion.div>
-                                )}
-                            </motion.div>
-                        )
-                    })
-                }
-                <div className={"footer"}>
-                    {footerLinks.map((link, i) => {
-                        const { title, href } = link;
-                        return (
-                            <motion.div
-                                key={`f_${i}`}
-                                variants={slideIn}
-                                custom={i}
-                                initial="initial"
-                                animate="enter"
-                                exit="exit"
-                            >
+        <div className="nav">
+            <div className="body">
+                {mainLinks.map((link, i) => (
+                    <motion.div
+                        key={`m_${i}`}
+                        className="linkContainer"
+                        custom={i}
+                        initial="initial"
+                        animate="enter"
+                        exit="exit"
+                        variants={perspective}
+                    >
+                        <Link href={link.href} className="font-sora nav-link-item group">
+                            <AnimatedNavIcon
+                                icon={<link.icon className="w-6 h-6 text-black/40 group-hover:text-black transition-colors shrink-0" />}
+                                animation={link.animation}
+                                size={24}
+                                className="shrink-0"
+                            />
+                            {link.title}
+                        </Link>
+                    </motion.div>
+                ))}
 
-                                <Link
-                                    href={href}
-                                >
-                                    {title}
-                                </Link>
-                            </motion.div>
-                        )
-                    })}
+                <div className="footer">
+                    {[...secondaryLinks, ...(isAdmin ? [adminLink] : [])].map((link, i) => (
+                        <motion.div
+                            key={`s_${i}`}
+                            variants={slideIn}
+                            custom={i}
+                            initial="initial"
+                            animate="enter"
+                            exit="exit"
+                        >
+                            <Link href={link.href} className="nav-secondary-link group">
+                                <AnimatedNavIcon
+                                    icon={<link.icon className="w-3.5 h-3.5 text-black/30 group-hover:text-black/70 transition-colors" />}
+                                    animation={link.animation}
+                                    size={14}
+                                />
+                                {link.title}
+                            </Link>
+                        </motion.div>
+                    ))}
+                    <motion.div
+                        variants={slideIn}
+                        custom={secondaryLinks.length + (isAdmin ? 1 : 0)}
+                        initial="initial"
+                        animate="enter"
+                        exit="exit"
+                    >
+                        <SignOutButton
+                            variant="ghost"
+                            size="default"
+                            className="nav-secondary-link !p-0 !h-auto hover:!bg-transparent flex items-center gap-2"
+                            onClick={handleLogout}
+                        >
+                            <AnimatedNavIcon
+                                icon={<LogOut className="w-3.5 h-3.5 text-black/30" />}
+                                animation="shake"
+                                size={14}
+                            />
+                            Logout
+                        </SignOutButton>
+                    </motion.div>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }

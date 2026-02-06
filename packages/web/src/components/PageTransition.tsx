@@ -128,15 +128,9 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
                 transition={{ duration: 0.3 }}
               >
                 <div className="bg-neutral-900 rounded-xl p-4 relative overflow-hidden">
-                  {/* Animated stripe pattern */}
-                  <motion.div 
-                    className="absolute inset-0 opacity-5"
-                    style={{
-                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, white 10px, white 20px)'
-                    }}
-                    animate={{ backgroundPosition: ['0px 0px', '28px 28px'] }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  />
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-orange-500/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+                  </div>
                   
                   <AnimatePresence mode="popLayout">
                     <motion.img

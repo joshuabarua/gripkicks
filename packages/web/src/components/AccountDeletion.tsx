@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@/hooks/useAsync';
 import { fetchApi } from '@/lib/api-client';
-import { ApiError } from '@/lib/errors';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,12 +13,16 @@ import { Loader2, CheckCircle2, AlertCircle, AlertTriangle, Trash2 } from 'lucid
 
 const deletionSchema = z.object({
   password: z.string().min(1, 'Password is required'),
-  confirmation: z.literal('DELETE', {
-    errorMap: () => ({ message: 'Please type DELETE to confirm' }),
-  }),
+  confirmation: z
+    .string()
+    .transform((value) => value.toUpperCase())
+    .refine((value) => value === 'DELETE', { message: 'Please type DELETE to confirm' }),
 });
 
-type DeletionFormData = z.infer<typeof deletionSchema>;
+type DeletionFormData = {
+  password: string;
+  confirmation: string;
+};
 
 export function AccountDeletion() {
   const [formData, setFormData] = useState<DeletionFormData>({
@@ -62,7 +65,7 @@ export function AccountDeletion() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value.toUpperCase() }));
   };
 
   const handleDialogClose = (open: boolean) => {

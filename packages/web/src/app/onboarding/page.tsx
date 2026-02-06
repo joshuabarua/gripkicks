@@ -25,12 +25,15 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { FullPageLoading } from '@/components/ui/loading'
+import type { Shoe } from '@/types/api'
 
-interface Shoe {
-  _id: string
-  name: string
-  brand: string
-  imageUrl?: string
+type ShoeSizeOption = { value: string; label: string }
+const isShoeSizeOption = (size: (typeof shoeSizes)[number]): size is ShoeSizeOption => {
+  return 'value' in size
+}
+
+interface ApiSuccessResponse {
+  success: boolean
 }
 
 type OnboardingStep = 'welcome' | 'profile' | 'foot-data' | 'first-shoe' | 'complete'
@@ -44,7 +47,7 @@ export default function OnboardingPage() {
   const [selectedShoe, setSelectedShoe] = useState<Shoe | null>(null)
   const [shoeFormData, setShoeFormData] = useState({
     size: '',
-    condition: 'new' as const,
+    condition: 'new' as string,
     comfort: 5,
     performance: 5,
     notes: ''
@@ -114,7 +117,7 @@ export default function OnboardingPage() {
       setIsLoading(true)
       try {
         // Add shoe to stash
-        const shoeResponse = await fetchApi('/api/v1/stash', {
+        const shoeResponse = await fetchApi<ApiSuccessResponse>('/api/v1/stash', {
           method: 'POST',
           body: JSON.stringify({ 
             shoeId: selectedShoe._id,
@@ -124,7 +127,7 @@ export default function OnboardingPage() {
 
         if (shoeResponse.isOk() && shoeResponse.value.success) {
           // Complete onboarding
-          const onboardingResponse = await fetchApi('/api/v1/users/onboarding', {
+          const onboardingResponse = await fetchApi<ApiSuccessResponse>('/api/v1/users/onboarding', {
             method: 'POST',
             body: JSON.stringify({
               footShape,
@@ -418,7 +421,7 @@ export default function OnboardingPage() {
                                 <SelectValue placeholder="Select size" />
                               </SelectTrigger>
                               <SelectContent className="bg-neutral-800 border-neutral-700">
-                                {shoeSizes.map((size) => (
+                                {shoeSizes.filter(isShoeSizeOption).map((size) => (
                                   <SelectItem key={size.value} value={size.value}>{size.label}</SelectItem>
                                 ))}
                               </SelectContent>
