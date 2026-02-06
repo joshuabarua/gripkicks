@@ -33,6 +33,10 @@ const baseLinks = [
         href: "/selector"
     },
     {
+        title: "About",
+        href: "/about"
+    },
+    {
         title: "Logout",
         href: "#"
     }
@@ -43,12 +47,12 @@ const footerLinks = [
         href: "/dashboard"
     },
     {
-        title: "Profile",
-        href: "/profile"
+        title: "About",
+        href: "/about"
     },
     {
-        title: "Shoe Sanctuary",
-        href: "/stash"
+        title: "Privacy",
+        href: "/privacy"
     }
 ]
 

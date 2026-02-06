@@ -3,9 +3,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from '@/lib/auth'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Footprints, 
@@ -15,7 +12,8 @@ import {
   ChevronLeft,
   User,
   Star,
-  Sparkles
+  Sparkles,
+  ArrowUpRight
 } from 'lucide-react'
 import Link from 'next/link'
 import { fetchApi } from '@/lib/api-client'
@@ -187,367 +185,379 @@ export default function OnboardingPage() {
     return <FullPageLoading text="Loading" />
   }
 
+  const inputClasses = "bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-orange-500 focus:ring-orange-500 rounded-xl h-12"
+  const stepIndex = steps.findIndex(s => s.key === currentStep)
+
   return (
-    <div className="min-h-svh bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-sm font-medium text-gray-600">
-              Step {steps.findIndex(s => s.key === currentStep) + 1} of {steps.length}
-            </h2>
-            <button 
-              onClick={handleSkipOnboarding}
-              className="text-sm text-gray-500 hover:text-gray-700 underline"
-            >
-              Skip for now
-            </button>
+    <main className="min-h-screen bg-black text-white overflow-x-hidden">
+      <section className="px-6 md:px-12 lg:px-16 py-12">
+        <div className="max-w-3xl mx-auto">
+          {/* Progress */}
+          <div className="mb-12">
+            <div className="flex justify-between items-center mb-4">
+              <p className="font-mono text-xs text-orange-500 tracking-[0.3em]">
+                [STEP_{stepIndex + 1}_OF_{steps.length}]
+              </p>
+              <button 
+                onClick={handleSkipOnboarding}
+                className="font-sora text-xs text-neutral-500 hover:text-orange-500 transition-colors"
+              >
+                Skip for now
+              </button>
+            </div>
+            <div className="w-full h-1 bg-neutral-800 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-orange-500 rounded-full"
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
           </div>
-          <Progress value={progress} className="h-2" />
-        </div>
 
-        {/* Step Content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            {currentStep === 'welcome' && (
-              <Card className="text-center">
-                <CardHeader className="pb-8">
-                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="w-10 h-10 text-white" />
-                  </div>
-                  <CardTitle className="text-3xl font-bold">Welcome to GripKicks!</CardTitle>
-                  <CardDescription className="text-lg">
-                    Your personal climbing shoe companion
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid md:grid-cols-3 gap-4 text-left">
-                    <div className="p-4 rounded-lg bg-blue-50">
-                      <Footprints className="w-8 h-8 text-blue-600 mb-2" />
-                      <h3 className="font-semibold">Track Your Feet</h3>
-                      <p className="text-sm text-gray-600">Understand your foot shape for better shoe selection</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-purple-50">
-                      <Star className="w-8 h-8 text-purple-600 mb-2" />
-                      <h3 className="font-semibold">Rate Your Shoes</h3>
-                      <p className="text-sm text-gray-600">Keep track of comfort and performance for each pair</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-amber-50">
-                      <Plus className="w-8 h-8 text-amber-600 mb-2" />
-                      <h3 className="font-semibold">Find Your Match</h3>
-                      <p className="text-sm text-gray-600">Get personalized recommendations based on your data</p>
-                    </div>
-                  </div>
-                  <Button onClick={handleNext} size="lg" className="w-full">
-                    Let&apos;s Get Started
-                    <ChevronRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+          {/* Step Content */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {currentStep === 'welcome' && (
+                <div className="text-center">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6"
+                  >
+                    <Sparkles className="w-10 h-10 text-orange-500" />
+                  </motion.div>
+                  <h1 className="font-tanker text-5xl md:text-6xl mb-4">
+                    WELCOME TO<br /><span className="text-orange-500">GRIPKICKS</span>
+                  </h1>
+                  <p className="font-sora text-neutral-400 text-lg mb-10">Your personal climbing shoe companion</p>
 
-            {currentStep === 'profile' && (
-              <Card>
-                <CardHeader>
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                    <User className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <CardTitle>Tell Us About Yourself</CardTitle>
-                  <CardDescription>
-                    This information helps us personalize your experience
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
-                      value={profileData.name}
-                      onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone (optional)</Label>
-                    <Input
-                      id="phone"
-                      value={profileData.phone}
-                      onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                      placeholder="+1 (555) 123-4567"
-                    />
-                  </div>
-                  <div className="flex justify-between pt-4">
-                    <Button variant="outline" onClick={handlePrevious}>
-                      <ChevronLeft className="w-4 h-4 mr-2" />
-                      Back
-                    </Button>
-                    <Button onClick={handleNext} disabled={!profileData.name || isLoading}>
-                      {isLoading ? 'Saving...' : 'Next'}
-                      <ChevronRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {currentStep === 'foot-data' && (
-              <Card>
-                <CardHeader>
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <Footprints className="w-8 h-8 text-purple-600" />
-                  </div>
-                  <CardTitle>What&apos;s Your Foot Shape?</CardTitle>
-                  <CardDescription>
-                    This helps us recommend shoes that will fit you best
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <Label className="text-base font-medium">Foot Shape</Label>
-                    <div className="grid gap-3 mt-2">
-                      {[
-                        { value: 'egyptian', label: 'Egyptian', desc: 'Big toe is longest' },
-                        { value: 'roman', label: 'Roman', desc: 'First three toes similar length' },
-                        { value: 'greek', label: 'Greek', desc: 'Second toe is longest' },
-                        { value: 'germanic', label: 'Germanic', desc: 'Big toe and others equal' },
-                        { value: 'celtic', label: 'Celtic', desc: 'Big toe and second toe equal' }
-                      ].map((shape) => (
-                        <button
-                          key={shape.value}
-                          onClick={() => setFootShape(shape.value)}
-                          className={`p-4 rounded-lg border text-left transition-colors ${
-                            footShape === shape.value
-                              ? 'border-purple-500 bg-purple-50'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="font-medium">{shape.label}</div>
-                          <div className="text-sm text-gray-600">{shape.desc}</div>
-                        </button>
-                      ))}
-                    </div>
+                  <div className="grid md:grid-cols-3 gap-4 text-left mb-10">
+                    {[
+                      { icon: Footprints, title: 'Track Your Feet', desc: 'Understand your foot shape for better shoe selection' },
+                      { icon: Star, title: 'Rate Your Shoes', desc: 'Keep track of comfort and performance for each pair' },
+                      { icon: Plus, title: 'Find Your Match', desc: 'Get personalized recommendations based on your data' },
+                    ].map((item) => (
+                      <div key={item.title} className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 group hover:border-orange-500/30 transition-colors">
+                        <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center mb-4">
+                          <item.icon className="w-5 h-5 text-orange-500" />
+                        </div>
+                        <h3 className="font-tanker text-lg text-white mb-1">{item.title}</h3>
+                        <p className="font-sora text-neutral-500 text-xs">{item.desc}</p>
+                      </div>
+                    ))}
                   </div>
 
-                  <div>
-                    <Label className="text-base font-medium">Foot Volume</Label>
-                    <Select value={footVolume} onValueChange={setFootVolume}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select your foot volume" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Low - Narrow feet</SelectItem>
-                        <SelectItem value="medium">Medium - Average width</SelectItem>
-                        <SelectItem value="high">High - Wide feet</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleNext}
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
+                  >
+                    LET&apos;S GET STARTED
+                    <ChevronRight className="w-5 h-5" />
+                  </motion.button>
+                </div>
+              )}
 
-                  <div className="flex justify-between pt-4">
-                    <Button variant="outline" onClick={handlePrevious}>
-                      <ChevronLeft className="w-4 h-4 mr-2" />
-                      Back
-                    </Button>
-                    <Button onClick={handleNext} disabled={!footShape || !footVolume || isLoading}>
-                      {isLoading ? 'Saving...' : 'Next'}
-                      <ChevronRight className="w-4 h-4 ml-2" />
-                    </Button>
+              {currentStep === 'profile' && (
+                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8">
+                  <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
+                    <User className="w-7 h-7 text-orange-500" />
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                  <h2 className="font-tanker text-3xl mb-2">TELL US ABOUT YOURSELF</h2>
+                  <p className="font-sora text-neutral-500 text-sm mb-8">This information helps us personalize your experience</p>
 
-            {currentStep === 'first-shoe' && (
-              <Card>
-                <CardHeader>
-                  <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
-                    <Plus className="w-8 h-8 text-amber-600" />
-                  </div>
-                  <CardTitle>Add Your First Climbing Shoe</CardTitle>
-                  <CardDescription>
-                    Search for a shoe and rate your experience with it
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Shoe Search */}
-                  <div>
-                    <Label className="text-base font-medium">Search Shoes</Label>
-                    <div className="mt-2">
-                      <ShoeSearch 
-                        onShoeSelect={setSelectedShoe}
-                        selectedShoe={selectedShoe}
+                  <div className="space-y-5">
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[NAME]</Label>
+                      <Input
+                        id="name"
+                        value={profileData.name}
+                        onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                        placeholder="John Doe"
+                        className={inputClasses}
                       />
                     </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[PHONE_OPTIONAL]</Label>
+                      <Input
+                        id="phone"
+                        value={profileData.phone}
+                        onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                        placeholder="+1 (555) 123-4567"
+                        className={inputClasses}
+                      />
+                    </div>
+                    <div className="flex justify-between pt-4">
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePrevious} className="border border-neutral-700 hover:border-orange-500/30 text-neutral-400 font-sora text-sm px-6 py-3 rounded-2xl transition-all flex items-center gap-2">
+                        <ChevronLeft className="w-4 h-4" /> Back
+                      </motion.button>
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleNext} disabled={!profileData.name || isLoading} className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors flex items-center gap-2">
+                        {isLoading ? 'SAVING...' : 'NEXT'} <ChevronRight className="w-4 h-4" />
+                      </motion.button>
+                    </div>
                   </div>
+                </div>
+              )}
 
-                  {/* Selected Shoe */}
-                  {selectedShoe && (
-                    <div className="p-4 rounded-lg border bg-gray-50">
-                      <div className="flex items-center gap-4">
-                        <div className="w-20 h-20 bg-white rounded-lg overflow-hidden">
-                          <ShoeImage
-                            brand={selectedShoe.brand}
-                            shoeName={selectedShoe.name}
-                            imageUrl={selectedShoe.imageUrl}
-                            className="w-full h-full object-contain p-2"
-                          />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold">{selectedShoe.name}</h3>
-                          <p className="text-sm text-gray-600">{selectedShoe.brand}</p>
-                        </div>
+              {currentStep === 'foot-data' && (
+                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8">
+                  <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
+                    <Footprints className="w-7 h-7 text-orange-500" />
+                  </div>
+                  <h2 className="font-tanker text-3xl mb-2">FOOT SHAPE</h2>
+                  <p className="font-sora text-neutral-500 text-sm mb-8">This helps us recommend shoes that will fit you best</p>
+
+                  <div className="space-y-6">
+                    <div>
+                      <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[SELECT_SHAPE]</Label>
+                      <div className="grid gap-3 mt-3">
+                        {[
+                          { value: 'egyptian', label: 'Egyptian', desc: 'Big toe is longest' },
+                          { value: 'roman', label: 'Roman', desc: 'First three toes similar length' },
+                          { value: 'greek', label: 'Greek', desc: 'Second toe is longest' },
+                          { value: 'germanic', label: 'Germanic', desc: 'Big toe and others equal' },
+                          { value: 'celtic', label: 'Celtic', desc: 'Big toe and second toe equal' }
+                        ].map((shape) => (
+                          <motion.button
+                            key={shape.value}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            onClick={() => setFootShape(shape.value)}
+                            className={`p-4 rounded-2xl border text-left transition-all ${
+                              footShape === shape.value
+                                ? 'border-orange-500 bg-orange-500/10'
+                                : 'border-neutral-800 hover:border-neutral-700 bg-neutral-800/50'
+                            }`}
+                          >
+                            <div className="font-sora font-medium text-white">{shape.label}</div>
+                            <div className="font-sora text-xs text-neutral-500">{shape.desc}</div>
+                          </motion.button>
+                        ))}
                       </div>
                     </div>
-                  )}
 
-                  {/* Shoe Details Form */}
-                  {selectedShoe && (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="size">Size</Label>
-                          <Select value={shoeFormData.size} onValueChange={(value) => setShoeFormData({ ...shoeFormData, size: value })}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select size" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {shoeSizes.map((size) => (
-                                <SelectItem key={size.value} value={size.value}>
-                                  {size.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="condition">Condition</Label>
-                          <Select value={shoeFormData.condition} onValueChange={(value: string) => setShoeFormData({ ...shoeFormData, condition: value })}>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="new">New</SelectItem>
-                              <SelectItem value="like-new">Like New</SelectItem>
-                              <SelectItem value="good">Good</SelectItem>
-                              <SelectItem value="worn">Worn</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
+                    <div className="space-y-2">
+                      <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[FOOT_VOLUME]</Label>
+                      <Select value={footVolume} onValueChange={setFootVolume}>
+                        <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white rounded-xl h-12 focus:border-orange-500 focus:ring-orange-500">
+                          <SelectValue placeholder="Select your foot volume" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-neutral-800 border-neutral-700">
+                          <SelectItem value="low">Low - Narrow feet</SelectItem>
+                          <SelectItem value="medium">Medium - Average width</SelectItem>
+                          <SelectItem value="high">High - Wide feet</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label>Comfort Rating</Label>
-                          <div className="flex items-center gap-2 mt-2">
-                            {[1, 2, 3, 4, 5].map((rating) => (
-                              <button
-                                key={rating}
-                                onClick={() => setShoeFormData({ ...shoeFormData, comfort: rating })}
-                                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                  shoeFormData.comfort >= rating
-                                    ? 'border-amber-500 bg-amber-50'
-                                    : 'border-gray-300'
-                                }`}
-                              >
-                                {rating}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <Label>Performance Rating</Label>
-                          <div className="flex items-center gap-2 mt-2">
-                            {[1, 2, 3, 4, 5].map((rating) => (
-                              <button
-                                key={rating}
-                                onClick={() => setShoeFormData({ ...shoeFormData, performance: rating })}
-                                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                  shoeFormData.performance >= rating
-                                    ? 'border-amber-500 bg-amber-50'
-                                    : 'border-gray-300'
-                                }`}
-                              >
-                                {rating}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
+                    <div className="flex justify-between pt-4">
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePrevious} className="border border-neutral-700 hover:border-orange-500/30 text-neutral-400 font-sora text-sm px-6 py-3 rounded-2xl transition-all flex items-center gap-2">
+                        <ChevronLeft className="w-4 h-4" /> Back
+                      </motion.button>
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleNext} disabled={!footShape || !footVolume || isLoading} className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors flex items-center gap-2">
+                        {isLoading ? 'SAVING...' : 'NEXT'} <ChevronRight className="w-4 h-4" />
+                      </motion.button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-                      <div>
-                        <Label htmlFor="notes">Notes (optional)</Label>
-                        <Textarea
-                          id="notes"
-                          value={shoeFormData.notes}
-                          onChange={(e) => setShoeFormData({ ...shoeFormData, notes: e.target.value })}
-                          placeholder="Any additional notes about this shoe..."
-                          rows={3}
+              {currentStep === 'first-shoe' && (
+                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8">
+                  <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
+                    <Plus className="w-7 h-7 text-orange-500" />
+                  </div>
+                  <h2 className="font-tanker text-3xl mb-2">ADD YOUR FIRST SHOE</h2>
+                  <p className="font-sora text-neutral-500 text-sm mb-8">Search for a shoe and rate your experience with it</p>
+
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[SEARCH_SHOES]</Label>
+                      <div className="mt-2">
+                        <ShoeSearch 
+                          onShoeSelect={setSelectedShoe}
+                          selectedShoe={selectedShoe}
                         />
                       </div>
                     </div>
-                  )}
 
-                  <div className="flex justify-between pt-4">
-                    <Button variant="outline" onClick={handlePrevious}>
-                      <ChevronLeft className="w-4 h-4 mr-2" />
-                      Back
-                    </Button>
-                    <Button onClick={handleNext} disabled={!selectedShoe || !shoeFormData.size || isLoading}>
-                      {isLoading ? 'Completing...' : 'Complete Setup'}
-                      <CheckCircle2 className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+                    {selectedShoe && (
+                      <div className="p-4 rounded-2xl border border-orange-500/20 bg-orange-500/5">
+                        <div className="flex items-center gap-4">
+                          <div className="w-20 h-20 bg-neutral-800 rounded-xl overflow-hidden">
+                            <ShoeImage
+                              brand={selectedShoe.brand}
+                              shoeName={selectedShoe.name}
+                              imageUrl={selectedShoe.imageUrl}
+                              className="w-full h-full object-contain p-2"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="font-sora font-semibold text-white">{selectedShoe.name}</h3>
+                            <p className="font-mono text-[10px] text-neutral-500">{selectedShoe.brand}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
-            {currentStep === 'complete' && (
-              <Card className="text-center">
-                <CardHeader className="pb-8">
-                  <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle2 className="w-10 h-10 text-white" />
+                    {selectedShoe && (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[SIZE]</Label>
+                            <Select value={shoeFormData.size} onValueChange={(value) => setShoeFormData({ ...shoeFormData, size: value })}>
+                              <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white rounded-xl h-12 focus:border-orange-500">
+                                <SelectValue placeholder="Select size" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-neutral-800 border-neutral-700">
+                                {shoeSizes.map((size) => (
+                                  <SelectItem key={size.value} value={size.value}>{size.label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[CONDITION]</Label>
+                            <Select value={shoeFormData.condition} onValueChange={(value: string) => setShoeFormData({ ...shoeFormData, condition: value })}>
+                              <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white rounded-xl h-12 focus:border-orange-500">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-neutral-800 border-neutral-700">
+                                <SelectItem value="new">New</SelectItem>
+                                <SelectItem value="like-new">Like New</SelectItem>
+                                <SelectItem value="good">Good</SelectItem>
+                                <SelectItem value="worn">Worn</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[COMFORT]</Label>
+                            <div className="flex items-center gap-2 mt-2">
+                              {[1, 2, 3, 4, 5].map((rating) => (
+                                <motion.button
+                                  key={rating}
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => setShoeFormData({ ...shoeFormData, comfort: rating })}
+                                  className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-tanker text-sm transition-all ${
+                                    shoeFormData.comfort >= rating
+                                      ? 'border-orange-500 bg-orange-500/20 text-orange-500'
+                                      : 'border-neutral-700 text-neutral-600'
+                                  }`}
+                                >
+                                  {rating}
+                                </motion.button>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[PERFORMANCE]</Label>
+                            <div className="flex items-center gap-2 mt-2">
+                              {[1, 2, 3, 4, 5].map((rating) => (
+                                <motion.button
+                                  key={rating}
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => setShoeFormData({ ...shoeFormData, performance: rating })}
+                                  className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-tanker text-sm transition-all ${
+                                    shoeFormData.performance >= rating
+                                      ? 'border-orange-500 bg-orange-500/20 text-orange-500'
+                                      : 'border-neutral-700 text-neutral-600'
+                                  }`}
+                                >
+                                  {rating}
+                                </motion.button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[NOTES_OPTIONAL]</Label>
+                          <Textarea
+                            id="notes"
+                            value={shoeFormData.notes}
+                            onChange={(e) => setShoeFormData({ ...shoeFormData, notes: e.target.value })}
+                            placeholder="Any additional notes about this shoe..."
+                            rows={3}
+                            className="bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-orange-500 rounded-xl"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex justify-between pt-4">
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePrevious} className="border border-neutral-700 hover:border-orange-500/30 text-neutral-400 font-sora text-sm px-6 py-3 rounded-2xl transition-all flex items-center gap-2">
+                        <ChevronLeft className="w-4 h-4" /> Back
+                      </motion.button>
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleNext} disabled={!selectedShoe || !shoeFormData.size || isLoading} className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors flex items-center gap-2">
+                        {isLoading ? 'COMPLETING...' : 'COMPLETE SETUP'} <CheckCircle2 className="w-4 h-4" />
+                      </motion.button>
+                    </div>
                   </div>
-                  <CardTitle className="text-3xl font-bold">You&apos;re All Set!</CardTitle>
-                  <CardDescription className="text-lg">
-                    Your profile is ready and you can start exploring
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <Link href="/footchecker">
-                      <Button variant="outline" className="w-full h-auto p-4 flex-col">
-                        <Footprints className="w-8 h-8 mb-2" />
-                        <span>Foot Lab</span>
-                      </Button>
-                    </Link>
-                    <Link href="/stash">
-                      <Button variant="outline" className="w-full h-auto p-4 flex-col">
-                        <Plus className="w-8 h-8 mb-2" />
-                        <span>My Shoes</span>
-                      </Button>
-                    </Link>
-                    <Link href="/findmyshoe">
-                      <Button variant="outline" className="w-full h-auto p-4 flex-col">
-                        <Star className="w-8 h-8 mb-2" />
-                        <span>Find Shoes</span>
-                      </Button>
-                    </Link>
+                </div>
+              )}
+
+              {currentStep === 'complete' && (
+                <div className="text-center">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6"
+                  >
+                    <CheckCircle2 className="w-10 h-10 text-orange-500" />
+                  </motion.div>
+                  <h1 className="font-tanker text-5xl md:text-6xl mb-4">
+                    YOU&apos;RE<br /><span className="text-orange-500">ALL SET!</span>
+                  </h1>
+                  <p className="font-sora text-neutral-400 text-lg mb-10">Your profile is ready and you can start exploring</p>
+
+                  <div className="grid md:grid-cols-3 gap-4 mb-10">
+                    {[
+                      { href: '/footchecker', icon: Footprints, label: 'Foot Lab' },
+                      { href: '/stash', icon: Plus, label: 'My Shoes' },
+                      { href: '/findmyshoe', icon: Star, label: 'Find Shoes' },
+                    ].map((item) => (
+                      <Link key={item.href} href={item.href}>
+                        <motion.div
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col items-center gap-3 hover:border-orange-500/30 transition-colors cursor-pointer"
+                        >
+                          <item.icon className="w-8 h-8 text-orange-500" />
+                          <span className="font-tanker text-lg text-white">{item.label}</span>
+                        </motion.div>
+                      </Link>
+                    ))}
                   </div>
-                  <Button onClick={handleFinish} size="lg" className="w-full">
-                    Go to My Shoe Sanctuary
-                    <ChevronRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleFinish}
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
+                  >
+                    GO TO SHOE SANCTUARY
+                    <ArrowUpRight className="w-5 h-5" />
+                  </motion.button>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
+    </main>
   )
 }

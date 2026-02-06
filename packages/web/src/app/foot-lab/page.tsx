@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import FootModelViewer from '@/components/FootModelViewer';
-import CloudBackground from '@/components/CloudBackground';
-import { Footprints, Settings, Sparkles } from 'lucide-react';
+import { Footprints, Sparkles, X } from 'lucide-react';
 
 export default function FootLabPage() {
   const [selectedShape, setSelectedShape] = useState('medium');
@@ -12,105 +11,99 @@ export default function FootLabPage() {
   const [showModel, setShowModel] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <main className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative z-20 text-center py-8"
-      >
-        <h1 className="text-5xl font-bold text-white mb-4 flex items-center justify-center gap-3">
-          <Footprints className="w-12 h-12" />
-          Foot Lab
-          <Settings className="w-12 h-12" />
-        </h1>
-        <p className="text-xl text-white/80 max-w-2xl mx-auto px-4">
-          Interactive 3D foot modeling with real-time morphing technology
-        </p>
-      </motion.div>
+      <section className="px-6 md:px-12 lg:px-16 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12"
+        >
+          <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">[FOOT_LAB]</p>
+          <h1 className="font-tanker text-6xl md:text-8xl mb-4">
+            FOOT<br /><span className="text-orange-500">LAB</span>
+          </h1>
+          <p className="font-sora text-lg text-neutral-400 max-w-2xl mx-auto">
+            Interactive 3D foot modeling with real-time morphing technology
+          </p>
+        </motion.div>
 
-      {/* Main Content */}
-      <div className="relative z-10">
-        {!showModel ? (
-          // Landing screen
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center justify-center min-h-[60vh]"
-          >
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 max-w-md border border-white/20">
-              <Sparkles className="w-16 h-16 text-white mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-4 text-center">
-                Experience Your Foot in 3D
-              </h2>
-              <p className="text-white/80 mb-6 text-center">
-                Explore different foot shapes and volumes with our interactive 3D model
-              </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowModel(true)}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 px-6 rounded-full hover:shadow-lg hover:shadow-white/20 transition-all"
-              >
-                Launch 3D Viewer
-              </motion.button>
-            </div>
-          </motion.div>
-        ) : (
-          // 3D Viewer
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 z-30"
-          >
-            <FootModelViewer
-              shape={selectedShape}
-              volume={selectedVolume}
-              onShapeChange={setSelectedShape}
-              onVolumeChange={setSelectedVolume}
-            />
-            
-            {/* Close button */}
-            <button
-              onClick={() => setShowModel(false)}
-              className="absolute top-4 right-4 z-40 bg-black/50 backdrop-blur-md text-white p-3 rounded-full hover:bg-black/70 transition-all"
+        {/* Main Content */}
+        <div className="relative z-10">
+          {!showModel ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center justify-center"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </motion.div>
-        )}
-      </div>
-
-      {/* Feature Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="relative z-10 container mx-auto px-4 py-12"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-            <h3 className="text-lg font-semibold text-white mb-2">Real-time Morphing</h3>
-            <p className="text-white/70 text-sm">
-              See instant changes as you select different foot shapes and volumes
-            </p>
-          </div>
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-            <h3 className="text-lg font-semibold text-white mb-2">5 Foot Shapes</h3>
-            <p className="text-white/70 text-sm">
-              Egyptian, Roman, Greek, Germanic, and Celtic foot types
-            </p>
-          </div>
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-            <h3 className="text-lg font-semibold text-white mb-2">3 Volume Levels</h3>
-            <p className="text-white/70 text-sm">
-              Low, medium, and high volume options for perfect fit
-            </p>
-          </div>
+              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-10 max-w-md text-center">
+                <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Sparkles className="w-8 h-8 text-orange-500" />
+                </div>
+                <h2 className="font-tanker text-3xl mb-3">3D FOOT MODEL</h2>
+                <p className="font-sora text-neutral-400 text-sm mb-8">
+                  Explore different foot shapes and volumes with our interactive 3D model
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setShowModel(true)}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors"
+                >
+                  LAUNCH 3D VIEWER
+                </motion.button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="fixed inset-0 z-30"
+            >
+              <FootModelViewer
+                shape={selectedShape}
+                volume={selectedVolume}
+                onShapeChange={setSelectedShape}
+                onVolumeChange={setSelectedVolume}
+              />
+              
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowModel(false)}
+                className="absolute top-6 right-6 z-40 bg-neutral-900/90 backdrop-blur-md border border-neutral-800 text-white p-3 rounded-2xl hover:border-orange-500/30 transition-all"
+              >
+                <X className="w-6 h-6" />
+              </motion.button>
+            </motion.div>
+          )}
         </div>
-      </motion.div>
-    </div>
+
+        {/* Feature Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-16 max-w-4xl mx-auto"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { title: 'Real-time Morphing', desc: 'See instant changes as you select different foot shapes and volumes' },
+              { title: '5 Foot Shapes', desc: 'Egyptian, Roman, Greek, Germanic, and Celtic foot types' },
+              { title: '3 Volume Levels', desc: 'Low, medium, and high volume options for perfect fit' },
+            ].map((card) => (
+              <div key={card.title} className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 group hover:border-orange-500/30 transition-colors">
+                <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <Footprints className="w-5 h-5 text-orange-500" />
+                </div>
+                <h3 className="font-tanker text-lg text-white mb-1">{card.title}</h3>
+                <p className="font-sora text-neutral-500 text-xs">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+    </main>
   );
 }

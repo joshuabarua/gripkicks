@@ -4,9 +4,9 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Search, Footprints, Sparkles } from 'lucide-react';
+import { Plus, Search, Footprints, ArrowUpRight, Star, Zap, Target, Heart, Crown, Clock } from 'lucide-react';
 import ShoeImage from '@/components/ShoeImage';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSession } from '@/lib/auth';
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
@@ -14,13 +14,25 @@ import { fetchApi } from '@/lib/api-client';
 import { shoeCache } from '@/lib/cache';
 import { useToast } from "@/components/ui/toast";
 import type { UserShoe, GetStashResponse } from "@/types/api";
-import { editFormSchema, type EditFormData } from '@/schemas/shoe-schema';
-import { Crown, Clock, Heart } from 'lucide-react';
 import CloudShoe from '@/components/CloudShoe';
 import EditShoeDialog from '@/components/EditShoeDialog';
 import ShoeStatsModal from '@/components/ShoeStatsModal';
 import CloudBackground from '@/components/CloudBackground';
 import { FullPageLoading, LoadingBar } from '@/components/ui/loading';
+
+const MarqueeText = ({ children, reverse = false }: { children: React.ReactNode; reverse?: boolean }) => (
+  <motion.div
+    animate={{ x: reverse ? [0, 500] : [0, -500] }}
+    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+    className="flex gap-8 whitespace-nowrap"
+  >
+    {Array(20).fill(null).map((_, i) => (
+      <span key={i} className="font-tanker text-xl text-white/30">
+        {children}
+      </span>
+    ))}
+  </motion.div>
+);
 
 
 export default function ShoeSanctuaryPage() {
@@ -68,10 +80,10 @@ export default function ShoeSanctuaryPage() {
       }
 
       const response = await fetchApi<GetStashResponse>('/api/v1/stash');
-      if (response.success && response.data) {
-        setUserShoes(response.data);
+      if (response.isOk()) {
+        setUserShoes(response.value.data || []);
         // Cache the response for 5 minutes
-        shoeCache.set(cacheKey, response, 5 * 60 * 1000);
+        shoeCache.set(cacheKey, response.value, 5 * 60 * 1000);
       } else {
         toast.addToast(response.error || 'Failed to load your shoe collection', 'error');
       }
@@ -192,7 +204,7 @@ export default function ShoeSanctuaryPage() {
         body: JSON.stringify({ shoeId }),
       });
 
-      if (response.success) {
+      if (response.isOk()) {
         // Clear cache when adding new shoe
         shoeCache.clear();
         await fetchUserStash();
@@ -222,7 +234,8 @@ export default function ShoeSanctuaryPage() {
         method: 'DELETE',
       });
 
-      if (response.success) {
+      if (response.isOk()) {
+        // Clear cache when removing shoe
         shoeCache.clear();
         await fetchUserStash();
         setIsStatsModalOpen(false);
@@ -255,7 +268,7 @@ export default function ShoeSanctuaryPage() {
         body: JSON.stringify(editForm),
       });
 
-      if (response.success) {
+      if (response.isOk()) {
         // Clear cache when updating shoe
         shoeCache.clear();
         await fetchUserStash();

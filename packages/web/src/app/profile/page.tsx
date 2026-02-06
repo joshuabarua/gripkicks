@@ -2,15 +2,11 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, User, Mail, Camera, Footprints, Star, Edit2, Save, X, Lock, AlertTriangle } from 'lucide-react';
+import { User, Mail, Camera, Footprints, Star, Edit2, Lock, AlertTriangle, ArrowUpRight } from 'lucide-react';
 import { fetchApi } from '@/lib/api-client';
 import { useSession } from '@/lib/auth';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { ProfileForm } from '@/components/ProfileForm';
 import { ProfileImageUpload } from '@/components/ProfileImageUpload';
 import { PasswordChangeForm } from '@/components/PasswordChangeForm';
@@ -41,14 +37,21 @@ const footShapeLabels: Record<string, string> = {
   celtic: 'Celtic',
 };
 
+const tabs = [
+  { key: 'overview', label: 'Overview', icon: User },
+  { key: 'profile', label: 'Profile', icon: Edit2 },
+  { key: 'picture', label: 'Picture', icon: Camera },
+  { key: 'security', label: 'Security', icon: Lock },
+  { key: 'danger', label: 'Danger', icon: AlertTriangle },
+] as const;
+
+type TabKey = typeof tabs[number]['key'];
+
 export default function ProfilePage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [editName, setEditName] = useState('');
+  const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
   useEffect(() => {
     async function loadProfile() {
@@ -56,11 +59,11 @@ export default function ProfilePage() {
       
       try {
         const data = await fetchApi<UserProfile>('/api/v1/profile');
-        setProfile(data);
-        setEditName(data.name);
+        if (data.isOk()) {
+          setProfile(data.value);
+        }
       } catch (err) {
         console.error('Failed to load profile:', err);
-        setError('Failed to load profile');
       } finally {
         setLoading(false);
       }
@@ -75,208 +78,215 @@ export default function ProfilePage() {
     }
   }, [session, sessionLoading]);
 
-  const handleSave = async () => {
-    if (!editName.trim()) return;
-    
-    setSaving(true);
-    setError(null);
-
-    try {
-      const updated = await fetchApi<{ success: boolean; data: UserProfile }>('/api/v1/profile', {
-        method: 'PUT',
-        body: JSON.stringify({ name: editName }),
-      });
-      
-      if (updated.success) {
-        setProfile(prev => prev ? { ...prev, name: editName } : null);
-        setEditing(false);
-      }
-    } catch (err) {
-      console.error('Failed to update profile:', err);
-      setError('Failed to update profile');
-    } finally {
-      setSaving(false);
-    }
-  };
-
   if (sessionLoading || loading) {
     return <FullPageLoading text="Loading Profile" />;
   }
 
   if (!session?.user) {
     return (
-      <div className="flex min-h-svh w-full flex-col items-center justify-center p-6">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Not Logged In</CardTitle>
-            <CardDescription>Please log in to view your profile</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/auth/login">
-              <Button className="w-full">Log In</Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
+      <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+        <div className="text-center">
+          <h1 className="font-tanker text-4xl mb-4">NOT LOGGED IN</h1>
+          <p className="font-sora text-neutral-500 mb-6">Please log in to view your profile</p>
+          <Link href="/auth/login">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors"
+            >
+              LOG IN
+            </motion.button>
+          </Link>
+        </div>
+      </main>
     );
   }
 
   return (
-    <div className="flex min-h-svh w-full flex-col p-6 md:p-10">
-      <div className="w-full max-w-4xl mx-auto space-y-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Account Settings</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your profile information and account settings
-          </p>
-        </div>
-
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-2">
-              <Edit2 className="h-4 w-4" />
-              Profile
-            </TabsTrigger>
-            <TabsTrigger value="picture" className="flex items-center gap-2">
-              <Camera className="h-4 w-4" />
-              Picture
-            </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2">
-              <Lock className="h-4 w-4" />
-              Security
-            </TabsTrigger>
-            <TabsTrigger value="danger" className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              Danger
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl">Profile Overview</CardTitle>
-                <CardDescription>Your current profile information</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Avatar Section */}
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    {profile?.image ? (
-                      <img
-                        src={profile.image}
-                        alt={profile.name}
-                        className="w-20 h-20 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
-                        <User className="h-10 w-10 text-muted-foreground" />
-                      </div>
-                    )}
+    <main className="min-h-screen bg-black text-white overflow-x-hidden">
+      <section className="px-6 md:px-12 lg:px-16 py-12">
+        <div className="max-w-5xl mx-auto">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-12"
+          >
+            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">[ACCOUNT]</p>
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                {profile?.image ? (
+                  <img
+                    src={profile.image}
+                    alt={profile.name}
+                    className="w-20 h-20 rounded-2xl object-cover border-2 border-orange-500/20"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center">
+                    <User className="h-10 w-10 text-neutral-600" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">{profile?.name}</h3>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1">
-                      <Mail className="h-3 w-3" />
-                      {profile?.email}
+                )}
+              </div>
+              <div>
+                <h1 className="font-tanker text-4xl md:text-5xl">{profile?.name}</h1>
+                <p className="font-sora text-neutral-500 flex items-center gap-2 mt-1">
+                  <Mail className="h-4 w-4" />
+                  {profile?.email}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Tab Navigation */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="flex gap-2 mb-8 overflow-x-auto pb-2"
+          >
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <motion.button
+                  key={tab.key}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-sora text-sm transition-all whitespace-nowrap ${
+                    activeTab === tab.key
+                      ? 'bg-orange-500 text-black font-medium'
+                      : 'bg-neutral-900 border border-neutral-800 text-neutral-400 hover:border-orange-500/30'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {tab.label}
+                </motion.button>
+              );
+            })}
+          </motion.div>
+
+          {/* Tab Content */}
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {activeTab === 'overview' && (
+              <div className="space-y-4">
+                {/* Info Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                        <Footprints className="w-5 h-5 text-orange-500" />
+                      </div>
+                      {!profile?.footShape && (
+                        <Link href="/footchecker">
+                          <motion.span whileHover={{ scale: 1.05 }} className="font-mono text-[10px] text-orange-500 cursor-pointer">[SET UP]</motion.span>
+                        </Link>
+                      )}
+                    </div>
+                    <p className="font-mono text-[10px] text-neutral-600 mb-1">FOOT SHAPE</p>
+                    <p className="font-tanker text-2xl text-white capitalize">
+                      {profile?.footShape ? footShapeLabels[profile.footShape] || profile.footShape : 'Not set'}
+                    </p>
+                  </div>
+
+                  <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                        <Star className="w-5 h-5 text-orange-500" />
+                      </div>
+                      {!profile?.favoriteShoe && (
+                        <Link href="/stash">
+                          <motion.span whileHover={{ scale: 1.05 }} className="font-mono text-[10px] text-orange-500 cursor-pointer">[CHOOSE]</motion.span>
+                        </Link>
+                      )}
+                    </div>
+                    <p className="font-mono text-[10px] text-neutral-600 mb-1">FAVORITE SHOE</p>
+                    <p className="font-tanker text-2xl text-white">
+                      {profile?.favoriteShoe ? `${profile.favoriteShoe.brand} ${profile.favoriteShoe.name}` : 'Not set'}
                     </p>
                   </div>
                 </div>
 
-                {/* Foot Shape Section */}
-                <div className="border-t pt-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Footprints className="h-5 w-5 text-muted-foreground" />
-                      <span className="font-medium">Foot Shape</span>
-                    </div>
-                    {profile?.footShape ? (
-                      <span className="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
-                        {footShapeLabels[profile.footShape] || profile.footShape}
-                      </span>
-                    ) : (
-                      <Link href="/footchecker">
-                        <Button variant="outline" size="sm">
-                          Set Up
-                        </Button>
-                      </Link>
-                    )}
-                  </div>
-                </div>
-
-                {/* Favorite Shoe Section */}
-                <div className="border-t pt-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Star className="h-5 w-5 text-muted-foreground" />
-                      <span className="font-medium">Favorite Shoe</span>
-                    </div>
-                    {profile?.favoriteShoe ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm">
-                          {profile.favoriteShoe.brand} {profile.favoriteShoe.name}
-                        </span>
-                      </div>
-                    ) : (
-                      <Link href="/footchecker">
-                        <Button variant="outline" size="sm">
-                          Choose
-                        </Button>
-                      </Link>
-                    )}
-                  </div>
-                </div>
-
-                {/* Onboarding Status */}
+                {/* Onboarding CTA */}
                 {!profile?.onboardingComplete && (
-                  <div className="border-t pt-4">
-                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
-                      <p className="text-sm text-amber-600 dark:text-amber-400 mb-2">
-                        Get personalized shoe recommendations in 3 simple steps:
-                      </p>
-                      <ol className="text-sm text-amber-600 dark:text-amber-400 space-y-1 mb-3">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 relative overflow-hidden"
+                  >
+                    <motion.div 
+                      className="absolute inset-0 opacity-10"
+                      style={{
+                        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, black 10px, black 20px)'
+                      }}
+                      animate={{ backgroundPosition: ['0px 0px', '40px 40px'] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    />
+                    <div className="relative">
+                      <p className="font-mono text-[10px] text-black/60 mb-2">[SETUP_REQUIRED]</p>
+                      <h3 className="font-tanker text-3xl text-black mb-3">COMPLETE YOUR PROFILE</h3>
+                      <ol className="font-sora text-sm text-black/70 space-y-1 mb-4">
                         <li>1. Set up your foot profile in Foot Lab</li>
                         <li>2. Add your first shoe with comfort ratings</li>
-                        <li>3. Find your perfect match in Sole Mate</li>
+                        <li>3. Find your perfect match</li>
                       </ol>
                       <Link href="/footchecker">
-                        <Button size="sm" className="mt-2">
-                          Start Setup
-                        </Button>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="bg-black text-orange-500 font-tanker text-lg px-6 py-3 rounded-2xl flex items-center gap-2"
+                        >
+                          START SETUP
+                          <ArrowUpRight className="w-5 h-5" />
+                        </motion.button>
                       </Link>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+              </div>
+            )}
 
-          <TabsContent value="profile" className="space-y-6">
-            <ProfileForm />
-          </TabsContent>
+            {activeTab === 'profile' && (
+              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
+                <ProfileForm />
+              </div>
+            )}
 
-          <TabsContent value="picture" className="space-y-6">
-            <ProfileImageUpload 
-              currentImage={profile?.image}
-              onImageUpdate={(url) => {
-                setProfile(prev => prev ? { ...prev, image: url } : null);
-              }}
-            />
-          </TabsContent>
+            {activeTab === 'picture' && (
+              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
+                <ProfileImageUpload 
+                  currentImage={profile?.image}
+                  onImageUpdate={(url) => {
+                    setProfile(prev => prev ? { ...prev, image: url } : null);
+                  }}
+                />
+              </div>
+            )}
 
-          <TabsContent value="security" className="space-y-6">
-            <PasswordChangeForm />
-            <EmailChangeForm currentEmail={profile?.email || ''} />
-          </TabsContent>
+            {activeTab === 'security' && (
+              <div className="space-y-4">
+                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
+                  <PasswordChangeForm />
+                </div>
+                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
+                  <EmailChangeForm currentEmail={profile?.email || ''} />
+                </div>
+              </div>
+            )}
 
-          <TabsContent value="danger" className="space-y-6">
-            <AccountDeletion />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+            {activeTab === 'danger' && (
+              <div className="bg-neutral-900 border border-red-500/20 rounded-3xl p-6 md:p-8">
+                <AccountDeletion />
+              </div>
+            )}
+          </motion.div>
+        </div>
+      </section>
+    </main>
   );
 }

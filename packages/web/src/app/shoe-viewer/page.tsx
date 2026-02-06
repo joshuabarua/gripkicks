@@ -67,17 +67,18 @@ export default function ShoeViewer() {
   const [selectedModel, setSelectedModel] = useState(shoeModels[0]);
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="w-full h-screen bg-black relative">
       {/* Controls Panel */}
-      <div className="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white max-w-sm">
-        <h1 className="text-2xl font-bold mb-4">Shoe Model Viewer</h1>
+      <div className="absolute top-6 left-6 z-10 bg-neutral-900/90 backdrop-blur-md border border-neutral-800 rounded-3xl p-6 text-white max-w-sm">
+        <p className="font-mono text-[10px] text-orange-500 tracking-[0.3em] mb-2">[3D_VIEWER]</p>
+        <h1 className="font-tanker text-3xl mb-4">MODEL VIEWER</h1>
         
-        <div className="space-y-2 mb-4">
-          <label className="text-sm text-gray-300">Select Model:</label>
+        <div className="space-y-3 mb-4">
+          <label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[SELECT_MODEL]</label>
           <select 
             value={selectedModel.path}
             onChange={(e) => setSelectedModel(shoeModels.find(m => m.path === e.target.value) || shoeModels[0])}
-            className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm"
+            className="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-3 text-sm font-sora focus:border-orange-500 focus:outline-none"
           >
             {shoeModels.map(model => (
               <option key={model.path} value={model.path}>
@@ -87,20 +88,19 @@ export default function ShoeViewer() {
           </select>
         </div>
         
-        <div className="text-xs text-gray-400 space-y-1">
-          <p>📁 File: {selectedModel.name}</p>
-          <p>📏 Size: {selectedModel.size}</p>
-          <p>🖱️ Use mouse to rotate • Scroll to zoom</p>
+        <div className="font-mono text-[10px] text-neutral-600 space-y-1">
+          <p>FILE: {selectedModel.name}</p>
+          <p>SIZE: {selectedModel.size}</p>
+          <p>MOUSE TO ROTATE • SCROLL TO ZOOM</p>
         </div>
       </div>
       
       {/* 3D Canvas */}
       <Canvas 
-        key={selectedModel.path} // Force re-render when model changes
+        key={selectedModel.path}
         camera={{ position: [0, 0, 5], fov: 50 }}
       >
         <Suspense fallback={null}>
-          {/* Enhanced lighting setup */}
           <ambientLight intensity={0.4} />
           <directionalLight 
             position={[10, 10, 5]} 
@@ -120,21 +120,21 @@ export default function ShoeViewer() {
       </Canvas>
       
       {/* Model Info Panel */}
-      <div className="absolute bottom-4 right-4 z-10 bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white">
-        <h3 className="text-sm font-semibold mb-2">Available Models</h3>
-        <div className="space-y-1 text-xs">
+      <div className="absolute bottom-6 right-6 z-10 bg-neutral-900/90 backdrop-blur-md border border-neutral-800 rounded-3xl p-5 text-white">
+        <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-3">[MODELS]</p>
+        <div className="space-y-2">
           {shoeModels.map(model => (
             <div 
               key={model.path}
-              className={`p-2 rounded cursor-pointer transition-colors ${
+              className={`p-3 rounded-2xl cursor-pointer transition-all text-sm ${
                 selectedModel.path === model.path 
-                  ? 'bg-blue-600/30 border border-blue-400' 
-                  : 'bg-gray-800/50 hover:bg-gray-700/50'
+                  ? 'bg-orange-500/10 border border-orange-500/30' 
+                  : 'bg-neutral-800/50 border border-transparent hover:border-neutral-700'
               }`}
               onClick={() => setSelectedModel(model)}
             >
-              <p className="font-medium">{model.name}</p>
-              <p className="text-gray-400">{model.size}</p>
+              <p className="font-sora font-medium">{model.name}</p>
+              <p className="font-mono text-[10px] text-neutral-500">{model.size}</p>
             </div>
           ))}
         </div>

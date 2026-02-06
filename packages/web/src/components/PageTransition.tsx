@@ -90,7 +90,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
             {/* Animated background text */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none select-none flex flex-col justify-center gap-4 opacity-30">
               <MarqueeText>GRIP KICKS • LOADING • </MarqueeText>
-              <MarqueeText reverse>AI POWERED • CLIMBING SHOES • </MarqueeText>
+              <MarqueeText reverse>COMMUNITY DRIVEN • CLIMBING SHOES • </MarqueeText>
               <MarqueeText>FIND YOUR FIT • </MarqueeText>
             </div>
 

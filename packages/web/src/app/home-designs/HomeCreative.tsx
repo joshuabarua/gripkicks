@@ -107,8 +107,8 @@ export default function HomeCreative() {
             >
               <Zap className="w-8 h-8 text-orange-500" />
               <div>
-                <div className="font-tanker text-5xl text-white">98%</div>
-                <p className="font-sora text-neutral-500 text-sm mt-1">Match accuracy</p>
+                <div className="font-tanker text-5xl text-white">100%</div>
+                <p className="font-sora text-neutral-500 text-sm mt-1">Community powered</p>
               </div>
             </motion.div>
 
@@ -125,7 +125,7 @@ export default function HomeCreative() {
               </div>
               <div>
                 <h4 className="font-tanker text-xl text-white mb-1">Foot Lab</h4>
-                <p className="font-sora text-neutral-500 text-xs">AI-powered foot analysis</p>
+                <p className="font-sora text-neutral-500 text-xs">Community-driven foot profiling</p>
               </div>
             </motion.div>
 
@@ -174,8 +174,8 @@ export default function HomeCreative() {
             className="mt-16 flex justify-center gap-16"
           >
             {[
-              { value: '10K+', label: 'Active Climbers' },
-              { value: '500+', label: 'Shoes in Database' },
+              { value: '100%', label: 'Your Data, Your Control' },
+              { value: '0%', label: 'Data Resold. Ever.' },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="font-tanker text-3xl text-orange-500">{stat.value}</div>
@@ -195,7 +195,7 @@ export default function HomeCreative() {
         >
           {Array(10).fill(null).map((_, i) => (
             <span key={i} className="font-tanker text-2xl text-black/80">
-              FIND YOUR GRIP • AI POWERED • COMMUNITY DRIVEN • 
+              FIND YOUR GRIP • COMMUNITY DRIVEN • YOUR DATA, YOUR SHOES • 
             </span>
           ))}
         </motion.div>
