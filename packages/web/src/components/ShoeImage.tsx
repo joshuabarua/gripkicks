@@ -9,6 +9,7 @@ interface ShoeImageProps {
   className?: string;
   transformation?: Transformation[];
   fallbackImage?: string;
+  gender?: "men" | "women" | "kids" | "unisex";
   // Common IKImage props
   alt?: string;
   loading?: "lazy";
@@ -21,16 +22,19 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
   brand,
   shoeName,
   imageUrl,
-  className = "",
+  className = "object-contain",
   transformation = [
     {
-      height: 300,
-      width: 400,
+      height: 200,
+      width: 200,
+      crop: "at_max",
+      cropMode: "pad_resize",
       format: "png",
       quality: 80
     }
   ],
   fallbackImage = "/imgs/placeholder_shoe.png",
+  gender,
   ...props
 }) => {
   const [imageError, setImageError] = useState(false);
@@ -91,10 +95,17 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
         .replace(/[^a-z0-9]/g, '_')
         .replace(/_+/g, '_')
         .replace(/^_|_$/g, '');
-      return `gripkicks/imgs/shoes/${normalizedBrand}/${normalizedName}_m1.jpg`;
+
+      // Use gender to determine the suffix
+      let genderSuffix = 'm1'; // default to men
+      if (gender === 'women') genderSuffix = 'w1';
+      else if (gender === 'kids') genderSuffix = 'k1';
+      else if (gender === 'unisex') genderSuffix = 'u1';
+
+      return `gripkicks/imgs/shoes/${normalizedBrand}/${normalizedName}_${genderSuffix}.png`;
     }
 
-    return `gripkicks/imgs/shoes/${normalizedBrand}/default.jpg`;
+    return `gripkicks/imgs/shoes/${normalizedBrand}/default.png`;
   };
 
   const imagePath = generateImagePath();

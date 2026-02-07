@@ -395,20 +395,14 @@ export default function ShoeSanctuaryPage() {
                           onClick={() => addShoeToSanctuary(shoe._id)}
                         >
                           <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 bg-white rounded-xl overflow-hidden flex-shrink-0">
+                            <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
                               <ShoeImage
                                 brand={shoe.brand}
                                 shoeName={shoe.name}
                                 imageUrl={shoe.imageUrl}
-                                className="w-full h-full object-contain p-1.5"
-                                transformation={[
-                                  {
-                                    height: 64,
-                                    width: 64,
-                                    format: "png",
-                                    quality: 75
-                                  }
-                                ]}
+                                className="p-1.5"
+                                transformation={[{ height: 64, width: 64, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 75 }]}
+                                gender={shoe.gender}
                               />
                             </div>
                             <div>

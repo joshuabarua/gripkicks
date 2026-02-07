@@ -158,20 +158,12 @@ export default function ShoeStatsModal({
 
             <div className="relative flex items-center gap-5">
               <div className="w-28 h-28 flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 p-1">
-                <div className="w-full h-full rounded-xl overflow-hidden bg-white">
+                <div className="w-full h-full rounded-xl overflow-hidden bg-slate-700">
                   <ShoeImage
                     brand={shoeBrand}
                     shoeName={shoeName}
                     imageUrl={shoe.shoe.imageUrl}
-                    className="w-full h-full object-contain"
-                    transformation={[
-                      {
-                        height: 200,
-                        width: 200,
-                        format: "png",
-                        quality: 80
-                      }
-                    ]}
+                    className=""
                   />
                 </div>
               </div>

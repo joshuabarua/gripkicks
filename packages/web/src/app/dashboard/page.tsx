@@ -331,13 +331,14 @@ export default function Dashboard() {
                       className="flex items-center justify-between p-4 rounded-2xl bg-neutral-800/50 hover:bg-neutral-800 border border-neutral-800 hover:border-orange-500/20 cursor-pointer transition-all group"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-neutral-900 rounded-xl overflow-hidden flex-shrink-0">
+                        <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
                           <ShoeImage
                             brand={shoe.shoe.brand}
                             shoeName={shoe.shoe.name}
                             imageUrl={shoe.shoe.imageUrl}
-                            className="w-full h-full object-contain p-2"
-                            transformation={[{ height: 56, width: 56, format: "png", quality: 75 }]}
+                            className="p-2"
+                            transformation={[{ height: 56, width: 56, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 75 }]}
+                            gender={shoe.shoe.gender}
                           />
                         </div>
                         <div>
@@ -419,6 +420,6 @@ export default function Dashboard() {
           ))}
         </motion.div>
       </section>
-    </main>
+    </main >
   );
 }

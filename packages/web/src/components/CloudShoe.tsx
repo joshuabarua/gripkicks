@@ -99,6 +99,7 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
                   quality: 80
                 }
               ]}
+              gender={shoe.shoe.gender}
             />
           )}
         </div>

@@ -37,7 +37,15 @@ export default function AdminDashboard() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const shoes = useQuery(api.shoes.list);
-  const updateShoe = useMutation(api.shoes.update);
+  const updateShoe = useMutation(api.shoes.update).withOptimisticUpdate(
+    (localStore, args) => {
+      // Optimistic update logic
+      const shoe = localStore.getQuery(api.shoes.list)?.find(s => s._id === args.id);
+      if (shoe) {
+        Object.assign(shoe, args);
+      }
+    }
+  );
   const deleteShoe = useMutation(api.shoes.remove);
   const createShoe = useMutation(api.shoes.create);
 
@@ -113,19 +121,25 @@ export default function AdminDashboard() {
 
   const handleSave = async () => {
     if (!editForm) return;
-    await updateShoe({
-      id: editForm._id,
-      name: editForm.name,
-      brand: editForm.brand,
-      imageUrl: editForm.imageUrl,
-      gender: editForm.gender,
-      aggressiveness: editForm.aggressiveness,
-      stiffness: editForm.stiffness,
-      climbingDiscipline: editForm.climbingDiscipline,
-      volume: editForm.volume,
-    });
-    setEditingId(null);
-    setEditForm(null);
+    try {
+      await updateShoe({
+        id: editForm._id,
+        name: editForm.name,
+        brand: editForm.brand,
+        imageUrl: editForm.imageUrl,
+        gender: editForm.gender,
+        aggressiveness: editForm.aggressiveness,
+        stiffness: editForm.stiffness,
+        climbingDiscipline: editForm.climbingDiscipline,
+        volume: editForm.volume,
+      });
+      setEditingId(null);
+      setEditForm(null);
+      console.log('Shoe updated successfully');
+    } catch (error) {
+      console.error('Failed to update shoe:', error);
+      alert('Failed to save shoe changes. Please try again.');
+    }
   };
 
   const handleDelete = async (id: Id<"shoes">) => {
@@ -410,7 +424,7 @@ export default function AdminDashboard() {
                           </div>
                         ) : null}
                         <div
-                          className="w-16 h-16 rounded-lg overflow-hidden bg-white/10 cursor-pointer hover:ring-2 hover:ring-accent transition-all"
+                          className="rounded-lg overflow-hidden bg-white/10 cursor-pointer hover:ring-2 hover:ring-accent transition-all"
                           onClick={() => {
                             setEditingImageId(shoe._id);
                             setEditingImageUrl(shoe.imageUrl || '');
@@ -421,8 +435,8 @@ export default function AdminDashboard() {
                             brand={shoe.brand}
                             shoeName={shoe.name}
                             imageUrl={shoe.imageUrl}
-                            className="w-full h-full object-cover"
-                            transformation={[{ height: 64, width: 64, quality: 80 }]}
+                            className=""
+                            gender={shoe.gender}
                           />
                         </div>
                       </td>
