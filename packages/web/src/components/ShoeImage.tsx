@@ -26,7 +26,7 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
     {
       height: 300,
       width: 400,
-      format: "auto",
+      format: "png",
       quality: 80
     }
   ],

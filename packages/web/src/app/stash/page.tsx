@@ -405,7 +405,7 @@ export default function ShoeSanctuaryPage() {
                                   {
                                     height: 64,
                                     width: 64,
-                                    format: "auto",
+                                    format: "png",
                                     quality: 75
                                   }
                                 ]}

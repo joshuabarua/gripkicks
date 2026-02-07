@@ -168,7 +168,7 @@ export default function ShoeStatsModal({
                       {
                         height: 200,
                         width: 200,
-                        format: "auto",
+                        format: "png",
                         quality: 80
                       }
                     ]}

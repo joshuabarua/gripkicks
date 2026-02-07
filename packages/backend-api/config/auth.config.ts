@@ -46,10 +46,12 @@ export const auth = betterAuth({
   },
   trustedOrigins: [
     'http://localhost:3000',
-    'http://localhost:3001',
+    'http://localhost:8000',
+    'http://192.168.0.71:3000',
+    'http://192.168.0.71:8000',
   ],
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3001',
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:8000',
   plugins: [
     polar({
       client: polarClient,

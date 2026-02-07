@@ -24,7 +24,7 @@ const API_BASE = process.env.API_BASE || '/api/v1';
 
 // Add CORS middleware for Better Auth routes
 app.use('/api/auth/*', cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: ['http://localhost:3000', 'http://192.168.0.71:3000'],
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['POST', 'GET', 'OPTIONS'],
   exposeHeaders: ['Content-Length'],
@@ -34,8 +34,8 @@ app.use('/api/auth/*', cors({
 
 // Health check endpoint
 app.get('/health', (c: Context) => {
-  return c.json({ 
-    status: 'ok', 
+  return c.json({
+    status: 'ok',
     uptime: Math.floor(process.uptime() * 1000), // Convert to milliseconds
     message: 'Welcome to the API!'
   });
@@ -43,8 +43,8 @@ app.get('/health', (c: Context) => {
 
 // Better Auth health check endpoint
 app.get('/api/auth/healthz', (c: Context) => {
-  return c.json({ 
-    status: 'ok', 
+  return c.json({
+    status: 'ok',
     service: 'better-auth',
     message: 'Better Auth is running'
   });

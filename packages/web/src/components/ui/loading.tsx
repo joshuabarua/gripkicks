@@ -10,9 +10,9 @@ interface LoadingProps {
   variant?: 'default' | 'minimal' | 'full';
 }
 
-export function Loading({ 
-  text = 'Loading', 
-  showProgress = false, 
+export function Loading({
+  text = 'Loading',
+  showProgress = false,
   progress = 0,
   size = 'md',
   variant = 'default'
@@ -39,7 +39,7 @@ export function Loading({
     return (
       <div className="flex items-center gap-2">
         <div className={`${sizeClasses[size]} h-[2px] bg-neutral-800 rounded-full overflow-hidden`}>
-          <motion.div 
+          <motion.div
             className="h-full bg-orange-500"
             initial={{ width: '0%' }}
             animate={{ width: showProgress ? `${progress}%` : ['0%', '100%', '0%'] }}
@@ -54,7 +54,7 @@ export function Loading({
     return (
       <div className="flex min-h-svh w-full items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-4">
-          <motion.div 
+          <motion.div
             className="w-16 h-16 border-l-2 border-t-2 border-orange-500/30"
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -62,7 +62,7 @@ export function Loading({
           <div className="flex flex-col items-center gap-3">
             <span className="font-mono text-[10px] text-orange-500 tracking-[0.3em]">[{text.toUpperCase()}]</span>
             <div className={`${sizeClasses[size]} h-[2px] bg-neutral-800 rounded-full overflow-hidden`}>
-              <motion.div 
+              <motion.div
                 className="h-full bg-orange-500"
                 initial={{ width: '0%' }}
                 animate={{ width: showProgress ? `${progress}%` : ['0%', '100%', '0%'] }}
@@ -90,7 +90,7 @@ export function Loading({
       <span className={`font-mono ${textSizes[size]} text-neutral-600 tracking-[0.2em]`}>[{text.toUpperCase()}]</span>
       {showProgress && (
         <div className={`${sizeClasses[size]} h-[2px] bg-neutral-800 rounded-full overflow-hidden`}>
-          <motion.div 
+          <motion.div
             className="h-full bg-orange-500"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
@@ -110,7 +110,7 @@ export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
   };
 
   return (
-    <motion.div 
+    <motion.div
       className={`${sizes[size]} border-2 border-neutral-800 border-t-orange-500 rounded-full`}
       animate={{ rotate: 360 }}
       transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
@@ -118,12 +118,12 @@ export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
   );
 }
 
-export function LoadingBar({ 
-  progress, 
+export function LoadingBar({
+  progress,
   showLabel = false,
-  size = 'md' 
-}: { 
-  progress?: number; 
+  size = 'md'
+}: {
+  progress?: number;
   showLabel?: boolean;
   size?: 'sm' | 'md' | 'lg';
 }) {
@@ -143,14 +143,14 @@ export function LoadingBar({
         </span>
       )}
       <div className={`${sizeClasses[size]} bg-neutral-800 rounded-full overflow-hidden`}>
-        <motion.div 
+        <motion.div
           className="h-full bg-orange-500"
           initial={{ width: '0%', x: 0 }}
-          animate={isIndeterminate 
+          animate={isIndeterminate
             ? { x: ['-100%', '200%'] }
             : { width: `${progress}%` }
           }
-          transition={isIndeterminate 
+          transition={isIndeterminate
             ? { duration: 1.2, repeat: Infinity, ease: "easeInOut" }
             : { duration: 0.15 }
           }
@@ -165,22 +165,22 @@ export function FullPageLoading({ text = 'Loading' }: { text?: string }) {
   return (
     <div className="flex min-h-svh w-full items-center justify-center bg-black">
       <div className="relative flex flex-col items-center">
-        <motion.div 
+        <motion.div
           className="absolute -top-8 -left-8 w-12 h-12 border-l-2 border-t-2 border-orange-500/20"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         />
-        <motion.div 
+        <motion.div
           className="absolute -bottom-8 -right-8 w-12 h-12 border-r-2 border-b-2 border-orange-500/20"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         />
-        
+
         <div className="flex flex-col items-center gap-4 p-8">
           <div className="font-tanker text-2xl text-white">
             GRIP <span className="text-orange-500">KICKS</span>
           </div>
-          
+
           <div className="flex items-center gap-2">
             {[0, 1, 2].map((i) => (
               <motion.div
@@ -191,11 +191,11 @@ export function FullPageLoading({ text = 'Loading' }: { text?: string }) {
               />
             ))}
           </div>
-          
+
           <span className="font-mono text-[10px] text-neutral-600 tracking-[0.2em]">[{text.toUpperCase()}]</span>
-          
+
           <div className="w-24 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
-            <motion.div 
+            <motion.div
               className="h-full bg-orange-500"
               animate={{ x: ['-100%', '200%'] }}
               transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}

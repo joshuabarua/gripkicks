@@ -30,29 +30,29 @@ const modelMap: Record<string, string> = {
 
 export const convexAdapter = (config: ConvexAdapterConfig) => {
   const baseUrl = toConvexHttpUrl(config.convexUrl);
-  
+
   const callConvex = async (model: string, operation: string, data: Record<string, unknown>) => {
     const mappedModel = modelMap[model] || model;
     const url = `${baseUrl}/api/auth-db/${mappedModel}/${operation}`;
-    
+
     if (config.debugLogs) {
       console.log(`[ConvexAdapter] ${operation} on ${model}:`, JSON.stringify(data, null, 2));
     }
-    
+
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      
+
       const responseText = await response.text();
-      
+
       if (!response.ok) {
         console.error(`[ConvexAdapter] Error: ${response.status} ${responseText}`);
         throw new Error(`Convex adapter error: ${response.status} - ${responseText}`);
       }
-      
+
       let result;
       try {
         result = JSON.parse(responseText);
@@ -60,11 +60,11 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
         console.error(`[ConvexAdapter] Failed to parse response:`, responseText);
         throw new Error(`Invalid JSON response from Convex`);
       }
-      
+
       if (config.debugLogs) {
         console.log(`[ConvexAdapter] Result:`, JSON.stringify(result, null, 2));
       }
-      
+
       // Return the data, ensuring it has the expected format
       return result.data;
     } catch (error) {
@@ -91,7 +91,7 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
           if (config.debugLogs) {
             console.log(`[ConvexAdapter] CREATE ${model}:`, data);
           }
-          
+
           // Add betterAuthId for user model
           if (model === 'user' && data.id) {
             const dataWithBetterAuthId = {
@@ -101,7 +101,7 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             const result = await callConvex(model, 'create', dataWithBetterAuthId);
             return result;
           }
-          
+
           const result = await callConvex(model, 'create', data as Record<string, unknown>);
           return result;
         },
@@ -111,13 +111,13 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
           // We need to find the record first, then update by ID
           const field = where[0]?.field;
           const value = where[0]?.value;
-          
+
           if (!field || value === undefined) {
             throw new Error('Update requires a field and value');
           }
-          
+
           let id: string | undefined;
-          
+
           // Special handling for session updates by token
           if (model === 'session' && field === 'token') {
             // Find the session by token first
@@ -134,15 +134,15 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             console.warn(`[ConvexAdapter] Update by ${field} not implemented for ${model}`);
             return null;
           }
-          
+
           if (!id) {
             throw new Error('Record not found for update');
           }
-          
+
           if (config.debugLogs) {
             console.log('[ConvexAdapter] Updating session with ID:', id);
           }
-          
+
           const result = await callConvex(model, 'update', { id, data: update });
           return result;
         },
@@ -181,12 +181,38 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
         },
 
         delete: async ({ model, where }) => {
-          const id = where[0]?.value;
-          if (!id) {
-            throw new Error('Delete requires an ID');
+          const field = where[0]?.field;
+          const value = where[0]?.value;
+
+          if (config.debugLogs) {
+            console.log(`[ConvexAdapter] DELETE called with model: ${model}, where:`, where);
+            console.log(`[ConvexAdapter] Field: ${field}, Value: ${value}`);
           }
-          
-          await callConvex(model, 'delete', { id });
+
+          if (!field || value === undefined) {
+            throw new Error('Delete requires a field and value');
+          }
+
+          // Handle session deletion - check if value looks like a token (not a Convex ID)
+          if (model === 'session') {
+            // Convex IDs look like "k1726gnwrvqwjh4488jt1wknhd80768a"
+            // Session tokens look like "Pf8A0y4EJcr6wdkEmICxUt4VXDggMjCY"
+            if (typeof value === 'string' && value.length > 20 && /^[A-Za-z0-9]+$/.test(value)) {
+              if (config.debugLogs) {
+                console.log(`[ConvexAdapter] Detected session token, using deleteByToken`);
+              }
+              await callConvex(model, 'deleteByToken', { token: value });
+              return;
+            }
+          }
+
+          // Handle deletion by ID
+          if (field === 'id' || field === '_id') {
+            await callConvex(model, 'delete', { id: value });
+            return;
+          }
+
+          throw new Error(`Delete by ${field} not implemented for ${model}`);
         },
 
         deleteMany: async ({ model, where }) => {
@@ -194,7 +220,7 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
           if (model === 'session' && where.length > 0) {
             const field = where[0]?.field;
             const value = where[0]?.value;
-            
+
             if (field === 'token') {
               await callConvex(model, 'deleteByToken', { token: value });
               return 1;
@@ -203,7 +229,7 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
               return result?.count || 0;
             }
           }
-          
+
           // TODO: Implement deleteMany for other models
           console.warn(`[ConvexAdapter] deleteMany not implemented for model: ${model}, where:`, where);
           throw new Error('deleteMany operation not supported for this configuration');
@@ -213,14 +239,14 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
           // Determine the lookup method based on the where clause
           const field = where[0]?.field;
           const value = where[0]?.value;
-          
+
           if (!field || value === undefined) {
             return null;
           }
-          
+
           let operation = 'findById';
           const data: Record<string, unknown> = {};
-          
+
           if (field === 'id' || field === '_id') {
             operation = 'findById';
             data.id = value;
@@ -246,7 +272,7 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
               data.accountId = accountWhere.value;
             }
           }
-          
+
           try {
             const result = await callConvex(model, operation, data);
             return result;
@@ -264,30 +290,30 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
               if (userIdWhere) {
                 const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
                 let records = Array.isArray(result) ? result : [];
-                
+
                 // Apply limit and offset if provided
                 if (offset) records = records.slice(offset);
                 if (limit) records = records.slice(0, limit);
-                
+
                 return records;
               }
             }
-            
+
             // Handle account queries
             if (model === 'account' && where && where.length > 0) {
               const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
               if (userIdWhere) {
                 const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
                 let records = Array.isArray(result) ? result : [];
-                
+
                 // Apply limit and offset if provided
                 if (offset) records = records.slice(offset);
                 if (limit) records = records.slice(0, limit);
-                
+
                 return records;
               }
             }
-            
+
             // For other cases, return empty array (Better Auth typically doesn't need these)
             if (config.debugLogs) {
               console.log(`[ConvexAdapter] findMany called for ${model} with unsupported where clause:`, where);

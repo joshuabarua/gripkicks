@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSession } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
-import { 
-  Footprints, 
-  Plus, 
-  Star, 
-  ArrowUpRight, 
+import {
+  Footprints,
+  Plus,
+  Star,
+  ArrowUpRight,
   TrendingUp,
   Activity,
   Heart,
@@ -82,7 +82,7 @@ export default function Dashboard() {
   }
 
   const userName = profile?.name || session.user.name || 'Climber';
-  const avgComfort = userShoes.length > 0 
+  const avgComfort = userShoes.length > 0
     ? (userShoes.reduce((acc, shoe) => acc + (shoe.comfortScore || 0), 0) / userShoes.length).toFixed(1)
     : '-';
   const favCount = Array.isArray(userShoes) ? userShoes.filter(shoe => shoe.isFavourite).length : 0;
@@ -337,7 +337,7 @@ export default function Dashboard() {
                             shoeName={shoe.shoe.name}
                             imageUrl={shoe.shoe.imageUrl}
                             className="w-full h-full object-contain p-2"
-                            transformation={[{ height: 56, width: 56, format: "auto", quality: 75 }]}
+                            transformation={[{ height: 56, width: 56, format: "png", quality: 75 }]}
                           />
                         </div>
                         <div>
@@ -414,7 +414,7 @@ export default function Dashboard() {
         >
           {Array(10).fill(null).map((_, i) => (
             <span key={i} className="font-tanker text-2xl text-black/80">
-              TRACK • ANALYZE • CLIMB • REPEAT • 
+              TRACK • ANALYZE • CLIMB • REPEAT •
             </span>
           ))}
         </motion.div>

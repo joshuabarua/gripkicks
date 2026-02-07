@@ -95,13 +95,13 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Corner accents */}
-            <motion.div 
+            <motion.div
               className="absolute top-6 left-6 w-16 h-16 border-l-2 border-t-2 border-orange-500/30"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
             />
-            <motion.div 
+            <motion.div
               className="absolute bottom-6 right-6 w-16 h-16 border-r-2 border-b-2 border-orange-500/30"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -122,16 +122,16 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
             <div className="relative z-10 flex flex-col items-center">
               {/* Image container with border */}
               <motion.div
-                className="relative p-1 bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-2xl"
+                className="relative p-1  rounded-2xl"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="bg-neutral-900 rounded-xl p-4 relative overflow-hidden">
+                <div className=" rounded-xl p-4 relative overflow-hidden">
                   <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-orange-500/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-1/2 w-40 h-40 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
                   </div>
-                  
+
                   <AnimatePresence mode="popLayout">
                     <motion.img
                       key={currentImageIndex}
@@ -159,7 +159,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
               >
                 <span className="font-mono text-[10px] text-neutral-600">[{String(imageCounter).padStart(2, '0')}/{String(transitionImages.length).padStart(2, '0')}]</span>
                 <div className="w-24 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
-                  <motion.div 
+                  <motion.div
                     className="h-full bg-orange-500"
                     initial={{ width: 0 }}
                     animate={{ width: `${(imageCounter / transitionImages.length) * 100}%` }}
@@ -184,7 +184,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
           </motion.div>
         )}
       </AnimatePresence>
-      
+
       <motion.div
         key={pathname}
         initial={{ opacity: 0 }}

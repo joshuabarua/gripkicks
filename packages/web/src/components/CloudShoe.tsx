@@ -57,7 +57,7 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="relative w-52 bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-md group-hover:shadow-xl group-hover:shadow-orange-500/10">
+      <div className="relative flex flex-col justify-center items-center gap-2.5 p-3 rounded-[20px] border-[1.5px] border-[#252525] bg-[#252525] shadow-[0_0_40px_0_rgba(87,89,88,0.10)] transition-all duration-300 group-hover:shadow-[0_0_60px_0_rgba(251,146,60,0.20)] group-hover:border-orange-500/50">
         {(shoe.isFavourite || specialLabel) && (
           <div className="absolute top-3 left-3 z-20 flex gap-1.5">
             {shoe.isFavourite && (
@@ -66,11 +66,10 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
               </div>
             )}
             {specialLabel && (
-              <div className={`rounded-full w-6 h-6 flex items-center justify-center ${
-                specialLabel.type === 'most-comfy' ? 'bg-pink-500/90 text-white' :
+              <div className={`rounded-full w-6 h-6 flex items-center justify-center ${specialLabel.type === 'most-comfy' ? 'bg-pink-500/90 text-white' :
                 specialLabel.type === 'oldest' ? 'bg-blue-500/90 text-white' :
-                'bg-purple-500/90 text-white'
-              }`}>
+                  'bg-purple-500/90 text-white'
+                }`}>
                 {specialLabel.icon}
               </div>
             )}
@@ -78,23 +77,25 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
         )}
 
         <div className="absolute top-3 right-3 z-20">
-          <div className="bg-black/70 backdrop-blur-sm rounded-full px-2.5 py-0.5">
+          <div className="bg-black/20 backdrop-blur-sm rounded-full px-2.5 py-0.5 border border-white/10">
             <span className="font-mono text-[10px] text-orange-400 font-bold">{avgScore}</span>
           </div>
         </div>
 
-        <div className="w-full h-44 bg-white flex items-center justify-center">
+        <div className="w-[175px] h-[200-px] flex items-center justify-center">
           {isInView && (
             <ShoeImage
               brand={shoe.shoe.brand}
               shoeName={shoe.shoe.name}
               imageUrl={shoe.shoe.imageUrl}
-              className="w-full h-full object-contain"
+              className="object-contain"
               transformation={[
                 {
-                  height: 200,
+                  height: 225,
                   width: 200,
-                  format: "auto",
+                  crop: "at_max",
+                  cropMode: "pad_resize",
+                  format: "png",
                   quality: 80
                 }
               ]}
@@ -102,12 +103,12 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
           )}
         </div>
 
-        <div className="px-4 py-3 bg-white border-t border-neutral-100">
-          <p className="font-sora text-neutral-900 text-sm font-medium leading-tight truncate group-hover:text-orange-500 transition-colors">
+        <div className="w-full text-center">
+          <p className="font-sora uppercase text-white text-sm font-medium leading-tight truncate group-hover:text-orange-400 transition-colors">
             {shoe.shoe.name}
           </p>
         </div>
       </div>
-    </motion.div>
+    </motion.div >
   );
 }
