@@ -448,7 +448,7 @@ export default function ShoeSanctuaryPage() {
                 </div>
                 <div className="bg-neutral-900 border border-neutral-800 rounded-2xl px-5 py-3">
                   <span className="font-tanker text-2xl text-orange-500">
-                    {Object.keys(userShoes.reduce((acc: Record<string, boolean>, s) => { acc[s.shoe.brand] = true; return acc; }, {})).length}
+                    {Object.keys(userShoes.reduce((acc: Record<string, boolean>, s) => { acc[s.shoeDetails.brand] = true; return acc; }, {})).length}
                   </span>
                   <span className="text-neutral-500 font-sora text-xs ml-2">brands</span>
                 </div>
@@ -499,7 +499,7 @@ export default function ShoeSanctuaryPage() {
               <div className="space-y-16">
                 {Object.entries(
                   userShoes.reduce((acc: Record<string, UserShoe[]>, shoe: UserShoe) => {
-                    const brand = shoe.shoe.brand;
+                    const brand = shoe.shoeDetails.brand;
                     if (!acc[brand]) acc[brand] = [];
                     acc[brand].push(shoe);
                     return acc;

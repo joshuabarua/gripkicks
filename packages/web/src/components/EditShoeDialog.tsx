@@ -39,7 +39,7 @@ export default function EditShoeDialog({
               </div>
               <DialogTitle className="text-white font-so-cloudy uppercase text-xl">Edit Shoe Stats</DialogTitle>
               <DialogDescription className="text-sm text-neutral-500 font-sora">
-                {editingShoe.shoe.name} — {editingShoe.shoe.brand}
+                {editingShoe.shoeDetails.name} — {editingShoe.shoeDetails.brand}
               </DialogDescription>
             </DialogHeader>
 

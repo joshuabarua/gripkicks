@@ -85,13 +85,13 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
         <div className="w-[175px] h-[200-px] flex items-center justify-center">
           {isInView && (
             <ShoeImage
-              brand={shoe.shoe.brand}
-              shoeName={shoe.shoe.name}
-              imageUrl={shoe.shoe.imageUrl}
+              brand={shoe.shoeDetails.brand}
+              shoeName={shoe.shoeDetails.name}
+              imageUrl={shoe.shoeDetails.imageUrl}
               className="object-contain"
               transformation={[
                 {
-                  height: 225,
+                  height: 200,
                   width: 200,
                   crop: "at_max",
                   cropMode: "pad_resize",
@@ -99,14 +99,14 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
                   quality: 80
                 }
               ]}
-              gender={shoe.shoe.gender}
+              gender={shoe.shoeDetails.gender}
             />
           )}
         </div>
 
         <div className="w-full text-center">
           <p className="font-sora uppercase text-white text-sm font-medium leading-tight truncate group-hover:text-orange-400 transition-colors">
-            {shoe.shoe.name}
+            {shoe.shoeDetails.name}
           </p>
         </div>
       </div>

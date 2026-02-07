@@ -333,17 +333,17 @@ export default function Dashboard() {
                       <div className="flex items-center gap-4">
                         <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
                           <ShoeImage
-                            brand={shoe.shoe.brand}
-                            shoeName={shoe.shoe.name}
-                            imageUrl={shoe.shoe.imageUrl}
+                            brand={shoe.shoeDetails.brand}
+                            shoeName={shoe.shoeDetails.name}
+                            imageUrl={shoe.shoeDetails.imageUrl}
                             className="p-2"
                             transformation={[{ height: 56, width: 56, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 75 }]}
-                            gender={shoe.shoe.gender}
+                            gender={shoe.shoeDetails.gender}
                           />
                         </div>
                         <div>
-                          <h3 className="font-sora font-medium text-white group-hover:text-orange-500 transition-colors">{shoe.shoe.name}</h3>
-                          <p className="font-mono text-[10px] text-neutral-600">{shoe.shoe.brand}</p>
+                          <h3 className="font-sora font-medium text-white group-hover:text-orange-500 transition-colors">{shoe.shoeDetails.name}</h3>
+                          <p className="font-mono text-[10px] text-neutral-600">{shoe.shoeDetails.brand}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">

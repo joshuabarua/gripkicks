@@ -77,8 +77,8 @@ export default function ShoeStatsModal({
   if (!shoe) return null;
 
   const hasFullShoe = !!fullShoe;
-  const shoeName = fullShoe?.name || shoe.shoe.name;
-  const shoeBrand = fullShoe?.brand || shoe.shoe.brand;
+  const shoeName = fullShoe?.name || shoe.shoeDetails.name;
+  const shoeBrand = fullShoe?.brand || shoe.shoeDetails.brand;
 
   const aggressiveness = hasFullShoe ? fullShoe?.aggressiveness : undefined;
   const climbingDiscipline = hasFullShoe ? fullShoe?.climbingDiscipline : undefined;
@@ -162,7 +162,7 @@ export default function ShoeStatsModal({
                   <ShoeImage
                     brand={shoeBrand}
                     shoeName={shoeName}
-                    imageUrl={shoe.shoe.imageUrl}
+                    imageUrl={shoe.shoeDetails.imageUrl}
                     className=""
                   />
                 </div>

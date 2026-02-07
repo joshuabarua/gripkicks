@@ -45,11 +45,12 @@ export interface FootShapeCompat {
 export interface UserShoe {
   _id: string;
   shoeId: string;
-  shoe: {
+  shoeDetails: {
     _id: string;
     name: string;
     brand: string;
     imageUrl?: string;
+    gender?: "men" | "women" | "kids" | "unisex";
   };
   size?: string;
   purchaseDate?: string;
