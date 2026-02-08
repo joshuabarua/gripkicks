@@ -58,6 +58,13 @@ next-env.d.ts
 
 # Skill files
 SKILL.md
+continue-workflow.md
+no-inline-comments.md
+yarn-npx.md
+
+.windsurf/rules/*   
+.windsurf/settings.json
+.windsurf/ai
 
 # License files
 LICENSE*
