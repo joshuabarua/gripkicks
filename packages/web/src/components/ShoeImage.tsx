@@ -69,20 +69,14 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
   };
 
   const generateImagePath = (): string => {
-    const normalizedBrand = normalizeBrand(brand);
-
     if (imageUrl) {
       if (imageUrl.startsWith('https://ik.imagekit.io/')) {
         const url = new URL(imageUrl);
         let path = url.pathname;
-        path = path.substring(1);
-        if (path.startsWith('ie871bk0r/')) {
-          path = path.substring('ie871bk0r/'.length);
+        if (path.startsWith('/')) {
+          path = path.substring(1);
         }
-        return path;
-      }
-      if (!imageUrl.startsWith('http') && !imageUrl.includes('://')) {
-        let path = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
+        // Remove the ImageKit ID prefix if present
         if (path.startsWith('ie871bk0r/')) {
           path = path.substring('ie871bk0r/'.length);
         }
@@ -92,43 +86,10 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
     }
 
     if (slug) {
-      let normalizedSlug = slug.trim().replace(/\\/g, "/");
-      normalizedSlug = normalizedSlug.replace(/^gripkicks\/imgs\/shoes\//, "");
-      normalizedSlug = normalizedSlug.replace(/^\/+/, "");
-      if (normalizedSlug.endsWith(".png")) {
-        normalizedSlug = normalizedSlug.slice(0, -4);
-      }
-
-      const slugParts = normalizedSlug.split("/").filter(Boolean);
-      if (slugParts.length > 0) {
-        slugParts[0] = normalizeBrand(slugParts[0]);
-        normalizedSlug = slugParts.join("/");
-      }
-
-      if (/_([mwku])$/.test(normalizedSlug)) {
-        normalizedSlug = `${normalizedSlug}1`;
-      }
-
-      return `gripkicks/imgs/shoes/${normalizedSlug}.png`;
+      return `gripkicks/imgs/shoes/${slug}.png`;
     }
 
-    if (shoeName) {
-      const normalizedName = shoeName
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '_')
-        .replace(/_+/g, '_')
-        .replace(/^_|_$/g, '');
-
-      // Use gender to determine the suffix
-      let genderSuffix = 'm1'; // default to men
-      if (gender === 'women') genderSuffix = 'w1';
-      else if (gender === 'kids') genderSuffix = 'k1';
-      else if (gender === 'unisex') genderSuffix = 'u1';
-
-      return `gripkicks/imgs/shoes/${normalizedBrand}/${normalizedName}_${genderSuffix}.png`;
-    }
-
-    return `gripkicks/imgs/shoes/${normalizedBrand}/default.png`;
+    return `gripkicks/imgs/shoes/${normalizeBrand(brand)}/default.png`;
   };
 
   const imagePath = generateImagePath();

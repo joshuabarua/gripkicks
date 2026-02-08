@@ -5,8 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import ShoeImage from '@/components/ShoeImage';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
+import { PaginatedList } from '@/components/ui/PaginatedList';
 import { Footprints, Plus, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState, useCallback } from 'react';
 
 type BaseShoe = {
   _id: string;
@@ -46,6 +48,8 @@ export function AddShoeDialog({
   searchResults,
   onSelectShoe,
 }: AddShoeDialogProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const genderOptions: { label: string; value: GenderFilter }[] = [
     { label: 'All', value: 'all' },
     { label: 'Men', value: 'men' },
@@ -53,6 +57,20 @@ export function AddShoeDialog({
     { label: 'Kids', value: 'kids' },
     { label: 'Unisex', value: 'unisex' },
   ];
+
+  const handleEndReached = useCallback(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+  }, []);
+
+  const loadingIndicator = (
+    <div className="inline-flex items-center gap-2 text-neutral-500 text-sm">
+      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-neutral-500"></div>
+      <span>Loading more shoes...</span>
+    </div>
+  );
 
   return (
     <Dialog
@@ -132,8 +150,9 @@ export function AddShoeDialog({
             </div>
           </div>
 
-          <div className="max-h-96 overflow-y-auto space-y-fluid-xs pr-2 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
-            {searchResults.map((shoe) => (
+          <PaginatedList
+            items={searchResults}
+            renderItem={(shoe: BaseShoe) => (
               <div
                 key={shoe._id}
                 className="flex items-center justify-between p-fluid-md rounded-2xl bg-neutral-900 hover:bg-neutral-800 cursor-pointer transition-all duration-300 border border-neutral-800 hover:border-orange-500/30 group"
@@ -162,18 +181,13 @@ export function AddShoeDialog({
                 </div>
                 <Plus className="w-5 h-5 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-90 transition-all duration-300" />
               </div>
-            ))}
-          </div>
-
-          {searchQuery.length > 2 && searchResults.length === 0 && (
-            <div className="text-center py-8">
-              <AnimatedIcon animation="bounce" trigger="scroll" className="mx-auto mb-4">
-                <Footprints className="w-12 h-12 text-neutral-700" />
-              </AnimatedIcon>
-              <p className="text-neutral-400 font-sora">No shoes found</p>
-              <p className="text-xs text-neutral-600 font-mono mt-2">Try &quot;La Sportiva&quot;, &quot;Scarpa&quot;, or &quot;Five Ten&quot;</p>
-            </div>
-          )}
+            )}
+            className="max-h-96 space-y-fluid-xs pr-2 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent"
+            loadingIndicator={loadingIndicator}
+            onEndReached={handleEndReached}
+            hasMore={searchResults.length > 0}
+            isLoading={isLoading}
+          />
         </div>
       </DialogContent>
     </Dialog>
