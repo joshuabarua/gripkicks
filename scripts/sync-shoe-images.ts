@@ -1,6 +1,6 @@
 import ImageKit from 'imagekit';
 import { ConvexClient } from "convex/browser";
-import { api } from "../convex/_generated/api";
+import { api } from "../convex/_generated/api.js";
 
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY || 'public_pQA0HTNiRRSN1Rut2M2i9nr0eZ4=',
@@ -12,10 +12,12 @@ const client = new ConvexClient(process.env.CONVEX_URL || "https://peaceful-mart
 
 interface ShoeImageInfo {
   brand: string;
+  brandFolder: string;
   shoeName: string;
   gender: 'men' | 'women' | 'kids' | 'unisex';
   imageUrl: string;
   fileName: string;
+  slugPath: string;
 }
 
 const BRAND_FOLDERS: Record<string, string> = {
@@ -45,13 +47,14 @@ const NAME_MAPPINGS: Record<string, string> = {
   'katana_lace': 'Katana Lace',
 };
 
-function parseGenderFromFilename(filename: string): { baseName: string; gender: 'men' | 'women' | 'kids' | 'unisex'; imageNumber: string } | null {
-  let match = filename.match(/^(.+?)[_-](m|w|k)(\d+)\.jpg$/i);
+function parseGenderFromFilename(filename: string): { baseName: string; gender: 'men' | 'women' | 'kids' | 'unisex'; imageNumber: string; extension: string } | null {
+  let match = filename.match(/^(.+?)[_-](m|w|k)(\d+)\.(jpg|png|jpeg|webp)$/i);
   if (!match) return null;
 
   const baseName = match[1].replace(/-/g, '_');
   const genderCode = match[2].toLowerCase();
   const imageNumber = match[3];
+  const extension = match[4].toLowerCase();
 
   const genderMap: Record<string, 'men' | 'women' | 'kids'> = {
     'm': 'men',
@@ -63,8 +66,15 @@ function parseGenderFromFilename(filename: string): { baseName: string; gender: 
     baseName,
     gender: genderMap[genderCode] || 'unisex',
     imageNumber,
+    extension,
   };
 }
+
+const buildSlugFromFilename = (brandFolder: string, fileName: string) => {
+  const base = fileName.replace(/\.[^.]+$/, "");
+  const withoutDigits = base.replace(/\d+$/, "") || base;
+  return `${brandFolder}/${withoutDigits}`;
+};
 
 function formatShoeName(baseName: string): string {
   const normalized = baseName.toLowerCase().replace(/-/g, '_');
@@ -90,7 +100,7 @@ async function listAllShoeImages(): Promise<ShoeImageInfo[]> {
       });
 
       for (const file of files) {
-        if (file.type !== 'file' || !file.name.endsWith('.jpg')) continue;
+        if (file.type !== 'file' || !/(\.jpg|\.jpeg|\.png|\.webp)$/i.test(file.name)) continue;
 
         const parsed = parseGenderFromFilename(file.name);
         if (!parsed) {
@@ -102,12 +112,16 @@ async function listAllShoeImages(): Promise<ShoeImageInfo[]> {
           continue;
         }
 
+        const slugPath = buildSlugFromFilename(folderName, file.name);
+
         allImages.push({
           brand: brandName,
+          brandFolder: folderName,
           shoeName: formatShoeName(parsed.baseName),
           gender: parsed.gender,
           imageUrl: file.url,
           fileName: file.name,
+          slugPath,
         });
 
         console.log(`  Found: ${formatShoeName(parsed.baseName)} (${parsed.gender}) - ${file.name}`);
@@ -119,6 +133,12 @@ async function listAllShoeImages(): Promise<ShoeImageInfo[]> {
 
   return allImages;
 }
+
+const slugNeedsRefresh = (current?: string | null, next?: string) => {
+  if (!next) return false;
+  if (!current) return true;
+  return current.replace(/\\/g, '/').trim() !== next.trim();
+};
 
 async function syncShoesToDatabase(images: ShoeImageInfo[]) {
   console.log('\n=== Syncing to Convex Database ===\n');
@@ -151,11 +171,15 @@ async function syncShoesToDatabase(images: ShoeImageInfo[]) {
     const existing = existingMap.get(key);
 
     if (existing) {
-      if (existing.imageUrl !== image.imageUrl) {
-        console.log(`Updating imageUrl for: ${image.brand} ${image.shoeName} (${image.gender})`);
+      const needsImageUpdate = existing.imageUrl !== image.imageUrl;
+      const needsSlugUpdate = slugNeedsRefresh(existing.slug, image.slugPath);
+
+      if (needsImageUpdate || needsSlugUpdate) {
+        console.log(`Updating ${image.brand} ${image.shoeName} (${image.gender})${needsSlugUpdate ? ' slug' : ''}${needsImageUpdate ? ' image' : ''}`);
         await client.mutation(api.shoes.update, {
           id: existing._id,
           imageUrl: image.imageUrl,
+          slug: image.slugPath,
         });
         updated++;
       } else {
@@ -175,6 +199,7 @@ async function syncShoesToDatabase(images: ShoeImageInfo[]) {
           name: image.shoeName,
           brand: image.brand,
           imageUrl: image.imageUrl,
+          slug: image.slugPath,
           gender: image.gender,
           aggressiveness: baseShoe.aggressiveness,
           stiffness: baseShoe.stiffness,
@@ -198,10 +223,12 @@ async function syncShoesToDatabase(images: ShoeImageInfo[]) {
     const unisexShoe = existingMap.get(unisexKey);
 
     if (unisexShoe && unisexShoe.imageUrl !== image.imageUrl) {
-      console.log(`Updating unisex ${image.brand} ${image.shoeName} with _m1 image`);
+      const needsSlugUpdate = slugNeedsRefresh(unisexShoe.slug, image.slugPath);
+      console.log(`Updating unisex ${image.brand} ${image.shoeName} with _m1 image${needsSlugUpdate ? ' and slug' : ''}`);
       await client.mutation(api.shoes.update, {
         id: unisexShoe._id,
         imageUrl: image.imageUrl,
+        slug: image.slugPath,
       });
       updated++;
     }

@@ -17,6 +17,8 @@ type BaseShoe = {
   slug?: string | null;
 };
 
+type GenderFilter = 'all' | 'men' | 'women' | 'kids' | 'unisex';
+
 interface AddShoeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -24,6 +26,8 @@ interface AddShoeDialogProps {
   onSearchChange: (value: string) => void;
   selectedBrand: string;
   onBrandChange: (value: string) => void;
+  selectedGender: GenderFilter;
+  onGenderChange: (value: GenderFilter) => void;
   uniqueBrands: string[];
   searchResults: BaseShoe[];
   onSelectShoe: (shoeId: string) => void;
@@ -36,10 +40,20 @@ export function AddShoeDialog({
   onSearchChange,
   selectedBrand,
   onBrandChange,
+  selectedGender,
+  onGenderChange,
   uniqueBrands,
   searchResults,
   onSelectShoe,
 }: AddShoeDialogProps) {
+  const genderOptions: { label: string; value: GenderFilter }[] = [
+    { label: 'All', value: 'all' },
+    { label: 'Men', value: 'men' },
+    { label: 'Women', value: 'women' },
+    { label: 'Kids', value: 'kids' },
+    { label: 'Unisex', value: 'unisex' },
+  ];
+
   return (
     <Dialog
       open={open}
@@ -96,6 +110,26 @@ export function AddShoeDialog({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="flex items-center gap-fluid-sm">
+            <Label className="text-xs text-neutral-500 font-mono">Gender:</Label>
+            <div className="flex flex-wrap gap-2">
+              {genderOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => onGenderChange(option.value)}
+                  className={`px-3 py-1 rounded-full text-xs font-mono transition-colors border ${
+                    selectedGender === option.value
+                      ? 'bg-orange-500 text-black border-orange-500'
+                      : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-orange-500/40'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="max-h-96 overflow-y-auto space-y-fluid-xs pr-2 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">

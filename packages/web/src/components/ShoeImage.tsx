@@ -98,6 +98,17 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
       if (normalizedSlug.endsWith(".png")) {
         normalizedSlug = normalizedSlug.slice(0, -4);
       }
+
+      const slugParts = normalizedSlug.split("/").filter(Boolean);
+      if (slugParts.length > 0) {
+        slugParts[0] = normalizeBrand(slugParts[0]);
+        normalizedSlug = slugParts.join("/");
+      }
+
+      if (/_([mwku])$/.test(normalizedSlug)) {
+        normalizedSlug = `${normalizedSlug}1`;
+      }
+
       return `gripkicks/imgs/shoes/${normalizedSlug}.png`;
     }
 

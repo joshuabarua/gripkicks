@@ -27,6 +27,7 @@ export default function ShoeSanctuaryPage() {
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
+  const [selectedGender, setSelectedGender] = useState<'all' | 'men' | 'women' | 'kids' | 'unisex'>('all');
   const [editingShoe, setEditingShoe] = useState<UserShoe | null>(null);
   const [editForm, setEditForm] = useState<EditFormData>({
     size: undefined,
@@ -88,6 +89,10 @@ export default function ShoeSanctuaryPage() {
       results = results.filter(shoe => shoe.brand === selectedBrand);
     }
 
+    if (selectedGender !== 'all') {
+      results = results.filter(shoe => (shoe.gender ?? '').toLowerCase() === selectedGender);
+    }
+
     // Filter by search query
     if (searchQuery.length > 2) {
       results = results.filter(shoe =>
@@ -97,7 +102,7 @@ export default function ShoeSanctuaryPage() {
     }
 
     return results;
-  }, [searchQuery, allShoes, selectedBrand]);
+  }, [searchQuery, allShoes, selectedBrand, selectedGender]);
 
   const addShoeToSanctuary = async (shoeId: string) => {
     const result = await addShoeToStash(shoeId);
@@ -227,6 +232,8 @@ export default function ShoeSanctuaryPage() {
                 onSearchChange={setSearchQuery}
                 selectedBrand={selectedBrand}
                 onBrandChange={setSelectedBrand}
+                selectedGender={selectedGender}
+                onGenderChange={setSelectedGender}
                 uniqueBrands={uniqueBrands}
                 searchResults={searchResults}
                 onSelectShoe={addShoeToSanctuary}
