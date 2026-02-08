@@ -77,14 +77,15 @@ export default function ShoeStatsModal({
   if (!shoe) return null;
 
   const hasFullShoe = !!fullShoe;
-  const shoeName = fullShoe?.name || shoe.shoeDetails.name;
-  const shoeBrand = fullShoe?.brand || shoe.shoeDetails.brand;
+  const fallbackDetails = shoe.shoe ?? shoe.shoeDetails;
+  const shoeName = fullShoe?.name || fallbackDetails?.name || 'Unknown Shoe';
+  const shoeBrand = fullShoe?.brand || fallbackDetails?.brand || 'Unknown Brand';
 
-  const aggressiveness = hasFullShoe ? fullShoe?.aggressiveness : undefined;
-  const climbingDiscipline = hasFullShoe ? fullShoe?.climbingDiscipline : undefined;
-  const stiffness = hasFullShoe ? fullShoe?.stiffness : undefined;
-  const volume = hasFullShoe ? fullShoe?.volume : undefined;
-  const rubberTechnology = hasFullShoe ? fullShoe?.rubberTechnology : undefined;
+  const aggressiveness = hasFullShoe ? fullShoe?.aggressiveness : shoe.shoe?.aggressiveness;
+  const climbingDiscipline = hasFullShoe ? fullShoe?.climbingDiscipline : shoe.shoe?.climbingDiscipline;
+  const stiffness = hasFullShoe ? fullShoe?.stiffness : shoe.shoe?.stiffness;
+  const volume = hasFullShoe ? fullShoe?.volume : shoe.shoe?.volume;
+  const rubberTechnology = hasFullShoe ? fullShoe?.rubberTechnology : shoe.shoe?.rubberTechnology;
   const totalRatings = hasFullShoe ? fullShoe?.totalRatings : undefined;
   const avgComfortScore = hasFullShoe ? fullShoe?.avgComfortScore : undefined;
   const avgPerformanceRating = hasFullShoe ? fullShoe?.avgPerformanceRating : undefined;
@@ -118,16 +119,16 @@ export default function ShoeStatsModal({
             View detailed rank and ratings for the {shoeName} climbing shoe including comfort, performance, and durability ratings.
           </DialogDescription>
 
-          <div className="relative p-6 border-b border-neutral-800">
+          <div className="relative p-fluid-lg border-b border-neutral-800">
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
             </div>
 
-            <div className="absolute top-4 right-4 flex items-center gap-1.5 z-10">
+            <div className="absolute top-fluid-sm right-fluid-sm flex items-center gap-fluid-xs z-10">
               {onToggleFavourite && (
                 <button
                   onClick={onToggleFavourite}
-                  className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
                 >
                   <Star className={`w-4 h-4 ${shoe.isFavourite ? 'fill-orange-500 text-orange-500' : 'text-neutral-500'}`} />
                 </button>
@@ -135,7 +136,7 @@ export default function ShoeStatsModal({
               {onEditShoe && (
                 <button
                   onClick={onEditShoe}
-                  className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
                 >
                   <Edit className="w-4 h-4 text-neutral-400" />
                 </button>
@@ -143,14 +144,14 @@ export default function ShoeStatsModal({
               {onRemoveShoe && (
                 <button
                   onClick={onRemoveShoe}
-                  className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-red-900/50 flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-red-900/50 flex items-center justify-center transition-colors"
                 >
                   <Trash2 className="w-4 h-4 text-neutral-400 hover:text-red-400" />
                 </button>
               )}
               <button
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
+                className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
               >
                 <X className="w-4 h-4 text-neutral-400" />
               </button>
@@ -162,16 +163,18 @@ export default function ShoeStatsModal({
                   <ShoeImage
                     brand={shoeBrand}
                     shoeName={shoeName}
-                    imageUrl={shoe.shoeDetails.imageUrl}
+                    imageUrl={fallbackDetails?.imageUrl}
+                    slug={fallbackDetails?.slug}
                     className=""
+                    gender={fallbackDetails?.gender}
                   />
                 </div>
               </div>
 
               <div>
-                <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-1">[SHOE_STATS]</p>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <h2 className="text-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
+                <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-fluid-xs">[SHOE_STATS]</p>
+                <div className="flex items-center gap-fluid-sm flex-wrap">
+                  <h2 className="text-fluid-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
                   <div className="flex items-center gap-1.5">
                     {rank && (
                       <BadgeTooltip text={`Rank #${rank} in your collection`}>
@@ -219,12 +222,12 @@ export default function ShoeStatsModal({
                       )}
                   </div>
                 </div>
-                <p className="text-neutral-500 font-sora text-sm mt-1">{shoeBrand}</p>
+                <p className="text-neutral-500 font-sora text-fluid-sm mt-fluid-xs">{shoeBrand}</p>
               </div>
             </div>
           </div>
 
-          <div className="p-6 space-y-6">
+          <div className="p-fluid-lg space-y-fluid-md">
             <ShoeTags
               aggressiveness={aggressiveness}
               climbingDiscipline={climbingDiscipline}

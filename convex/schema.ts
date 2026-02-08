@@ -15,6 +15,7 @@ export default defineSchema({
     name: v.string(),
     brand: v.string(),
     imageUrl: v.optional(v.string()),
+    slug: v.optional(v.string()),
     gender: v.optional(v.union(v.literal("men"), v.literal("women"), v.literal("kids"), v.literal("unisex"))),
     aggressiveness: v.string(),
     stiffness: v.string(),

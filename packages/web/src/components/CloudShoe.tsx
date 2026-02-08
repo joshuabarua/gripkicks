@@ -15,11 +15,23 @@ interface CloudShoeProps {
 }
 
 export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudShoeProps) {
+  const details = shoe?.shoe ?? shoe?.shoeDetails;
+  const brand = details?.brand ?? 'Unknown Brand';
+  const name = details?.name ?? 'Unknown Shoe';
+  const imageUrl = details?.imageUrl;
+  const slug = details?.slug;
+  const gender = details?.gender;
+  const characteristicSource = shoe?.shoe;
+
   const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
 
   const avgScore = (() => {
-    const defaultStats = calculateDefaultStats({});
+    const defaultStats = calculateDefaultStats({
+      aggressiveness: characteristicSource?.aggressiveness,
+      climbingDiscipline: characteristicSource?.climbingDiscipline,
+      stiffness: characteristicSource?.stiffness,
+    });
     const comfort = shoe.comfortScore || defaultStats.comfort;
     const performance = shoe.performanceRating || defaultStats.performance;
     const durability = shoe.durabilityRating || defaultStats.durability;
@@ -57,16 +69,16 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="relative flex flex-col justify-center items-center gap-2.5 p-3 rounded-[20px] border-[1.5px] border-[#252525] bg-[#252525] shadow-[0_0_40px_0_rgba(87,89,88,0.10)] transition-all duration-300 group-hover:shadow-[0_0_60px_0_rgba(251,146,60,0.20)] group-hover:border-orange-500/50">
+      <div className="relative flex flex-col justify-center items-center gap-fluid-sm p-fluid-md rounded-2xl border border-[#252525] bg-[#252525] shadow-[0_0_40px_0_rgba(87,89,88,0.10)] transition-all duration-300 group-hover:shadow-[0_0_60px_0_rgba(251,146,60,0.20)] group-hover:border-orange-500/50">
         {(shoe.isFavourite || specialLabel) && (
-          <div className="absolute top-3 left-3 z-20 flex gap-1.5">
+          <div className="absolute top-fluid-sm left-fluid-sm z-20 flex gap-fluid-xs">
             {shoe.isFavourite && (
-              <div className="bg-orange-500/90 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                <Star className="w-3 h-3 fill-current" />
+              <div className="bg-orange-500/90 text-white rounded-full w-7 h-7 flex items-center justify-center">
+                <Star className="w-3.5 h-3.5 fill-current" />
               </div>
             )}
             {specialLabel && (
-              <div className={`rounded-full w-6 h-6 flex items-center justify-center ${specialLabel.type === 'most-comfy' ? 'bg-pink-500/90 text-white' :
+              <div className={`rounded-full w-7 h-7 flex items-center justify-center ${specialLabel.type === 'most-comfy' ? 'bg-pink-500/90 text-white' :
                 specialLabel.type === 'oldest' ? 'bg-blue-500/90 text-white' :
                   'bg-purple-500/90 text-white'
                 }`}>
@@ -76,18 +88,19 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
           </div>
         )}
 
-        <div className="absolute top-3 right-3 z-20">
-          <div className="bg-black/20 backdrop-blur-sm rounded-full px-2.5 py-0.5 border border-white/10">
-            <span className="font-mono text-[10px] text-orange-400 font-bold">{avgScore}</span>
+        <div className="absolute top-fluid-sm right-fluid-sm z-20">
+          <div className="bg-black/20 backdrop-blur-sm rounded-full px-fluid-sm py-[2px] border border-white/10">
+            <span className="font-mono text-fluid-xs text-orange-400 font-bold">{avgScore}</span>
           </div>
         </div>
 
-        <div className="w-[175px] h-[200-px] flex items-center justify-center">
+        <div className="flex items-center justify-center w-[min(48vw,220px)] h-[min(55vw,240px)]">
           {isInView && (
             <ShoeImage
-              brand={shoe.shoeDetails.brand}
-              shoeName={shoe.shoeDetails.name}
-              imageUrl={shoe.shoeDetails.imageUrl}
+              brand={brand}
+              shoeName={name}
+              imageUrl={imageUrl}
+              slug={slug}
               className="object-contain"
               transformation={[
                 {
@@ -99,14 +112,14 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
                   quality: 80
                 }
               ]}
-              gender={shoe.shoeDetails.gender}
+              gender={gender}
             />
           )}
         </div>
 
         <div className="w-full text-center">
           <p className="font-sora uppercase text-white text-sm font-medium leading-tight truncate group-hover:text-orange-400 transition-colors">
-            {shoe.shoeDetails.name}
+            {name}
           </p>
         </div>
       </div>

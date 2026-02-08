@@ -400,6 +400,7 @@ export default function OnboardingPage() {
                               brand={selectedShoe.brand}
                               shoeName={selectedShoe.name}
                               imageUrl={selectedShoe.imageUrl}
+                              slug={selectedShoe.slug}
                               className="w-full h-full object-contain p-2"
                             />
                           </div>

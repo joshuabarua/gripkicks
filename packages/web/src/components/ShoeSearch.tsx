@@ -86,6 +86,7 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
                       brand={shoe.brand}
                       shoeName={shoe.name}
                       imageUrl={shoe.imageUrl}
+                      slug={shoe.slug}
                       className="w-full h-full object-contain p-1"
                     />
                   </div>

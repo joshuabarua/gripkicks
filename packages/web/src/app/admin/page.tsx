@@ -22,6 +22,7 @@ type Shoe = {
   name: string;
   brand: string;
   imageUrl?: string;
+  slug?: string;
   gender?: 'men' | 'women' | 'kids' | 'unisex';
   aggressiveness: string;
   stiffness: string;
@@ -59,6 +60,7 @@ export default function AdminDashboard() {
     name: '',
     brand: '',
     imageUrl: '',
+    slug: '',
     gender: 'unisex' as const,
     aggressiveness: 'moderate',
     stiffness: 'medium',
@@ -119,14 +121,24 @@ export default function AdminDashboard() {
     setEditForm({ ...shoe });
   };
 
+  const requireImageOrSlug = (image?: string | null, slug?: string | null) => {
+    return Boolean(image?.trim()) || Boolean(slug?.trim());
+  };
+
   const handleSave = async () => {
     if (!editForm) return;
+
+    if (!requireImageOrSlug(editForm.imageUrl, editForm.slug)) {
+      alert('Please provide either an image URL or a slug before saving.');
+      return;
+    }
     try {
       await updateShoe({
         id: editForm._id,
         name: editForm.name,
         brand: editForm.brand,
         imageUrl: editForm.imageUrl,
+        slug: editForm.slug?.trim() || undefined,
         gender: editForm.gender,
         aggressiveness: editForm.aggressiveness,
         stiffness: editForm.stiffness,
@@ -149,12 +161,21 @@ export default function AdminDashboard() {
   };
 
   const handleCreate = async () => {
-    await createShoe(newShoe);
+    if (!requireImageOrSlug(newShoe.imageUrl, newShoe.slug)) {
+      alert('Please provide either an image URL or a slug before creating a shoe.');
+      return;
+    }
+
+    await createShoe({
+      ...newShoe,
+      slug: newShoe.slug.trim() || undefined,
+    });
     setShowAddForm(false);
     setNewShoe({
       name: '',
       brand: '',
       imageUrl: '',
+      slug: '',
       gender: 'unisex',
       aggressiveness: 'moderate',
       stiffness: 'medium',
@@ -281,6 +302,17 @@ export default function AdminDashboard() {
                         onChange={(e) => setNewShoe({ ...newShoe, imageUrl: e.target.value })}
                         className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
                       />
+                    </div>
+                    <div>
+                      <label className="block text-white/70 text-sm mb-1">Slug</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. la_sportiva/solution-men"
+                        value={newShoe.slug}
+                        onChange={(e) => setNewShoe({ ...newShoe, slug: e.target.value })}
+                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
+                      />
+                      <p className="text-[11px] text-white/40 mt-1 font-mono">Used when no direct image URL is set.</p>
                     </div>
                     <div>
                       <label className="block text-white/70 text-sm mb-1">Rubber Technology</label>
@@ -435,6 +467,7 @@ export default function AdminDashboard() {
                             brand={shoe.brand}
                             shoeName={shoe.name}
                             imageUrl={shoe.imageUrl}
+                            slug={shoe.slug}
                             className=""
                             gender={shoe.gender}
                           />
@@ -456,6 +489,13 @@ export default function AdminDashboard() {
                               value={editForm?.brand || ''}
                               onChange={(e) => setEditForm({ ...editForm!, brand: e.target.value })}
                               className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm"
+                            />
+                            <input
+                              type="text"
+                              value={editForm?.slug || ''}
+                              onChange={(e) => setEditForm({ ...editForm!, slug: e.target.value })}
+                              placeholder="Slug"
+                              className="w-full mt-2 px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-xs"
                             />
                           </td>
                           <td className="p-3">
@@ -537,7 +577,12 @@ export default function AdminDashboard() {
                       ) : (
                         <>
                           <td className="p-3 text-white">{shoe.name}</td>
-                          <td className="p-3 text-white/80">{shoe.brand}</td>
+                          <td className="p-3 text-white/80">
+                            <div>{shoe.brand}</div>
+                            {shoe.slug && (
+                              <p className="text-[10px] text-white/40 mt-1 font-mono truncate">slug: {shoe.slug}</p>
+                            )}
+                          </td>
                           <td className="p-3 text-white/60">{shoe.gender || 'unisex'}</td>
                           <td className="p-3 text-white/60 text-xs">{shoe.rubberTechnology?.compound || '-'}</td>
                           <td className="p-3 text-white/60">{shoe.aggressiveness}</td>

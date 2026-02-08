@@ -123,29 +123,29 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
                                 <AnimatedNavIcon
                                     icon={<link.icon className="w-3.5 h-3.5 text-black/30 group-hover:text-black/70 transition-colors" />}
                                     animation={link.animation}
-                                    size={14}
+                                    size={8}
                                 />
                                 {link.title}
                             </Link>
                         </motion.div>
                     ))}
                     <motion.div
+                        key="logout"
                         variants={slideIn}
-                        custom={secondaryLinks.length + (isAdmin ? 1 : 0)}
+                        custom={secondaryLinks.length}
                         initial="initial"
                         animate="enter"
                         exit="exit"
                     >
                         <SignOutButton
                             variant="ghost"
-                            size="default"
-                            className="nav-secondary-link !p-0 !h-auto hover:!bg-transparent flex items-center gap-2"
+                            className="nav-secondary-link group"
                             onClick={handleLogout}
                         >
                             <AnimatedNavIcon
-                                icon={<LogOut className="w-3.5 h-3.5 text-black/30" />}
-                                animation="shake"
-                                size={14}
+                                icon={<LogOut className="w-3.5 h-3.5 text-black/30 group-hover:text-black/70 transition-colors" />}
+                                animation="wiggle"
+                                size={8}
                             />
                             Logout
                         </SignOutButton>

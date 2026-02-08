@@ -54,6 +54,8 @@
 	--title-lg: clamp(48px, calc(72px * var(--scale)), 120px);
 	--title-xl: clamp(60px, calc(96px * var(--scale)), 160px);
 	--title-2xl: clamp(72px, calc(128px * var(--scale)), 200px);
+	--title-3xl: clamp(84px, calc(156px * var(--scale)), 250px);
+	--title-4xl: clamp(96px, calc(180px * var(--scale)), 300px);
 
 	/* Title line heights - larger values prevent overlap */
 	--title-leading: 1.1;
@@ -246,15 +248,33 @@ a {
 		&:nth-of-type(2) {
 			position: absolute;
 			transform-origin: bottom center;
-			transform: rotateX(-90deg) translateY(9px);
+			transform: rotateX(-90deg) translateY(var(--space-xs));
 			opacity: 0;
 		}
 	}
 }
 
-.nav-menu {
+/* .nav-menu {
+	width: calc(var(--space-3xl) * 7.5);
+/* ... 
+		.body {
+			color: hsl(46 100% 97%);
+			font-size: var(--text-4xl);
+			position: relative;
+			z-index: 1000;
+		}
+		.nav-link-item {
+			display: flex;
+			align-items: center;
+			gap: var(--space-sm);
+			font-size: var(--text-3xl);
+		}
+	} 
+	*/
+
+	.nav-menu {
 	width: 480px;
-	height: 650px;
+	height: 450px;
 	background-color: hsl(17, 83%, 54%);
 	border-radius: 25px;
 	position: absolute;
@@ -281,7 +301,7 @@ a {
 		a {
 			text-decoration: none;
 			color: hsl(46 100% 97%);
-			font-size: 46px;
+			font-size: var(--text-md);
 			position: relative;
 			z-index: 1000;
 		}
@@ -289,41 +309,45 @@ a {
 			display: flex;
 			align-items: center;
 			gap: 12px;
-			font-size: 42px;
-		}
+			font-size: var(--text-3xl);
+		} 
 	}
+}
+
 
 	.footer {
 		border-top: 1px solid rgba(0, 0, 0, 0.08);
 		width: 100%;
-		padding-top: 20px;
+		padding-top: var(--space-lg);
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 8px 24px;
+		gap: var(--space-xs) var(--space-lg);
 		.nav-secondary-link {
 			display: flex;
 			align-items: center;
-			gap: 6px;
-			font-size: 13px;
+			gap: var(--space-xs);
+	font-size: 13px;
 			color: rgba(0, 0, 0, 0.45);
 			cursor: pointer;
 			transition: color 0.2s;
 			&:hover {
 				color: rgba(0, 0, 0, 0.8);
 			}
+			svg {
+				width: var(--space-xs);
+				height: var(--space-xs);
+			}
 		}
 		a {
-			font-size: 13px;
+			font-size: var(--text-xs);
 			color: rgba(0, 0, 0, 0.45);
 		}
 	}
-}
 
 /* Gradient animation for text */
 @keyframes gradient {
 	0% {
-		background-position: 0% 50%;
 	}
 	50% {
 		background-position: 100% 50%;

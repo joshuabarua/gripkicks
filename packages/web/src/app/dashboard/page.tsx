@@ -321,43 +321,53 @@ export default function Dashboard() {
               <p className="font-mono text-xs text-orange-500 mb-4 tracking-[0.3em]">[RECENT_SHOES]</p>
               <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
                 <div className="space-y-4">
-                  {userShoes.slice(0, 3).map((shoe, index) => (
-                    <motion.div
-                      key={shoe._id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      onClick={() => router.push('/stash')}
-                      className="flex items-center justify-between p-4 rounded-2xl bg-neutral-800/50 hover:bg-neutral-800 border border-neutral-800 hover:border-orange-500/20 cursor-pointer transition-all group"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
-                          <ShoeImage
-                            brand={shoe.shoeDetails.brand}
-                            shoeName={shoe.shoeDetails.name}
-                            imageUrl={shoe.shoeDetails.imageUrl}
-                            className="p-2"
-                            transformation={[{ height: 56, width: 56, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 75 }]}
-                            gender={shoe.shoeDetails.gender}
-                          />
-                        </div>
-                        <div>
-                          <h3 className="font-sora font-medium text-white group-hover:text-orange-500 transition-colors">{shoe.shoeDetails.name}</h3>
-                          <p className="font-mono text-[10px] text-neutral-600">{shoe.shoeDetails.brand}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <div className="flex items-center gap-1">
-                            <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
-                            <span className="font-mono text-xs text-neutral-400">{shoe.comfortScore || 0}</span>
+                  {userShoes.slice(0, 3).map((shoe, index) => {
+                    const details = shoe.shoe ?? shoe.shoeDetails;
+                    const brand = details?.brand ?? 'Unknown Brand';
+                    const name = details?.name ?? 'Unknown Shoe';
+                    const imageUrl = details?.imageUrl;
+                    const slug = details?.slug;
+                    const gender = details?.gender;
+
+                    return (
+                      <motion.div
+                        key={shoe._id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        onClick={() => router.push('/stash')}
+                        className="flex items-center justify-between p-4 rounded-2xl bg-neutral-800/50 hover:bg-neutral-800 border border-neutral-800 hover:border-orange-500/20 cursor-pointer transition-all group"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
+                            <ShoeImage
+                              brand={brand}
+                              shoeName={name}
+                              imageUrl={imageUrl}
+                              slug={slug}
+                              className="p-2"
+                              transformation={[{ height: 56, width: 56, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 75 }]}
+                              gender={gender}
+                            />
                           </div>
-                          <span className="font-mono text-[10px] text-neutral-600">COMFORT</span>
+                          <div>
+                            <h3 className="font-sora font-medium text-white group-hover:text-orange-500 transition-colors">{name}</h3>
+                            <p className="font-mono text-[10px] text-neutral-600">{brand}</p>
+                          </div>
                         </div>
-                        <ArrowUpRight className="w-4 h-4 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
-                      </div>
-                    </motion.div>
-                  ))}
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <div className="flex items-center gap-1">
+                              <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
+                              <span className="font-mono text-xs text-neutral-400">{shoe.comfortScore || 0}</span>
+                            </div>
+                            <span className="font-mono text-[10px] text-neutral-600">COMFORT</span>
+                          </div>
+                          <ArrowUpRight className="w-4 h-4 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
                 {userShoes.length > 3 && (
                   <motion.button

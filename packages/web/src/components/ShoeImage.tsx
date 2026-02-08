@@ -10,6 +10,7 @@ interface ShoeImageProps {
   transformation?: Transformation[];
   fallbackImage?: string;
   gender?: "men" | "women" | "kids" | "unisex";
+  slug?: string;
   // Common IKImage props
   alt?: string;
   loading?: "lazy";
@@ -35,6 +36,7 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
   ],
   fallbackImage = "/imgs/placeholder_shoe.png",
   gender,
+  slug,
   ...props
 }) => {
   const [imageError, setImageError] = useState(false);
@@ -45,7 +47,7 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
     setImageError(false);
     setImageLoading(true);
     setLoadingTimeout(false);
-  }, [imageUrl, brand, shoeName]);
+  }, [imageUrl, brand, shoeName, slug]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -55,7 +57,7 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
       }
     }, 5000);
     return () => clearTimeout(timer);
-  }, [imageLoading, imageUrl, brand, shoeName]);
+  }, [imageLoading, imageUrl, brand, shoeName, slug]);
 
   // Normalize brand name for folder structure (underscores)
   const normalizeBrand = (brand: string): string => {
@@ -87,6 +89,16 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
         return path;
       }
       return imageUrl;
+    }
+
+    if (slug) {
+      let normalizedSlug = slug.trim().replace(/\\/g, "/");
+      normalizedSlug = normalizedSlug.replace(/^gripkicks\/imgs\/shoes\//, "");
+      normalizedSlug = normalizedSlug.replace(/^\/+/, "");
+      if (normalizedSlug.endsWith(".png")) {
+        normalizedSlug = normalizedSlug.slice(0, -4);
+      }
+      return `gripkicks/imgs/shoes/${normalizedSlug}.png`;
     }
 
     if (shoeName) {

@@ -21,6 +21,8 @@ export interface Shoe {
   name: string;
   brand: string;
   imageUrl?: string;
+  slug?: string;
+  gender?: 'men' | 'women' | 'kids' | 'unisex';
   aggressiveness: string;
   stiffness: string;
   climbingDiscipline: string;
@@ -33,6 +35,7 @@ export interface RubberTechnology {
   _id: string;
   name: string;
   description?: string;
+  compound?: string;
 }
 
 export interface FootShapeCompat {
@@ -45,11 +48,13 @@ export interface FootShapeCompat {
 export interface UserShoe {
   _id: string;
   shoeId: string;
-  shoeDetails: {
+  shoe?: Shoe;
+  shoeDetails?: {
     _id: string;
     name: string;
     brand: string;
     imageUrl?: string;
+    slug?: string;
     gender?: "men" | "women" | "kids" | "unisex";
   };
   size?: string;

@@ -32,26 +32,26 @@ export default function EditShoeDialog({
     <AnimatePresence>
       {editingShoe && (
         <Dialog open={!!editingShoe} onOpenChange={() => setEditingShoe(null)}>
-          <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-lg rounded-3xl shadow-2xl shadow-orange-500/5">
-            <DialogHeader>
-              <div className="flex items-center gap-3 mb-1">
+          <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-lg rounded-3xl shadow-2xl shadow-orange-500/5 p-fluid-lg space-y-fluid-md">
+            <DialogHeader className="space-y-fluid-xs">
+              <div className="flex items-center gap-fluid-sm">
                 <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[EDIT_STATS]</p>
               </div>
-              <DialogTitle className="text-white font-so-cloudy uppercase text-xl">Edit Shoe Stats</DialogTitle>
-              <DialogDescription className="text-sm text-neutral-500 font-sora">
-                {editingShoe.shoeDetails.name} — {editingShoe.shoeDetails.brand}
+              <DialogTitle className="text-white font-so-cloudy uppercase text-fluid-xl">Edit Shoe Stats</DialogTitle>
+              <DialogDescription className="text-fluid-sm text-neutral-500 font-sora">
+                {(editingShoe.shoe?.name || editingShoe.shoeDetails?.name || 'Unknown Shoe')} — {(editingShoe.shoe?.brand || editingShoe.shoeDetails?.brand || 'Unknown Brand')}
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-fluid-md">
+              <div className="grid grid-cols-2 gap-fluid-sm">
                 <div>
                   <Label htmlFor="size" className="text-neutral-400 font-sora text-xs">Size</Label>
                   <select
                     id="size"
                     value={editForm.size || ''}
                     onChange={(e) => setEditForm({ ...editForm, size: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-900 text-white border border-neutral-800 rounded-xl focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/20 transition-colors"
+                    className="w-full px-fluid-md py-fluid-xs bg-neutral-900 text-white border border-neutral-800 rounded-xl focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/20 transition-colors"
                   >
                     <option value="">Select size</option>
                     {shoeSizes.map((size: ShoeSizeOption, index) => {
@@ -77,7 +77,7 @@ export default function EditShoeDialog({
                     id="condition"
                     value={editForm.condition || ''}
                     onChange={(e) => setEditForm({ ...editForm, condition: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-900 text-white border border-neutral-800 rounded-xl focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/20 transition-colors"
+                    className="w-full px-fluid-md py-fluid-xs bg-neutral-900 text-white border border-neutral-800 rounded-xl focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/20 transition-colors"
                   >
                     <option value="">Select condition</option>
                     {conditions.map((condition) => (
@@ -170,7 +170,7 @@ export default function EditShoeDialog({
                 <button
                   type="button"
                   onClick={() => setEditForm({ ...editForm, showNotes: !editForm.showNotes })}
-                  className="flex items-center justify-between w-full py-3 text-sm text-neutral-400 hover:text-white transition-colors font-sora"
+                  className="flex items-center justify-between w-full py-fluid-sm text-sm text-neutral-400 hover:text-white transition-colors font-sora"
                 >
                   <span>Additional Notes</span>
                   <ChevronDown className={`w-4 h-4 transition-transform ${editForm.showNotes ? 'rotate-180' : ''}`} />
@@ -189,10 +189,10 @@ export default function EditShoeDialog({
                 )}
               </div>
 
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-fluid-sm pt-fluid-sm">
                 <Button
                   variant="outline"
-                  className="flex-1 border-neutral-800 bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800 hover:border-neutral-700 rounded-xl"
+                  className="flex-1 border-neutral-800 bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800 hover:border-neutral-700 rounded-xl py-fluid-xs"
                   onClick={() => setEditingShoe(null)}
                 >
                   Cancel
@@ -201,13 +201,13 @@ export default function EditShoeDialog({
                   <Button
                     variant="destructive"
                     onClick={removeShoe}
-                    className="px-4 bg-red-900/30 border border-red-500/20 text-red-400 hover:bg-red-900/50 rounded-xl"
+                    className="px-fluid-md bg-red-900/30 border border-red-500/20 text-red-400 hover:bg-red-900/50 rounded-xl"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 )}
                 <Button
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-black font-tanker rounded-xl"
+                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-black font-tanker rounded-xl py-fluid-xs"
                   onClick={updateShoeStats}
                 >
                   <Save className="w-4 h-4 mr-2" />

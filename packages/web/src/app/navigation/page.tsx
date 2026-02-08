@@ -12,8 +12,8 @@ import NavLinks from '@/components/ui/nav-links';
 
 const menu = {
   open: {
-    width: "480px",
-    height: "650px",
+        width: "300px",
+    height: "350px",
     top: "-25px",
     right: "-25px",
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] }
@@ -26,7 +26,7 @@ const menu = {
     transition: { duration: 0.75, delay: 0.35, type: "tween", ease: [0.76, 0, 0.24, 1] }
   },
   closedText: {
-    width: "80px",
+   width: "80px",
     height: " 35px",
     top: "-0px",
     right: "-0px",
@@ -102,7 +102,7 @@ const Navigation: React.FC = () => {
   return (
     <motion.nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 p-4 bg-background/99 backdrop-blur-sm border-b-2 border-white"
+      className="fixed top-0 left-0 right-0 z-50 p-fluid-md bg-background/99 backdrop-blur-sm border-b border-white"
       style={{ borderImage: 'none', borderColor: 'rgba(255, 255, 255, 0.8)' }}
       initial={{ y: -100 }}
       animate={{ y: isVisible ? 0 : -100 }}
@@ -113,7 +113,7 @@ const Navigation: React.FC = () => {
           <Glow color="whitesmoke" className="rounded-sm flex justify-center items-center">
             <li>
               <Link href="/">
-                <h1 className="font-tanker text-2xl hover:scale-105 duration-1000 ease-in-out whitespace-nowrap">Grip Kicks</h1>
+                <h1 className="font-tanker text-fluid-2xl hover:scale-105 duration-1000 ease-in-out whitespace-nowrap">Grip Kicks</h1>
               </Link>
             </li>
           </Glow>
@@ -122,7 +122,7 @@ const Navigation: React.FC = () => {
           {isPending ? (
             <div className="h-9 w-20 animate-pulse bg-muted rounded" />
           ) : isAuthenticated ? (
-            <div className="relative flex items-center gap-2">
+            <div className="relative flex items-center ">
               <AnimatePresence mode="wait">
                 {isActive && (
                   <motion.div
