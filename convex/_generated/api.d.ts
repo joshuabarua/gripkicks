@@ -11,6 +11,7 @@
 import type * as app from "../app.js";
 import type * as auth from "../auth.js";
 import type * as authDb from "../authDb.js";
+import type * as backlog from "../backlog.js";
 import type * as check from "../check.js";
 import type * as fix from "../fix.js";
 import type * as http from "../http.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   app: typeof app;
   auth: typeof auth;
   authDb: typeof authDb;
+  backlog: typeof backlog;
   check: typeof check;
   fix: typeof fix;
   http: typeof http;

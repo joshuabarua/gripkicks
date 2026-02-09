@@ -7,7 +7,9 @@ import type { Id } from '../../../../../convex/_generated/dataModel';
 import { useSession } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import ShoeImage from '@/components/ShoeImage';
-import { Pencil, Trash2, X, Check, Plus, Search, Footprints, Users } from 'lucide-react';
+import { PaginatedList } from '@/components/ui/PaginatedList';
+import { BacklogManager } from '@/components/admin/BacklogManager';
+import { Pencil, Trash2, X, Check, Plus, Search, Footprints, Users, ListTodo } from 'lucide-react';
 
 type RubberTechnology = {
   _id: Id<"rubberTechnologies">;
@@ -68,7 +70,7 @@ export default function AdminDashboard() {
     volume: 'medium',
     rubberTechnologyId: undefined as Id<"rubberTechnologies"> | undefined,
   });
-  const [activeTab, setActiveTab] = useState<'shoes' | 'users'>('shoes');
+  const [activeTab, setActiveTab] = useState<'shoes' | 'users' | 'backlog'>('shoes');
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [brandFilter, setBrandFilter] = useState<string>('all');
 
@@ -220,6 +222,16 @@ export default function AdminDashboard() {
             <Users className="w-4 h-4" />
             Users ({users?.length || 0})
           </button>
+          <button
+            onClick={() => setActiveTab('backlog')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === 'backlog'
+              ? 'bg-accent text-white'
+              : 'bg-white/10 text-white/70 hover:bg-white/20'
+              }`}
+          >
+            <ListTodo className="w-4 h-4" />
+            Backlog
+          </button>
         </div>
 
         {activeTab === 'shoes' && (
@@ -259,6 +271,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            <div className="flex flex-col gap-4 min-h-[60vh]">
             {showAddForm && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowAddForm(false)}>
                 <div className="bg-zinc-900 p-6 rounded-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -404,214 +417,254 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="border-b border-white/20">
-                    <th className="text-left p-3 text-white/70 font-medium">Image</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Name</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Brand</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Gender</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Rubber</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Aggressiveness</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Stiffness</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Discipline</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Volume</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredShoes.map((shoe) => (
-                    <tr key={shoe._id} className="border-b border-white/10 hover:bg-white/5">
-                      <td className="p-3">
-                        {editingImageId === shoe._id ? (
-                          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setEditingImageId(null)}>
-                            <div className="bg-zinc-900 p-4 rounded-xl w-full max-w-lg mx-4" onClick={(e) => e.stopPropagation()}>
-                              <h3 className="text-white font-medium mb-3">Edit Image URL</h3>
-                              <input
-                                type="text"
-                                value={editingImageUrl}
-                                onChange={(e) => setEditingImageUrl(e.target.value)}
-                                placeholder="Image URL"
-                                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white text-sm mb-3"
-                                autoFocus
-                              />
-                              <div className="flex justify-end gap-2">
-                                <button
-                                  onClick={() => setEditingImageId(null)}
-                                  className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded text-white text-sm"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  onClick={async () => {
-                                    await updateShoe({ id: shoe._id, imageUrl: editingImageUrl });
-                                    setEditingImageId(null);
-                                  }}
-                                  className="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-white text-sm"
-                                >
-                                  Save
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ) : null}
-                        <div
-                          className="rounded-lg overflow-hidden bg-white/10 cursor-pointer hover:ring-2 hover:ring-accent transition-all"
-                          onClick={() => {
-                            setEditingImageId(shoe._id);
-                            setEditingImageUrl(shoe.imageUrl || '');
-                          }}
-                          title="Click to edit image URL"
-                        >
-                          <ShoeImage
-                            brand={shoe.brand}
-                            shoeName={shoe.name}
-                            imageUrl={shoe.imageUrl}
-                            slug={shoe.slug}
-                            className=""
-                            gender={shoe.gender}
-                          />
+            <PaginatedList
+              items={filteredShoes}
+              renderItem={(shoe) => {
+                const isEditingCurrentShoe = editingId === shoe._id && editForm?._id === shoe._id;
+                const currentEditForm = isEditingCurrentShoe ? editForm : null;
+
+                return (
+                <div key={shoe._id} className="bg-white/5 border border-white/10 rounded-lg p-3 flex flex-col gap-2 max-h-[175px] overflow-hidden">
+                  {editingImageId === shoe._id ? (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setEditingImageId(null)}>
+                      <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-lg mx-2" onClick={(e) => e.stopPropagation()}>
+                        <h3 className="text-white font-medium mb-3">Edit Image URL</h3>
+                        <input
+                          type="text"
+                          value={editingImageUrl}
+                          onChange={(e) => setEditingImageUrl(e.target.value)}
+                          placeholder="Image URL"
+                          className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white text-sm mb-3"
+                          autoFocus
+                        />
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => setEditingImageId(null)}
+                            className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded text-white text-sm"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={async () => {
+                              await updateShoe({ id: shoe._id, imageUrl: editingImageUrl });
+                              setEditingImageId(null);
+                            }}
+                            className="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-white text-sm"
+                          >
+                            Save
+                          </button>
                         </div>
-                      </td>
-                      {editingId === shoe._id ? (
-                        <>
-                          <td className="p-3">
-                            <input
-                              type="text"
-                              value={editForm?.name || ''}
-                              onChange={(e) => setEditForm({ ...editForm!, name: e.target.value })}
-                              className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm"
-                            />
-                          </td>
-                          <td className="p-3">
-                            <input
-                              type="text"
-                              value={editForm?.brand || ''}
-                              onChange={(e) => setEditForm({ ...editForm!, brand: e.target.value })}
-                              className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm"
-                            />
-                            <input
-                              type="text"
-                              value={editForm?.slug || ''}
-                              onChange={(e) => setEditForm({ ...editForm!, slug: e.target.value })}
-                              placeholder="Slug"
-                              className="w-full mt-2 px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-xs"
-                            />
-                          </td>
-                          <td className="p-3">
-                            <select
-                              value={editForm?.gender || 'unisex'}
-                              onChange={(e) => setEditForm({ ...editForm!, gender: e.target.value as Shoe['gender'] })}
-                              className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm"
-                            >
-                              {genderOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </td>
-                          <td className="p-3">
-                            <select
-                              value={editForm?.rubberTechnologyId || ''}
-                              onChange={(e) => setEditForm({ ...editForm!, rubberTechnologyId: e.target.value as Id<'rubberTechnologies'> || undefined })}
-                              className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm"
-                            >
-                              <option value="">None</option>
-                              {rubberTechnologies?.map(rubber => (
-                                <option key={rubber._id} value={rubber._id}>
-                                  {rubber.brand} - {rubber.compound}
-                                </option>
-                              ))}
-                            </select>
-                          </td>
-                          <td className="p-3">
-                            <select
-                              value={editForm?.aggressiveness || 'moderate'}
-                              onChange={(e) => setEditForm({ ...editForm!, aggressiveness: e.target.value })}
-                              className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm"
-                            >
-                              {aggressivenessOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </td>
-                          <td className="p-3">
-                            <select
-                              value={editForm?.stiffness || 'medium'}
-                              onChange={(e) => setEditForm({ ...editForm!, stiffness: e.target.value })}
-                              className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm"
-                            >
-                              {stiffnessOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </td>
-                          <td className="p-3">
-                            <select
-                              value={editForm?.climbingDiscipline || 'sport'}
-                              onChange={(e) => setEditForm({ ...editForm!, climbingDiscipline: e.target.value })}
-                              className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm"
-                            >
-                              {disciplineOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </td>
-                          <td className="p-3">
-                            <select
-                              value={editForm?.volume || 'medium'}
-                              onChange={(e) => setEditForm({ ...editForm!, volume: e.target.value })}
-                              className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm"
-                            >
-                              {volumeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </td>
-                          <td className="p-3">
-                            <div className="flex gap-2">
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div className="flex gap-3 h-full">
+                    <div
+                      className="rounded-lg overflow-hidden bg-white/10 cursor-pointer hover:ring-2 hover:ring-accent transition-all flex-shrink-0"
+                      onClick={() => {
+                        setEditingImageId(shoe._id);
+                        setEditingImageUrl(shoe.imageUrl || '');
+                      }}
+                      title="Click to edit image URL"
+                    >
+                      <ShoeImage
+                        brand={shoe.brand}
+                        shoeName={shoe.name}
+                        imageUrl={shoe.imageUrl ?? undefined}
+                        slug={shoe.slug ?? undefined}
+                        className="w-20 h-20"
+                        transformation={[{ height: 80, width: 80, crop: 'at_max', cropMode: 'pad_resize', format: 'png', quality: 80 }]}
+                        gender={['men', 'women', 'kids', 'unisex'].includes((shoe.gender ?? '').toLowerCase())
+                          ? (shoe.gender?.toLowerCase() as 'men' | 'women' | 'kids' | 'unisex')
+                          : undefined}
+                      />
+                    </div>
+
+                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm overflow-y-auto">
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wide text-white/50">Name</label>
+                        {isEditingCurrentShoe && currentEditForm ? (
+                          <input
+                            type="text"
+                            value={currentEditForm.name || ''}
+                            onChange={(e) => setEditForm((prev) => (prev ? { ...prev, name: e.target.value } : prev))}
+                            className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                            autoFocus
+                          />
+                        ) : (
+                          <div className="text-white font-medium">{shoe.name}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wide text-white/50">Brand</label>
+                        {isEditingCurrentShoe && currentEditForm ? (
+                          <input
+                            type="text"
+                            value={currentEditForm.brand || ''}
+                            onChange={(e) => setEditForm((prev) => (prev ? { ...prev, brand: e.target.value } : prev))}
+                            className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                          />
+                        ) : (
+                          <div className="text-white/70">{shoe.brand}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wide text-white/50">Slug</label>
+                        {isEditingCurrentShoe && currentEditForm ? (
+                          <input
+                            type="text"
+                            value={currentEditForm.slug || ''}
+                            onChange={(e) => setEditForm((prev) => (prev ? { ...prev, slug: e.target.value } : prev))}
+                            className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                          />
+                        ) : (
+                          <div className="text-white/70 font-mono text-xs">{shoe.slug}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wide text-white/50">Gender</label>
+                        {isEditingCurrentShoe && currentEditForm ? (
+                          <select
+                            value={currentEditForm.gender || ''}
+                            onChange={(e) => setEditForm((prev) => (prev ? { ...prev, gender: e.target.value as typeof prev.gender } : prev))}
+                            className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                          >
+                            <option value="">Select</option>
+                            <option value="men">Men</option>
+                            <option value="women">Women</option>
+                            <option value="kids">Kids</option>
+                            <option value="unisex">Unisex</option>
+                          </select>
+                        ) : (
+                          <div className="text-white/70">{shoe.gender}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wide text-white/50">Aggressiveness</label>
+                        {isEditingCurrentShoe && currentEditForm ? (
+                          <input
+                            type="text"
+                            value={currentEditForm.aggressiveness || ''}
+                            onChange={(e) => setEditForm((prev) => (prev ? { ...prev, aggressiveness: e.target.value } : prev))}
+                            className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                          />
+                        ) : (
+                          <div className="text-white/70">{shoe.aggressiveness}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wide text-white/50">Stiffness</label>
+                        {isEditingCurrentShoe && currentEditForm ? (
+                          <input
+                            type="text"
+                            value={currentEditForm.stiffness || ''}
+                            onChange={(e) => setEditForm((prev) => (prev ? { ...prev, stiffness: e.target.value } : prev))}
+                            className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                          />
+                        ) : (
+                          <div className="text-white/70">{shoe.stiffness}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wide text-white/50">Discipline</label>
+                        {isEditingCurrentShoe && currentEditForm ? (
+                          <input
+                            type="text"
+                            value={currentEditForm.climbingDiscipline || ''}
+                            onChange={(e) => setEditForm((prev) => (prev ? { ...prev, climbingDiscipline: e.target.value } : prev))}
+                            className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                          />
+                        ) : (
+                          <div className="text-white/70">{shoe.climbingDiscipline}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wide text-white/50">Volume</label>
+                        {isEditingCurrentShoe && currentEditForm ? (
+                          <input
+                            type="text"
+                            value={currentEditForm.volume || ''}
+                            onChange={(e) => setEditForm((prev) => (prev ? { ...prev, volume: e.target.value } : prev))}
+                            className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                          />
+                        ) : (
+                          <div className="text-white/70">{shoe.volume}</div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center">
+                        <div className="flex gap-1.5">
+                          {isEditingCurrentShoe && currentEditForm ? (
+                            <>
                               <button
-                                onClick={handleSave}
-                                className="p-2 bg-green-600 hover:bg-green-700 rounded text-white"
+                                onClick={async () => {
+                                  await updateShoe({ id: shoe._id, ...currentEditForm });
+                                  setEditingId(null);
+                                  setEditForm(null);
+                                }}
+                                className="p-1.5 bg-green-600 hover:bg-green-700 rounded text-white"
+                                title="Save"
                               >
                                 <Check className="w-4 h-4" />
                               </button>
                               <button
-                                onClick={() => { setEditingId(null); setEditForm(null); }}
-                                className="p-2 bg-white/10 hover:bg-white/20 rounded text-white"
+                                onClick={() => {
+                                  setEditingId(null);
+                                  setEditForm(null);
+                                }}
+                                className="p-1.5 bg-white/10 hover:bg-white/20 rounded text-white"
+                                title="Cancel"
                               >
                                 <X className="w-4 h-4" />
                               </button>
-                            </div>
-                          </td>
-                        </>
-                      ) : (
-                        <>
-                          <td className="p-3 text-white">{shoe.name}</td>
-                          <td className="p-3 text-white/80">
-                            <div>{shoe.brand}</div>
-                            {shoe.slug && (
-                              <p className="text-[10px] text-white/40 mt-1 font-mono truncate">slug: {shoe.slug}</p>
-                            )}
-                          </td>
-                          <td className="p-3 text-white/60">{shoe.gender || 'unisex'}</td>
-                          <td className="p-3 text-white/60 text-xs">{shoe.rubberTechnology?.compound || '-'}</td>
-                          <td className="p-3 text-white/60">{shoe.aggressiveness}</td>
-                          <td className="p-3 text-white/60">{shoe.stiffness}</td>
-                          <td className="p-3 text-white/60">{shoe.climbingDiscipline}</td>
-                          <td className="p-3 text-white/60">{shoe.volume}</td>
-                          <td className="p-3">
-                            <div className="flex gap-2">
+                            </>
+                          ) : (
+                            <>
                               <button
-                                onClick={() => handleEdit(shoe as Shoe)}
-                                className="p-2 bg-blue-600 hover:bg-blue-700 rounded text-white"
+                                onClick={() => handleEdit(shoe)}
+                                className="p-1.5 bg-white/10 hover:bg-white/20 rounded text-white"
+                                title="Edit"
                               >
                                 <Pencil className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDelete(shoe._id)}
-                                className="p-2 bg-red-600 hover:bg-red-700 rounded text-white"
+                                className="p-1.5 bg-red-600 hover:bg-red-700 rounded text-white"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
-                            </div>
-                          </td>
-                        </>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                );
+              }}
+              className="flex-1 min-h-0 space-y-2"
+              itemsPerPage={15}
+              loadingIndicator={
+                <div className="text-center py-4">
+                  <div className="inline-flex items-center gap-2 text-neutral-500 text-sm">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-neutral-500"></div>
+                    <span>Loading more shoes...</span>
+                  </div>
+                </div>
+              }
+              completedIndicator={
+                <span className="text-white/60">
+                  All {filteredShoes.length} shoes loaded
+                </span>
+              }
+            />
             </div>
           </>
         )}
@@ -635,24 +688,24 @@ export default function AdminDashboard() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
+              <table className="w-full border-collapse text-sm">
                 <thead>
-                  <tr className="border-b border-white/20">
-                    <th className="text-left p-3 text-white/70 font-medium">Avatar</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Name</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Email</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Foot Shape</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Foot Volume</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Admin</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Onboarded</th>
-                    <th className="text-left p-3 text-white/70 font-medium">Verified</th>
+                  <tr className="border-b border-white/20 text-xs uppercase tracking-wide text-white/60">
+                    <th className="text-left py-2 pr-3 font-medium">Avatar</th>
+                    <th className="text-left py-2 pr-3 font-medium">Name</th>
+                    <th className="text-left py-2 pr-3 font-medium">Email</th>
+                    <th className="text-left py-2 pr-3 font-medium">Foot Shape</th>
+                    <th className="text-left py-2 pr-3 font-medium">Foot Volume</th>
+                    <th className="text-left py-2 pr-3 font-medium">Admin</th>
+                    <th className="text-left py-2 pr-3 font-medium">Onboarded</th>
+                    <th className="text-left py-2 pr-3 font-medium">Verified</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map((user) => (
                     <tr key={user._id} className="border-b border-white/10 hover:bg-white/5">
-                      <td className="p-3">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10">
+                      <td className="py-2 pr-3">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-white/10">
                           {user.image ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={user.image} alt={user.name || ''} className="w-full h-full object-cover" />
@@ -663,21 +716,21 @@ export default function AdminDashboard() {
                           )}
                         </div>
                       </td>
-                      <td className="p-3 text-white">{user.name || '-'}</td>
-                      <td className="p-3 text-white/80">{user.email}</td>
-                      <td className="p-3 text-white/60">{user.footShape || '-'}</td>
-                      <td className="p-3 text-white/60">{user.footVolume || '-'}</td>
-                      <td className="p-3">
+                      <td className="py-2 pr-3 text-white">{user.name || '-'}</td>
+                      <td className="py-2 pr-3 text-white/80">{user.email}</td>
+                      <td className="py-2 pr-3 text-white/60">{user.footShape || '-'}</td>
+                      <td className="py-2 pr-3 text-white/60">{user.footVolume || '-'}</td>
+                      <td className="py-2 pr-3">
                         <span className={`px-2 py-1 rounded text-xs ${user.isAdmin ? 'bg-green-600/20 text-green-400' : 'bg-white/10 text-white/50'}`}>
                           {user.isAdmin ? 'Yes' : 'No'}
                         </span>
                       </td>
-                      <td className="p-3">
+                      <td className="py-2 pr-3">
                         <span className={`px-2 py-1 rounded text-xs ${user.onboardingComplete ? 'bg-blue-600/20 text-blue-400' : 'bg-white/10 text-white/50'}`}>
                           {user.onboardingComplete ? 'Yes' : 'No'}
                         </span>
                       </td>
-                      <td className="p-3">
+                      <td className="py-2 pr-3">
                         <span className={`px-2 py-1 rounded text-xs ${user.emailVerified ? 'bg-green-600/20 text-green-400' : 'bg-yellow-600/20 text-yellow-400'}`}>
                           {user.emailVerified ? 'Yes' : 'No'}
                         </span>
@@ -688,6 +741,10 @@ export default function AdminDashboard() {
               </table>
             </div>
           </>
+        )}
+
+        {activeTab === 'backlog' && (
+          <BacklogManager />
         )}
       </div>
     </div>

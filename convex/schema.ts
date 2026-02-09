@@ -9,6 +9,12 @@ export const footShapeValidator = v.union(
   v.literal("celtic")
 );
 
+export const backlogStatusValidator = v.union(
+  v.literal("not_started"),
+  v.literal("in_progress"), 
+  v.literal("done")
+);
+
 export default defineSchema({
   // Climbing Shoes
   shoes: defineTable({
@@ -123,5 +129,16 @@ export default defineSchema({
   })
     .index("by_userId", ["userId"])
     .index("by_shoeId", ["shoeId"])
-    .index("by_userId_shoeId", ["userId", "shoeId"])
+    .index("by_userId_shoeId", ["userId", "shoeId"]),
+
+  // Backlog/Task management
+  backlogItems: defineTable({
+    title: v.string(),
+    notes: v.optional(v.string()),
+    status: backlogStatusValidator,
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_status", ["status"])
+    .index("by_createdAt", ["createdAt"]),
 });
