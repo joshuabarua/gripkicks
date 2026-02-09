@@ -25,13 +25,13 @@ const freePlan: PlanFeature[] = [
   { text: 'Find My Shoe — top 1 recommendation', included: true },
   { text: 'Rate shoes on comfort & performance', included: true },
   { text: 'Full recommendation list', included: false },
-  { text: 'Sole Sibling matching', included: false },
+  { text: 'Sole Mate matching', included: false },
 ];
 
 const premiumPlan: PlanFeature[] = [
   { text: 'Everything in Free', included: true },
   { text: 'Full recommendation list — all matching shoes', included: true },
-  { text: 'Sole Sibling — find your foot twin', included: true },
+  { text: 'Sole Mate — find your foot twin', included: true },
   { text: 'Priority community support', included: true },
   { text: 'Early access to new features', included: true },
   { text: 'Cancel anytime, no questions asked', included: true },
@@ -294,13 +294,13 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Sole Sibling Feature Highlight */}
+      {/* Sole Mate Feature Highlight */}
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">[PREMIUM_FEATURE]</p>
             <h2 className="font-tanker text-4xl md:text-6xl mb-6">
-              MEET YOUR<br /><span className="text-orange-500">SOLE SIBLING</span>
+              MEET YOUR<br /><span className="text-orange-500">SOLE MATE</span>
             </h2>
           </motion.div>
 
@@ -314,7 +314,7 @@ export default function PricingPage() {
               Same shape, same volume, same size. They&apos;ve already tried dozens of shoes and rated them all.
             </p>
             <p>
-              With <span className="text-orange-500 font-medium">Sole Sibling</span>, we match you with your foot twin. 
+              With <span className="text-orange-500 font-medium">Sole Mate</span>, we match you with your foot twin. 
               When someone with your exact foot profile shares a shoe in common with you and has rated other shoes — 
               you get notified. Their experience becomes your shortcut.
             </p>
@@ -361,7 +361,7 @@ export default function PricingPage() {
               },
               {
                 q: 'What happens to my data if I downgrade?',
-                a: 'Your data stays yours. You keep your shoe collection, ratings, and foot profile. You just lose access to the full recommendation list and Sole Sibling matching.',
+                a: 'Your data stays yours. You keep your shoe collection, ratings, and foot profile. You just lose access to the full recommendation list and Sole Mate matching.',
               },
               {
                 q: 'Why is it so cheap?',

@@ -223,7 +223,7 @@ export default function SoleMatePage() {
             </div>
           </motion.div>
 
-          {/* Sole Sibling Spotlight */}
+          {/* Sole Mate Spotlight */}
           {filteredRatings.some(r => r.isSoleSibling) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -239,7 +239,7 @@ export default function SoleMatePage() {
                     </div>
                   </AnimatedIcon>
                   <div>
-                    <h2 className="font-tanker text-xl text-white">SOLE SIBLING SPOTLIGHT</h2>
+                    <h2 className="font-tanker text-xl text-white">SOLE MATE SPOTLIGHT</h2>
                     <p className="font-sora text-xs text-neutral-400">Climbers with your exact foot profile love these shoes!</p>
                   </div>
                 </div>
