@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
-import { getUsers, getUserById, getProfile, editProfile, completeOnboarding, getShoes, getUserStash, addToStash, removeFromStash, updateUserShoeStats, toggleFavourite } from '../controllers/userController'
+import { getUsers, getUserById, getProfile, editProfile, completeOnboarding, getShoes } from '../controllers/userController'
+import { getUserStash, addToStash, removeFromStash, updateUserShoeStats, toggleFavourite } from '../controllers/stashController'
 import { isAdmin, protect } from '../middleware/auth.middlewares'
 
 const Users = new Hono()

@@ -34,7 +34,6 @@ export const changeEmail = async (c: Context): Promise<Response> => {
       response = await auth.api.changeEmail({
         body: {
           newEmail,
-          password,
         },
         // Pass the user session from the request
         headers: c.req.raw.headers,
@@ -51,14 +50,21 @@ export const changeEmail = async (c: Context): Promise<Response> => {
       }, 500);
     }
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return c.json({ 
-        success: false, 
-        message: errorData.message || 'Failed to change email' 
-      }, response.status);
+    if (typeof response === 'object' && response !== null) {
+      if ('success' in response && !response.success) {
+        return c.json({ 
+          success: false, 
+          message: (response as any).message || 'Failed to change email' 
+        }, 400);
+      }
+      // Success case
+      return c.json({
+        success: true,
+        message: 'Verification email sent to your new email address',
+      });
     }
 
+    // Fallback for unexpected response format
     return c.json({
       success: true,
       message: 'Verification email sent to your new email address',
@@ -112,20 +118,27 @@ export const deleteAccount = async (c: Context): Promise<Response> => {
       }, 500);
     }
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return c.json({ 
-        success: false, 
-        message: errorData.message || 'Failed to delete account' 
-      }, response.status);
+    if (typeof response === 'object' && response !== null) {
+      if ('success' in response && !response.success) {
+        return c.json({ 
+          success: false, 
+          message: (response as any).message || 'Failed to delete account' 
+        }, 400);
+      }
+      // Success case - clear session if available
+      if ('headers' in response && (response as any).headers?.get) {
+        const sessionCookie = (response as any).headers.get('set-cookie');
+        if (sessionCookie) {
+          c.header('set-cookie', sessionCookie);
+        }
+      }
+      return c.json({
+        success: true,
+        message: 'Account deleted successfully',
+      });
     }
 
-    // Clear the session cookie
-    const sessionCookie = response.headers.get('set-cookie');
-    if (sessionCookie) {
-      c.header('set-cookie', sessionCookie);
-    }
-
+    // Fallback for unexpected response format
     return c.json({
       success: true,
       message: 'Account deleted successfully',
@@ -196,14 +209,21 @@ export const changePassword = async (c: Context): Promise<Response> => {
       }, 500);
     }
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return c.json({ 
-        success: false, 
-        message: errorData.message || 'Failed to change password' 
-      }, response.status);
+    if (typeof response === 'object' && response !== null) {
+      if ('success' in response && !response.success) {
+        return c.json({ 
+          success: false, 
+          message: (response as any).message || 'Failed to change password' 
+        }, 400);
+      }
+      // Success case
+      return c.json({
+        success: true,
+        message: 'Password changed successfully',
+      });
     }
 
+    // Fallback for unexpected response format
     return c.json({
       success: true,
       message: 'Password changed successfully',

@@ -208,7 +208,7 @@ function MyComponent() {
 3. **Environment variables**
 
    ```bash
-   # Copy from .env.example
+   # From .env
    cp .env.example .env.local
 
    # Required variables:

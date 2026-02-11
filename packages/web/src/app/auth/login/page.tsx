@@ -1,7 +1,6 @@
 'use client'
 
 import { LoginForm } from "@/components/login-form"
-import { AuthDebug } from "@/components/auth-debug";
 import { motion } from 'framer-motion';
 
 export default function Login() {  
@@ -32,8 +31,6 @@ export default function Login() {
           >
             <LoginForm />
           </motion.div>
-          
-          {process.env.NODE_ENV === 'development' && <AuthDebug />}
         </div>
       </div>
     </main>

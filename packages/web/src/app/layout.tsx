@@ -1,8 +1,8 @@
 "use client"
 
 import "./globals.css";
-import Footer from "./footer/page";
-import Navigation from "./navigation/page";
+import Footer from "@/components/Footer";
+import Navigation from "@/components/Navigation";
 import localFont from 'next/font/local'
 import Providers from '@/components/providers';
 import ImageKitProvider from '@/components/ImageKitProvider';

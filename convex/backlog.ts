@@ -9,9 +9,10 @@ export const createBacklogItem = mutation({
     status: backlogStatusValidator,
   },
   handler: async (ctx, args) => {
-    // Remove strict auth check for now - will add proper Better Auth integration later
     const backlogItem = await ctx.db.insert("backlogItems", {
-      ...args,
+      title: args.title,
+      notes: args.notes,
+      status: args.status,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
@@ -28,9 +29,8 @@ export const updateBacklogItem = mutation({
     status: v.optional(backlogStatusValidator),
   },
   handler: async (ctx, args) => {
-    // Remove strict auth check for now - will add proper Better Auth integration later
     const { id, ...updateData } = args;
-    
+
     const existingItem = await ctx.db.get(id);
     if (!existingItem) {
       throw new Error("Backlog item not found");
@@ -50,7 +50,6 @@ export const deleteBacklogItem = mutation({
     id: v.id("backlogItems"),
   },
   handler: async (ctx, args) => {
-    // Remove strict auth check for now - will add proper Better Auth integration later
     const existingItem = await ctx.db.get(args.id);
     if (!existingItem) {
       throw new Error("Backlog item not found");
@@ -66,7 +65,6 @@ export const listBacklogItems = query({
     statusFilter: v.optional(backlogStatusValidator),
   },
   handler: async (ctx, args) => {
-    // Remove strict auth check for now - will add proper Better Auth integration later
     let items = await ctx.db.query("backlogItems").order("desc").collect();
 
     if (args.statusFilter) {

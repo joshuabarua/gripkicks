@@ -52,6 +52,13 @@ export const auth = betterAuth({
   ],
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:8000',
+  rateLimit: {
+    window: 60,
+    max: process.env.NODE_ENV === 'production' ? 20 : 1000,
+    storage: 'memory',
+    skipSuccessfulRequests: false,
+    skipFailedRequests: false,
+  },
   plugins: [
     polar({
       client: polarClient,

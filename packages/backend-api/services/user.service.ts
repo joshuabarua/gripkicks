@@ -1,14 +1,15 @@
 import { Result, ResultAsync, err, ok } from 'neverthrow';
-import { 
-  AppError, 
-  NotFoundError, 
-  UnauthorizedError, 
+import {
+  AppError,
+  NotFoundError,
+  UnauthorizedError,
   ValidationError,
   InvalidDataError,
   UnauthenticatedError,
   UnexpectedError,
   RandomError
 } from '../src/lib/errors';
+import { getConvexUrl } from '../utils/convexHelper';
 
 export interface User {
   id: string;
@@ -172,7 +173,7 @@ class UserService {
 
   private async findUserById(id: string): Promise<User | null> {
     try {
-      const convexUrl = this.getConvexUrl();
+      const convexUrl = getConvexUrl();
       const response = await fetch(`${convexUrl}/api/users/getById`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -203,7 +204,7 @@ class UserService {
 
   private async performUpdate(userId: string, data: UpdateProfileData): Promise<User> {
     try {
-      const convexUrl = this.getConvexUrl();
+      const convexUrl = getConvexUrl();
       const response = await fetch(`${convexUrl}/api/users/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -238,7 +239,7 @@ class UserService {
     favoriteShoeId?: string
   ): Promise<User> {
     try {
-      const convexUrl = this.getConvexUrl();
+      const convexUrl = getConvexUrl();
       const response = await fetch(`${convexUrl}/api/users/completeOnboarding`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -283,16 +284,9 @@ class UserService {
     }
   }
 
-  private getConvexUrl(): string {
-    return process.env.CONVEX_HTTP_URL || 
-           process.env.CONVEX_SITE_URL ||
-           (process.env.CONVEX_URL?.replace('.convex.cloud', '.convex.site')) ||
-           'http://localhost:3210';
-  }
-
   private async performDelete(userId: string): Promise<void> {
     try {
-      const convexUrl = this.getConvexUrl();
+      const convexUrl = getConvexUrl();
       const response = await fetch(`${convexUrl}/api/users/delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

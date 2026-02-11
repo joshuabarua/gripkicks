@@ -1,44 +1,5 @@
-import { query, action, mutation } from "./_generated/server";
+import { query, action } from "./_generated/server";
 import { v } from "convex/values";
-import type { Id } from "./_generated/dataModel";
-
-// Minimal no-op implementations to satisfy Convex typecheck while Better Auth is handled in Hono.
-// Replace with real Convex auth logic if/when needed.
-
-export const currentUser = query({
-  args: {},
-  handler: async () => null,
-});
-
-export const createOrUpdateUser = query({
-  args: {},
-  handler: async () => null,
-});
-
-export const completeOnboarding = query({
-  args: {},
-  handler: async () => null,
-});
-
-export const getUserStash = query({
-  args: {},
-  handler: async () => [],
-});
-
-export const addToStash = query({
-  args: {},
-  handler: async () => null,
-});
-
-export const removeFromStash = query({
-  args: {},
-  handler: async () => null,
-});
-
-export const isShoeInStash = query({
-  args: {},
-  handler: async () => false,
-});
 
 // Validate session with Better Auth
 export const validateSession = action({
@@ -48,7 +9,7 @@ export const validateSession = action({
   handler: async (ctx, args) => {
     // Get Better Auth URL from environment
     const authUrl = process.env.BETTER_AUTH_URL || 'http://localhost:3001';
-    
+
     try {
       // Make HTTP request to Better Auth's session endpoint
       const response = await fetch(`${authUrl}/api/auth/get-session`, {
@@ -58,18 +19,18 @@ export const validateSession = action({
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!response.ok) {
         // Session is invalid or expired
         return null;
       }
-      
+
       const sessionData = await response.json();
-      
+
       if (!sessionData || !sessionData.session || !sessionData.user) {
         return null;
       }
-      
+
       return {
         session: {
           id: sessionData.session.id,
@@ -140,7 +101,7 @@ export const verifyShoeOwnership = query({
     // Check if the user has this shoe in their stash
     const userShoe = await ctx.db
       .query("userShoes")
-      .withIndex("by_userId_shoeId", (q) => 
+      .withIndex("by_userId_shoeId", (q) =>
         q.eq("userId", user._id).eq("shoeId", args.shoeId)
       )
       .first();

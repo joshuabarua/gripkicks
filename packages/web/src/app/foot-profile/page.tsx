@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { footProfileSchema, useFootProfileStore, FootProfile } from "@/store/footProfileStore";
+import { footProfileSchema, useFootProfileStore, FootProfile } from "@/stores/footProfileStore";
 import { motion, AnimatePresence } from "framer-motion";
 import InteractiveCard from "./interactive-card";
 import CloudBackground from "@/components/CloudBackground";
