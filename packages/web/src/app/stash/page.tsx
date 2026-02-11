@@ -11,6 +11,7 @@ import EditShoeDialog from '@/components/EditShoeDialog';
 import ShoeStatsModal from '@/components/ShoeStatsModal';
 import CloudBackground from '@/components/CloudBackground';
 import { FullPageLoading, LoadingBar } from '@/components/ui/loading';
+import { ShoeCardSkeleton, StatsStripSkeleton } from '@/components/ui/skeleton';
 import { addShoeToStash, removeShoeFromStash as removeShoeFromStashService, toggleFavouriteInStash, updateShoeInStash } from '@/services/stash';
 import { buildSpecialLabels } from '@/utils/specialLabels';
 import { AddShoeDialog } from '@/components/stash/AddShoeDialog';
@@ -18,6 +19,7 @@ import { useStashData } from '@/hooks/useStashData';
 import { StatsStrip } from '@/components/stash/StatsStrip';
 import { BrandSections } from '@/components/stash/BrandSections';
 import { useBrandGroups } from '@/hooks/useBrandGroups';
+import { AdvancedFilters } from '@/components/stash/AdvancedFilters';
 
 export default function ShoeSanctuaryPage() {
   const { data: session, isPending: sessionLoading } = useSession();
@@ -28,6 +30,12 @@ export default function ShoeSanctuaryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [selectedGender, setSelectedGender] = useState<'all' | 'men' | 'women' | 'kids' | 'unisex'>('all');
+  const [selectedAggressiveness, setSelectedAggressiveness] = useState<string>('all');
+  const [selectedStiffness, setSelectedStiffness] = useState<string>('all');
+  const [selectedDiscipline, setSelectedDiscipline] = useState<string>('all');
+  const [selectedVolume, setSelectedVolume] = useState<string>('all');
+  const [selectedComfortRating, setSelectedComfortRating] = useState<'all' | '4+' | '3+' | '2+' | '1+'>('all');
+  const [selectedPerformanceRating, setSelectedPerformanceRating] = useState<'all' | '4+' | '3+' | '2+' | '1+'>('all');
   const [editingShoe, setEditingShoe] = useState<UserShoe | null>(null);
   const [editForm, setEditForm] = useState<EditFormData>({
     size: undefined,
@@ -80,7 +88,7 @@ export default function ShoeSanctuaryPage() {
 
   const brandGroups = useBrandGroups(userShoes);
 
-  // Search for shoes
+  // Search for shoes with advanced filters
   const searchResults = useMemo(() => {
     let results: typeof allShoes = allShoes;
 
@@ -89,8 +97,45 @@ export default function ShoeSanctuaryPage() {
       results = results.filter(shoe => shoe.brand === selectedBrand);
     }
 
+    // Filter by gender if selected
     if (selectedGender !== 'all') {
       results = results.filter(shoe => (shoe.gender ?? '').toLowerCase() === selectedGender);
+    }
+
+    // Filter by aggressiveness if selected
+    if (selectedAggressiveness !== 'all') {
+      results = results.filter(shoe => shoe.aggressiveness === selectedAggressiveness);
+    }
+
+    // Filter by stiffness if selected
+    if (selectedStiffness !== 'all') {
+      results = results.filter(shoe => shoe.stiffness === selectedStiffness);
+    }
+
+    // Filter by climbing discipline if selected
+    if (selectedDiscipline !== 'all') {
+      results = results.filter(shoe => shoe.climbingDiscipline === selectedDiscipline);
+    }
+
+    // Filter by volume if selected
+    if (selectedVolume !== 'all') {
+      results = results.filter(shoe => shoe.volume === selectedVolume);
+    }
+
+    // Filter by comfort rating if selected
+    if (selectedComfortRating !== 'all') {
+      const minRating = parseFloat(selectedComfortRating.replace('+', ''));
+      results = results.filter(shoe => 
+        shoe.avgComfortScore !== undefined && shoe.avgComfortScore >= minRating
+      );
+    }
+
+    // Filter by performance rating if selected
+    if (selectedPerformanceRating !== 'all') {
+      const minRating = parseFloat(selectedPerformanceRating.replace('+', ''));
+      results = results.filter(shoe => 
+        shoe.avgPerformanceRating !== undefined && shoe.avgPerformanceRating >= minRating
+      );
     }
 
     // Filter by search query
@@ -102,7 +147,34 @@ export default function ShoeSanctuaryPage() {
     }
 
     return results;
-  }, [searchQuery, allShoes, selectedBrand, selectedGender]);
+  }, [searchQuery, allShoes, selectedBrand, selectedGender, selectedAggressiveness, selectedStiffness, selectedDiscipline, selectedVolume, selectedComfortRating, selectedPerformanceRating]);
+
+  // Calculate active filters count
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (selectedBrand !== 'all') count++;
+    if (selectedGender !== 'all') count++;
+    if (selectedAggressiveness !== 'all') count++;
+    if (selectedStiffness !== 'all') count++;
+    if (selectedDiscipline !== 'all') count++;
+    if (selectedVolume !== 'all') count++;
+    if (selectedComfortRating !== 'all') count++;
+    if (selectedPerformanceRating !== 'all') count++;
+    return count;
+  }, [selectedBrand, selectedGender, selectedAggressiveness, selectedStiffness, selectedDiscipline, selectedVolume, selectedComfortRating, selectedPerformanceRating]);
+
+  // Reset all filters
+  const resetFilters = () => {
+    setSelectedBrand('all');
+    setSelectedGender('all');
+    setSelectedAggressiveness('all');
+    setSelectedStiffness('all');
+    setSelectedDiscipline('all');
+    setSelectedVolume('all');
+    setSelectedComfortRating('all');
+    setSelectedPerformanceRating('all');
+    setSearchQuery('');
+  };
 
   const addShoeToSanctuary = async (shoeId: string) => {
     const result = await addShoeToStash(shoeId);
@@ -247,24 +319,51 @@ export default function ShoeSanctuaryPage() {
                 brandCount={brandGroups.length}
               />
             )}
+
+            {/* Show skeleton while loading initial data */}
+            {isLoading && userShoes.length === 0 && (
+              <StatsStripSkeleton />
+            )}
           </div>
         </section>
 
         <section className="px-fluid-lg md:px-fluid-xl pb-fluid-3xl">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto space-y-fluid-lg">
+            {/* Advanced Filters */}
+            <AdvancedFilters
+              selectedBrand={selectedBrand}
+              onBrandChange={setSelectedBrand}
+              selectedGender={selectedGender}
+              onGenderChange={setSelectedGender}
+              selectedAggressiveness={selectedAggressiveness}
+              onAggressivenessChange={setSelectedAggressiveness}
+              selectedStiffness={selectedStiffness}
+              onStiffnessChange={setSelectedStiffness}
+              selectedDiscipline={selectedDiscipline}
+              onDisciplineChange={setSelectedDiscipline}
+              selectedVolume={selectedVolume}
+              onVolumeChange={setSelectedVolume}
+              selectedComfortRating={selectedComfortRating}
+              onComfortRatingChange={setSelectedComfortRating}
+              selectedPerformanceRating={selectedPerformanceRating}
+              onPerformanceRatingChange={setSelectedPerformanceRating}
+              uniqueBrands={uniqueBrands}
+              onReset={resetFilters}
+              activeFiltersCount={activeFiltersCount}
+            />
+
             {isLoading && (
               <div className="flex flex-col items-center justify-center py-fluid-3xl">
-                <div className="flex items-center gap-2 mb-4">
-                  {[0, 1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"
-                      style={{ animationDelay: `${i * 0.15}s` }}
-                    />
+                <div className="w-full max-w-4xl space-y-4">
+                  <div className="text-center mb-6">
+                    <LoadingBar size="lg" />
+                    <span className="font-mono text-[10px] text-neutral-500 tracking-[0.2em] mt-4 block">[LOADING_SANCTUARY]</span>
+                  </div>
+                  {/* Show skeleton cards while loading */}
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <ShoeCardSkeleton key={i} />
                   ))}
                 </div>
-                <span className="font-mono text-[10px] text-neutral-500 tracking-[0.2em]">[LOADING_SANCTUARY]</span>
-                <LoadingBar size="lg" />
               </div>
             )}
 

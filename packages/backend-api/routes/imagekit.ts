@@ -20,6 +20,13 @@ type ImageKitAuthRequest = {
   [key: string]: unknown;
 };
 
+// Define upload request type
+type ImageUploadRequest = {
+  file: File;
+  fileName: string;
+  folder: string;
+};
+
 const router = new Hono<{ 
   Variables: {
     user: User;
@@ -83,6 +90,41 @@ router.post('/imagekit', protect, async (c) => {
   } catch (error) {
     console.error('ImageKit auth error:', error);
     return c.json({ error: 'Failed to authenticate' }, 500);
+  }
+});
+
+// Image upload endpoint for ProfileImageUpload component
+router.post('/upload', protect, async (c) => {
+  try {
+    const user = c.get('user');
+    
+    if (!user || !user.id) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    const body = await c.req.json();
+    const { fileName, folder } = body;
+
+    if (!fileName || !folder) {
+      return c.json({ error: 'fileName and folder are required' }, 400);
+    }
+
+    // For now, return a placeholder URL since ImageKit direct upload
+    // should be handled by the frontend component
+    // This endpoint can be enhanced later to handle server-side uploads
+    const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || "public_pQA0HTNiRRSN1Rut2M2i9nr0eZ4=";
+    const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || "https://ik.imagekit.io/ie871bk0r";
+    
+    // Generate a mock URL for now - in production, this would be the actual uploaded URL
+    const mockUrl = `${urlEndpoint}/${folder}/${fileName}`;
+    
+    return c.json({
+      success: true,
+      url: mockUrl
+    });
+  } catch (error) {
+    console.error('Image upload error:', error);
+    return c.json({ error: 'Failed to upload image' }, 500);
   }
 });
 

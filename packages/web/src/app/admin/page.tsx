@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import ShoeImage from '@/components/ShoeImage';
 import { PaginatedList } from '@/components/ui/PaginatedList';
 import { BacklogManager } from '@/components/admin/BacklogManager';
+import ShoeImageUpload from '@/components/ShoeImageUpload';
 import { Pencil, Trash2, X, Check, Plus, Search, Footprints, Users, ListTodo } from 'lucide-react';
 
 type RubberTechnology = {
@@ -427,17 +428,40 @@ export default function AdminDashboard() {
                 <div key={shoe._id} className="bg-white/5 border border-white/10 rounded-lg p-3 flex flex-col gap-2 max-h-[175px] overflow-hidden">
                   {editingImageId === shoe._id ? (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setEditingImageId(null)}>
-                      <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-lg mx-2" onClick={(e) => e.stopPropagation()}>
-                        <h3 className="text-white font-medium mb-3">Edit Image URL</h3>
-                        <input
-                          type="text"
-                          value={editingImageUrl}
-                          onChange={(e) => setEditingImageUrl(e.target.value)}
-                          placeholder="Image URL"
-                          className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white text-sm mb-3"
-                          autoFocus
-                        />
-                        <div className="flex justify-end gap-2">
+                      <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-lg mx-2 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                        <h3 className="text-white font-medium mb-4">Edit Shoe Image</h3>
+                        
+                        <div className="space-y-4">
+                          {/* Image Upload Component */}
+                          <ShoeImageUpload
+                            brand={shoe.brand}
+                            shoeName={shoe.name}
+                            onUploadSuccess={(url) => {
+                              setEditingImageUrl(url);
+                              // Auto-save when upload is successful
+                              updateShoe({ id: shoe._id, imageUrl: url });
+                              setEditingImageId(null);
+                            }}
+                            onError={(error) => {
+                              console.error('Image upload failed:', error);
+                            }}
+                          />
+                          
+                          {/* Fallback URL input */}
+                          <div className="border-t border-white/10 pt-4">
+                            <p className="text-white text-sm mb-2">Or enter image URL manually:</p>
+                            <input
+                              type="text"
+                              value={editingImageUrl}
+                              onChange={(e) => setEditingImageUrl(e.target.value)}
+                              placeholder="Image URL"
+                              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white text-sm mb-3"
+                              autoFocus
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="flex justify-end gap-2 mt-4">
                           <button
                             onClick={() => setEditingImageId(null)}
                             className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded text-white text-sm"
@@ -451,7 +475,7 @@ export default function AdminDashboard() {
                             }}
                             className="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-white text-sm"
                           >
-                            Save
+                            Save URL
                           </button>
                         </div>
                       </div>
