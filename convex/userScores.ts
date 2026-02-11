@@ -1,6 +1,5 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
-import { validateSession } from './auth';
 
 // User score profile schema
 const userScoreProfileSchema = {
@@ -47,7 +46,7 @@ const scoreHistorySchema = {
 export const updateScoreProfile = mutation({
   args: {
     userId: v.id('users'),
-    scoreProfile: userScoreProfileSchema,
+    scoreProfile: v.object(userScoreProfileSchema),
   },
   handler: async (ctx, args) => {
     // Note: Authentication is handled at the HTTP layer via Better Auth
@@ -97,7 +96,7 @@ export const getScoreProfile = query({
 export const addScoreHistory = mutation({
   args: {
     userId: v.id('users'),
-    history: scoreHistorySchema,
+    history: v.object(scoreHistorySchema),
   },
   handler: async (ctx, args) => {
     // Note: Authentication is handled at the HTTP layer via Better Auth
@@ -133,15 +132,17 @@ export const getTopUsers = query({
     const limit = args.limit || 50;
     const offset = args.offset || 0;
 
-    const topUsers = await ctx.db
+    const allByScore = await ctx.db
       .query('userScoreProfiles')
-      .withIndex('by_overallScore', (q) => q.desc('overallScore'))
-      .range(offset, offset + limit - 1)
+      .withIndex('by_overallScore')
+      .order("desc")
       .collect();
+
+    const topUsers = allByScore.slice(offset, offset + limit);
 
     // Get user details for each score profile
     const usersWithDetails = await Promise.all(
-      topUsers.map(async (scoreProfile) => {
+      topUsers.map(async (scoreProfile: typeof allByScore[number]) => {
         const user = await ctx.db.get(scoreProfile.userId);
         return {
           ...scoreProfile,
