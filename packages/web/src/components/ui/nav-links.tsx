@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { SignOutButton } from '@/components/signout-button';
 import { useSession } from '@/lib/auth';
-import { LayoutDashboard, Settings, Footprints, Archive, Heart, Box, Info, Shield, LogOut, Crown } from 'lucide-react';
+import { LayoutDashboard, Settings, Footprints, Archive, Heart, Box, Info, Shield, LogOut, Crown, Target } from 'lucide-react';
 import { AnimatedNavIcon } from '@/components/ui/AnimatedNavIcon';
 import type { LucideIcon } from 'lucide-react';
 
@@ -23,6 +23,7 @@ const mainLinks: NavItem[] = [
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, animation: 'bounce' },
     { title: "Foot Lab", href: "/footchecker", icon: Footprints, animation: 'wiggle' },
     { title: "Shoe Sanctuary", href: "/stash", icon: Archive, animation: 'pop' },
+    { title: "Shoe Matcher", href: "/matcher", icon: Target, animation: 'pulse' },
     { title: "Sole Mate", href: "/findmyshoe", icon: Heart, animation: 'pulse' },
 ]
 

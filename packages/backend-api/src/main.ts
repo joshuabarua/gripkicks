@@ -13,6 +13,7 @@ import Users from '../routes/users.routes';
 import AuthSync from '../routes/authSync.routes';
 import AuthRoutes from '../routes/auth.routes';
 import ImageKitRoute from '../routes/imagekit';
+import PolarRoutes from '../routes/polar.routes';
 import createApp from '../lib/create-app';
 import { Context } from 'hono';
 
@@ -60,6 +61,7 @@ app.route(API_BASE, Users);
 app.route(`${API_BASE}/auth`, AuthRoutes);
 app.route(API_BASE, AuthSync);
 app.route('/api', ImageKitRoute);
+app.route(`${API_BASE}/polar`, PolarRoutes);
 
 // Error handling
 app.onError(errorHandler);

@@ -493,7 +493,15 @@ app.post("/api/auth-db/:model/:operation", async (c) => {
     // Verifications
     else if (model === "verification") {
       if (operation === "create") {
-        result = await c.env.runMutation(api.authDb.createVerification, body);
+        // Convert expiresAt from string to number if needed
+        const processedBody = {
+          ...body,
+          expiresAt: typeof body.expiresAt === 'string' ? new Date(body.expiresAt).getTime() : body.expiresAt
+        };
+        
+        // Filter out extra fields that aren't in the validator
+        const { id, createdAt, updatedAt, ...validFields } = processedBody;
+        result = await c.env.runMutation(api.authDb.createVerification, validFields);
       } else if (operation === "update") {
         result = await c.env.runMutation(api.authDb.updateVerification, {
           id: body.id as Id<"verifications">,

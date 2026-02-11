@@ -5,7 +5,10 @@
       "Bash(ls:*)",
       "Bash(grep:*)",
       "Bash(find:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "WebFetch(domain:polar.sh)",
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

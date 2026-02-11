@@ -112,7 +112,8 @@ export default defineSchema({
     identifier: v.string(),
     value: v.string(),
     expiresAt: v.number(),
-  }).index("by_identifier", ["identifier"]),
+  }).index("by_identifier", ["identifier"])
+   .index("by_expiresAt", ["expiresAt"]),
 
   // User's shoe collection (stash)
   userShoes: defineTable({
@@ -141,4 +142,54 @@ export default defineSchema({
   })
     .index("by_status", ["status"])
     .index("by_createdAt", ["createdAt"]),
+
+  // User Score Profiles
+  userScoreProfiles: defineTable({
+    userId: v.id("users"),
+    overallScore: v.number(),
+    preferenceProfile: v.object({
+      comfort: v.number(),
+      performance: v.number(),
+      durability: v.number(),
+      aggressiveness: v.number(),
+      versatility: v.number(),
+    }),
+    learnedPreferences: v.object({
+      preferredBrands: v.array(v.string()),
+      preferredVolumes: v.array(v.string()),
+      preferredDisciplines: v.array(v.string()),
+      confidence: v.number(),
+      sampleSize: v.number(),
+    }),
+    footProfile: v.optional(v.object({
+      shape: v.string(),
+      volume: v.string(),
+    })),
+    lastUpdated: v.number(),
+    version: v.number(),
+    history: v.array(v.object({
+      timestamp: v.number(),
+      previousScore: v.number(),
+      newScore: v.number(),
+      changeReason: v.union(
+        v.literal("shoe_added"),
+        v.literal("shoe_updated"),
+        v.literal("shoe_removed"),
+        v.literal("profile_updated"),
+        v.literal("recalculation")
+      ),
+      affectedShoes: v.array(v.string()),
+    })),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_overallScore", ["overallScore"]),
+
+  // Shoe Popularity
+  popularity: defineTable({
+    shoeId: v.id("shoes"),
+    count: v.number(),
+    lastUpdated: v.number(),
+  })
+    .index("by_shoeId", ["shoeId"])
+    .index("by_count", ["count"]),
 });

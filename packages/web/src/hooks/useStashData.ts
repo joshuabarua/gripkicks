@@ -100,7 +100,7 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
       }
     );
     setIsLoading(false);
-  }, [sessionUserId, enabled, onError]);
+  }, [sessionUserId, enabled]); // Remove onError from dependencies
 
   // Use real-time data when available, fallback to REST API
   useEffect(() => {
@@ -144,7 +144,7 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
       setIsLoading(false);
       setRealtimeEnabled(false);
     }
-  }, [realtimeStashData, userData, sessionUserId, realtimeEnabled, fetchUserStash]);
+  }, [realtimeStashData, userData, sessionUserId, realtimeEnabled]); // Remove fetchUserStash from dependencies
 
   useEffect(() => {
     if (sessionUserId && enabled) {
@@ -153,7 +153,7 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
       setUserShoes([]);
       setIsLoading(false);
     }
-  }, [sessionUserId, enabled, fetchUserStash]);
+  }, [sessionUserId, enabled]); // Remove fetchUserStash from dependencies
 
   const invalidateCache = useCallback(() => {
     if (sessionUserId) {

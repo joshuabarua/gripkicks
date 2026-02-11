@@ -46,3 +46,10 @@ export const getAllShoesPopularity = query({
     return popularityArray;
   },
 });
+
+export const list = query({
+  handler: async (ctx) => {
+    // Get all user shoes
+    return await ctx.db.query("userShoes").collect();
+  },
+});

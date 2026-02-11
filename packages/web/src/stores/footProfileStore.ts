@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { z } from 'zod';
 
 // Define schema for validation
@@ -14,7 +15,12 @@ interface FootProfileState {
   setProfile: (profile: FootProfile) => void;
 }
 
-export const useFootProfileStore = create<FootProfileState>((set) => ({
-  profile: null,
-  setProfile: (profile) => set({ profile })
-}));
+export const useFootProfileStore = create<FootProfileState>()(
+  persist(
+    (set) => ({
+      profile: null,
+      setProfile: (profile) => set({ profile }),
+    }),
+    { name: 'foot-profile' }
+  )
+);

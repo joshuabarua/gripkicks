@@ -92,17 +92,30 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             console.log(`[ConvexAdapter] CREATE ${model}:`, data);
           }
 
+          // Convert expiresAt from string to number if present (for verification model)
+          // Also filter out extra fields that aren't in the validator
+          let finalData = data;
+          if (model === 'verification') {
+            const { id, createdAt, updatedAt, expiresAt, ...rest } = data;
+            finalData = {
+              ...rest,
+              expiresAt: expiresAt && typeof expiresAt === 'string' 
+                ? new Date(expiresAt).getTime() 
+                : expiresAt
+            };
+          }
+
           // Add betterAuthId for user model
           if (model === 'user' && data.id) {
             const dataWithBetterAuthId = {
-              ...data,
+              ...finalData,
               betterAuthId: data.id,
             };
             const result = await callConvex(model, 'create', dataWithBetterAuthId);
             return result;
           }
 
-          const result = await callConvex(model, 'create', data as Record<string, unknown>);
+          const result = await callConvex(model, 'create', finalData as Record<string, unknown>);
           return result;
         },
 
@@ -217,7 +230,7 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
 
         deleteMany: async ({ model, where }) => {
           // Handle special cases for session deletion
-          if (model === 'session' && where.length > 0) {
+          if (model === 'session') {
             const field = where[0]?.field;
             const value = where[0]?.value;
 
@@ -230,9 +243,44 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             }
           }
 
+          // Handle verification deletion by expiresAt (for cleanup)
+          if (model === 'verification' && where.length > 0) {
+            const expiresWhere = where.find((w: { field: string; value: unknown; operator?: string }) => 
+              w.field === 'expiresAt' && w.operator === 'lt'
+            );
+            if (expiresWhere) {
+              if (config.debugLogs) {
+                console.log('[ConvexAdapter] About to delete expired verifications with expiresBefore:', expiresWhere.value);
+              }
+              
+              // Convert string timestamp to number if needed
+              let expiresBefore = expiresWhere.value;
+              if (typeof expiresBefore === 'string') {
+                expiresBefore = new Date(expiresBefore).getTime();
+              }
+              
+              // Add a delay to prevent immediate cleanup of newly created verifications
+              // Better Auth sometimes calls cleanup immediately after creation
+              if (config.debugLogs) {
+                console.log('[ConvexAdapter] Waiting 5 seconds before cleanup...');
+              }
+              await new Promise(resolve => setTimeout(resolve, 5000)); // 5 second delay
+              
+              // Delete expired verifications
+              const result = await callConvex(model, 'deleteExpired', { 
+                expiresBefore: expiresBefore as number
+              });
+              
+              if (config.debugLogs) {
+                console.log('[ConvexAdapter] Deleted expired verifications, count:', result?.count);
+              }
+              return result?.count || 0;
+            }
+          }
+
           // TODO: Implement deleteMany for other models
-          console.warn(`[ConvexAdapter] deleteMany not implemented for model: ${model}, where:`, where);
-          throw new Error('deleteMany operation not supported for this configuration');
+          console.warn(`[ConvexAdapter] deleteMany not fully implemented for model: ${model}, where:`, where);
+          throw new Error(`deleteMany operation not supported for this configuration`);
         },
 
         findOne: async ({ model, where }) => {
@@ -284,6 +332,31 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
 
         findMany: async ({ model, where, limit, offset, sortBy }) => {
           try {
+            // Handle verification queries by identifier
+            if (model === 'verification' && where && where.length > 0) {
+              const identifierWhere = where.find((w: { field: string; value: unknown }) => w.field === 'identifier');
+              if (identifierWhere) {
+                const result = await callConvex(model, 'findByIdentifier', { identifier: identifierWhere.value });
+                const records = result ? [result] : [];
+                
+                // Apply limit and offset if provided
+                let finalRecords = records;
+                if (offset) finalRecords = finalRecords.slice(offset);
+                if (limit) finalRecords = finalRecords.slice(0, limit);
+                
+                return finalRecords;
+              }
+              
+              // Handle verification cleanup queries by expiresAt
+              const expiresWhere = where.find((w: { field: string; value: unknown; operator?: string }) => 
+                w.field === 'expiresAt' && w.operator === 'lt'
+              );
+              if (expiresWhere) {
+                // For cleanup, return empty array - Better Auth will call deleteMany separately
+                return [];
+              }
+            }
+            
             // Handle session queries
             if (model === 'session' && where && where.length > 0) {
               const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');

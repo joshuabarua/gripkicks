@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Zap, Crown, Users, ArrowUpRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { useSession, authClient } from '@/lib/auth';
+import { useSession } from '@/lib/auth';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { fetchApi } from '@/lib/api-client';
 
@@ -282,7 +282,13 @@ export default function PricingPage() {
                     window.location.href = '/auth/signup';
                     return;
                   }
-                  await authClient.checkout({ slug: selectedPlan });
+                  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+                  const res = await fetch(`${apiUrl}/api/v1/polar/checkout/${selectedPlan}`, {
+                    method: 'POST',
+                    credentials: 'include',
+                  });
+                  const data = await res.json();
+                  if (data.url) window.location.href = data.url;
                 }}
                 className="relative w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
               >
