@@ -63,7 +63,7 @@ export function GrippyKickkyy({
 
   // Konami code: ↑↑↓↓←→←→BA
   const konamiPattern = useMemo(() => ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'], []);
-  const [isRunning, setIsRunning] = useState(false);
+  const [isRunning, setIsRunning] = useState(true);
   const [runPosition, setRunPosition] = useState({ x: -100, y: 50 });
 
   useEffect(() => {
@@ -89,27 +89,26 @@ export function GrippyKickkyy({
       setIsRunning(true);
       setIsVisible(true);
       setIsAnimating(true);
-      setRunPosition({ x: -100, y: 85 }); // Fixed at 85% from top (bottom 15%)
+      setRunPosition({ x: -100, y: 15 }); // y: 15 means 15px from bottom
       
-      // Speed up animation when it starts
+
       setTimeout(() => {
         if (lottieRef.current) {
-          lottieRef.current.setSpeed(3.5); // Ultra fast!
+          lottieRef.current.setSpeed(3.5); 
         }
-      }, 100); // Small delay to ensure animation is loaded
-      // Animate across screen
+      }, 100); 
       let position = -100;
       const runInterval = setInterval(() => {
-        position += 12; // Even faster movement
-        setRunPosition({ x: position, y: 85 });
+        position += 10;
+        setRunPosition({ x: position, y: -5 });
         
-        if (position > window.innerWidth + 100) {
+        if (position > window.innerWidth * 2) { // 200vw (2x viewport width) to ensure full traversal
           clearInterval(runInterval);
           setIsRunning(false);
           setIsVisible(false);
           setIsAnimating(false);
         }
-      }, 10); // Even faster interval
+      }, 10); 
     } else {
       setIsVisible(true);
       setIsAnimating(true);
@@ -141,30 +140,38 @@ export function GrippyKickkyy({
     }
   };
 
-  // Auto trigger for development fun
-  useEffect(() => {
-    if (trigger === 'auto') {
-      const timer = setTimeout(() => {
-        triggerAnimation();
-      }, Math.random() * 30000 + 10000); // Random between 10-40 seconds
-      
-      return () => clearTimeout(timer);
-    }
-  }, [trigger]);
 
   if (!isVisible && trigger === 'click') {
     return (
       <div
-        className={`${positionClasses[position]} ${className} cursor-pointer transition-all duration-300 hover:scale-125`}
+        className={`${positionClasses[position]} ${className} cursor-pointer transition-all duration-300 hover:scale-125 flex items-center justify-center`}
         onClick={handleClick}
         style={{ 
-          bottom: '20px', 
-          right: '20px',
+          ...(position === 'absolute' ? {} : { bottom: '20px', right: '20px' }),
           zIndex: 9999 
         }}
       >
-        {/* Tiny hidden trigger dot */}
-        <div className="w-2 h-2 rounded-full transition-all duration-300 bg-gray-300 opacity-20 hover:opacity-40" />
+        {/* Click trigger area */}
+        <div className="w-8 h-8 rounded-full transition-all duration-300 bg-blue-500 opacity-30 hover:opacity-60 flex items-center justify-center">
+          <div className="w-2 h-2 rounded-full bg-white"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isVisible && trigger === 'hover') {
+    return (
+      <div
+        className={`${positionClasses[position]} ${sizeClasses[size]} ${className} flex items-center justify-center pointer-events-auto`}
+        style={{ 
+          zIndex: 9999,
+          opacity: 0.3
+        }}
+        onMouseEnter={handleMouseEnter}
+      >
+        <div className="w-full h-full rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center">
+          <span className="text-xs text-gray-500">Hover</span>
+        </div>
       </div>
     );
   }
@@ -173,16 +180,17 @@ export function GrippyKickkyy({
 
   return (
     <div
-      className={`${positionClasses[position]} ${sizeClasses[size]} ${className} flex items-center justify-center pointer-events-none`}
+      className={`${positionClasses[position]} ${sizeClasses[size]} ${className} flex items-center justify-center ${trigger === 'hover' ? 'pointer-events-auto' : 'pointer-events-none'}`}
       style={{ 
         ...(trigger === 'run' 
-          ? { left: `${runPosition.x}px`, top: `${runPosition.y}%`, transform: 'translateY(-50%)' }
+          ? { left: `${runPosition.x}px`, bottom: `${runPosition.y}px`, top: 'auto', transform: 'none' }
           : { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
         ),
         zIndex: 9999,
         opacity: isAnimating ? 1 : 0,
         transition: trigger === 'run' ? 'none' : 'opacity 0.1s ease-in-out'
       }}
+      onMouseEnter={handleMouseEnter}
     >
       <Lottie
         animationData={animationData}
@@ -224,22 +232,13 @@ export function KonamiGrippy() {
   );
 }
 
-export function LoadingGrippy() {
-  return (
-    <GrippyKickkyy 
-      trigger="auto" 
-      size="medium"
-    />
-  );
-}
-
 export function RunningGrippy() {
   const [shouldRun, setShouldRun] = useState(false);
   
-  // Random timing intervals
+  // Rare timing intervals for production
   useEffect(() => {
     const scheduleNextRun = () => {
-      const randomDelay = Math.random() * 20000 + 10000; // 10-30 seconds
+      const randomDelay = Math.random() * 900000 + 600000; // 10-25 minutes (very rare)
       const timer = setTimeout(() => {
         setShouldRun(true);
         // Schedule next run after this one completes
