@@ -1,6 +1,9 @@
 # Node modules
 node_modules/
 
+# Development batch files
+*.bat
+
 # Logs
 logs
 *.log

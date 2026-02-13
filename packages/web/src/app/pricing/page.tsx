@@ -255,7 +255,7 @@ export default function PricingPage() {
                 <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-2">[PREMIUM]</p>
                 <div className="flex items-baseline gap-2 mb-1">
                   <h3 className="font-tanker text-5xl">
-                    €{pricingOptions.find(p => p.id === selectedPlan)?.price}
+                    ${pricingOptions.find(p => p.id === selectedPlan)?.price}
                   </h3>
                   <span className="font-sora text-neutral-500 text-sm">
                     {pricingOptions.find(p => p.id === selectedPlan)?.period}
@@ -311,12 +311,22 @@ export default function PricingPage() {
                       }
 
                       // Not a founder, proceed to Polar checkout
-                      const res = await fetch(`${apiUrl}/api/v1/polar/checkout/${selectedPlan}`, {
+                      const res = await fetch(`${apiUrl}/api/v1/polar/checkout`, {
                         method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
                         credentials: 'include',
+                        body: JSON.stringify({
+                          productId: selectedPlan === 'monthly' ? process.env.NEXT_PUBLIC_POLAR_PRODUCT_MONTHLY :
+                                    selectedPlan === 'yearly' ? process.env.NEXT_PUBLIC_POLAR_PRODUCT_YEARLY :
+                                    process.env.NEXT_PUBLIC_POLAR_PRODUCT_LIFETIME,
+                          email: session.user.email,
+                          name: session.user.name || session.user.email
+                        })
                       });
                       const data = await res.json();
-                      if (data.url) window.location.href = data.url;
+                      if (data.checkoutUrl) window.location.href = data.checkoutUrl;
                     } catch {
                       console.error('Failed to process upgrade');
                     } finally {

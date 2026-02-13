@@ -8,13 +8,12 @@ export class PolarService {
   /**
    * Create a checkout session for a product
    */
-  static async createCheckout(productId: string, customerId: string, email: string) {
+  static async createCheckout(productId: string, customerId?: string, email?: string) {
     try {
       const checkout = await polarClient.checkouts.create({
-        productId,
-        customerId,
+        products: [productId],
+        ...(customerId && { customerId }),
         successUrl: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/pricing/success?checkout_id={CHECKOUT_ID}`,
-        cancelUrl: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/pricing`,
         customerEmail: email,
         metadata: {
           source: 'gripkicks-web'
@@ -24,6 +23,7 @@ export class PolarService {
       return checkout;
     } catch (error) {
       console.error('Error creating Polar checkout:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       throw new Error('Failed to create checkout session');
     }
   }

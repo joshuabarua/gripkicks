@@ -28,8 +28,16 @@
 		"lint": "eslint .",
 		"format": "eslint --fix && prettier --write .",
 		"dev": "dotenv -e .env -- concurrently \"yarn workspace web dev\" \"yarn workspace backend-api dev\"",
+		"dev:terminals": "dotenv -e .env -- start start-dev.bat && start start-backend.bat",
+		"dev:ngrok": "dotenv -e .env -- concurrently \"yarn workspace web dev\" \"yarn workspace backend-api dev:ngrok\"",
+		"dev:ngrok:terminals": "dotenv -e .env -- start start-dev.bat && start start-backend.bat",
 		"dev:convex": "dotenv -e .env -- concurrently \"yarn workspace web dev\" \"yarn workspace backend-api dev\" \"npx convex dev\"",
 		"dev:backend": "dotenv -e .env -- concurrently \"yarn workspace backend-api dev\" \"npx convex dev\"",
+		"dev:all": "dotenv -e .env -- concurrently \"yarn workspace web dev\" \"yarn workspace backend-api dev:ngrok\" \"npx convex dev\"",
+		"dev:all:terminals": "dotenv -e .env -- start start-dev.bat && start start-backend.bat && start start-convex.bat",
+		"dev:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev\"'",
+		"dev:ngrok:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"'",
+		"dev:all:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"' && osascript -e 'tell application \"Terminal\" to do script \"npx convex dev\"'",
 		"postinstall": "patch-package"
 	},
 	"dependencies": {
