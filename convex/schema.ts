@@ -83,6 +83,7 @@ export default defineSchema({
     polarCustomerId: v.optional(v.string()),
     polarSubscriptionId: v.optional(v.string()),
     subscriptionExpiresAt: v.optional(v.number()),
+    subscriptionUpdatedAt: v.optional(v.number()),
   })
     .index("by_email", ["email"])
     .index("by_betterAuthId", ["betterAuthId"]),
