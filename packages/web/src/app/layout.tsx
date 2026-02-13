@@ -54,7 +54,9 @@ export default function RootLayout({
               <PageTransition>
                 <OnboardingGuard>
                   <Navigation />
-                  {children}
+                  <div className="mt-16">
+                    {children}
+                  </div>
                   <Footer />
                   <FooterGrippy />
                   <KonamiGrippy />
