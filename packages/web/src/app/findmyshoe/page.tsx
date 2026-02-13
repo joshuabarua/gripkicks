@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSession } from '@/lib/auth';
 import { fetchApi } from '@/lib/api-client';
+import { useSubscription } from '@/hooks/useSubscription';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Search, Star, Users, TrendingUp, Footprints, ArrowUpRight } from 'lucide-react';
@@ -43,6 +44,7 @@ type Category = typeof categories[number]['key'];
 
 export default function SoleMatePage() {
   const { data: session } = useSession();
+  const { isPremium } = useSubscription();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -147,7 +149,7 @@ export default function SoleMatePage() {
             <Footprints className="w-8 h-8 text-orange-500" />
           </div>
           <h1 className="font-tanker text-4xl mb-2">COMPLETE YOUR PROFILE</h1>
-          <p className="font-sora text-neutral-500 mb-8">Set up your foot profile and add at least one shoe to get personalized recommendations</p>
+          <p className="font-sora text-neutral-500 mb-8">Set up your foot profile and add at least one shoe so we can find what fits</p>
           <div className="space-y-3">
             <Link href="/footchecker" className="block">
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg py-3 rounded-2xl transition-colors flex items-center justify-center gap-2">

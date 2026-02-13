@@ -4,12 +4,13 @@ import React from "react";
 import { useSession } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import dynamic from "next/dynamic";
-import { ArrowUpRight, Footprints, Zap, Target, Activity, Sparkles, Clock, Flame } from 'lucide-react';
+import { ArrowUpRight, Footprints, Zap, Target, Activity, Sparkles, Flame } from 'lucide-react';
 import { AnimatedNavIcon } from '@/components/ui/AnimatedNavIcon';
 import { motion } from 'framer-motion';
 import { FullPageLoading } from '@/components/ui/loading';
+import { fetchApi } from '@/lib/api-client';
 
-const Scene = dynamic(() => import("@/components/3d/Scene"), { 
+const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
   loading: () => <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
 });
@@ -17,26 +18,20 @@ const Scene = dynamic(() => import("@/components/3d/Scene"), {
 export default function HomeCreative() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const [countdown, setCountdown] = React.useState({ days: '00', hours: '00', minutes: '00', seconds: '00' });
+  const [totalUsers, setTotalUsers] = React.useState<number | null>(null);
 
   React.useEffect(() => {
-    const target = new Date('2026-03-01T00:00:00Z').getTime();
-    const updateCountdown = () => {
-      const diff = Math.max(target - Date.now(), 0);
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      setCountdown({
-        days: days.toString().padStart(2, '0'),
-        hours: hours.toString().padStart(2, '0'),
-        minutes: minutes.toString().padStart(2, '0'),
-        seconds: seconds.toString().padStart(2, '0'),
-      });
-    };
-    updateCountdown();
-    const timer = setInterval(updateCountdown, 1000);
-    return () => clearInterval(timer);
+    async function loadUserCount() {
+      try {
+        const response = await fetchApi<{ count: number }>('/api/v1/users/count');
+        if (response.isOk()) {
+          setTotalUsers(response.value.count);
+        }
+      } catch {
+        setTotalUsers(null);
+      }
+    }
+    loadUserCount();
   }, []);
 
   if (isPending) {
@@ -45,18 +40,18 @@ export default function HomeCreative() {
 
   const isAuthenticated = !!session?.user;
   const userName = session?.user?.name || 'Climber';
-  const totalLifetimeSlots = 1000;
-  const claimedSlots = 823;
-  const remainingSlots = totalLifetimeSlots - claimedSlots;
-  const remainingPercent = (remainingSlots / totalLifetimeSlots) * 100;
+  const founderSpotsTotal = 1000;
+  const claimedSlots = totalUsers ?? 0;
+  const remainingSlots = Math.max(0, founderSpotsTotal - claimedSlots);
+  const claimedPercent = Math.min(100, (claimedSlots / founderSpotsTotal) * 100);
 
   const tierOptions = [
     {
       name: 'Free',
       price: '€0',
       subLabel: '',
-      tagline: 'Instant access to Shoe Sanctuary and Foot Lab previews.',
-      features: ['1 top recommendation', 'Community comfort notes', 'Save favorite shoes'],
+      tagline: 'Your stash, your foot profile, and a taste of the matching.',
+      features: ['Top shoe rec for your feet', 'Community comfort notes', 'Save shoes to your stash'],
       highlight: false,
       cta: 'Explore free',
       href: '/stash',
@@ -65,10 +60,10 @@ export default function HomeCreative() {
       name: 'Premium',
       price: '€1/mo',
       subLabel: 'or €10/yr',
-      tagline: 'Full match engine, Sole Mate, and lifetime data ownership.',
-      features: ['Unlimited recommendations', 'Foot Lab deep dive', 'Sole Mate matching', 'Sizing heatmaps'],
+      tagline: 'Every shoe rec, Sole Mate matching, and your data stays yours.',
+      features: ['All shoe recommendations', 'Full Foot Lab breakdown', 'Sole Mate matching', 'Sizing heatmaps'],
       highlight: true,
-      cta: 'Unlock premium',
+      cta: 'Go premium',
       href: '/auth/signup',
     },
   ];
@@ -199,9 +194,9 @@ export default function HomeCreative() {
                 </div>
               </div>
               <p className="font-sora text-black/70 max-w-md">
-                {isAuthenticated 
-                  ? 'View your shoe collection, ratings, and personalized recommendations.'
-                  : 'Create your profile and discover shoes matched to your unique climbing style.'
+                {isAuthenticated
+                  ? 'Check your stash, see how your shoes stack up, and find what fits next.'
+                  : 'Tell us about your feet, add your shoes, and we\'ll help you find the right pair.'
                 }
               </p>
             </motion.div>
@@ -232,7 +227,7 @@ export default function HomeCreative() {
               <AnimatedNavIcon icon={<div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center"><Footprints className="w-6 h-6 text-orange-500" /></div>} animation="wiggle" size={48} />
               <div>
                 <h4 className="font-tanker text-xl text-white mb-1">Foot Lab</h4>
-                <p className="font-sora text-neutral-500 text-xs">Community-driven foot profiling</p>
+                <p className="font-sora text-neutral-500 text-xs">Know your feet, find better shoes</p>
               </div>
             </motion.div>
 
@@ -246,7 +241,7 @@ export default function HomeCreative() {
               <AnimatedNavIcon icon={<div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center"><Target className="w-6 h-6 text-orange-500" /></div>} animation="spin" size={48} />
               <div>
                 <h4 className="font-tanker text-xl text-white mb-1">Smart Match</h4>
-                <p className="font-sora text-neutral-500 text-xs">Personalized recommendations</p>
+                <p className="font-sora text-neutral-500 text-xs">Shoes that actually fit your feet</p>
               </div>
             </motion.div>
 
@@ -392,39 +387,40 @@ export default function HomeCreative() {
       <section className="bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-black border-y border-orange-500/30 py-24 px-6">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <p className="font-sora text-xs uppercase tracking-[0.4em] text-orange-500">Early access countdown</p>
-            <h3 className="font-tanker text-4xl md:text-5xl">{remainingSlots} lifetime spots left</h3>
-            <p className="font-sora text-neutral-800 dark:text-neutral-200 text-lg max-w-lg">
-              First 1000 climbers lock in premium forever. We keep the list transparent so you know exactly how close you are.
+            <p className="font-sora text-xs uppercase tracking-[0.4em] text-orange-500">Founder access</p>
+            <h3 className="font-tanker text-4xl md:text-5xl">
+              {totalUsers !== null ? `${remainingSlots} spots left` : 'Loading...'}
+            </h3>
+            <p className="font-sora text-neutral-200 text-lg max-w-lg">
+              First 1,000 climbers get lifetime premium — free. This tracker is real. Once it hits zero, paid plans kick in.
             </p>
-            <div className="flex gap-4">
-              {Object.entries(countdown).map(([label, value]) => (
-                <div key={label} className="flex-1 bg-black/40 border border-neutral-800 rounded-2xl p-4 text-center">
-                  <p className="font-tanker text-3xl">{value}</p>
-                  <span className="font-sora text-xs uppercase tracking-[0.3em] text-neutral-500">{label}</span>
-                </div>
-              ))}
-            </div>
           </div>
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-orange-400" />
+                <Activity className="w-5 h-5 text-orange-400" />
               </div>
-              <p className="font-sora text-sm text-neutral-200">{claimedSlots} climbers already secured access</p>
+              <p className="font-sora text-sm text-neutral-200">
+                {totalUsers !== null ? `${claimedSlots} climbers signed up` : 'Loading...'}
+              </p>
             </div>
             <div className="h-3 rounded-full bg-black/30 overflow-hidden">
-              <div className="h-full bg-orange-400" style={{ width: `${remainingPercent}%` }} />
+              <motion.div
+                className="h-full bg-orange-400 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${claimedPercent}%` }}
+                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+              />
             </div>
             <div className="flex items-center justify-between text-sm font-sora text-neutral-300">
-              <span>{claimedSlots} claimed</span>
-              <span>{totalLifetimeSlots} total</span>
+              <span>{claimedSlots} signed up</span>
+              <span>{founderSpotsTotal} total</span>
             </div>
             <button
               onClick={() => router.push('/auth/signup')}
               className="w-full bg-black text-white font-tanker text-xl py-4 rounded-2xl flex items-center justify-center gap-3 hover:bg-neutral-900"
             >
-              Reserve lifetime premium
+              Claim your spot
               <ArrowUpRight className="w-5 h-5" />
             </button>
           </div>

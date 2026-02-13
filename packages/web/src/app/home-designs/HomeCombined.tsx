@@ -60,7 +60,7 @@ export default function HomeCombined() {
         <MarqueeText>
           <span className="text-black">FIND YOUR GRIP</span>
           <span className="text-black/40 mx-4">•</span>
-          <span className="text-black">AI POWERED</span>
+          <span className="text-black">COMMUNITY BUILT</span>
           <span className="text-black/40 mx-4">•</span>
           <span className="text-black">COMMUNITY DRIVEN</span>
           <span className="text-black/40 mx-4">•</span>
@@ -136,7 +136,7 @@ export default function HomeCombined() {
             </div>
             <div className="text-right hidden md:block">
               <p className="font-mono text-[10px] text-neutral-600">[EST. 2024]</p>
-              <p className="font-mono text-[10px] text-neutral-600 mt-1">[AI_POWERED]</p>
+              <p className="font-mono text-[10px] text-neutral-600 mt-1">[COMMUNITY_BUILT]</p>
               <motion.div 
                 className="w-2 h-2 bg-orange-500 rounded-full mt-4 ml-auto"
                 animate={{ scale: [1, 1.5, 1] }}
@@ -183,8 +183,8 @@ export default function HomeCombined() {
               </div>
               <p className="relative font-sora text-black/70 max-w-md text-sm md:text-base">
                 {isAuthenticated 
-                  ? 'View your shoe collection, ratings, and personalized recommendations.'
-                  : 'Create your profile and discover shoes matched to your unique climbing style.'
+                  ? 'Check your stash, see how your shoes stack up, and find what fits next.'
+                  : 'Tell us about your feet, add your shoes, and we\'ll help you find the right pair.'
                 }
               </p>
             </motion.div>
@@ -212,9 +212,9 @@ export default function HomeCombined() {
                   transition={{ type: "spring", stiffness: 200 }}
                   viewport={{ once: true }}
                 >
-                  98%
+                  100%
                 </motion.div>
-                <p className="font-mono text-[10px] text-neutral-500 mt-1">MATCH_ACCURACY</p>
+                <p className="font-mono text-[10px] text-neutral-500 mt-1">COMMUNITY_POWERED</p>
               </div>
             </motion.div>
 
@@ -238,7 +238,7 @@ export default function HomeCombined() {
               </div>
               <div>
                 <h4 className="font-tanker text-xl md:text-2xl text-white mb-1">FOOT LAB</h4>
-                <p className="font-mono text-[10px] text-neutral-500">AI_POWERED_ANALYSIS</p>
+                <p className="font-mono text-[10px] text-neutral-500">KNOW_YOUR_FEET</p>
               </div>
             </motion.div>
 
@@ -262,7 +262,7 @@ export default function HomeCombined() {
               </div>
               <div>
                 <h4 className="font-tanker text-xl md:text-2xl text-white mb-1">SMART MATCH</h4>
-                <p className="font-mono text-[10px] text-neutral-500">10K+_PROFILES</p>
+                <p className="font-mono text-[10px] text-neutral-500">FIND_YOUR_FIT</p>
               </div>
             </motion.div>
 
@@ -333,9 +333,9 @@ export default function HomeCombined() {
           >
             <div className="flex gap-8 md:gap-16">
               {[
-                { value: '10K+', label: 'USERS' },
-                { value: '500+', label: 'SHOES' },
-                { value: '24/7', label: 'AI_SUPPORT' },
+                { value: '100%', label: 'YOUR_DATA' },
+                { value: '0%', label: 'DATA_SOLD' },
+                { value: '24/7', label: 'OPEN_SOURCE' },
               ].map((stat, i) => (
                 <motion.div 
                   key={stat.label}
@@ -361,11 +361,11 @@ export default function HomeCombined() {
       {/* Second Marquee - Reverse */}
       <section className="py-4 bg-white overflow-hidden">
         <MarqueeText reverse>
-          <span className="text-black">500+ SHOES</span>
+          <span className="text-black">BUILT BY CLIMBERS</span>
           <span className="text-orange-500 mx-4">★</span>
-          <span className="text-black">10K+ CLIMBERS</span>
+          <span className="text-black">FOR CLIMBERS</span>
           <span className="text-orange-500 mx-4">★</span>
-          <span className="text-black">98% ACCURACY</span>
+          <span className="text-black">YOUR DATA STAYS YOURS</span>
           <span className="text-orange-500 mx-4">★</span>
         </MarqueeText>
       </section>
@@ -423,7 +423,7 @@ export default function HomeCombined() {
             animate={{ opacity: [1, 0.5, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            AI_POWERED_CLIMBING_SHOES
+            BUILT_FOR_CLIMBERS
           </motion.span>
         </div>
       </section>

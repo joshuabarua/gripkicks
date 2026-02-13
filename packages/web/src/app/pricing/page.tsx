@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useSession } from '@/lib/auth';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { fetchApi } from '@/lib/api-client';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
@@ -30,10 +31,10 @@ const freePlan: PlanFeature[] = [
 
 const premiumPlan: PlanFeature[] = [
   { text: 'Everything in Free', included: true },
-  { text: 'Full recommendation list — all matching shoes', included: true },
-  { text: 'Sole Mate — find your foot twin', included: true },
-  { text: 'Priority community support', included: true },
-  { text: 'Early access to new features', included: true },
+  { text: 'Full recs list — every shoe that fits your feet', included: true },
+  { text: 'Sole Mate — find someone with the same feet as you', included: true },
+  { text: 'Priority support from the team', included: true },
+  { text: 'First to try new features', included: true },
   { text: 'Cancel anytime, no questions asked', included: true },
 ];
 
@@ -45,8 +46,10 @@ const pricingOptions = [
 
 export default function PricingPage() {
   const { data: session } = useSession();
+  const { isPremium, isFounder, subscriptionTier } = useSubscription();
   const [selectedPlan, setSelectedPlan] = useState('yearly');
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
+  const [founderChecking, setFounderChecking] = useState(false);
   const founderSpotsTotal = 1000;
 
   useEffect(() => {
@@ -87,7 +90,7 @@ export default function PricingPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-sora text-xl text-neutral-400 max-w-xl mx-auto leading-relaxed"
           >
-            Support the community. Unlock the full experience. Cancel whenever you want — seriously.
+            Help keep the lights on. Get the full toolkit. Cancel whenever — no guilt trips.
           </motion.p>
         </div>
       </section>
@@ -112,8 +115,8 @@ export default function PricingPage() {
                 <p className="font-tanker text-2xl text-black">FOUNDER MEMBERS</p>
               </div>
               <p className="font-sora text-black/80 mb-6">
-                The first <span className="font-bold text-black">1,000 users</span> get lifetime premium access — completely free. 
-                No catch. You believed in us early, we believe in rewarding that.
+                The first <span className="font-bold text-black">1,000 climbers</span> to sign up get lifetime premium — free.
+                No catch. You showed up early, so everything stays unlocked for you. Forever.
               </p>
               <div className="bg-black/10 rounded-2xl p-4">
                 <div className="flex justify-between items-center mb-2">
@@ -274,27 +277,58 @@ export default function PricingPage() {
                 ))}
               </ul>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={async () => {
-                  if (!session?.user) {
-                    window.location.href = '/auth/signup';
-                    return;
-                  }
-                  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-                  const res = await fetch(`${apiUrl}/api/v1/polar/checkout/${selectedPlan}`, {
-                    method: 'POST',
-                    credentials: 'include',
-                  });
-                  const data = await res.json();
-                  if (data.url) window.location.href = data.url;
-                }}
-                className="relative w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
-              >
-                {session?.user ? 'UPGRADE NOW' : 'GET STARTED'}
-                <ArrowUpRight className="w-5 h-5" />
-              </motion.button>
+              {isPremium ? (
+                <div className="w-full bg-neutral-800 border border-orange-500/30 text-center font-tanker text-xl py-4 rounded-2xl">
+                  <span className="text-orange-500">
+                    {isFounder ? 'FOUNDER MEMBER' : `PREMIUM — ${subscriptionTier?.toUpperCase()}`}
+                  </span>
+                  <p className="font-sora text-xs text-neutral-500 mt-1">You have full access</p>
+                </div>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  disabled={founderChecking}
+                  onClick={async () => {
+                    if (!session?.user) {
+                      window.location.href = '/auth/signup';
+                      return;
+                    }
+
+                    // Check founder eligibility first
+                    setFounderChecking(true);
+                    try {
+                      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+                      const founderRes = await fetch(`${apiUrl}/api/v1/polar/check-founder`, {
+                        credentials: 'include',
+                      });
+                      const founderData = await founderRes.json();
+
+                      if (founderData.success && founderData.data?.isFounder) {
+                        // User just became a founder — redirect to success
+                        window.location.href = '/pricing/success?founder=true';
+                        return;
+                      }
+
+                      // Not a founder, proceed to Polar checkout
+                      const res = await fetch(`${apiUrl}/api/v1/polar/checkout/${selectedPlan}`, {
+                        method: 'POST',
+                        credentials: 'include',
+                      });
+                      const data = await res.json();
+                      if (data.url) window.location.href = data.url;
+                    } catch {
+                      console.error('Failed to process upgrade');
+                    } finally {
+                      setFounderChecking(false);
+                    }
+                  }}
+                  className="relative w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {founderChecking ? 'CHECKING...' : session?.user ? 'UPGRADE NOW' : 'GET STARTED'}
+                  <ArrowUpRight className="w-5 h-5" />
+                </motion.button>
+              )}
             </motion.div>
           </div>
         </div>
@@ -335,9 +369,9 @@ export default function PricingPage() {
             className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4"
           >
             {[
-              { step: '01', title: 'MATCH', desc: 'We find users with identical foot profiles to yours' },
-              { step: '02', title: 'VERIFY', desc: 'You share at least one shoe in common with matching ratings' },
-              { step: '03', title: 'DISCOVER', desc: 'See every shoe they love — ranked by their real experience' },
+              { step: '01', title: 'MATCH', desc: 'We look for climbers with the same foot shape and volume as you' },
+              { step: '02', title: 'VERIFY', desc: 'You both own at least one shoe in common and rated it similarly' },
+              { step: '03', title: 'SHORTCUT', desc: 'See what else they rate highly — skip the trial and error' },
             ].map((item) => (
               <div key={item.step} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
                 <span className="font-tanker text-3xl text-orange-500/20">{item.step}</span>
@@ -371,11 +405,11 @@ export default function PricingPage() {
               },
               {
                 q: 'Why is it so cheap?',
-                a: 'Because this is a community project, not a VC-backed startup. We charge just enough to keep the servers running and the project alive. The goal is helping climbers, not maximizing revenue.',
+                a: 'Because I\'m a climber building this for climbers, not a startup trying to squeeze you. The price covers servers and keeps the project going. That\'s it.',
               },
               {
                 q: 'What about the first 1,000 users?',
-                a: 'If you signed up before we hit 1,000 users, you get lifetime premium access for free. Forever. Even if you leave and come back. It\'s our way of saying thanks for believing in this early.',
+                a: 'If you\'re one of the first 1,000 to sign up, premium is yours for life. Free. Even if you disappear for a year and come back. You helped get this off the ground — that counts.',
               },
             ].map((item, i) => (
               <motion.div
@@ -405,7 +439,7 @@ export default function PricingPage() {
               FIND YOUR<br /><span className="text-orange-500">PERFECT FIT</span>
             </h2>
             <p className="font-sora text-neutral-500 text-lg mb-10 max-w-xl mx-auto">
-              Join the community. Start free. Upgrade when you&apos;re ready — or don&apos;t. We&apos;re glad you&apos;re here either way.
+              Jump in. It&apos;s free to start. Upgrade if you want the full toolkit — or don&apos;t. Either way, welcome to the crew.
             </p>
             <Link href="/auth/signup">
               <motion.button

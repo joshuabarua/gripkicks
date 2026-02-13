@@ -42,6 +42,7 @@ export const auth = betterAuth({
     'http://localhost:8000',
     'http://192.168.0.71:3000',
     'http://192.168.0.71:8000',
+    ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : []),
   ],
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3001',

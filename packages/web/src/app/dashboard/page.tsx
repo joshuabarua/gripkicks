@@ -401,7 +401,7 @@ export default function Dashboard() {
               </motion.div>
               <h3 className="font-tanker text-3xl text-white mb-2">NO SHOES YET</h3>
               <p className="font-sora text-neutral-500 mb-6">
-                Start tracking your climbing shoes to get personalized recommendations
+                Add your shoes so we can start figuring out what fits you best
               </p>
               <motion.button
                 whileHover={{ scale: 1.02 }}

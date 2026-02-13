@@ -12,6 +12,7 @@ import { useUserSync } from '@/hooks/useUserSync';
 import { OrientationInitializer } from '@/components/OrientationInitializer';
 import { OnboardingGuard } from '@/components/OnboardingGuard';
 import { PageTransition } from '@/components/PageTransition';
+import { FooterGrippy, KonamiGrippy, RunningGrippy } from '@/components/GrippyKickkyy';
 
 const basteleur = localFont({
   src: '../../public/fonts/Basteleur-Bold.otf',
@@ -55,6 +56,9 @@ export default function RootLayout({
                   <Navigation />
                   {children}
                   <Footer />
+                  <FooterGrippy />
+                  <KonamiGrippy />
+                  <RunningGrippy />
                 </OnboardingGuard>
               </PageTransition>
               <ToastContainer />

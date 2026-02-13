@@ -77,6 +77,12 @@ export default defineSchema({
     footShape: v.optional(footShapeValidator),
     footVolume: v.optional(v.string()),
     favoriteShoeId: v.optional(v.id("shoes")),
+    // Subscription fields (Polar.sh)
+    subscriptionStatus: v.optional(v.union(v.literal("active"), v.literal("canceled"), v.literal("past_due"), v.literal("founder"))),
+    subscriptionTier: v.optional(v.union(v.literal("monthly"), v.literal("yearly"), v.literal("lifetime"), v.literal("founder"))),
+    polarCustomerId: v.optional(v.string()),
+    polarSubscriptionId: v.optional(v.string()),
+    subscriptionExpiresAt: v.optional(v.number()),
   })
     .index("by_email", ["email"])
     .index("by_betterAuthId", ["betterAuthId"]),

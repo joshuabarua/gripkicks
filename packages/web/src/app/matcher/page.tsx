@@ -27,7 +27,7 @@ export default function ShoeMatcherPage() {
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">Shoe Matcher</h1>
             <p className="text-neutral-400">
-              Find your perfect climbing shoe based on your style and preferences
+              See where every shoe lands based on how it actually performs
             </p>
           </div>
           
@@ -35,9 +35,9 @@ export default function ShoeMatcherPage() {
             <div className="flex items-start gap-3">
               <Zap className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-white mb-1">Technical Analysis</h3>
+                <h3 className="font-semibold text-white mb-1">See How Shoes Compare</h3>
                 <p className="text-sm text-neutral-400">
-                  Compare shoes across technical vs endurance characteristics
+                  Every shoe plotted on a grid by comfort, performance, and aggressiveness
                 </p>
               </div>
             </div>
@@ -45,9 +45,9 @@ export default function ShoeMatcherPage() {
             <div className="flex items-start gap-3">
               <Activity className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-white mb-1">Style Matching</h3>
+                <h3 className="font-semibold text-white mb-1">Find Your Style</h3>
                 <p className="text-sm text-neutral-400">
-                  Bouldering vs sport climbing specialization analysis
+                  Bouldering, sport, all-around — see what fits your climbing
                 </p>
               </div>
             </div>
@@ -55,9 +55,9 @@ export default function ShoeMatcherPage() {
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-white mb-1">Smart Recommendations</h3>
+                <h3 className="font-semibold text-white mb-1">Visual Grid</h3>
                 <p className="text-sm text-neutral-400">
-                  Visual grid positioning based on shoe specifications
+                  Shoe images placed on a quadrant so you can spot the right zone fast
                 </p>
               </div>
             </div>

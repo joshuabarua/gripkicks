@@ -149,6 +149,24 @@ app.post("/api/users/findByBetterAuthId", async (c) => {
   }
 });
 
+// Find user by email (internal, for webhook lookups)
+app.post("/api/users/findByEmail", async (c) => {
+  try {
+    const { email } = await c.req.json();
+
+    if (!email) {
+      return c.json({ success: false, message: "Email is required" }, 400);
+    }
+
+    const user = await c.env.runQuery(api.users.getByEmail, { email });
+
+    return c.json({ success: true, data: user });
+  } catch (error) {
+    console.error("Error finding user by email:", error);
+    return c.json({ success: false, message: "Failed to find user" }, 500);
+  }
+});
+
 // Get user profile (handled by existing backend-api)
 app.get("/api/v1/profile", async (c) => {
   return c.json({ success: false, message: "Use backend-api for profile endpoints" }, 301);
@@ -398,6 +416,88 @@ app.post("/api/shoes/updateImageUrl", async (c) => {
   } catch (error) {
     console.error("Error updating shoe image URL:", error);
     return c.json({ success: false, message: "Failed to update shoe image URL" }, 500);
+  }
+});
+
+// ============ SUBSCRIPTIONS API (internal, called by backend-api) ============
+
+// Update subscription status
+app.post("/api/subscriptions/update", async (c) => {
+  try {
+    const { betterAuthId, subscriptionStatus, subscriptionTier, polarCustomerId, polarSubscriptionId, subscriptionExpiresAt } = await c.req.json();
+
+    if (!betterAuthId) {
+      return c.json({ success: false, message: "betterAuthId is required" }, 400);
+    }
+
+    const user = await c.env.runMutation(api.subscriptions.updateSubscription, {
+      betterAuthId,
+      subscriptionStatus,
+      subscriptionTier,
+      polarCustomerId,
+      polarSubscriptionId,
+      subscriptionExpiresAt,
+    });
+
+    return c.json({ success: true, data: user });
+  } catch (error) {
+    console.error("Error updating subscription:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    return c.json({ success: false, message }, 500);
+  }
+});
+
+// Grant founder status
+app.post("/api/subscriptions/grantFounder", async (c) => {
+  try {
+    const { betterAuthId } = await c.req.json();
+
+    if (!betterAuthId) {
+      return c.json({ success: false, message: "betterAuthId is required" }, 400);
+    }
+
+    const user = await c.env.runMutation(api.subscriptions.grantFounderStatus, {
+      betterAuthId,
+    });
+
+    return c.json({ success: true, data: user });
+  } catch (error) {
+    console.error("Error granting founder status:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    return c.json({ success: false, message }, 500);
+  }
+});
+
+// Get subscription status
+app.post("/api/subscriptions/status", async (c) => {
+  try {
+    const { betterAuthId } = await c.req.json();
+
+    if (!betterAuthId) {
+      return c.json({ success: false, message: "betterAuthId is required" }, 400);
+    }
+
+    const status = await c.env.runQuery(api.subscriptions.getSubscriptionStatus, {
+      betterAuthId,
+    });
+
+    return c.json({ success: true, data: status });
+  } catch (error) {
+    console.error("Error getting subscription status:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    return c.json({ success: false, message }, 500);
+  }
+});
+
+// Get total user count (for founder spots)
+app.get("/api/subscriptions/userCount", async (c) => {
+  try {
+    const count = await c.env.runQuery(api.subscriptions.getUserCount, {});
+    return c.json({ success: true, data: { count } });
+  } catch (error) {
+    console.error("Error getting user count:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    return c.json({ success: false, message }, 500);
   }
 });
 

@@ -47,17 +47,22 @@ export function useScorePersistence() {
   const { user } = useUserStore();
   const { userPreferenceProfile, learningInsights } = useUserPreferenceLearning();
   const { scoredShoes } = useShoeScoring();
-  
-  const updateUserScore = useMutation(api.users.updateScoreProfile);
-  const addScoreHistory = useMutation(api.users.addScoreHistory);
-  const existingScoreProfile = useQuery(api.users.getScoreProfile, user?.id ? { userId: user.id } : 'skip');
+
+  // Resolve Better Auth ID → Convex user ID
+  const convexUser = useQuery(api.users.findByBetterAuthId,
+    user ? { betterAuthId: user.id } : "skip"
+  );
+
+  const updateUserScore = useMutation(api.userScores.updateScoreProfile);
+  const addScoreHistory = useMutation(api.userScores.addScoreHistory);
+  const existingScoreProfile = useQuery(api.userScores.getScoreProfile, convexUser?._id ? { userId: convexUser._id } : 'skip');
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [lastUpdateReason, setLastUpdateReason] = useState<string>('');
 
   // Calculate current user score based on all data
   const calculateCurrentScore = useCallback((): UserScoreProfile | null => {
-    if (!user || !userPreferenceProfile) return null;
+    if (!user || !convexUser || !userPreferenceProfile) return null;
 
     // Base score from preference profile (0-100 scale)
     const preferenceScore = (
@@ -89,7 +94,7 @@ export function useScorePersistence() {
     );
 
     return {
-      userId: user.id,
+      userId: convexUser._id,
       overallScore,
       preferenceProfile: {
         comfort: userPreferenceProfile.comfort,
@@ -109,11 +114,11 @@ export function useScorePersistence() {
       lastUpdated: Date.now(),
       version: (existingScoreProfile?.version || 0) + 1,
     };
-  }, [user, userPreferenceProfile, existingScoreProfile]);
+  }, [user, convexUser, userPreferenceProfile, existingScoreProfile]);
 
   // Update score profile in database
   const updateScoreProfile = useCallback(async (reason: string, affectedShoes: string[] = []) => {
-    if (!user || isUpdating) return;
+    if (!user || !convexUser || isUpdating) return;
 
     setIsUpdating(true);
     setLastUpdateReason(reason);
@@ -126,14 +131,19 @@ export function useScorePersistence() {
 
       // Update user score profile
       await updateUserScore({
-        userId: user.id,
-        scoreProfile: currentScore,
+        userId: convexUser._id,
+        overallScore: currentScore.overallScore,
+        preferenceProfile: currentScore.preferenceProfile,
+        learnedPreferences: currentScore.learnedPreferences,
+        footProfile: currentScore.footProfile ?? undefined,
+        lastUpdated: currentScore.lastUpdated,
+        version: currentScore.version,
       });
 
       // Add to history if score changed
       if (Math.abs(currentScore.overallScore - previousScore) > 0.1) {
         await addScoreHistory({
-          userId: user.id,
+          userId: convexUser._id,
           history: {
             timestamp: Date.now(),
             previousScore,
@@ -150,7 +160,7 @@ export function useScorePersistence() {
     } finally {
       setIsUpdating(false);
     }
-  }, [user, isUpdating, calculateCurrentScore, existingScoreProfile, updateUserScore, addScoreHistory]);
+  }, [user, convexUser, isUpdating, calculateCurrentScore, existingScoreProfile, updateUserScore, addScoreHistory]);
 
   // Auto-update score when preferences change
   useEffect(() => {

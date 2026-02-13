@@ -243,9 +243,9 @@ export default function OnboardingPage() {
 
                   <div className="grid md:grid-cols-3 gap-4 text-left mb-10">
                     {[
-                      { icon: Footprints, title: 'Track Your Feet', desc: 'Understand your foot shape for better shoe selection' },
-                      { icon: Star, title: 'Rate Your Shoes', desc: 'Keep track of comfort and performance for each pair' },
-                      { icon: Plus, title: 'Find Your Match', desc: 'Get personalized recommendations based on your data' },
+                      { icon: Footprints, title: 'Know Your Feet', desc: 'Tell us your foot shape so we can narrow things down' },
+                      { icon: Star, title: 'Rate Your Shoes', desc: 'Track how each pair feels on comfort and performance' },
+                      { icon: Plus, title: 'Find Your Fit', desc: 'Get shoe recs based on real data from your feet' },
                     ].map((item) => (
                       <div key={item.title} className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 group hover:border-orange-500/30 transition-colors">
                         <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center mb-4">

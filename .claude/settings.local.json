@@ -8,7 +8,9 @@
       "Bash(dir:*)",
       "WebFetch(domain:polar.sh)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(npx convex:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

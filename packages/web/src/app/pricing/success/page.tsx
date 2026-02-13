@@ -35,7 +35,7 @@ function SuccessContent() {
             Premium features are now unlocked.
           </p>
           <p className="font-sora text-neutral-600 text-sm mb-10">
-            Full recommendations, Sole Sibling matching, and early access to new features are all yours.
+            Full recommendations, Sole Mate matching, and early access to new features are all yours.
           </p>
 
           {checkoutId && (

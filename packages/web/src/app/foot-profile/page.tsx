@@ -96,7 +96,7 @@ export default function FootProfilePage() {
             <Sparkles className="w-12 h-12" />
           </h1>
           <p className="text-xl text-white/80">
-            Discover your perfect fit with personalized foot profiling
+            Map your feet so we can match you to the right shoes
           </p>
         </motion.div>
 

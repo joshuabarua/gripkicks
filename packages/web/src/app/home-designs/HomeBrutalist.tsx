@@ -70,7 +70,7 @@ export default function HomeBrutalist() {
             </div>
             <div className="text-right">
               <p className="font-mono text-xs text-black/60">[EST. 2024]</p>
-              <p className="font-mono text-xs text-black/60 mt-1">[AI_POWERED]</p>
+              <p className="font-mono text-xs text-black/60 mt-1">[COMMUNITY_BUILT]</p>
             </div>
           </div>
 
@@ -90,8 +90,8 @@ export default function HomeBrutalist() {
               </h3>
               <p className="font-mono text-xs text-white/60 max-w-xs">
                 {isAuthenticated 
-                  ? 'ACCESS YOUR SHOE COLLECTION AND PERSONALIZED RECOMMENDATIONS'
-                  : 'CREATE YOUR PROFILE AND GET AI-POWERED SHOE MATCHES'
+                  ? 'YOUR STASH, YOUR RATINGS, YOUR NEXT PAIR'
+                  : 'TELL US ABOUT YOUR FEET AND WE\'LL HELP YOU FIND THE RIGHT SHOE'
                 }
               </p>
             </motion.div>
@@ -117,8 +117,8 @@ export default function HomeBrutalist() {
             <p className="font-mono text-xs text-black/60 mb-8">[FEATURES]</p>
             <div className="grid grid-cols-3 gap-4">
               {[
-                { id: 'A1', title: 'FOOT LAB', desc: 'AI ANALYSIS' },
-                { id: 'A2', title: 'SMART MATCH', desc: '10K+ PROFILES' },
+                { id: 'A1', title: 'FOOT LAB', desc: 'KNOW YOUR FEET' },
+                { id: 'A2', title: 'SMART MATCH', desc: 'FIND YOUR FIT' },
                 { id: 'A3', title: 'TRACK', desc: 'PERFORMANCE' },
               ].map((item, i) => (
                 <motion.div
@@ -141,9 +141,9 @@ export default function HomeBrutalist() {
           <div className="mt-16 pt-8 border-t-4 border-black flex justify-between items-end">
             <div className="flex gap-16">
               {[
-                { value: '10K+', label: 'USERS' },
-                { value: '500+', label: 'SHOES' },
-                { value: '98%', label: 'ACCURACY' },
+                { value: '100%', label: 'YOUR DATA' },
+                { value: '0%', label: 'DATA SOLD' },
+                { value: '1', label: 'CLIMBER BUILT' },
               ].map((stat) => (
                 <div key={stat.label}>
                   <div className="font-tanker text-4xl md:text-6xl text-black">{stat.value}</div>
@@ -163,7 +163,7 @@ export default function HomeBrutalist() {
       <section className="bg-black py-4 px-8">
         <div className="flex justify-between items-center">
           <span className="font-mono text-[10px] text-white/40">© 2024 GRIP KICKS</span>
-          <span className="font-mono text-[10px] text-orange-500">AI_POWERED_CLIMBING_SHOES</span>
+          <span className="font-mono text-[10px] text-orange-500">BUILT_FOR_CLIMBERS</span>
         </div>
       </section>
     </main>

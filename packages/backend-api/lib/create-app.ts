@@ -12,7 +12,7 @@ const createApp = () => {
   app.use(
     '*',
     cors({
-      origin: 'http://localhost:3000',
+      origin: (process.env.FRONTEND_URL || 'http://localhost:3000').split(','),
       allowHeaders: ['Content-Type', 'Authorization'],
       allowMethods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'],
       exposeHeaders: ['Content-Length'],

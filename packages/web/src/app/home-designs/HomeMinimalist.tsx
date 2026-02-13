@@ -82,9 +82,9 @@ export default function HomeMinimalist() {
               </h2>
               
               <p className="font-sora text-neutral-600 text-lg max-w-md leading-relaxed">
-                {isAuthenticated 
-                  ? "Continue exploring shoes tailored to your unique climbing profile."
-                  : "AI-powered climbing shoe recommendations based on your foot profile and climbing style."
+                {isAuthenticated
+                  ? "Your stash is waiting. See what's next for your feet."
+                  : "Tell us your foot shape and climbing style — we'll point you to shoes that actually fit."
                 }
               </p>
               
@@ -109,9 +109,9 @@ export default function HomeMinimalist() {
             {/* Right Column - Features */}
             <div className="space-y-0 border-l border-neutral-200">
               {[
-                { num: '01', title: 'Foot Analysis', desc: 'AI-powered scanning creates your unique profile' },
-                { num: '02', title: 'Smart Matching', desc: 'Recommendations from thousands of data points' },
-                { num: '03', title: 'Track Progress', desc: 'Monitor comfort and performance over time' },
+                { num: '01', title: 'Foot Lab', desc: 'Map your foot shape and volume so we know what fits' },
+                { num: '02', title: 'Smart Match', desc: 'Recs based on real climber ratings and your feet' },
+                { num: '03', title: 'Track & Rate', desc: 'Log comfort and performance as you break shoes in' },
               ].map((item, i) => (
                 <motion.div
                   key={item.num}
@@ -135,9 +135,9 @@ export default function HomeMinimalist() {
           <div className="max-w-7xl mx-auto px-8 py-16">
             <div className="grid grid-cols-3 gap-8">
               {[
-                { value: '10K+', label: 'Climbers' },
-                { value: '500+', label: 'Shoes Analyzed' },
-                { value: '98%', label: 'Satisfaction' },
+                { value: '100%', label: 'Your Data' },
+                { value: '0%', label: 'Data Sold' },
+                { value: '1 of 1', label: 'Climber Built' },
               ].map((stat, i) => (
                 <motion.div
                   key={stat.label}

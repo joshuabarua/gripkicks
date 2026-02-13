@@ -50,23 +50,26 @@ interface SoulMateInsights {
 
 export function useSoulMateMatching() {
   const { user } = useUserStore();
+  const convexUser = useQuery(api.users.findByBetterAuthId,
+    user ? { betterAuthId: user.id } : "skip"
+  );
   const allUsers = useQuery(api.users.list);
   const allUserShoes = useQuery(api.popularity.list);
   const allShoes = useQuery(api.shoes.list);
   const { userPreferenceProfile, learningInsights } = useUserPreferenceLearning();
 
   const soulMateData = useMemo(() => {
-    if (!user || !allUsers || !allUserShoes || !allShoes || !userPreferenceProfile) {
+    if (!convexUser || !allUsers || !allUserShoes || !allShoes || !userPreferenceProfile) {
       return null;
     }
 
     // Get all other users (excluding current user)
-    const otherUsers = allUsers.filter(u => u._id !== user._id);
+    const otherUsers = allUsers.filter(u => u._id !== convexUser._id);
     
     // Calculate compatibility scores for all other users
     const candidates = otherUsers.map(otherUser => {
       const compatibility = calculateSoulMateCompatibility(
-        user,
+        convexUser,
         otherUser,
         userPreferenceProfile,
         allUserShoes,
@@ -98,7 +101,7 @@ export function useSoulMateMatching() {
       compatibilityDistribution: distribution,
       globalTrends,
     };
-  }, [user, allUsers, allUserShoes, allShoes, userPreferenceProfile]);
+  }, [convexUser, allUsers, allUserShoes, allShoes, userPreferenceProfile]);
 
   return soulMateData;
 }
@@ -142,13 +145,13 @@ function calculateSoulMateCompatibility(
   };
 
   // Calculate shared preferences
-  const sharedBrands = currentUserProfile.preferredBrands.filter(brand =>
+  const sharedBrands = currentUserProfile.preferredBrands.filter((brand: string) =>
     otherUserProfile.preferredBrands.includes(brand)
   );
-  const sharedVolumes = currentUserProfile.preferredVolumes.filter(volume =>
+  const sharedVolumes = currentUserProfile.preferredVolumes.filter((volume: string) =>
     otherUserProfile.preferredVolumes.includes(volume)
   );
-  const sharedDisciplines = currentUserProfile.preferredDisciplines.filter(discipline =>
+  const sharedDisciplines = currentUserProfile.preferredDisciplines.filter((discipline: string) =>
     otherUserProfile.preferredDisciplines.includes(discipline)
   );
 
