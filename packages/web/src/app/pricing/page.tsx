@@ -39,9 +39,9 @@ const premiumPlan: PlanFeature[] = [
 ];
 
 const pricingOptions = [
-  { id: 'monthly', label: 'Monthly', price: '1', period: '/mo', savings: '' },
-  { id: 'yearly', label: 'Yearly', price: '10', period: '/yr', savings: 'Save 17%' },
-  { id: 'lifetime', label: 'Lifetime', price: '50', period: 'once', savings: 'Best value' },
+  { id: 'monthly', label: 'Monthly', price: '1.99', period: '/mo', savings: '' },
+  { id: 'yearly', label: 'Yearly', price: '9.99', period: '/yr', savings: 'Save 58%' },
+  { id: 'lifetime', label: 'Lifetime', price: '49.99', period: 'once', savings: 'Best value' },
 ];
 
 export default function PricingPage() {

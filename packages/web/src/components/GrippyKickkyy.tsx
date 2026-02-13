@@ -3,6 +3,23 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import Lottie from 'lottie-react';
 
+interface LottieMethods {
+  play: () => void;
+  stop: () => void;
+  pause: () => void;
+  setSpeed: (speed: number) => void;
+  setDirection: (direction: number) => void;
+  goToAndStop: (value: number, isFrame?: boolean) => void;
+  goToAndPlay: (value: number, isFrame?: boolean) => void;
+  destroy: () => void;
+  playSegments: (segments: unknown, forceFlag?: boolean) => void;
+  setSubframe: (useSubFrames: boolean) => void;
+  getDuration: (inFrames?: boolean) => number;
+  animationContainerRef: React.RefObject<HTMLDivElement>;
+  animationLoaded: boolean;
+  animationItem: import('lottie-web').AnimationItem | undefined;
+}
+
 interface GrippyKickkyyProps {
   trigger?: 'hover' | 'click' | 'auto' | 'konami' | 'run';
   size?: 'small' | 'medium' | 'large' | 'fullscreen' | 'running';
@@ -19,8 +36,8 @@ export function GrippyKickkyy({
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [konamiCode, setKonamiCode] = useState<string[]>([]);
-  const [animationData, setAnimationData] = useState<any>(null);
-  const lottieRef = useRef<any>(null);
+  const [animationData, setAnimationData] = useState<string | null>(null);
+  const lottieRef = useRef<LottieMethods>(null);
 
   // Load lottie animation
   useEffect(() => {
