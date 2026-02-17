@@ -9,15 +9,28 @@ export const getUserStash = query({
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .collect();
 
-    // Get full shoe details for each entry
-    const stashWithShoes = await Promise.all(
-      userShoes.map(async (entry) => {
-        const shoe = await ctx.db.get(entry.shoeId);
-        return { ...entry, shoe };
-      })
+    if (userShoes.length === 0) {
+      return [];
+    }
+
+    // Collect all shoe IDs and fetch them in a single batch
+    const shoeIds = userShoes.map(entry => entry.shoeId);
+    const shoes = await Promise.all(
+      shoeIds.map(shoeId => ctx.db.get(shoeId))
     );
 
-    return stashWithShoes.filter((entry) => entry.shoe !== null);
+    // Create a map for O(1) lookup instead of array search
+    const shoeMap = new Map(
+      shoes.filter(shoe => shoe !== null).map(shoe => [shoe!._id, shoe!])
+    );
+
+    // Combine userShoes with their corresponding shoe data
+    return userShoes
+      .map(entry => ({
+        ...entry,
+        shoe: shoeMap.get(entry.shoeId) || null
+      }))
+      .filter(entry => entry.shoe !== null);
   },
 });
 

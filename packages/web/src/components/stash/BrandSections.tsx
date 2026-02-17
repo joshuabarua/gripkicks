@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { memo } from 'react';
 import CloudShoe from '@/components/CloudShoe';
 import type { UserShoe } from '@/types/api';
 import type { SpecialLabelType } from '@/utils/specialLabels';
@@ -14,7 +15,7 @@ interface BrandSectionsProps {
   onSelect: (shoe: UserShoe) => void;
 }
 
-export function BrandSections({ groups, specialLabels, onSelect }: BrandSectionsProps) {
+const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelect }) => {
   return (
     <div className="space-y-fluid-2xl">
       {groups.map(({ brand, shoes }, brandIndex) => (
@@ -44,4 +45,33 @@ export function BrandSections({ groups, specialLabels, onSelect }: BrandSections
       ))}
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // Only re-render if groups length, special labels, or onSelect changed
+  if (prevProps.groups.length !== nextProps.groups.length) return false;
+  if (prevProps.onSelect !== nextProps.onSelect) return false;
+  
+  // Check if special labels changed
+  const prevLabelsKeys = Object.keys(prevProps.specialLabels);
+  const nextLabelsKeys = Object.keys(nextProps.specialLabels);
+  if (prevLabelsKeys.length !== nextLabelsKeys.length) return false;
+  
+  // Check if any group structure changed
+  for (let i = 0; i < prevProps.groups.length; i++) {
+    const prevGroup = prevProps.groups[i];
+    const nextGroup = nextProps.groups[i];
+    
+    if (prevGroup.brand !== nextGroup.brand) return false;
+    if (prevGroup.shoes.length !== nextGroup.shoes.length) return false;
+    
+    // Check if shoe IDs changed in this group
+    const prevShoeIds = prevGroup.shoes.map(s => s._id).sort().join(',');
+    const nextShoeIds = nextGroup.shoes.map(s => s._id).sort().join(',');
+    if (prevShoeIds !== nextShoeIds) return false;
+  }
+  
+  return true;
+});
+
+BrandSections.displayName = 'BrandSections';
+
+export { BrandSections };

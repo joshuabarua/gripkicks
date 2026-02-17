@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
+import { memo } from 'react';
 import { Star } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
 import type { UserShoe } from "@/types/api";
@@ -14,7 +15,7 @@ interface CloudShoeProps {
   specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode };
 }
 
-export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudShoeProps) {
+const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) => {
   const details = shoe?.shoe ?? shoe?.shoeDetails;
   const brand = details?.brand ?? 'Unknown Brand';
   const name = details?.name ?? 'Unknown Shoe';
@@ -125,4 +126,20 @@ export default function CloudShoe({ shoe, onClick, index, specialLabel }: CloudS
       </div>
     </motion.div >
   );
-}
+}, (prevProps, nextProps) => {
+  // Only re-render if essential props changed
+  return (
+    prevProps.shoe._id === nextProps.shoe._id &&
+    prevProps.shoe.isFavourite === nextProps.shoe.isFavourite &&
+    prevProps.shoe.comfortScore === nextProps.shoe.comfortScore &&
+    prevProps.shoe.performanceRating === nextProps.shoe.performanceRating &&
+    prevProps.shoe.durabilityRating === nextProps.shoe.durabilityRating &&
+    prevProps.index === nextProps.index &&
+    prevProps.onClick === nextProps.onClick &&
+    prevProps.specialLabel?.type === nextProps.specialLabel?.type
+  );
+});
+
+CloudShoe.displayName = 'CloudShoe';
+
+export default CloudShoe;

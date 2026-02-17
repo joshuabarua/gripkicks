@@ -2,6 +2,8 @@ import { IKImage } from "imagekitio-react";
 import { useState, useEffect } from "react";
 import type { Transformation } from "imagekit-javascript/dist/src/interfaces/Transformation";
 
+type ImageContext = 'thumbnail' | 'preview' | 'modal';
+
 interface ShoeImageProps {
   brand: string;
   shoeName?: string;
@@ -11,6 +13,7 @@ interface ShoeImageProps {
   fallbackImage?: string;
   gender?: "men" | "women" | "kids" | "unisex";
   slug?: string;
+  context?: ImageContext;
   // Common IKImage props
   alt?: string;
   loading?: "lazy";
@@ -24,21 +27,54 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
   shoeName,
   imageUrl,
   className = "object-contain",
-  transformation = [
-    {
-      height: 200,
-      width: 200,
-      crop: "at_max",
-      cropMode: "pad_resize",
-      format: "png",
-      quality: 80
-    }
-  ],
+  transformation,
   fallbackImage = "/imgs/placeholder_shoe.png",
-  gender,
+  context = 'preview',
   slug,
   ...props
 }) => {
+  // Get optimal image dimensions based on context
+  const getOptimalTransformation = (context: ImageContext): Transformation[] => {
+    if (transformation) return transformation;
+    
+    switch (context) {
+      case 'thumbnail':
+        return [
+          {
+            height: 48,
+            width: 48,
+            crop: "at_max",
+            cropMode: "pad_resize",
+            format: "png",
+            quality: 75
+          }
+        ];
+      case 'modal':
+        return [
+          {
+            height: 400,
+            width: 400,
+            crop: "at_max",
+            cropMode: "pad_resize",
+            format: "png",
+            quality: 85
+          }
+        ];
+      default: // preview
+        return [
+          {
+            height: 200,
+            width: 200,
+            crop: "at_max",
+            cropMode: "pad_resize",
+            format: "png",
+            quality: 80
+          }
+        ];
+    }
+  };
+
+  const optimizedTransformation = getOptimalTransformation(context);
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [loadingTimeout, setLoadingTimeout] = useState(false);
@@ -133,7 +169,7 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
       )}
       <IKImage
         path={imagePath}
-        transformation={transformation}
+        transformation={optimizedTransformation}
         className={`w-full h-full object-contain ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         onError={handleError}
         onLoad={handleLoad}
