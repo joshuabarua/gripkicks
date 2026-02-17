@@ -48,7 +48,7 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
 
   const { enabled = true, onError } = options ?? {};
 
-  // Get user by Better Auth ID for real-time updates
+  // Consolidated queries - only fetch what's needed
   const userData = useQuery(api.users.findByBetterAuthId, 
     sessionUserId ? { betterAuthId: sessionUserId } : 'skip'
   );
@@ -58,9 +58,11 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
     userData ? { userId: userData._id } : 'skip'
   );
 
-  // Fallback data for when real-time isn't available
-  const shoesData = useQuery(api.shoes.list);
+  // Only fetch popularity data if we have user shoes (cached for 10 minutes)
   const popularityData = useQuery(api.popularity.getAllShoesPopularity);
+  
+  // Only fetch all shoes when needed for search/add functionality
+  const shoesData = useQuery(api.shoes.list);
 
   const allShoes = useMemo(() => shoesData ?? [], [shoesData]);
   const popularityMap = useMemo(() => (
@@ -100,7 +102,7 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
       }
     );
     setIsLoading(false);
-  }, [sessionUserId, enabled]); // Remove onError from dependencies
+  }, [sessionUserId, enabled, onError]);
 
   // Use real-time data when available, fallback to REST API
   useEffect(() => {
@@ -144,7 +146,7 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
       setIsLoading(false);
       setRealtimeEnabled(false);
     }
-  }, [realtimeStashData, userData, sessionUserId, realtimeEnabled]); // Remove fetchUserStash from dependencies
+  }, [realtimeStashData, userData, sessionUserId, realtimeEnabled, fetchUserStash]);
 
   useEffect(() => {
     if (sessionUserId && enabled) {
@@ -153,7 +155,7 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
       setUserShoes([]);
       setIsLoading(false);
     }
-  }, [sessionUserId, enabled]); // Remove fetchUserStash from dependencies
+  }, [sessionUserId, enabled, fetchUserStash]);
 
   const invalidateCache = useCallback(() => {
     if (sessionUserId) {

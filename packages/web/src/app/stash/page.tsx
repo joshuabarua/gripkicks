@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Footprints } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth';
@@ -20,6 +20,7 @@ import { StatsStrip } from '@/components/stash/StatsStrip';
 import { BrandSections } from '@/components/stash/BrandSections';
 import { useBrandGroups } from '@/hooks/useBrandGroups';
 import { AdvancedFilters } from '@/components/stash/AdvancedFilters';
+import { debounce } from '@/lib/debounce';
 
 export default function ShoeSanctuaryPage() {
   const { data: session, isPending: sessionLoading } = useSession();
@@ -47,6 +48,12 @@ export default function ShoeSanctuaryPage() {
     performanceRating: undefined,
     durabilityRating: undefined,
   });
+
+  // Debounced search function (300ms delay)
+  const debouncedSetSearchQuery = useCallback(
+    debounce((value: string) => setSearchQuery(value), 300),
+    []
+  );
 
   const {
     userShoes,
@@ -301,7 +308,7 @@ export default function ShoeSanctuaryPage() {
                 open={isAddDialogOpen}
                 onOpenChange={setIsAddDialogOpen}
                 searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
+                onSearchChange={debouncedSetSearchQuery}
                 selectedBrand={selectedBrand}
                 onBrandChange={setSelectedBrand}
                 selectedGender={selectedGender}
