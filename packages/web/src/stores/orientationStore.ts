@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { debounce } from '@/lib/debounce';
 
 interface OrientationState {
   isPortrait: boolean;
@@ -92,13 +93,17 @@ export const useOrientationStore = create<OrientationState>((set, get) => ({
   initialize: () => {
     if (get().initialized || typeof window === 'undefined') return;
 
+    const debouncedUpdateOrientation = debounce(() => {
+      set(calculateOrientation());
+    }, 100);
+
     const updateOrientation = () => {
       set(calculateOrientation());
     };
 
     updateOrientation();
 
-    resizeHandler = updateOrientation;
+    resizeHandler = debouncedUpdateOrientation;
     window.addEventListener('resize', resizeHandler);
 
     mediaQuery = window.matchMedia('(orientation: portrait)');

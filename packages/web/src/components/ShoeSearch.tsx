@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Search } from 'lucide-react'
 import ShoeImage from '@/components/ShoeImage'
 import { fetchApi } from '@/lib/api-client'
+import { debounce } from '@/lib/debounce'
 import type { Shoe } from '@/types/api'
 
 interface ShoeSearchProps {
@@ -24,15 +25,19 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
   }, [])
 
   useEffect(() => {
-    if (searchQuery) {
-      const results = shoes.filter(shoe => 
-        shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        shoe.brand.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-      setSearchResults(results)
-    } else {
-      setSearchResults(shoes.slice(0, 10)) // Show first 10 shoes when no search
-    }
+    const debouncedSearch = debounce(() => {
+      if (searchQuery) {
+        const results = shoes.filter(shoe => 
+          shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          shoe.brand.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        setSearchResults(results)
+      } else {
+        setSearchResults(shoes.slice(0, 10)) // Show first 10 shoes when no search
+      }
+    }, 300)
+
+    debouncedSearch()
   }, [searchQuery, shoes])
 
   const fetchShoes = async () => {

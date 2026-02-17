@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState, useEffect, useCallback } from "react";
+import React, { Suspense, useState, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
 import ShoeModel from "./ShoeModel";
 
@@ -19,18 +19,6 @@ const Scene = () => {
     setContextLost(false);
     setCanvasKey(prev => prev + 1);
   }, []);
-
-  useEffect(() => {
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-      canvas.addEventListener('webglcontextlost', handleContextLost as EventListener);
-      canvas.addEventListener('webglcontextrestored', handleContextRestored);
-      return () => {
-        canvas.removeEventListener('webglcontextlost', handleContextLost as EventListener);
-        canvas.removeEventListener('webglcontextrestored', handleContextRestored);
-      };
-    }
-  }, [handleContextLost, handleContextRestored, canvasKey]);
 
   if (contextLost) {
     return (
@@ -55,6 +43,7 @@ const Scene = () => {
         }}
         dpr={[1, 1.5]}
         onCreated={({ gl }) => {
+          // Only add event listeners here, not in useEffect
           gl.domElement.addEventListener('webglcontextlost', handleContextLost as EventListener);
           gl.domElement.addEventListener('webglcontextrestored', handleContextRestored);
         }}
