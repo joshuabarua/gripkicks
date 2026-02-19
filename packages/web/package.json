@@ -2,6 +2,9 @@
   "name": "web",
   "version": "0.1.0",
   "packageManager": "yarn@4.6.0",
+  "engines": {
+    "node": "20.x"
+  },
   "private": true,
   "type": "module",
   "scripts": {
