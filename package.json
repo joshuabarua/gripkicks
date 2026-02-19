@@ -39,8 +39,7 @@
     "dev:all:terminals": "dotenv -e .env -- start start-dev.bat && start start-backend.bat && start start-convex.bat",
     "dev:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev\"'",
     "dev:ngrok:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"'",
-    "dev:all:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"' && osascript -e 'tell application \"Terminal\" to do script \"npx convex dev\"'",
-    "postinstall": "node -e \"process.exit(process.env.CI || process.env.RENDER || process.env.VERCEL || process.env.NODE_ENV === 'production' ? 0 : 1)\" || patch-package"
+    "dev:all:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"' && osascript -e 'tell application \"Terminal\" to do script \"npx convex dev\"'"
   },
   "dependencies": {
     "@convex-dev/better-auth": "^0.10.10",
@@ -55,8 +54,6 @@
     "create-next-app": "^15.1.6",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "patch-package": "^8.0.0",
-    "postinstall-postinstall": "^2.1.0",
     "workspace": "^0.0.1-preview.2",
     "zustand": "^5.0.3"
   }
