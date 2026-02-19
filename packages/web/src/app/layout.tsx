@@ -1,6 +1,7 @@
 "use client";
 
 import "./globals.css";
+import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
 import localFont from "next/font/local";
@@ -17,6 +18,7 @@ import {
   KonamiGrippy,
   RunningGrippy,
 } from "@/components/GrippyKickkyy";
+import BootLoader from "@/components/BootLoader";
 
 const basteleur = localFont({
   src: "../../public/fonts/Basteleur-Bold.otf",
@@ -45,16 +47,50 @@ export default function RootLayout({
 }>) {
   // Sync user to Convex when authenticated
   useUserSync();
+  const [showBootLoader, setShowBootLoader] = useState(true);
   const cloudflareBeaconToken = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
   const cloudflareBeaconSrc =
     process.env.NEXT_PUBLIC_CF_BEACON_SRC ||
     "https://static.cloudflareinsights.com/beacon.min.js";
+
+  useEffect(() => {
+    let minTimeDone = false;
+    let pageReady = document.readyState === "complete";
+
+    const tryFinish = () => {
+      if (minTimeDone && pageReady) {
+        setShowBootLoader(false);
+      }
+    };
+
+    const minTimer = setTimeout(() => {
+      minTimeDone = true;
+      tryFinish();
+    }, 1500);
+
+    const onLoad = () => {
+      pageReady = true;
+      tryFinish();
+    };
+
+    if (!pageReady) {
+      window.addEventListener("load", onLoad);
+    } else {
+      tryFinish();
+    }
+
+    return () => {
+      clearTimeout(minTimer);
+      window.removeEventListener("load", onLoad);
+    };
+  }, []);
 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={`min-h-screen bg-background antialiased ${basteleur.variable} ${sora.variable} ${tanker.variable} ${soCloudy.variable}`}
       >
+        <BootLoader visible={showBootLoader} />
         {cloudflareBeaconToken ? (
           <Script
             src={cloudflareBeaconSrc}
