@@ -1,14 +1,29 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { CheckCircle, ArrowUpRight } from 'lucide-react';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { motion } from "framer-motion";
+import { CheckCircle, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect } from "react";
+import { analyticsEvents, track } from "@/lib/analytics";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
-  const checkoutId = searchParams.get('checkout_id');
+  const checkoutId = searchParams.get("checkout_id");
+  const isFounder = searchParams.get("founder") === "true";
+
+  useEffect(() => {
+    track(analyticsEvents.checkoutSucceeded, {
+      checkout_id: checkoutId || undefined,
+      founder: isFounder,
+    });
+
+    if (isFounder) {
+      track(analyticsEvents.founderGranted, {
+        source: "pricing_success",
+      });
+    }
+  }, [checkoutId, isFounder]);
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
@@ -16,7 +31,7 @@ function SuccessContent() {
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
+          transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
           className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-8"
         >
           <CheckCircle className="w-10 h-10 text-orange-500" />
@@ -27,7 +42,9 @@ function SuccessContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <p className="font-mono text-[10px] text-orange-500 tracking-[0.3em] mb-4">[WELCOME_TO_PREMIUM]</p>
+          <p className="font-mono text-[10px] text-orange-500 tracking-[0.3em] mb-4">
+            [WELCOME_TO_PREMIUM]
+          </p>
           <h1 className="font-tanker text-5xl md:text-6xl mb-4">
             YOU&apos;RE <span className="text-orange-500">IN</span>
           </h1>
@@ -35,7 +52,8 @@ function SuccessContent() {
             Premium features are now unlocked.
           </p>
           <p className="font-sora text-neutral-600 text-sm mb-10">
-            Full recommendations, Sole Mate matching, and early access to new features are all yours.
+            Full recommendations, Sole Mate matching, and early access to new
+            features are all yours.
           </p>
 
           {checkoutId && (
@@ -73,11 +91,13 @@ function SuccessContent() {
 
 export default function PricingSuccessPage() {
   return (
-    <Suspense fallback={
-      <main className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="font-mono text-neutral-500 text-sm">[LOADING...]</div>
-      </main>
-    }>
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-black text-white flex items-center justify-center">
+          <div className="font-mono text-neutral-500 text-sm">[LOADING...]</div>
+        </main>
+      }
+    >
       <SuccessContent />
     </Suspense>
   );

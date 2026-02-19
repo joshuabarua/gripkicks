@@ -1,113 +1,69 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { useSession } from '@/lib/auth';
-import { fetchApi } from '@/lib/api-client';
-import { useSubscription } from '@/hooks/useSubscription';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { Search, Star, Users, TrendingUp, Footprints, ArrowUpRight } from 'lucide-react';
-import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
-import { FullPageLoading } from '@/components/ui/loading';
-
-interface UserProfile {
-  footShape?: string;
-  footVolume?: string;
-  onboardingComplete: boolean;
-}
-
-interface Shoe {
-  _id: string;
-  name: string;
-  brand: string;
-  imageUrl?: string;
-}
-
-interface AggregatedRating {
-  shoe: Shoe;
-  avgComfortScore: number;
-  avgPerformanceRating: number;
-  avgDurabilityRating: number;
-  totalRatings: number;
-  matchScore: number;
-  isSoleSibling: boolean;
-}
+import { useState, useMemo } from "react";
+import { useSession } from "@/lib/auth";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useFindMyShoe, type AggregatedRating } from "@/hooks/useFindMyShoe";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import {
+  Search,
+  Star,
+  Users,
+  TrendingUp,
+  Footprints,
+  ArrowUpRight,
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
+import { FullPageLoading } from "@/components/ui/loading";
+import { Button } from "@/components/ui/button";
 
 const categories = [
-  { key: 'all', label: 'Overall' },
-  { key: 'comfort', label: 'Comfort' },
-  { key: 'performance', label: 'Performance' },
-  { key: 'durability', label: 'Durability' },
+  { key: "all", label: "Overall" },
+  { key: "comfort", label: "Comfort" },
+  { key: "performance", label: "Performance" },
+  { key: "durability", label: "Durability" },
 ] as const;
 
-type Category = typeof categories[number]['key'];
+type Category = (typeof categories)[number]["key"];
 
 export default function SoleMatePage() {
   const { data: session } = useSession();
   const { isPremium } = useSubscription();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<Category>('all');
+  const {
+    recommendations,
+    soleSiblingSpotlight,
+    isLoading,
+    hasProfile,
+    hasShoes,
+    pagination,
+  } = useFindMyShoe(20);
 
-  useEffect(() => {
-    if (session?.user) {
-      loadProfile();
-    }
-  }, [session]);
-
-  const loadProfile = async () => {
-    try {
-      const response = await fetchApi<UserProfile>('/api/v1/profile');
-      if (response.isOk()) {
-        setProfile(response.value);
-      }
-    } catch (error) {
-      console.error('Failed to load profile:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const mockAggregatedRatings: AggregatedRating[] = [
-    {
-      shoe: { _id: '1', name: 'Testarossa', brand: 'La Sportiva', imageUrl: '/shoes/testarossa.jpg' },
-      avgComfortScore: 8.5,
-      avgPerformanceRating: 9.2,
-      avgDurabilityRating: 7.8,
-      totalRatings: 45,
-      matchScore: 92,
-      isSoleSibling: true
-    },
-    {
-      shoe: { _id: '2', name: 'Solution', brand: 'La Sportiva', imageUrl: '/shoes/solution.jpg' },
-      avgComfortScore: 7.2,
-      avgPerformanceRating: 9.5,
-      avgDurabilityRating: 8.1,
-      totalRatings: 38,
-      matchScore: 88,
-      isSoleSibling: false
-    },
-  ];
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<Category>("all");
 
   const filteredRatings = useMemo(() => {
-    let filtered = mockAggregatedRatings;
+    let filtered = recommendations;
 
     if (searchQuery) {
-      filtered = filtered.filter(r =>
-        r.shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.shoe.brand.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (r) =>
+          r.shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          r.shoe.brand.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
-    if (selectedCategory !== 'all') {
-      filtered = filtered.sort((a, b) => {
+    if (selectedCategory !== "all") {
+      filtered = [...filtered].sort((a, b) => {
         switch (selectedCategory) {
-          case 'comfort':
+          case "comfort":
             return b.avgComfortScore - a.avgComfortScore;
-          case 'performance':
+          case "performance":
             return b.avgPerformanceRating - a.avgPerformanceRating;
-          case 'durability':
+          case "durability":
             return b.avgDurabilityRating - a.avgDurabilityRating;
           default:
             return b.matchScore - a.matchScore;
@@ -116,9 +72,20 @@ export default function SoleMatePage() {
     }
 
     return filtered;
-  }, [mockAggregatedRatings, searchQuery, selectedCategory]);
+  }, [recommendations, searchQuery, selectedCategory]);
 
-  if (loading) {
+  const filteredSoleSiblings = useMemo(() => {
+    if (searchQuery) {
+      return soleSiblingSpotlight.filter(
+        (r) =>
+          r.shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          r.shoe.brand.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+    }
+    return soleSiblingSpotlight;
+  }, [soleSiblingSpotlight, searchQuery]);
+
+  if (isLoading) {
     return <FullPageLoading text="Finding Matches" />;
   }
 
@@ -130,9 +97,15 @@ export default function SoleMatePage() {
             <Footprints className="w-8 h-8 text-orange-500" />
           </div>
           <h1 className="font-tanker text-4xl mb-2">SOLE MATE</h1>
-          <p className="font-sora text-neutral-500 mb-6">Please log in to find your perfect match</p>
+          <p className="font-sora text-neutral-500 mb-6">
+            Please log in to find your perfect match
+          </p>
           <Link href="/auth/login">
-            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors"
+            >
               LOG IN
             </motion.button>
           </Link>
@@ -141,7 +114,7 @@ export default function SoleMatePage() {
     );
   }
 
-  if (!profile?.onboardingComplete) {
+  if (!hasProfile) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="text-center max-w-md">
@@ -149,19 +122,18 @@ export default function SoleMatePage() {
             <Footprints className="w-8 h-8 text-orange-500" />
           </div>
           <h1 className="font-tanker text-4xl mb-2">COMPLETE YOUR PROFILE</h1>
-          <p className="font-sora text-neutral-500 mb-8">Set up your foot profile and add at least one shoe so we can find what fits</p>
-          <div className="space-y-3">
-            <Link href="/footchecker" className="block">
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg py-3 rounded-2xl transition-colors flex items-center justify-center gap-2">
-                GO TO FOOT LAB <ArrowUpRight className="w-5 h-5" />
-              </motion.button>
-            </Link>
-            <Link href="/stash" className="block">
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full border border-neutral-700 hover:border-orange-500/30 text-neutral-400 hover:text-orange-500 font-sora text-sm py-3 rounded-2xl transition-all">
-                Add Shoes to Collection
-              </motion.button>
-            </Link>
-          </div>
+          <p className="font-sora text-neutral-500 mb-8">
+            Set up your foot profile so we can find what fits you best
+          </p>
+          <Link href="/footchecker">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg py-3 rounded-2xl transition-colors flex items-center justify-center gap-2"
+            >
+              GO TO FOOT LAB <ArrowUpRight className="w-5 h-5" />
+            </motion.button>
+          </Link>
         </div>
       </main>
     );
@@ -171,23 +143,25 @@ export default function SoleMatePage() {
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <section className="px-6 md:px-12 lg:px-16 py-12">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">[SOLE_MATE]</p>
+            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">
+              [SOLE_MATE]
+            </p>
             <h1 className="font-tanker text-6xl md:text-8xl mb-4">
-              FIND YOUR<br /><span className="text-orange-500">MATCH</span>
+              FIND YOUR
+              <br />
+              <span className="text-orange-500">MATCH</span>
             </h1>
             <p className="font-sora text-lg text-neutral-400 max-w-2xl mx-auto">
               Discover your perfect climbing shoe based on community insights
             </p>
           </motion.div>
 
-          {/* Search & Filters */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -214,8 +188,8 @@ export default function SoleMatePage() {
                     onClick={() => setSelectedCategory(cat.key)}
                     className={`px-5 py-3 rounded-xl font-sora text-sm whitespace-nowrap transition-all ${
                       selectedCategory === cat.key
-                        ? 'bg-orange-500 text-black font-medium'
-                        : 'bg-neutral-800 border border-neutral-700 text-neutral-400 hover:border-orange-500/30'
+                        ? "bg-orange-500 text-black font-medium"
+                        : "bg-neutral-800 border border-neutral-700 text-neutral-400 hover:border-orange-500/30"
                     }`}
                   >
                     {cat.label}
@@ -225,8 +199,7 @@ export default function SoleMatePage() {
             </div>
           </motion.div>
 
-          {/* Sole Mate Spotlight */}
-          {filteredRatings.some(r => r.isSoleSibling) && (
+          {filteredSoleSiblings.length > 0 && isPremium && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -241,100 +214,262 @@ export default function SoleMatePage() {
                     </div>
                   </AnimatedIcon>
                   <div>
-                    <h2 className="font-tanker text-xl text-white">SOLE MATE SPOTLIGHT</h2>
-                    <p className="font-sora text-xs text-neutral-400">Climbers with your exact foot profile love these shoes!</p>
+                    <h2 className="font-tanker text-xl text-white">
+                      SOLE MATE SPOTLIGHT
+                    </h2>
+                    <p className="font-sora text-xs text-neutral-400">
+                      Climbers with your exact foot profile love these shoes!
+                    </p>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  {filteredRatings.filter(r => r.isSoleSibling).map((rating) => (
-                    <motion.div
+                  {filteredSoleSiblings.map((rating) => (
+                    <ShoeCard
                       key={rating.shoe._id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center justify-between p-4 bg-neutral-900/80 rounded-2xl border border-neutral-800"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-neutral-800 rounded-xl flex items-center justify-center">
-                          <Footprints className="w-7 h-7 text-orange-500" />
-                        </div>
-                        <div>
-                          <h3 className="font-sora font-semibold text-white">{rating.shoe.name}</h3>
-                          <p className="font-mono text-[10px] text-neutral-500">{rating.shoe.brand}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="bg-orange-500/20 text-orange-500 font-mono text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
-                              <Star className="w-3 h-3 fill-orange-500" /> {rating.matchScore}% MATCH
-                            </span>
-                            <span className="font-mono text-[10px] text-neutral-600">{rating.totalRatings} reviews</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right hidden md:block">
-                        <p className="font-mono text-[10px] text-neutral-600 mb-1">AVG RATINGS</p>
-                        <div className="flex gap-3">
-                          <div><span className="font-tanker text-lg text-white">{rating.avgComfortScore.toFixed(1)}</span><span className="font-mono text-[10px] text-neutral-600 ml-1">C</span></div>
-                          <div><span className="font-tanker text-lg text-white">{rating.avgPerformanceRating.toFixed(1)}</span><span className="font-mono text-[10px] text-neutral-600 ml-1">P</span></div>
-                          <div><span className="font-tanker text-lg text-white">{rating.avgDurabilityRating.toFixed(1)}</span><span className="font-mono text-[10px] text-neutral-600 ml-1">D</span></div>
-                        </div>
-                      </div>
-                    </motion.div>
+                      rating={rating}
+                      isSpotlight
+                    />
                   ))}
                 </div>
               </div>
             </motion.div>
           )}
 
-          {/* All Recommendations */}
+          {filteredSoleSiblings.length > 0 && !isPremium && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mb-8"
+            >
+              <div className="bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-3xl p-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+                <div className="relative z-10 flex flex-col items-center justify-center py-8 text-center">
+                  <Sparkles className="w-10 h-10 text-orange-500 mb-4" />
+                  <h3 className="font-tanker text-2xl text-white mb-2">
+                    SOLE MATE SPOTLIGHT
+                  </h3>
+                  <p className="font-sora text-neutral-400 mb-4 max-w-sm">
+                    Climbers with your exact foot profile have rated these shoes
+                    highly!
+                  </p>
+                  <Link href="/pricing">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-orange-500 hover:bg-orange-600 text-black font-tanker px-6 py-2 rounded-xl transition-colors"
+                    >
+                      UNLOCK PREMIUM
+                    </motion.button>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <div className="flex items-center gap-3 mb-6">
-              <AnimatedIcon animation="float" trigger="scroll">
-                <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-orange-500" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <AnimatedIcon animation="float" trigger="scroll">
+                  <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-orange-500" />
+                  </div>
+                </AnimatedIcon>
+                <h2 className="font-tanker text-2xl text-white">
+                  ALL RECOMMENDATIONS
+                  {pagination.totalCount > 0 && (
+                    <span className="font-mono text-sm text-neutral-500 ml-2">
+                      ({pagination.totalCount})
+                    </span>
+                  )}
+                </h2>
+              </div>
+            </div>
+
+            {filteredRatings.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 bg-neutral-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Footprints className="w-8 h-8 text-neutral-600" />
                 </div>
-              </AnimatedIcon>
-              <h2 className="font-tanker text-2xl text-white">ALL RECOMMENDATIONS</h2>
-            </div>
-            <div className="space-y-3">
-              {filteredRatings.filter(r => !r.isSoleSibling).map((rating, index) => (
-                <motion.div
-                  key={rating.shoe._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-center justify-between p-4 bg-neutral-900 border border-neutral-800 rounded-2xl hover:border-orange-500/20 transition-all group cursor-pointer"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-neutral-800 rounded-xl flex items-center justify-center">
-                      <Footprints className="w-7 h-7 text-neutral-600 group-hover:text-orange-500 transition-colors" />
+                <h3 className="font-tanker text-2xl text-white mb-2">
+                  NO RECOMMENDATIONS YET
+                </h3>
+                <p className="font-sora text-neutral-500 mb-6 max-w-sm mx-auto">
+                  {!hasShoes
+                    ? "Add some shoes to your collection and rate them to get personalized recommendations."
+                    : "We need more data from the community to generate recommendations. Check back soon!"}
+                </p>
+                {!hasShoes && (
+                  <Link href="/stash">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-orange-500 hover:bg-orange-600 text-black font-tanker px-6 py-3 rounded-2xl transition-colors"
+                    >
+                      ADD SHOES TO SANCTUARY
+                    </motion.button>
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  {filteredRatings
+                    .filter((r) => !isPremium || !r.isSoleSibling)
+                    .map((rating, index) => (
+                      <motion.div
+                        key={rating.shoe._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <ShoeCard rating={rating} />
+                      </motion.div>
+                    ))}
+                </div>
+
+                {pagination.totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-4 mt-8 pt-8 border-t border-neutral-800">
+                    <Button
+                      variant="outline"
+                      onClick={pagination.prevPage}
+                      disabled={pagination.currentPage === 1}
+                      className="border-neutral-700 text-neutral-400 hover:text-white hover:border-orange-500/30"
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-1" />
+                      Previous
+                    </Button>
+
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-sm text-neutral-500">
+                        Page {pagination.currentPage} of {pagination.totalPages}
+                      </span>
                     </div>
-                    <div>
-                      <h3 className="font-sora font-semibold text-white group-hover:text-orange-500 transition-colors">{rating.shoe.name}</h3>
-                      <p className="font-mono text-[10px] text-neutral-500">{rating.shoe.brand}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="bg-neutral-800 text-neutral-400 font-mono text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
-                          <Star className="w-3 h-3" /> {rating.matchScore}% MATCH
-                        </span>
-                        <span className="font-mono text-[10px] text-neutral-600">{rating.totalRatings} reviews</span>
-                      </div>
-                    </div>
+
+                    <Button
+                      variant="outline"
+                      onClick={pagination.nextPage}
+                      disabled={!pagination.hasMore}
+                      className="border-neutral-700 text-neutral-400 hover:text-white hover:border-orange-500/30"
+                    >
+                      Next
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
                   </div>
-                  <div className="text-right hidden md:block">
-                    <p className="font-mono text-[10px] text-neutral-600 mb-1">AVG RATINGS</p>
-                    <div className="flex gap-3">
-                      <div><span className="font-tanker text-lg text-white">{rating.avgComfortScore.toFixed(1)}</span><span className="font-mono text-[10px] text-neutral-600 ml-1">C</span></div>
-                      <div><span className="font-tanker text-lg text-white">{rating.avgPerformanceRating.toFixed(1)}</span><span className="font-mono text-[10px] text-neutral-600 ml-1">P</span></div>
-                      <div><span className="font-tanker text-lg text-white">{rating.avgDurabilityRating.toFixed(1)}</span><span className="font-mono text-[10px] text-neutral-600 ml-1">D</span></div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                )}
+              </>
+            )}
           </motion.div>
         </div>
       </section>
     </main>
+  );
+}
+
+function ShoeCard({
+  rating,
+  isSpotlight = false,
+}: {
+  rating: AggregatedRating;
+  isSpotlight?: boolean;
+}) {
+  return (
+    <div
+      className={`flex items-center justify-between p-4 ${
+        isSpotlight
+          ? "bg-neutral-900/80 rounded-2xl border border-neutral-800"
+          : "bg-neutral-900 border border-neutral-800 rounded-2xl hover:border-orange-500/20 transition-all group cursor-pointer"
+      }`}
+    >
+      <div className="flex items-center gap-4">
+        <div
+          className={`w-14 h-14 rounded-xl flex items-center justify-center ${
+            isSpotlight
+              ? "bg-neutral-800"
+              : "bg-neutral-800 group-hover:bg-neutral-700 transition-colors"
+          }`}
+        >
+          {rating.shoe.imageUrl ? (
+            <img
+              src={rating.shoe.imageUrl}
+              alt={rating.shoe.name}
+              className="w-10 h-10 object-contain"
+            />
+          ) : (
+            <Footprints
+              className={`w-7 h-7 ${
+                isSpotlight
+                  ? "text-orange-500"
+                  : "text-neutral-600 group-hover:text-orange-500 transition-colors"
+              }`}
+            />
+          )}
+        </div>
+        <div>
+          <h3
+            className={`font-sora font-semibold text-white ${
+              !isSpotlight && "group-hover:text-orange-500 transition-colors"
+            }`}
+          >
+            {rating.shoe.name}
+          </h3>
+          <p className="font-mono text-[10px] text-neutral-500">
+            {rating.shoe.brand}
+          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <span
+              className={`font-mono text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${
+                isSpotlight
+                  ? "bg-orange-500/20 text-orange-500"
+                  : "bg-neutral-800 text-neutral-400"
+              }`}
+            >
+              <Star
+                className={`w-3 h-3 ${isSpotlight ? "fill-orange-500" : ""}`}
+              />
+              {rating.matchScore}% MATCH
+            </span>
+            <span className="font-mono text-[10px] text-neutral-600">
+              {rating.totalRatings} reviews
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="text-right hidden md:block">
+        <p className="font-mono text-[10px] text-neutral-600 mb-1">
+          AVG RATINGS
+        </p>
+        <div className="flex gap-3">
+          <div>
+            <span className="font-tanker text-lg text-white">
+              {rating.avgComfortScore.toFixed(1)}
+            </span>
+            <span className="font-mono text-[10px] text-neutral-600 ml-1">
+              C
+            </span>
+          </div>
+          <div>
+            <span className="font-tanker text-lg text-white">
+              {rating.avgPerformanceRating.toFixed(1)}
+            </span>
+            <span className="font-mono text-[10px] text-neutral-600 ml-1">
+              P
+            </span>
+          </div>
+          <div>
+            <span className="font-tanker text-lg text-white">
+              {rating.avgDurabilityRating.toFixed(1)}
+            </span>
+            <span className="font-mono text-[10px] text-neutral-600 ml-1">
+              D
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

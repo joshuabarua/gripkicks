@@ -8,11 +8,11 @@ const nextConfig: NextConfig = {
     domains: ["images.unsplash.com", "images.pexels.com"],
   },
 
-  // Allow importing from the convex folder at the monorepo root
+  // Allow importing generated Convex types from monorepo root
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      convex: path.resolve(__dirname, "../../convex"),
+      "convex/_generated": path.resolve(__dirname, "../../convex/_generated"),
     };
     return config;
   },

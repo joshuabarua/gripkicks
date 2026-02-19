@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Check, Zap, Crown, Users, ArrowUpRight, Sparkles } from 'lucide-react';
-import Link from 'next/link';
-import { useSession } from '@/lib/auth';
-import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
-import { fetchApi } from '@/lib/api-client';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Check, Zap, Crown, Users, ArrowUpRight, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { useSession } from "@/lib/auth";
+import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
+import { fetchApi } from "@/lib/api-client";
+import { useSubscription } from "@/hooks/useSubscription";
+import { analyticsEvents, captureError, track } from "@/lib/analytics";
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
@@ -21,33 +22,54 @@ interface PlanFeature {
 }
 
 const freePlan: PlanFeature[] = [
-  { text: 'Shoe Sanctuary — manage your collection', included: true },
-  { text: 'Foot Lab — profile your feet', included: true },
-  { text: 'Find My Shoe — top 1 recommendation', included: true },
-  { text: 'Rate shoes on comfort & performance', included: true },
-  { text: 'Full recommendation list', included: false },
-  { text: 'Sole Mate matching', included: false },
+  { text: "Shoe Sanctuary — manage your collection", included: true },
+  { text: "Foot Lab — profile your feet", included: true },
+  { text: "Find My Shoe — top 1 recommendation", included: true },
+  { text: "Rate shoes on comfort & performance", included: true },
+  { text: "Full recommendation list", included: false },
+  { text: "Sole Mate matching", included: false },
 ];
 
 const premiumPlan: PlanFeature[] = [
-  { text: 'Everything in Free', included: true },
-  { text: 'Full recs list — every shoe that fits your feet', included: true },
-  { text: 'Sole Mate — find someone with the same feet as you', included: true },
-  { text: 'Priority support from the team', included: true },
-  { text: 'First to try new features', included: true },
-  { text: 'Cancel anytime, no questions asked', included: true },
+  { text: "Everything in Free", included: true },
+  { text: "Full recs list — every shoe that fits your feet", included: true },
+  {
+    text: "Sole Mate — find someone with the same feet as you",
+    included: true,
+  },
+  { text: "Priority support from the team", included: true },
+  { text: "First to try new features", included: true },
+  { text: "Cancel anytime, no questions asked", included: true },
 ];
 
 const pricingOptions = [
-  { id: 'monthly', label: 'Monthly', price: '1.99', period: '/mo', savings: '' },
-  { id: 'yearly', label: 'Yearly', price: '9.99', period: '/yr', savings: 'Save 58%' },
-  { id: 'lifetime', label: 'Lifetime', price: '49.99', period: 'once', savings: 'Best value' },
+  {
+    id: "monthly",
+    label: "Monthly",
+    price: "1.99",
+    period: "/mo",
+    savings: "",
+  },
+  {
+    id: "yearly",
+    label: "Yearly",
+    price: "9.99",
+    period: "/yr",
+    savings: "Save 58%",
+  },
+  {
+    id: "lifetime",
+    label: "Lifetime",
+    price: "49.99",
+    period: "once",
+    savings: "Best value",
+  },
 ];
 
 export default function PricingPage() {
   const { data: session } = useSession();
   const { isPremium, isFounder, subscriptionTier } = useSubscription();
-  const [selectedPlan, setSelectedPlan] = useState('yearly');
+  const [selectedPlan, setSelectedPlan] = useState("yearly");
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
   const [founderChecking, setFounderChecking] = useState(false);
   const founderSpotsTotal = 1000;
@@ -55,7 +77,9 @@ export default function PricingPage() {
   useEffect(() => {
     async function loadUserCount() {
       try {
-        const response = await fetchApi<{ count: number }>('/api/v1/users/count');
+        const response = await fetchApi<{ count: number }>(
+          "/api/v1/users/count",
+        );
         if (response.isOk()) {
           setTotalUsers(response.value.count);
         }
@@ -66,8 +90,12 @@ export default function PricingPage() {
     loadUserCount();
   }, []);
 
-  const spotsRemaining = totalUsers !== null ? Math.max(0, founderSpotsTotal - totalUsers) : null;
-  const founderProgress = totalUsers !== null ? Math.min(100, (totalUsers / founderSpotsTotal) * 100) : 0;
+  const spotsRemaining =
+    totalUsers !== null ? Math.max(0, founderSpotsTotal - totalUsers) : null;
+  const founderProgress =
+    totalUsers !== null
+      ? Math.min(100, (totalUsers / founderSpotsTotal) * 100)
+      : 0;
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
@@ -78,9 +106,12 @@ export default function PricingPage() {
 
         <div className="max-w-5xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-xs text-orange-500 mb-4 tracking-[0.3em]">[PRICING]</p>
+            <p className="font-mono text-xs text-orange-500 mb-4 tracking-[0.3em]">
+              [PRICING]
+            </p>
             <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
-              SIMPLE<br />
+              SIMPLE
+              <br />
               <span className="text-orange-500">PRICING</span>
             </h1>
           </motion.div>
@@ -90,7 +121,8 @@ export default function PricingPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-sora text-xl text-neutral-400 max-w-xl mx-auto leading-relaxed"
           >
-            Help keep the lights on. Get the full toolkit. Cancel whenever — no guilt trips.
+            Help keep the lights on. Get the full toolkit. Cancel whenever — no
+            guilt trips.
           </motion.p>
         </div>
       </section>
@@ -112,17 +144,25 @@ export default function PricingPage() {
                 <AnimatedIcon animation="float" trigger="scroll">
                   <Crown className="w-6 h-6 text-black" />
                 </AnimatedIcon>
-                <p className="font-tanker text-2xl text-black">FOUNDER MEMBERS</p>
+                <p className="font-tanker text-2xl text-black">
+                  FOUNDER MEMBERS
+                </p>
               </div>
               <p className="font-sora text-black/80 mb-6">
-                The first <span className="font-bold text-black">1,000 climbers</span> to sign up get lifetime premium — free.
-                No catch. You showed up early, so everything stays unlocked for you. Forever.
+                The first{" "}
+                <span className="font-bold text-black">1,000 climbers</span> to
+                sign up get lifetime premium — free. No catch. You showed up
+                early, so everything stays unlocked for you. Forever.
               </p>
               <div className="bg-black/10 rounded-2xl p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-mono text-[10px] text-black/60 tracking-[0.2em]">[FOUNDER_SPOTS]</span>
+                  <span className="font-mono text-[10px] text-black/60 tracking-[0.2em]">
+                    [FOUNDER_SPOTS]
+                  </span>
                   <span className="font-sora text-sm text-black font-medium">
-                    {spotsRemaining !== null ? `${spotsRemaining} remaining` : 'Loading...'}
+                    {spotsRemaining !== null
+                      ? `${spotsRemaining} remaining`
+                      : "Loading..."}
                   </span>
                 </div>
                 <div className="w-full h-2 bg-black/10 rounded-full overflow-hidden">
@@ -135,7 +175,9 @@ export default function PricingPage() {
                 </div>
                 <div className="flex justify-between mt-2">
                   <span className="font-mono text-[10px] text-black/40">0</span>
-                  <span className="font-mono text-[10px] text-black/40">1,000</span>
+                  <span className="font-mono text-[10px] text-black/40">
+                    1,000
+                  </span>
                 </div>
               </div>
             </div>
@@ -159,15 +201,19 @@ export default function PricingPage() {
                 onClick={() => setSelectedPlan(option.id)}
                 className={`relative px-6 py-3 rounded-2xl font-sora text-sm transition-all ${
                   selectedPlan === option.id
-                    ? 'bg-orange-500 text-black font-medium'
-                    : 'bg-neutral-900 border border-neutral-800 text-neutral-400 hover:border-orange-500/30'
+                    ? "bg-orange-500 text-black font-medium"
+                    : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:border-orange-500/30"
                 }`}
               >
                 {option.label}
                 {option.savings && (
-                  <span className={`absolute -top-2 -right-2 text-[9px] px-2 py-0.5 rounded-full font-mono ${
-                    selectedPlan === option.id ? 'bg-black text-orange-500' : 'bg-orange-500 text-black'
-                  }`}>
+                  <span
+                    className={`absolute -top-2 -right-2 text-[9px] px-2 py-0.5 rounded-full font-mono ${
+                      selectedPlan === option.id
+                        ? "bg-black text-orange-500"
+                        : "bg-orange-500 text-black"
+                    }`}
+                  >
                     {option.savings}
                   </span>
                 )}
@@ -195,24 +241,34 @@ export default function PricingPage() {
                     <Users className="w-6 h-6 text-neutral-400" />
                   </div>
                 </AnimatedIcon>
-                <p className="font-mono text-[10px] text-neutral-500 tracking-[0.2em] mb-2">[FREE_TIER]</p>
+                <p className="font-mono text-[10px] text-neutral-500 tracking-[0.2em] mb-2">
+                  [FREE_TIER]
+                </p>
                 <h3 className="font-tanker text-4xl mb-1">FREE</h3>
-                <p className="font-sora text-neutral-500 text-sm">Forever. No credit card needed.</p>
+                <p className="font-sora text-neutral-500 text-sm">
+                  Forever. No credit card needed.
+                </p>
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
                 {freePlan.map((feature) => (
                   <li key={feature.text} className="flex items-start gap-3">
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                      feature.included ? 'bg-neutral-800' : 'bg-neutral-800/50'
-                    }`}>
+                    <div
+                      className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                        feature.included
+                          ? "bg-neutral-800"
+                          : "bg-neutral-800/50"
+                      }`}
+                    >
                       {feature.included ? (
                         <Check className="w-3 h-3 text-neutral-400" />
                       ) : (
                         <span className="w-2 h-px bg-neutral-600" />
                       )}
                     </div>
-                    <span className={`font-sora text-sm ${feature.included ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                    <span
+                      className={`font-sora text-sm ${feature.included ? "text-neutral-300" : "text-neutral-600"}`}
+                    >
                       {feature.text}
                     </span>
                   </li>
@@ -239,7 +295,9 @@ export default function PricingPage() {
               className="bg-neutral-900 border border-orange-500/30 rounded-3xl p-8 flex flex-col relative overflow-hidden"
             >
               <div className="absolute top-4 right-4">
-                <span className="font-mono text-[9px] bg-orange-500 text-black px-3 py-1 rounded-full tracking-[0.1em]">RECOMMENDED</span>
+                <span className="font-mono text-[9px] bg-orange-500 text-black px-3 py-1 rounded-full tracking-[0.1em]">
+                  RECOMMENDED
+                </span>
               </div>
 
               <div className="absolute inset-0 opacity-5">
@@ -252,17 +310,21 @@ export default function PricingPage() {
                     <Zap className="w-6 h-6 text-orange-500" />
                   </div>
                 </AnimatedIcon>
-                <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-2">[PREMIUM]</p>
+                <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-2">
+                  [PREMIUM]
+                </p>
                 <div className="flex items-baseline gap-2 mb-1">
                   <h3 className="font-tanker text-5xl">
-                    ${pricingOptions.find(p => p.id === selectedPlan)?.price}
+                    ${pricingOptions.find((p) => p.id === selectedPlan)?.price}
                   </h3>
                   <span className="font-sora text-neutral-500 text-sm">
-                    {pricingOptions.find(p => p.id === selectedPlan)?.period}
+                    {pricingOptions.find((p) => p.id === selectedPlan)?.period}
                   </span>
                 </div>
                 <p className="font-sora text-neutral-500 text-sm">
-                  {selectedPlan === 'lifetime' ? 'One payment. Yours forever.' : 'Cancel anytime. We mean it.'}
+                  {selectedPlan === "lifetime"
+                    ? "One payment. Yours forever."
+                    : "Cancel anytime. We mean it."}
                 </p>
               </div>
 
@@ -272,7 +334,9 @@ export default function PricingPage() {
                     <div className="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0 mt-0.5">
                       <Check className="w-3 h-3 text-orange-500" />
                     </div>
-                    <span className="font-sora text-sm text-neutral-300">{feature.text}</span>
+                    <span className="font-sora text-sm text-neutral-300">
+                      {feature.text}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -280,9 +344,13 @@ export default function PricingPage() {
               {isPremium ? (
                 <div className="w-full bg-neutral-800 border border-orange-500/30 text-center font-tanker text-xl py-4 rounded-2xl">
                   <span className="text-orange-500">
-                    {isFounder ? 'FOUNDER MEMBER' : `PREMIUM — ${subscriptionTier?.toUpperCase()}`}
+                    {isFounder
+                      ? "FOUNDER MEMBER"
+                      : `PREMIUM — ${subscriptionTier?.toUpperCase()}`}
                   </span>
-                  <p className="font-sora text-xs text-neutral-500 mt-1">You have full access</p>
+                  <p className="font-sora text-xs text-neutral-500 mt-1">
+                    You have full access
+                  </p>
                 </div>
               ) : (
                 <motion.button
@@ -291,51 +359,92 @@ export default function PricingPage() {
                   disabled={founderChecking}
                   onClick={async () => {
                     if (!session?.user) {
-                      window.location.href = '/auth/signup';
+                      track(analyticsEvents.checkoutStarted, {
+                        plan: selectedPlan,
+                        authenticated: false,
+                      });
+                      window.location.href = "/auth/signup";
                       return;
                     }
+
+                    track(analyticsEvents.checkoutStarted, {
+                      plan: selectedPlan,
+                      authenticated: true,
+                    });
 
                     // Check founder eligibility first
                     setFounderChecking(true);
                     try {
-                      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-                      const founderRes = await fetch(`${apiUrl}/api/v1/polar/check-founder`, {
-                        credentials: 'include',
-                      });
+                      const apiUrl =
+                        process.env.NEXT_PUBLIC_API_URL ||
+                        "http://localhost:3001";
+                      const founderRes = await fetch(
+                        `${apiUrl}/api/v1/polar/check-founder`,
+                        {
+                          credentials: "include",
+                        },
+                      );
                       const founderData = await founderRes.json();
 
                       if (founderData.success && founderData.data?.isFounder) {
+                        track(analyticsEvents.founderGranted, {
+                          plan: selectedPlan,
+                          source: "pricing",
+                        });
                         // User just became a founder — redirect to success
-                        window.location.href = '/pricing/success?founder=true';
+                        window.location.href = "/pricing/success?founder=true";
                         return;
                       }
 
                       // Not a founder, proceed to Polar checkout
-                      const res = await fetch(`${apiUrl}/api/v1/polar/checkout`, {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
+                      const res = await fetch(
+                        `${apiUrl}/api/v1/polar/checkout`,
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          credentials: "include",
+                          body: JSON.stringify({
+                            productId:
+                              selectedPlan === "monthly"
+                                ? process.env.NEXT_PUBLIC_POLAR_PRODUCT_MONTHLY
+                                : selectedPlan === "yearly"
+                                  ? process.env.NEXT_PUBLIC_POLAR_PRODUCT_YEARLY
+                                  : process.env
+                                      .NEXT_PUBLIC_POLAR_PRODUCT_LIFETIME,
+                            email: session.user.email,
+                            name: session.user.name || session.user.email,
+                          }),
                         },
-                        credentials: 'include',
-                        body: JSON.stringify({
-                          productId: selectedPlan === 'monthly' ? process.env.NEXT_PUBLIC_POLAR_PRODUCT_MONTHLY :
-                                    selectedPlan === 'yearly' ? process.env.NEXT_PUBLIC_POLAR_PRODUCT_YEARLY :
-                                    process.env.NEXT_PUBLIC_POLAR_PRODUCT_LIFETIME,
-                          email: session.user.email,
-                          name: session.user.name || session.user.email
-                        })
-                      });
+                      );
                       const data = await res.json();
-                      if (data.checkoutUrl) window.location.href = data.checkoutUrl;
-                    } catch {
-                      console.error('Failed to process upgrade');
+                      if (data.checkoutUrl) {
+                        track(analyticsEvents.checkoutRedirected, {
+                          plan: selectedPlan,
+                        });
+                        window.location.href = data.checkoutUrl;
+                      }
+                    } catch (error) {
+                      console.error("Failed to process upgrade");
+                      captureError(error, {
+                        source: "pricing_upgrade",
+                        plan: selectedPlan,
+                      });
+                      track(analyticsEvents.checkoutFailed, {
+                        plan: selectedPlan,
+                      });
                     } finally {
                       setFounderChecking(false);
                     }
                   }}
                   className="relative w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  {founderChecking ? 'CHECKING...' : session?.user ? 'UPGRADE NOW' : 'GET STARTED'}
+                  {founderChecking
+                    ? "CHECKING..."
+                    : session?.user
+                      ? "UPGRADE NOW"
+                      : "GET STARTED"}
                   <ArrowUpRight className="w-5 h-5" />
                 </motion.button>
               )}
@@ -348,9 +457,13 @@ export default function PricingPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">[PREMIUM_FEATURE]</p>
+            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">
+              [PREMIUM_FEATURE]
+            </p>
             <h2 className="font-tanker text-4xl md:text-6xl mb-6">
-              MEET YOUR<br /><span className="text-orange-500">SOLE MATE</span>
+              MEET YOUR
+              <br />
+              <span className="text-orange-500">SOLE MATE</span>
             </h2>
           </motion.div>
 
@@ -360,16 +473,21 @@ export default function PricingPage() {
             className="space-y-6 font-sora text-lg text-neutral-400 leading-relaxed"
           >
             <p>
-              Imagine someone out there has the <span className="text-white">exact same feet</span> as you. 
-              Same shape, same volume, same size. They&apos;ve already tried dozens of shoes and rated them all.
+              Imagine someone out there has the{" "}
+              <span className="text-white">exact same feet</span> as you. Same
+              shape, same volume, same size. They&apos;ve already tried dozens
+              of shoes and rated them all.
             </p>
             <p>
-              With <span className="text-orange-500 font-medium">Sole Mate</span>, we match you with your foot twin. 
-              When someone with your exact foot profile shares a shoe in common with you and has rated other shoes — 
-              you get notified. Their experience becomes your shortcut.
+              With{" "}
+              <span className="text-orange-500 font-medium">Sole Mate</span>, we
+              match you with your foot twin. When someone with your exact foot
+              profile shares a shoe in common with you and has rated other shoes
+              — you get notified. Their experience becomes your shortcut.
             </p>
             <p className="text-neutral-500">
-              No more guessing. No more expensive trial and error. Just real data from someone who walks in your shoes — literally.
+              No more guessing. No more expensive trial and error. Just real
+              data from someone who walks in your shoes — literally.
             </p>
           </motion.div>
 
@@ -379,14 +497,33 @@ export default function PricingPage() {
             className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4"
           >
             {[
-              { step: '01', title: 'MATCH', desc: 'We look for climbers with the same foot shape and volume as you' },
-              { step: '02', title: 'VERIFY', desc: 'You both own at least one shoe in common and rated it similarly' },
-              { step: '03', title: 'SHORTCUT', desc: 'See what else they rate highly — skip the trial and error' },
+              {
+                step: "01",
+                title: "MATCH",
+                desc: "We look for climbers with the same foot shape and volume as you",
+              },
+              {
+                step: "02",
+                title: "VERIFY",
+                desc: "You both own at least one shoe in common and rated it similarly",
+              },
+              {
+                step: "03",
+                title: "SHORTCUT",
+                desc: "See what else they rate highly — skip the trial and error",
+              },
             ].map((item) => (
-              <div key={item.step} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
-                <span className="font-tanker text-3xl text-orange-500/20">{item.step}</span>
+              <div
+                key={item.step}
+                className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6"
+              >
+                <span className="font-tanker text-3xl text-orange-500/20">
+                  {item.step}
+                </span>
                 <h4 className="font-tanker text-lg mt-2 mb-1">{item.title}</h4>
-                <p className="font-sora text-xs text-neutral-500">{item.desc}</p>
+                <p className="font-sora text-xs text-neutral-500">
+                  {item.desc}
+                </p>
               </div>
             ))}
           </motion.div>
@@ -397,29 +534,33 @@ export default function PricingPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">[NO_BS]</p>
+            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">
+              [NO_BS]
+            </p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-12">
-              STRAIGHT<br /><span className="text-orange-500">TALK</span>
+              STRAIGHT
+              <br />
+              <span className="text-orange-500">TALK</span>
             </h2>
           </motion.div>
 
           <div className="space-y-6">
             {[
               {
-                q: 'Can I cancel immediately after one month?',
-                a: 'Absolutely. Pay for one month, use it, cancel. No hard feelings, no retention tricks. We\'d rather you come back because you want to.',
+                q: "Can I cancel immediately after one month?",
+                a: "Absolutely. Pay for one month, use it, cancel. No hard feelings, no retention tricks. We'd rather you come back because you want to.",
               },
               {
-                q: 'What happens to my data if I downgrade?',
-                a: 'Your data stays yours. You keep your shoe collection, ratings, and foot profile. You just lose access to the full recommendation list and Sole Mate matching.',
+                q: "What happens to my data if I downgrade?",
+                a: "Your data stays yours. You keep your shoe collection, ratings, and foot profile. You just lose access to the full recommendation list and Sole Mate matching.",
               },
               {
-                q: 'Why is it so cheap?',
-                a: 'Because I\'m a climber building this for climbers, not a startup trying to squeeze you. The price covers servers and keeps the project going. That\'s it.',
+                q: "Why is it so cheap?",
+                a: "Because I'm a climber building this for climbers, not a startup trying to squeeze you. The price covers servers and keeps the project going. That's it.",
               },
               {
-                q: 'What about the first 1,000 users?',
-                a: 'If you\'re one of the first 1,000 to sign up, premium is yours for life. Free. Even if you disappear for a year and come back. You helped get this off the ground — that counts.',
+                q: "What about the first 1,000 users?",
+                a: "If you're one of the first 1,000 to sign up, premium is yours for life. Free. Even if you disappear for a year and come back. You helped get this off the ground — that counts.",
               },
             ].map((item, i) => (
               <motion.div
@@ -430,8 +571,12 @@ export default function PricingPage() {
                 viewport={{ once: true }}
                 className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6"
               >
-                <h4 className="font-sora font-medium text-white mb-2">{item.q}</h4>
-                <p className="font-sora text-sm text-neutral-500 leading-relaxed">{item.a}</p>
+                <h4 className="font-sora font-medium text-white mb-2">
+                  {item.q}
+                </h4>
+                <p className="font-sora text-sm text-neutral-500 leading-relaxed">
+                  {item.a}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -442,14 +587,21 @@ export default function PricingPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <AnimatedIcon animation="float" trigger="scroll" className="mx-auto mb-6">
+            <AnimatedIcon
+              animation="float"
+              trigger="scroll"
+              className="mx-auto mb-6"
+            >
               <Sparkles className="w-8 h-8 text-orange-500" />
             </AnimatedIcon>
             <h2 className="font-tanker text-5xl md:text-7xl mb-6">
-              FIND YOUR<br /><span className="text-orange-500">PERFECT FIT</span>
+              FIND YOUR
+              <br />
+              <span className="text-orange-500">PERFECT FIT</span>
             </h2>
             <p className="font-sora text-neutral-500 text-lg mb-10 max-w-xl mx-auto">
-              Jump in. It&apos;s free to start. Upgrade if you want the full toolkit — or don&apos;t. Either way, welcome to the crew.
+              Jump in. It&apos;s free to start. Upgrade if you want the full
+              toolkit — or don&apos;t. Either way, welcome to the crew.
             </p>
             <Link href="/auth/signup">
               <motion.button

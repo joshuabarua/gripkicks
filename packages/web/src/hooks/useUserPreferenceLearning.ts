@@ -53,7 +53,7 @@ export function useUserPreferenceLearning() {
   const userShoes = useQuery(api.stash.getUserStash, 
     userData ? { userId: userData._id } : "skip"
   );
-  const shoes = useQuery(api.shoes.list);
+  const shoes = useQuery(api.shoes.listAll);
 
   const userPreferenceProfile = useMemo(() => {
     if (!userShoes || !shoes || !userData) return null;

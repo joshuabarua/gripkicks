@@ -1,6 +1,6 @@
 /**
  * Custom Convex Database Adapter for Better Auth
- * 
+ *
  * This adapter stores auth data (users, sessions, accounts, verifications) in Convex
  * via HTTP calls to the Convex deployment's HTTP endpoints.
  */
@@ -14,50 +14,64 @@ interface ConvexAdapterConfig {
 
 // Helper to convert Convex ID format for Better Auth
 function toConvexHttpUrl(url: string): string {
-  if (url.includes('.convex.cloud')) {
-    return url.replace('.convex.cloud', '.convex.site');
+  if (url.includes(".convex.cloud")) {
+    return url.replace(".convex.cloud", ".convex.site");
   }
   return url;
 }
 
 // Map Better Auth model names to our Convex model names
 const modelMap: Record<string, string> = {
-  user: 'user',
-  session: 'session',
-  account: 'account',
-  verification: 'verification',
+  user: "user",
+  session: "session",
+  account: "account",
+  verification: "verification",
 };
 
 export const convexAdapter = (config: ConvexAdapterConfig) => {
   const baseUrl = toConvexHttpUrl(config.convexUrl);
 
-  const callConvex = async (model: string, operation: string, data: Record<string, unknown>) => {
+  const callConvex = async (
+    model: string,
+    operation: string,
+    data: Record<string, unknown>,
+  ) => {
     const mappedModel = modelMap[model] || model;
     const url = `${baseUrl}/api/auth-db/${mappedModel}/${operation}`;
 
     if (config.debugLogs) {
-      console.log(`[ConvexAdapter] ${operation} on ${model}:`, JSON.stringify(data, null, 2));
+      console.log(
+        `[ConvexAdapter] ${operation} on ${model}:`,
+        JSON.stringify(data, null, 2),
+      );
     }
 
     try {
       const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       const responseText = await response.text();
 
       if (!response.ok) {
-        console.error(`[ConvexAdapter] Error: ${response.status} ${responseText}`);
-        throw new Error(`Convex adapter error: ${response.status} - ${responseText}`);
+        console.error(
+          `[ConvexAdapter] Error: ${response.status} ${responseText}`,
+        );
+        throw new Error(
+          `Convex adapter error: ${response.status} - ${responseText}`,
+        );
       }
 
       let result;
       try {
         result = JSON.parse(responseText);
       } catch {
-        console.error(`[ConvexAdapter] Failed to parse response:`, responseText);
+        console.error(
+          `[ConvexAdapter] Failed to parse response:`,
+          responseText,
+        );
         throw new Error(`Invalid JSON response from Convex`);
       }
 
@@ -94,28 +108,37 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
 
           // Convert expiresAt from string to number if present (for verification model)
           // Also filter out extra fields that aren't in the validator
-          let finalData = data;
-          if (model === 'verification') {
-            const { id, createdAt, updatedAt, expiresAt, ...rest } = data;
+          let finalData: Record<string, unknown> = data as Record<
+            string,
+            unknown
+          >;
+          if (model === "verification") {
+            const { id, createdAt, updatedAt, expiresAt, ...rest } =
+              data as Record<string, unknown>;
             finalData = {
               ...rest,
-              expiresAt: expiresAt && typeof expiresAt === 'string' 
-                ? new Date(expiresAt).getTime() 
-                : expiresAt
+              expiresAt:
+                expiresAt && typeof expiresAt === "string"
+                  ? new Date(expiresAt).getTime()
+                  : expiresAt,
             };
           }
 
           // Add betterAuthId for user model
-          if (model === 'user' && data.id) {
-            const dataWithBetterAuthId = {
+          if (model === "user" && data.id) {
+            const dataWithBetterAuthId: Record<string, unknown> = {
               ...finalData,
               betterAuthId: data.id,
             };
-            const result = await callConvex(model, 'create', dataWithBetterAuthId);
+            const result = await callConvex(
+              model,
+              "create",
+              dataWithBetterAuthId,
+            );
             return result;
           }
 
-          const result = await callConvex(model, 'create', finalData as Record<string, unknown>);
+          const result = await callConvex(model, "create", finalData);
           return result;
         },
 
@@ -126,37 +149,44 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
           const value = where[0]?.value;
 
           if (!field || value === undefined) {
-            throw new Error('Update requires a field and value');
+            throw new Error("Update requires a field and value");
           }
 
           let id: string | undefined;
 
           // Special handling for session updates by token
-          if (model === 'session' && field === 'token') {
+          if (model === "session" && field === "token") {
             // Find the session by token first
-            const session = await callConvex(model, 'findByToken', { token: value });
+            const session = await callConvex(model, "findByToken", {
+              token: value,
+            });
             if (config.debugLogs) {
-              console.log('[ConvexAdapter] Found session:', session);
+              console.log("[ConvexAdapter] Found session:", session);
             }
             // The session.id is already a proper Convex ID
             id = session?.id;
-          } else if (field === 'id' || field === '_id') {
+          } else if (field === "id" || field === "_id") {
             id = value as string;
           } else {
             // For other fields, we'd need to implement specific lookups
-            console.warn(`[ConvexAdapter] Update by ${field} not implemented for ${model}`);
+            console.warn(
+              `[ConvexAdapter] Update by ${field} not implemented for ${model}`,
+            );
             return null;
           }
 
           if (!id) {
-            throw new Error('Record not found for update');
+            throw new Error("Record not found for update");
           }
 
           if (config.debugLogs) {
-            console.log('[ConvexAdapter] Updating session with ID:', id);
+            console.log("[ConvexAdapter] Updating session with ID:", id);
           }
 
-          const result = await callConvex(model, 'update', { id, data: update });
+          const result = await callConvex(model, "update", {
+            id,
+            data: update,
+          });
           return result;
         },
 
@@ -165,19 +195,26 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
           // by finding records and updating them individually
           try {
             if (!where || where.length === 0) {
-              console.warn('[ConvexAdapter] updateMany requires where clause');
+              console.warn("[ConvexAdapter] updateMany requires where clause");
               return 0;
             }
 
             // For session model, handle specific cases
-            if (model === 'session') {
-              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+            if (model === "session") {
+              const userIdWhere = where.find(
+                (w: { field: string; value: unknown }) => w.field === "userId",
+              );
               if (userIdWhere) {
-                const sessions = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                const sessions = await callConvex(model, "findByUserId", {
+                  userId: userIdWhere.value,
+                });
                 if (Array.isArray(sessions)) {
                   let updateCount = 0;
                   for (const session of sessions) {
-                    await callConvex(model, 'update', { id: session.id, data: update });
+                    await callConvex(model, "update", {
+                      id: session.id,
+                      data: update,
+                    });
                     updateCount++;
                   }
                   return updateCount;
@@ -185,10 +222,12 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
               }
             }
 
-            console.warn(`[ConvexAdapter] updateMany not fully implemented for model: ${model}`);
+            console.warn(
+              `[ConvexAdapter] updateMany not fully implemented for model: ${model}`,
+            );
             return 0;
           } catch (error) {
-            console.error('[ConvexAdapter] updateMany error:', error);
+            console.error("[ConvexAdapter] updateMany error:", error);
             return 0;
           }
         },
@@ -198,30 +237,39 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
           const value = where[0]?.value;
 
           if (config.debugLogs) {
-            console.log(`[ConvexAdapter] DELETE called with model: ${model}, where:`, where);
+            console.log(
+              `[ConvexAdapter] DELETE called with model: ${model}, where:`,
+              where,
+            );
             console.log(`[ConvexAdapter] Field: ${field}, Value: ${value}`);
           }
 
           if (!field || value === undefined) {
-            throw new Error('Delete requires a field and value');
+            throw new Error("Delete requires a field and value");
           }
 
           // Handle session deletion - check if value looks like a token (not a Convex ID)
-          if (model === 'session') {
+          if (model === "session") {
             // Convex IDs look like "k1726gnwrvqwjh4488jt1wknhd80768a"
             // Session tokens look like "Pf8A0y4EJcr6wdkEmICxUt4VXDggMjCY"
-            if (typeof value === 'string' && value.length > 20 && /^[A-Za-z0-9]+$/.test(value)) {
+            if (
+              typeof value === "string" &&
+              value.length > 20 &&
+              /^[A-Za-z0-9]+$/.test(value)
+            ) {
               if (config.debugLogs) {
-                console.log(`[ConvexAdapter] Detected session token, using deleteByToken`);
+                console.log(
+                  `[ConvexAdapter] Detected session token, using deleteByToken`,
+                );
               }
-              await callConvex(model, 'deleteByToken', { token: value });
+              await callConvex(model, "deleteByToken", { token: value });
               return;
             }
           }
 
           // Handle deletion by ID
-          if (field === 'id' || field === '_id') {
-            await callConvex(model, 'delete', { id: value });
+          if (field === "id" || field === "_id") {
+            await callConvex(model, "delete", { id: value });
             return;
           }
 
@@ -230,57 +278,73 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
 
         deleteMany: async ({ model, where }) => {
           // Handle special cases for session deletion
-          if (model === 'session') {
+          if (model === "session") {
             const field = where[0]?.field;
             const value = where[0]?.value;
 
-            if (field === 'token') {
-              await callConvex(model, 'deleteByToken', { token: value });
+            if (field === "token") {
+              await callConvex(model, "deleteByToken", { token: value });
               return 1;
-            } else if (field === 'userId') {
-              const result = await callConvex(model, 'deleteByUserId', { userId: value });
+            } else if (field === "userId") {
+              const result = await callConvex(model, "deleteByUserId", {
+                userId: value,
+              });
               return result?.count || 0;
             }
           }
 
           // Handle verification deletion by expiresAt (for cleanup)
-          if (model === 'verification' && where.length > 0) {
-            const expiresWhere = where.find((w: { field: string; value: unknown; operator?: string }) => 
-              w.field === 'expiresAt' && w.operator === 'lt'
+          if (model === "verification" && where.length > 0) {
+            const expiresWhere = where.find(
+              (w: { field: string; value: unknown; operator?: string }) =>
+                w.field === "expiresAt" && w.operator === "lt",
             );
             if (expiresWhere) {
               if (config.debugLogs) {
-                console.log('[ConvexAdapter] About to delete expired verifications with expiresBefore:', expiresWhere.value);
+                console.log(
+                  "[ConvexAdapter] About to delete expired verifications with expiresBefore:",
+                  expiresWhere.value,
+                );
               }
-              
+
               // Convert string timestamp to number if needed
               let expiresBefore = expiresWhere.value;
-              if (typeof expiresBefore === 'string') {
+              if (typeof expiresBefore === "string") {
                 expiresBefore = new Date(expiresBefore).getTime();
               }
-              
+
               // Add a delay to prevent immediate cleanup of newly created verifications
               // Better Auth sometimes calls cleanup immediately after creation
               if (config.debugLogs) {
-                console.log('[ConvexAdapter] Waiting 5 seconds before cleanup...');
+                console.log(
+                  "[ConvexAdapter] Waiting 5 seconds before cleanup...",
+                );
               }
-              await new Promise(resolve => setTimeout(resolve, 5000)); // 5 second delay
-              
+              await new Promise((resolve) => setTimeout(resolve, 5000)); // 5 second delay
+
               // Delete expired verifications
-              const result = await callConvex(model, 'deleteExpired', { 
-                expiresBefore: expiresBefore as number
+              const result = await callConvex(model, "deleteExpired", {
+                expiresBefore: expiresBefore as number,
               });
-              
+
               if (config.debugLogs) {
-                console.log('[ConvexAdapter] Deleted expired verifications, count:', result?.count);
+                console.log(
+                  "[ConvexAdapter] Deleted expired verifications, count:",
+                  result?.count,
+                );
               }
               return result?.count || 0;
             }
           }
 
           // TODO: Implement deleteMany for other models
-          console.warn(`[ConvexAdapter] deleteMany not fully implemented for model: ${model}, where:`, where);
-          throw new Error(`deleteMany operation not supported for this configuration`);
+          console.warn(
+            `[ConvexAdapter] deleteMany not fully implemented for model: ${model}, where:`,
+            where,
+          );
+          throw new Error(
+            `deleteMany operation not supported for this configuration`,
+          );
         },
 
         findOne: async ({ model, where }) => {
@@ -292,30 +356,30 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             return null;
           }
 
-          let operation = 'findById';
+          let operation = "findById";
           const data: Record<string, unknown> = {};
 
-          if (field === 'id' || field === '_id') {
-            operation = 'findById';
+          if (field === "id" || field === "_id") {
+            operation = "findById";
             data.id = value;
-          } else if (field === 'email' && model === 'user') {
-            operation = 'findByEmail';
+          } else if (field === "email" && model === "user") {
+            operation = "findByEmail";
             data.email = value;
-          } else if (field === 'token' && model === 'session') {
-            operation = 'findByToken';
+          } else if (field === "token" && model === "session") {
+            operation = "findByToken";
             data.token = value;
-          } else if (field === 'identifier' && model === 'verification') {
-            operation = 'findByIdentifier';
+          } else if (field === "identifier" && model === "verification") {
+            operation = "findByIdentifier";
             data.identifier = value;
-          } else if (field === 'userId') {
-            operation = 'findByUserId';
+          } else if (field === "userId") {
+            operation = "findByUserId";
             data.userId = value;
-          } else if (model === 'account' && where.length >= 2) {
+          } else if (model === "account" && where.length >= 2) {
             // Account lookup by providerId + accountId
-            const providerWhere = where.find(w => w.field === 'providerId');
-            const accountWhere = where.find(w => w.field === 'accountId');
+            const providerWhere = where.find((w) => w.field === "providerId");
+            const accountWhere = where.find((w) => w.field === "accountId");
             if (providerWhere && accountWhere) {
-              operation = 'findByProviderAccountId';
+              operation = "findByProviderAccountId";
               data.providerId = providerWhere.value;
               data.accountId = accountWhere.value;
             }
@@ -333,35 +397,45 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
         findMany: async ({ model, where, limit, offset, sortBy }) => {
           try {
             // Handle verification queries by identifier
-            if (model === 'verification' && where && where.length > 0) {
-              const identifierWhere = where.find((w: { field: string; value: unknown }) => w.field === 'identifier');
+            if (model === "verification" && where && where.length > 0) {
+              const identifierWhere = where.find(
+                (w: { field: string; value: unknown }) =>
+                  w.field === "identifier",
+              );
               if (identifierWhere) {
-                const result = await callConvex(model, 'findByIdentifier', { identifier: identifierWhere.value });
+                const result = await callConvex(model, "findByIdentifier", {
+                  identifier: identifierWhere.value,
+                });
                 const records = result ? [result] : [];
-                
+
                 // Apply limit and offset if provided
                 let finalRecords = records;
                 if (offset) finalRecords = finalRecords.slice(offset);
                 if (limit) finalRecords = finalRecords.slice(0, limit);
-                
+
                 return finalRecords;
               }
-              
+
               // Handle verification cleanup queries by expiresAt
-              const expiresWhere = where.find((w: { field: string; value: unknown; operator?: string }) => 
-                w.field === 'expiresAt' && w.operator === 'lt'
+              const expiresWhere = where.find(
+                (w: { field: string; value: unknown; operator?: string }) =>
+                  w.field === "expiresAt" && w.operator === "lt",
               );
               if (expiresWhere) {
                 // For cleanup, return empty array - Better Auth will call deleteMany separately
                 return [];
               }
             }
-            
+
             // Handle session queries
-            if (model === 'session' && where && where.length > 0) {
-              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+            if (model === "session" && where && where.length > 0) {
+              const userIdWhere = where.find(
+                (w: { field: string; value: unknown }) => w.field === "userId",
+              );
               if (userIdWhere) {
-                const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                const result = await callConvex(model, "findByUserId", {
+                  userId: userIdWhere.value,
+                });
                 let records = Array.isArray(result) ? result : [];
 
                 // Apply limit and offset if provided
@@ -373,10 +447,14 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             }
 
             // Handle account queries
-            if (model === 'account' && where && where.length > 0) {
-              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+            if (model === "account" && where && where.length > 0) {
+              const userIdWhere = where.find(
+                (w: { field: string; value: unknown }) => w.field === "userId",
+              );
               if (userIdWhere) {
-                const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                const result = await callConvex(model, "findByUserId", {
+                  userId: userIdWhere.value,
+                });
                 let records = Array.isArray(result) ? result : [];
 
                 // Apply limit and offset if provided
@@ -389,11 +467,14 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
 
             // For other cases, return empty array (Better Auth typically doesn't need these)
             if (config.debugLogs) {
-              console.log(`[ConvexAdapter] findMany called for ${model} with unsupported where clause:`, where);
+              console.log(
+                `[ConvexAdapter] findMany called for ${model} with unsupported where clause:`,
+                where,
+              );
             }
             return [];
           } catch (error) {
-            console.error('[ConvexAdapter] findMany error:', error);
+            console.error("[ConvexAdapter] findMany error:", error);
             return [];
           }
         },
@@ -403,34 +484,47 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             // Better Auth rarely uses count, but we can implement basic support
             // by using findMany and counting the results
             if (!where || where.length === 0) {
-              console.warn('[ConvexAdapter] count without where clause not supported');
+              console.warn(
+                "[ConvexAdapter] count without where clause not supported",
+              );
               return 0;
             }
 
             // For session model
-            if (model === 'session') {
-              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+            if (model === "session") {
+              const userIdWhere = where.find(
+                (w: { field: string; value: unknown }) => w.field === "userId",
+              );
               if (userIdWhere) {
-                const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                const result = await callConvex(model, "findByUserId", {
+                  userId: userIdWhere.value,
+                });
                 return Array.isArray(result) ? result.length : 0;
               }
             }
 
             // For account model
-            if (model === 'account') {
-              const userIdWhere = where.find((w: { field: string; value: unknown }) => w.field === 'userId');
+            if (model === "account") {
+              const userIdWhere = where.find(
+                (w: { field: string; value: unknown }) => w.field === "userId",
+              );
               if (userIdWhere) {
-                const result = await callConvex(model, 'findByUserId', { userId: userIdWhere.value });
+                const result = await callConvex(model, "findByUserId", {
+                  userId: userIdWhere.value,
+                });
                 return Array.isArray(result) ? result.length : 0;
               }
             }
 
             if (config.debugLogs) {
-              console.log(`[ConvexAdapter] count called for ${model} with unsupported where clause:`, where);
+              console.log(
+                `[ConvexAdapter] count called for ${model} with unsupported where clause:`,
+                where,
+              );
             }
             return 0;
           } catch (error) {
-            console.error('[ConvexAdapter] count error:', error);
+            console.error("[ConvexAdapter] count error:", error);
             return 0;
           }
         },

@@ -1,8 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConvexProvider, ConvexReactClient } from 'convex/react';
+import React, { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConvexProvider, ConvexReactClient } from "convex/react";
+import posthog from "posthog-js";
+import { PostHogProvider } from "posthog-js/react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,15 +15,32 @@ const queryClient = new QueryClient({
   },
 });
 
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://peaceful-marten-189.convex.cloud";
+const convexUrl =
+  process.env.NEXT_PUBLIC_CONVEX_URL ||
+  "https://peaceful-marten-189.convex.cloud";
 const convex = new ConvexReactClient(convexUrl);
 
 export default function Providers({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+    if (!key) return;
+
+    posthog.init(key, {
+      api_host:
+        process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://eu.i.posthog.com",
+      person_profiles: "identified_only",
+      capture_pageview: true,
+      capture_pageleave: true,
+    });
+  }, []);
+
   return (
-    <ConvexProvider client={convex}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    </ConvexProvider>
+    <PostHogProvider client={posthog}>
+      <ConvexProvider client={convex}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </ConvexProvider>
+    </PostHogProvider>
   );
 }

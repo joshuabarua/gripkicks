@@ -1,4 +1,4 @@
-import { Polar } from '@polar-sh/sdk';
+import { Polar } from "@polar-sh/sdk";
 
 export const polarClient = new Polar({
   accessToken: process.env.POLAR_ACCESS_TOKEN,
@@ -8,23 +8,27 @@ export class PolarService {
   /**
    * Create a checkout session for a product
    */
-  static async createCheckout(productId: string, customerId?: string, email?: string) {
+  static async createCheckout(
+    productId: string,
+    customerId?: string,
+    email?: string,
+  ) {
     try {
       const checkout = await polarClient.checkouts.create({
         products: [productId],
         ...(customerId && { customerId }),
-        successUrl: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/pricing/success?checkout_id={CHECKOUT_ID}`,
+        successUrl: `${process.env.FRONTEND_URL || "http://localhost:3000"}/pricing/success?checkout_id={CHECKOUT_ID}`,
         customerEmail: email,
         metadata: {
-          source: 'gripkicks-web'
-        }
+          source: "gripkicks-web",
+        },
       });
-      
+
       return checkout;
     } catch (error) {
-      console.error('Error creating Polar checkout:', error);
-      console.error('Error details:', JSON.stringify(error, null, 2));
-      throw new Error('Failed to create checkout session');
+      console.error("Error creating Polar checkout:", error);
+      console.error("Error details:", JSON.stringify(error, null, 2));
+      throw new Error("Failed to create checkout session");
     }
   }
 
@@ -33,11 +37,13 @@ export class PolarService {
    */
   static async getCustomer(customerId: string) {
     try {
-      const customer = await polarClient.customers.get(customerId);
+      const customer = await polarClient.customers.get({
+        id: customerId,
+      } as never);
       return customer;
     } catch (error) {
-      console.error('Error fetching Polar customer:', error);
-      throw new Error('Failed to fetch customer');
+      console.error("Error fetching Polar customer:", error);
+      throw new Error("Failed to fetch customer");
     }
   }
 
@@ -50,14 +56,14 @@ export class PolarService {
         email,
         name,
         metadata: {
-          source: 'gripkicks-web'
-        }
+          source: "gripkicks-web",
+        },
       });
-      
+
       return customer;
     } catch (error) {
-      console.error('Error creating Polar customer:', error);
-      throw new Error('Failed to create customer');
+      console.error("Error creating Polar customer:", error);
+      throw new Error("Failed to create customer");
     }
   }
 
@@ -66,11 +72,13 @@ export class PolarService {
    */
   static async getProduct(productId: string) {
     try {
-      const product = await polarClient.products.get(productId);
+      const product = await polarClient.products.get({
+        id: productId,
+      } as never);
       return product;
     } catch (error) {
-      console.error('Error fetching Polar product:', error);
-      throw new Error('Failed to fetch product');
+      console.error("Error fetching Polar product:", error);
+      throw new Error("Failed to fetch product");
     }
   }
 
@@ -81,13 +89,13 @@ export class PolarService {
     try {
       const subscriptions = await polarClient.subscriptions.list({
         customerId,
-        limit: 10
+        limit: 10,
       });
-      
+
       return subscriptions;
     } catch (error) {
-      console.error('Error fetching customer subscriptions:', error);
-      throw new Error('Failed to fetch subscriptions');
+      console.error("Error fetching customer subscriptions:", error);
+      throw new Error("Failed to fetch subscriptions");
     }
   }
 
@@ -96,11 +104,20 @@ export class PolarService {
    */
   static async cancelSubscription(subscriptionId: string) {
     try {
-      const cancelled = await polarClient.subscriptions.cancel(subscriptionId);
+      const subscriptions = polarClient.subscriptions as unknown as {
+        update: (input: {
+          id: string;
+          cancelAtPeriodEnd: boolean;
+        }) => Promise<unknown>;
+      };
+      const cancelled = await subscriptions.update({
+        id: subscriptionId,
+        cancelAtPeriodEnd: true,
+      });
       return cancelled;
     } catch (error) {
-      console.error('Error cancelling Polar subscription:', error);
-      throw new Error('Failed to cancel subscription');
+      console.error("Error cancelling Polar subscription:", error);
+      throw new Error("Failed to cancel subscription");
     }
   }
 
@@ -110,7 +127,7 @@ export class PolarService {
   static verifyWebhookSignature(payload: string, signature: string): boolean {
     const webhookSecret = process.env.POLAR_WEBHOOK_SECRET;
     if (!webhookSecret) {
-      console.error('POLAR_WEBHOOK_SECRET not configured');
+      console.error("POLAR_WEBHOOK_SECRET not configured");
       return false;
     }
 
@@ -118,15 +135,15 @@ export class PolarService {
     // based on Polar.sh's webhook signature method
     // This is a placeholder - check Polar docs for exact implementation
     try {
-      const crypto = require('crypto');
+      const crypto = require("crypto");
       const expectedSignature = crypto
-        .createHmac('sha256', webhookSecret)
+        .createHmac("sha256", webhookSecret)
         .update(payload)
-        .digest('hex');
-      
+        .digest("hex");
+
       return signature === expectedSignature;
     } catch (error) {
-      console.error('Error verifying webhook signature:', error);
+      console.error("Error verifying webhook signature:", error);
       return false;
     }
   }

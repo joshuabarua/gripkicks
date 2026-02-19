@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useQuery } from 'convex/react';
-import { api } from 'convex/_generated/api';
-import type { UserShoe } from '@/types/api';
-import { shoeCache } from '@/lib/cache';
-import { getUserStash } from '@/services/stash';
-import { Id } from 'convex/_generated/dataModel';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import type { UserShoe } from "@/types/api";
+import { shoeCache } from "@/lib/cache";
+import { getUserStash } from "@/services/stash";
+import { Id } from "convex/_generated/dataModel";
 
 interface UseStashDataOptions {
   enabled?: boolean;
@@ -41,7 +41,10 @@ interface ConvexUserShoe {
   } | null;
 }
 
-export function useStashData(sessionUserId?: string, options?: UseStashDataOptions) {
+export function useStashData(
+  sessionUserId?: string,
+  options?: UseStashDataOptions,
+) {
   const [userShoes, setUserShoes] = useState<UserShoe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [realtimeEnabled, setRealtimeEnabled] = useState(false);
@@ -49,32 +52,38 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
   const { enabled = true, onError } = options ?? {};
 
   // Consolidated queries - only fetch what's needed
-  const userData = useQuery(api.users.findByBetterAuthId, 
-    sessionUserId ? { betterAuthId: sessionUserId } : 'skip'
+  const userData = useQuery(
+    api.users.findByBetterAuthId,
+    sessionUserId ? { betterAuthId: sessionUserId } : "skip",
   );
 
   // Get user's stash in real-time when user data is available
-  const realtimeStashData = useQuery(api.stash.getUserStash,
-    userData ? { userId: userData._id } : 'skip'
+  const realtimeStashData = useQuery(
+    api.stash.getUserStash,
+    userData ? { userId: userData._id } : "skip",
   );
 
   // Only fetch popularity data if we have user shoes (cached for 10 minutes)
   const popularityData = useQuery(api.popularity.getAllShoesPopularity);
-  
-  // Only fetch all shoes when needed for search/add functionality
-  const shoesData = useQuery(api.shoes.list);
+
+  // Only fetch all shoes when needed for search/add functionality (uses non-paginated version)
+  const shoesData = useQuery(api.shoes.listAll);
 
   const allShoes = useMemo(() => shoesData ?? [], [shoesData]);
-  const popularityMap = useMemo(() => (
-    popularityData ? new Map(popularityData.map((p) => [p.shoeId, p.count])) : new Map<string, number>()
-  ), [popularityData]);
+  const popularityMap = useMemo(
+    () =>
+      popularityData
+        ? new Map(popularityData.map((p) => [p.shoeId, p.count]))
+        : new Map<string, number>(),
+    [popularityData],
+  );
   const totalShoesInDatabase = useMemo(
     () => popularityData?.reduce((sum, p) => sum + p.count, 0) ?? 0,
-    [popularityData]
+    [popularityData],
   );
   const uniqueBrands = useMemo(
     () => [...new Set(allShoes.map((shoe) => shoe.brand))].sort(),
-    [allShoes]
+    [allShoes],
   );
 
   const fetchUserStash = useCallback(async () => {
@@ -97,9 +106,9 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
         shoeCache.set(cacheKey, value, 5 * 60 * 1000);
       },
       (error) => {
-        console.error('Failed to fetch user stash:', error);
-        onError?.('Failed to load your shoe collection');
-      }
+        console.error("Failed to fetch user stash:", error);
+        onError?.("Failed to load your shoe collection");
+      },
     );
     setIsLoading(false);
   }, [sessionUserId, enabled, onError]);
@@ -108,32 +117,36 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
   useEffect(() => {
     if (realtimeStashData !== undefined) {
       // Real-time data is available - map Convex structure to UserShoe type
-      const mappedUserShoes: UserShoe[] = realtimeStashData.map((item: ConvexUserShoe) => ({
-        _id: item._id,
-        shoeId: item.shoeId,
-        shoe: item.shoe ? {
-          _id: item.shoe._id,
-          name: item.shoe.name,
-          brand: item.shoe.brand,
-          imageUrl: item.shoe.imageUrl,
-          slug: item.shoe.slug,
-          gender: item.shoe.gender,
-          aggressiveness: item.shoe.aggressiveness,
-          stiffness: item.shoe.stiffness,
-          climbingDiscipline: item.shoe.climbingDiscipline,
-          volume: item.shoe.volume,
-          rubberTechnologyId: item.shoe.rubberTechnologyId,
-        } : undefined,
-        size: item.size,
-        purchaseDate: item.purchaseDate,
-        condition: item.condition,
-        notes: item.notes,
-        comfortScore: item.comfortScore,
-        performanceRating: item.performanceRating,
-        durabilityRating: item.durabilityRating,
-        isFavourite: item.isFavourite,
-      }));
-      
+      const mappedUserShoes: UserShoe[] = realtimeStashData.map(
+        (item: ConvexUserShoe) => ({
+          _id: item._id,
+          shoeId: item.shoeId,
+          shoe: item.shoe
+            ? {
+                _id: item.shoe._id,
+                name: item.shoe.name,
+                brand: item.shoe.brand,
+                imageUrl: item.shoe.imageUrl,
+                slug: item.shoe.slug,
+                gender: item.shoe.gender,
+                aggressiveness: item.shoe.aggressiveness,
+                stiffness: item.shoe.stiffness,
+                climbingDiscipline: item.shoe.climbingDiscipline,
+                volume: item.shoe.volume,
+                rubberTechnologyId: item.shoe.rubberTechnologyId,
+              }
+            : undefined,
+          size: item.size,
+          purchaseDate: item.purchaseDate,
+          condition: item.condition,
+          notes: item.notes,
+          comfortScore: item.comfortScore,
+          performanceRating: item.performanceRating,
+          durabilityRating: item.durabilityRating,
+          isFavourite: item.isFavourite,
+        }),
+      );
+
       setUserShoes(mappedUserShoes);
       setRealtimeEnabled(true);
       setIsLoading(false);
@@ -146,7 +159,13 @@ export function useStashData(sessionUserId?: string, options?: UseStashDataOptio
       setIsLoading(false);
       setRealtimeEnabled(false);
     }
-  }, [realtimeStashData, userData, sessionUserId, realtimeEnabled, fetchUserStash]);
+  }, [
+    realtimeStashData,
+    userData,
+    sessionUserId,
+    realtimeEnabled,
+    fetchUserStash,
+  ]);
 
   useEffect(() => {
     if (sessionUserId && enabled) {
