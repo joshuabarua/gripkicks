@@ -40,7 +40,7 @@
     "dev:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev\"'",
     "dev:ngrok:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"'",
     "dev:all:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"' && osascript -e 'tell application \"Terminal\" to do script \"npx convex dev\"'",
-    "postinstall": "node -e \"process.exit(process.env.CI ? 0 : 1)\" || patch-package"
+    "postinstall": "node -e \"process.exit(process.env.CI || process.env.RENDER || process.env.VERCEL || process.env.NODE_ENV === 'production' ? 0 : 1)\" || patch-package"
   },
   "dependencies": {
     "@convex-dev/better-auth": "^0.10.10",

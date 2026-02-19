@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { Footprints } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSession } from "@/lib/auth";
@@ -63,8 +63,8 @@ export default function ShoeSanctuaryPage() {
   });
 
   // Debounced search function (300ms delay)
-  const debouncedSetSearchQuery = useCallback(
-    debounce((value: string) => setSearchQuery(value), 300),
+  const debouncedSetSearchQuery = useMemo(
+    () => debounce((value: string) => setSearchQuery(value), 300),
     [],
   );
 

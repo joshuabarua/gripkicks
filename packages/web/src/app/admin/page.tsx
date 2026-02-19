@@ -150,35 +150,6 @@ export default function AdminDashboard() {
     return Boolean(image?.trim()) || Boolean(slug?.trim());
   };
 
-  const handleSave = async () => {
-    if (!editForm) return;
-
-    if (!requireImageOrSlug(editForm.imageUrl, editForm.slug)) {
-      alert("Please provide either an image URL or a slug before saving.");
-      return;
-    }
-    try {
-      await updateShoe({
-        id: editForm._id,
-        name: editForm.name,
-        brand: editForm.brand,
-        imageUrl: editForm.imageUrl,
-        slug: editForm.slug?.trim() || undefined,
-        gender: editForm.gender,
-        aggressiveness: editForm.aggressiveness,
-        stiffness: editForm.stiffness,
-        climbingDiscipline: editForm.climbingDiscipline,
-        volume: editForm.volume,
-      });
-      setEditingId(null);
-      setEditForm(null);
-      console.log("Shoe updated successfully");
-    } catch (error) {
-      console.error("Failed to update shoe:", error);
-      alert("Failed to save shoe changes. Please try again.");
-    }
-  };
-
   const handleDelete = async (id: Id<"shoes">) => {
     if (confirm("Are you sure you want to delete this shoe?")) {
       await deleteShoe({ id });

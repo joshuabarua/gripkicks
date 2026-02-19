@@ -6,6 +6,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useFindMyShoe, type AggregatedRating } from "@/hooks/useFindMyShoe";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Search,
   Star,
@@ -394,9 +395,11 @@ function ShoeCard({
           }`}
         >
           {rating.shoe.imageUrl ? (
-            <img
+            <Image
               src={rating.shoe.imageUrl}
               alt={rating.shoe.name}
+              width={40}
+              height={40}
               className="w-10 h-10 object-contain"
             />
           ) : (
