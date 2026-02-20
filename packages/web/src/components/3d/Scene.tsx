@@ -17,7 +17,7 @@ const Scene = () => {
   const handleContextRestored = useCallback(() => {
     console.log("WebGL context restored");
     setContextLost(false);
-    setCanvasKey(prev => prev + 1);
+    setCanvasKey((prev) => prev + 1);
   }, []);
 
   if (contextLost) {
@@ -31,7 +31,7 @@ const Scene = () => {
   }
 
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-full"><span className="text-muted-foreground">Loading 3D...</span></div>}>
+    <Suspense fallback={null}>
       <Canvas
         key={canvasKey}
         style={{ backgroundColor: "transparent" }}
@@ -44,8 +44,14 @@ const Scene = () => {
         dpr={[1, 1.5]}
         onCreated={({ gl }) => {
           // Only add event listeners here, not in useEffect
-          gl.domElement.addEventListener('webglcontextlost', handleContextLost as EventListener);
-          gl.domElement.addEventListener('webglcontextrestored', handleContextRestored);
+          gl.domElement.addEventListener(
+            "webglcontextlost",
+            handleContextLost as EventListener,
+          );
+          gl.domElement.addEventListener(
+            "webglcontextrestored",
+            handleContextRestored,
+          );
         }}
       >
         <directionalLight intensity={2} position={[0, 3, 4]} />

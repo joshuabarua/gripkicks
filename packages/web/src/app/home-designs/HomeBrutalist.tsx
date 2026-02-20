@@ -1,28 +1,23 @@
 "use client";
 
 import React from "react";
-import { useSession } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
+import { useSession } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { FullPageLoading } from '@/components/ui/loading';
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
 
-const Scene = dynamic(() => import("@/components/3d/Scene"), { 
+const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
-  loading: () => <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+  loading: () => null,
 });
 
 export default function HomeBrutalist() {
-  const { data: session, isPending } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
-  if (isPending) {
-    return <FullPageLoading />;
-  }
-
   const isAuthenticated = !!session?.user;
-  const userName = session?.user?.name?.toUpperCase() || 'CLIMBER';
+  const userName = session?.user?.name?.toUpperCase() || "CLIMBER";
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
@@ -31,8 +26,8 @@ export default function HomeBrutalist() {
         <div className="absolute inset-0">
           <Scene />
         </div>
-        
-        <motion.div 
+
+        <motion.div
           className="absolute bottom-8 left-8"
           animate={{ y: [0, 5, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
@@ -58,19 +53,25 @@ export default function HomeBrutalist() {
           <div className="flex justify-between items-start border-b-4 border-black pb-8 mb-16">
             <div>
               {isAuthenticated && (
-                <p className="font-mono text-xs text-black/60 mb-2">[LOGGED_IN: {userName}]</p>
+                <p className="font-mono text-xs text-black/60 mb-2">
+                  [LOGGED_IN: {userName}]
+                </p>
               )}
               <h2 className="font-tanker text-6xl md:text-8xl lg:text-9xl text-black leading-[0.85]">
-                {isAuthenticated ? 'WELCOME' : 'FIND'}
+                {isAuthenticated ? "WELCOME" : "FIND"}
                 <br />
-                {isAuthenticated ? 'BACK' : 'YOUR'}
+                {isAuthenticated ? "BACK" : "YOUR"}
                 <br />
-                <span className="text-white">{isAuthenticated ? '→' : 'GRIP'}</span>
+                <span className="text-white">
+                  {isAuthenticated ? "→" : "GRIP"}
+                </span>
               </h2>
             </div>
             <div className="text-right">
               <p className="font-mono text-xs text-black/60">[EST. 2024]</p>
-              <p className="font-mono text-xs text-black/60 mt-1">[COMMUNITY_BUILT]</p>
+              <p className="font-mono text-xs text-black/60 mt-1">
+                [COMMUNITY_BUILT]
+              </p>
             </div>
           </div>
 
@@ -78,7 +79,9 @@ export default function HomeBrutalist() {
           <div className="grid md:grid-cols-2 gap-4 mb-16">
             <motion.div
               whileHover={{ x: 8 }}
-              onClick={() => router.push(isAuthenticated ? '/dashboard' : '/auth/signup')}
+              onClick={() =>
+                router.push(isAuthenticated ? "/dashboard" : "/auth/signup")
+              }
               className="bg-black text-white p-8 cursor-pointer group"
             >
               <div className="flex justify-between items-start mb-16">
@@ -86,26 +89,27 @@ export default function HomeBrutalist() {
                 <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform" />
               </div>
               <h3 className="font-tanker text-4xl md:text-5xl mb-4">
-                {isAuthenticated ? 'DASHBOARD' : 'START NOW'}
+                {isAuthenticated ? "DASHBOARD" : "START NOW"}
               </h3>
               <p className="font-mono text-xs text-white/60 max-w-xs">
-                {isAuthenticated 
-                  ? 'YOUR STASH, YOUR RATINGS, YOUR NEXT PAIR'
-                  : 'TELL US ABOUT YOUR FEET AND WE\'LL HELP YOU FIND THE RIGHT SHOE'
-                }
+                {isAuthenticated
+                  ? "YOUR STASH, YOUR RATINGS, YOUR NEXT PAIR"
+                  : "TELL US ABOUT YOUR FEET AND WE'LL HELP YOU FIND THE RIGHT SHOE"}
               </p>
             </motion.div>
 
             <motion.div
               whileHover={{ x: 8 }}
-              onClick={() => router.push('/selector')}
+              onClick={() => router.push("/selector")}
               className="bg-white text-black p-8 cursor-pointer group"
             >
               <div className="flex justify-between items-start mb-16">
                 <span className="font-mono text-xs">[02]</span>
                 <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform" />
               </div>
-              <h3 className="font-tanker text-4xl md:text-5xl mb-4">3D SELECTOR</h3>
+              <h3 className="font-tanker text-4xl md:text-5xl mb-4">
+                3D SELECTOR
+              </h3>
               <p className="font-mono text-xs text-black/60 max-w-xs">
                 EXPLORE CLIMBING SHOES IN INTERACTIVE 3D VIEW
               </p>
@@ -117,9 +121,9 @@ export default function HomeBrutalist() {
             <p className="font-mono text-xs text-black/60 mb-8">[FEATURES]</p>
             <div className="grid grid-cols-3 gap-4">
               {[
-                { id: 'A1', title: 'FOOT LAB', desc: 'KNOW YOUR FEET' },
-                { id: 'A2', title: 'SMART MATCH', desc: 'FIND YOUR FIT' },
-                { id: 'A3', title: 'TRACK', desc: 'PERFORMANCE' },
+                { id: "A1", title: "FOOT LAB", desc: "KNOW YOUR FEET" },
+                { id: "A2", title: "SMART MATCH", desc: "FIND YOUR FIT" },
+                { id: "A3", title: "TRACK", desc: "PERFORMANCE" },
               ].map((item, i) => (
                 <motion.div
                   key={item.id}
@@ -129,9 +133,15 @@ export default function HomeBrutalist() {
                   viewport={{ once: true }}
                   className="border-4 border-black bg-transparent hover:bg-black hover:text-orange-500 transition-colors p-6 group"
                 >
-                  <span className="font-mono text-[10px] text-black/40 group-hover:text-orange-500/60">[{item.id}]</span>
-                  <h4 className="font-tanker text-2xl md:text-3xl mt-4 mb-2">{item.title}</h4>
-                  <p className="font-mono text-[10px] opacity-60">{item.desc}</p>
+                  <span className="font-mono text-[10px] text-black/40 group-hover:text-orange-500/60">
+                    [{item.id}]
+                  </span>
+                  <h4 className="font-tanker text-2xl md:text-3xl mt-4 mb-2">
+                    {item.title}
+                  </h4>
+                  <p className="font-mono text-[10px] opacity-60">
+                    {item.desc}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -141,13 +151,17 @@ export default function HomeBrutalist() {
           <div className="mt-16 pt-8 border-t-4 border-black flex justify-between items-end">
             <div className="flex gap-16">
               {[
-                { value: '100%', label: 'YOUR DATA' },
-                { value: '0%', label: 'DATA SOLD' },
-                { value: '1', label: 'CLIMBER BUILT' },
+                { value: "100%", label: "YOUR DATA" },
+                { value: "0%", label: "DATA SOLD" },
+                { value: "1", label: "CLIMBER BUILT" },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <div className="font-tanker text-4xl md:text-6xl text-black">{stat.value}</div>
-                  <div className="font-mono text-[10px] text-black/60">{stat.label}</div>
+                  <div className="font-tanker text-4xl md:text-6xl text-black">
+                    {stat.value}
+                  </div>
+                  <div className="font-mono text-[10px] text-black/60">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -162,8 +176,12 @@ export default function HomeBrutalist() {
       {/* Footer Strip */}
       <section className="bg-black py-4 px-8">
         <div className="flex justify-between items-center">
-          <span className="font-mono text-[10px] text-white/40">© 2024 GRIP KICKS</span>
-          <span className="font-mono text-[10px] text-orange-500">BUILT_FOR_CLIMBERS</span>
+          <span className="font-mono text-[10px] text-white/40">
+            © 2024 GRIP KICKS
+          </span>
+          <span className="font-mono text-[10px] text-orange-500">
+            BUILT_FOR_CLIMBERS
+          </span>
         </div>
       </section>
     </main>

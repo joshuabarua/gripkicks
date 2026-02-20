@@ -15,19 +15,16 @@ import {
 } from "lucide-react";
 import { AnimatedNavIcon } from "@/components/ui/AnimatedNavIcon";
 import { motion } from "framer-motion";
-import { FullPageLoading } from "@/components/ui/loading";
 import { fetchApi } from "@/lib/api-client";
 import { useOrientation } from "@/hooks/useOrientationScale";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
-  loading: () => (
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-  ),
+  loading: () => null,
 });
 
 export default function HomeCreative() {
-  const { data: session, isPending } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const [totalUsers, setTotalUsers] = React.useState<number | null>(null);
   const { isPortrait, screenWidth } = useOrientation();
@@ -47,10 +44,6 @@ export default function HomeCreative() {
     }
     loadUserCount();
   }, []);
-
-  if (isPending) {
-    return <FullPageLoading />;
-  }
 
   const isAuthenticated = !!session?.user;
   const userName = session?.user?.name || "Climber";

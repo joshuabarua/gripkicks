@@ -1,42 +1,53 @@
 "use client";
 
 import React from "react";
-import { useSession } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
+import { useSession } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { ArrowUpRight, ArrowDownRight, Footprints, Zap, Target, Star, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { FullPageLoading } from '@/components/ui/loading';
+import {
+  ArrowUpRight,
+  ArrowDownRight,
+  Footprints,
+  Zap,
+  Target,
+  Star,
+  Sparkles,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
-const Scene = dynamic(() => import("@/components/3d/Scene"), { 
+const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
-  loading: () => <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+  loading: () => null,
 });
 
-const MarqueeText = ({ children, reverse = false }: { children: React.ReactNode; reverse?: boolean }) => (
+const MarqueeText = ({
+  children,
+  reverse = false,
+}: {
+  children: React.ReactNode;
+  reverse?: boolean;
+}) => (
   <motion.div
     animate={{ x: reverse ? [0, 1000] : [0, -1000] }}
     transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
     className="flex gap-8 whitespace-nowrap"
   >
-    {Array(10).fill(null).map((_, i) => (
-      <span key={i} className="font-tanker text-2xl">
-        {children}
-      </span>
-    ))}
+    {Array(10)
+      .fill(null)
+      .map((_, i) => (
+        <span key={i} className="font-tanker text-2xl">
+          {children}
+        </span>
+      ))}
   </motion.div>
 );
 
 export default function HomeCombined() {
-  const { data: session, isPending } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
-  if (isPending) {
-    return <FullPageLoading />;
-  }
-
   const isAuthenticated = !!session?.user;
-  const userName = session?.user?.name?.toUpperCase() || 'CLIMBER';
+  const userName = session?.user?.name?.toUpperCase() || "CLIMBER";
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
@@ -45,8 +56,8 @@ export default function HomeCombined() {
         <div className="absolute inset-0">
           <Scene />
         </div>
-        
-        <motion.div 
+
+        <motion.div
           className="absolute bottom-8 left-8"
           animate={{ y: [0, 5, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
@@ -71,14 +82,14 @@ export default function HomeCombined() {
       <section className="min-h-screen bg-neutral-950 relative">
         {/* Large Typography Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
-          <motion.div 
+          <motion.div
             className="font-tanker text-[25vw] leading-none text-white/[0.02] absolute -top-[5vw] -left-[5vw]"
             animate={{ x: [0, 20, 0] }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           >
             GRIP
           </motion.div>
-          <motion.div 
+          <motion.div
             className="font-tanker text-[25vw] leading-none text-white/[0.02] absolute bottom-[5vw] -right-[10vw]"
             animate={{ x: [0, -20, 0] }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
@@ -98,7 +109,7 @@ export default function HomeCombined() {
           >
             <div>
               {isAuthenticated && (
-                <motion.p 
+                <motion.p
                   className="font-mono text-xs text-orange-500 mb-2"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -111,7 +122,7 @@ export default function HomeCombined() {
                   <>
                     <span className="text-white">WELCOME</span>
                     <br />
-                    <motion.span 
+                    <motion.span
                       className="text-orange-500"
                       animate={{ opacity: [1, 0.7, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
@@ -123,7 +134,7 @@ export default function HomeCombined() {
                   <>
                     <span className="text-white">YOUR PERFECT</span>
                     <br />
-                    <motion.span 
+                    <motion.span
                       className="text-orange-500"
                       animate={{ opacity: [1, 0.7, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
@@ -135,9 +146,13 @@ export default function HomeCombined() {
               </h2>
             </div>
             <div className="text-right hidden md:block">
-              <p className="font-mono text-[10px] text-neutral-600">[EST. 2024]</p>
-              <p className="font-mono text-[10px] text-neutral-600 mt-1">[COMMUNITY_BUILT]</p>
-              <motion.div 
+              <p className="font-mono text-[10px] text-neutral-600">
+                [EST. 2024]
+              </p>
+              <p className="font-mono text-[10px] text-neutral-600 mt-1">
+                [COMMUNITY_BUILT]
+              </p>
+              <motion.div
                 className="w-2 h-2 bg-orange-500 rounded-full mt-4 ml-auto"
                 animate={{ scale: [1, 1.5, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
@@ -154,27 +169,32 @@ export default function HomeCombined() {
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
               whileHover={{ scale: 1.02 }}
-              onClick={() => router.push(isAuthenticated ? '/dashboard' : '/auth/signup')}
+              onClick={() =>
+                router.push(isAuthenticated ? "/dashboard" : "/auth/signup")
+              }
               className="col-span-12 md:col-span-8 row-span-2 bg-gradient-to-br from-orange-500 via-orange-500 to-amber-500 rounded-2xl p-6 md:p-8 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
             >
               {/* Animated background pattern */}
-              <motion.div 
+              <motion.div
                 className="absolute inset-0 opacity-10"
                 style={{
-                  backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, black 10px, black 20px)'
+                  backgroundImage:
+                    "repeating-linear-gradient(45deg, transparent, transparent 10px, black 10px, black 20px)",
                 }}
-                animate={{ backgroundPosition: ['0px 0px', '40px 40px'] }}
+                animate={{ backgroundPosition: ["0px 0px", "40px 40px"] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
               />
-              
+
               <div className="relative flex justify-between items-start">
                 <div>
-                  <p className="font-mono text-[10px] text-black/60 mb-2">[01]</p>
+                  <p className="font-mono text-[10px] text-black/60 mb-2">
+                    [01]
+                  </p>
                   <h3 className="font-tanker text-4xl md:text-5xl lg:text-6xl text-black">
-                    {isAuthenticated ? 'DASHBOARD' : 'GET STARTED'}
+                    {isAuthenticated ? "DASHBOARD" : "GET STARTED"}
                   </h3>
                 </div>
-                <motion.div 
+                <motion.div
                   className="w-12 h-12 md:w-16 md:h-16 bg-black/10 rounded-full flex items-center justify-center group-hover:bg-black/20 transition-colors"
                   whileHover={{ rotate: 45 }}
                 >
@@ -182,10 +202,9 @@ export default function HomeCombined() {
                 </motion.div>
               </div>
               <p className="relative font-sora text-black/70 max-w-md text-sm md:text-base">
-                {isAuthenticated 
-                  ? 'Check your stash, see how your shoes stack up, and find what fits next.'
-                  : 'Tell us about your feet, add your shoes, and we\'ll help you find the right pair.'
-                }
+                {isAuthenticated
+                  ? "Check your stash, see how your shoes stack up, and find what fits next."
+                  : "Tell us about your feet, add your shoes, and we'll help you find the right pair."}
               </p>
             </motion.div>
 
@@ -205,7 +224,7 @@ export default function HomeCombined() {
                 <Zap className="w-8 h-8 text-orange-500" />
               </motion.div>
               <div>
-                <motion.div 
+                <motion.div
                   className="font-tanker text-5xl md:text-6xl text-white"
                   initial={{ opacity: 0, scale: 0.5 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -214,7 +233,9 @@ export default function HomeCombined() {
                 >
                   100%
                 </motion.div>
-                <p className="font-mono text-[10px] text-neutral-500 mt-1">COMMUNITY_POWERED</p>
+                <p className="font-mono text-[10px] text-neutral-500 mt-1">
+                  COMMUNITY_POWERED
+                </p>
               </div>
             </motion.div>
 
@@ -224,21 +245,27 @@ export default function HomeCombined() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
-              whileHover={{ x: 5, borderColor: 'rgba(249, 115, 22, 0.5)' }}
+              whileHover={{ x: 5, borderColor: "rgba(249, 115, 22, 0.5)" }}
               className="col-span-6 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between cursor-default transition-all"
             >
               <div className="flex justify-between items-start">
-                <motion.div 
+                <motion.div
                   className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center"
                   whileHover={{ rotate: 12, scale: 1.1 }}
                 >
                   <Footprints className="w-6 h-6 text-orange-500" />
                 </motion.div>
-                <span className="font-mono text-[10px] text-neutral-600">[A1]</span>
+                <span className="font-mono text-[10px] text-neutral-600">
+                  [A1]
+                </span>
               </div>
               <div>
-                <h4 className="font-tanker text-xl md:text-2xl text-white mb-1">FOOT LAB</h4>
-                <p className="font-mono text-[10px] text-neutral-500">KNOW_YOUR_FEET</p>
+                <h4 className="font-tanker text-xl md:text-2xl text-white mb-1">
+                  FOOT LAB
+                </h4>
+                <p className="font-mono text-[10px] text-neutral-500">
+                  KNOW_YOUR_FEET
+                </p>
               </div>
             </motion.div>
 
@@ -248,21 +275,27 @@ export default function HomeCombined() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true }}
-              whileHover={{ y: -5, borderColor: 'rgba(249, 115, 22, 0.5)' }}
+              whileHover={{ y: -5, borderColor: "rgba(249, 115, 22, 0.5)" }}
               className="col-span-6 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between cursor-default transition-all"
             >
               <div className="flex justify-between items-start">
-                <motion.div 
+                <motion.div
                   className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center"
                   whileHover={{ rotate: -12, scale: 1.1 }}
                 >
                   <Target className="w-6 h-6 text-orange-500" />
                 </motion.div>
-                <span className="font-mono text-[10px] text-neutral-600">[A2]</span>
+                <span className="font-mono text-[10px] text-neutral-600">
+                  [A2]
+                </span>
               </div>
               <div>
-                <h4 className="font-tanker text-xl md:text-2xl text-white mb-1">SMART MATCH</h4>
-                <p className="font-mono text-[10px] text-neutral-500">FIND_YOUR_FIT</p>
+                <h4 className="font-tanker text-xl md:text-2xl text-white mb-1">
+                  SMART MATCH
+                </h4>
+                <p className="font-mono text-[10px] text-neutral-500">
+                  FIND_YOUR_FIT
+                </p>
               </div>
             </motion.div>
 
@@ -273,7 +306,7 @@ export default function HomeCombined() {
               transition={{ duration: 0.5, delay: 0.4 }}
               viewport={{ once: true }}
               whileHover={{ scale: 1.02 }}
-              onClick={() => router.push('/selector')}
+              onClick={() => router.push("/selector")}
               className="col-span-6 md:col-span-4 row-span-2 bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 rounded-2xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/50 transition-all relative overflow-hidden"
             >
               {/* Sparkle animation */}
@@ -284,16 +317,22 @@ export default function HomeCombined() {
               >
                 <Sparkles className="w-4 h-4 text-orange-500/50" />
               </motion.div>
-              
+
               <div className="flex justify-between items-start">
-                <span className="font-mono text-[10px] text-orange-500">[INTERACTIVE]</span>
+                <span className="font-mono text-[10px] text-orange-500">
+                  [INTERACTIVE]
+                </span>
                 <motion.div whileHover={{ rotate: 45 }}>
                   <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 transition-colors" />
                 </motion.div>
               </div>
               <div>
-                <h4 className="font-tanker text-2xl md:text-3xl text-white mb-1">3D SELECTOR</h4>
-                <p className="font-mono text-[10px] text-neutral-500">EXPLORE_IN_3D</p>
+                <h4 className="font-tanker text-2xl md:text-3xl text-white mb-1">
+                  3D SELECTOR
+                </h4>
+                <p className="font-mono text-[10px] text-neutral-500">
+                  EXPLORE_IN_3D
+                </p>
               </div>
             </motion.div>
 
@@ -307,18 +346,24 @@ export default function HomeCombined() {
               className="col-span-6 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between group hover:border-orange-500/30 transition-colors"
             >
               <div className="flex justify-between items-start">
-                <motion.div 
+                <motion.div
                   className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center"
                   animate={{ rotate: [0, 5, -5, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
                   <Star className="w-6 h-6 text-orange-500" />
                 </motion.div>
-                <span className="font-mono text-[10px] text-neutral-600">[A3]</span>
+                <span className="font-mono text-[10px] text-neutral-600">
+                  [A3]
+                </span>
               </div>
               <div>
-                <h4 className="font-tanker text-xl md:text-2xl text-white mb-1">RATE & TRACK</h4>
-                <p className="font-mono text-[10px] text-neutral-500">PERFORMANCE_DATA</p>
+                <h4 className="font-tanker text-xl md:text-2xl text-white mb-1">
+                  RATE & TRACK
+                </h4>
+                <p className="font-mono text-[10px] text-neutral-500">
+                  PERFORMANCE_DATA
+                </p>
               </div>
             </motion.div>
           </div>
@@ -333,11 +378,11 @@ export default function HomeCombined() {
           >
             <div className="flex gap-8 md:gap-16">
               {[
-                { value: '100%', label: 'YOUR_DATA' },
-                { value: '0%', label: 'DATA_SOLD' },
-                { value: '24/7', label: 'OPEN_SOURCE' },
+                { value: "100%", label: "YOUR_DATA" },
+                { value: "0%", label: "DATA_SOLD" },
+                { value: "24/7", label: "OPEN_SOURCE" },
               ].map((stat, i) => (
-                <motion.div 
+                <motion.div
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -345,8 +390,12 @@ export default function HomeCombined() {
                   viewport={{ once: true }}
                   whileHover={{ scale: 1.05 }}
                 >
-                  <div className="font-tanker text-3xl md:text-4xl text-orange-500">{stat.value}</div>
-                  <div className="font-mono text-[10px] text-neutral-600">{stat.label}</div>
+                  <div className="font-tanker text-3xl md:text-4xl text-orange-500">
+                    {stat.value}
+                  </div>
+                  <div className="font-mono text-[10px] text-neutral-600">
+                    {stat.label}
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -373,15 +422,16 @@ export default function HomeCombined() {
       {/* Final CTA Section */}
       <section className="py-24 px-6 bg-orange-500 relative overflow-hidden">
         {/* Animated diagonal lines */}
-        <motion.div 
+        <motion.div
           className="absolute inset-0 opacity-10"
           style={{
-            backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 20px, black 20px, black 40px)'
+            backgroundImage:
+              "repeating-linear-gradient(-45deg, transparent, transparent 20px, black 20px, black 40px)",
           }}
-          animate={{ backgroundPosition: ['0px 0px', '80px 80px'] }}
+          animate={{ backgroundPosition: ["0px 0px", "80px 80px"] }}
           transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
         />
-        
+
         <div className="relative max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -400,14 +450,16 @@ export default function HomeCombined() {
                 CLIMB?
               </motion.span>
             </h2>
-            
+
             <motion.button
-              onClick={() => router.push(isAuthenticated ? '/dashboard' : '/auth/signup')}
+              onClick={() =>
+                router.push(isAuthenticated ? "/dashboard" : "/auth/signup")
+              }
               className="bg-black text-orange-500 font-tanker text-xl md:text-2xl px-12 py-6 hover:bg-neutral-900 transition-colors group"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {isAuthenticated ? 'GO TO DASHBOARD' : 'START NOW'}
+              {isAuthenticated ? "GO TO DASHBOARD" : "START NOW"}
               <ArrowUpRight className="inline-block ml-3 w-6 h-6 group-hover:rotate-45 transition-transform" />
             </motion.button>
           </motion.div>
@@ -417,8 +469,10 @@ export default function HomeCombined() {
       {/* Footer Strip */}
       <section className="bg-black py-4 px-6 md:px-12">
         <div className="flex justify-between items-center">
-          <span className="font-mono text-[10px] text-neutral-600">© 2024 GRIP KICKS</span>
-          <motion.span 
+          <span className="font-mono text-[10px] text-neutral-600">
+            © 2024 GRIP KICKS
+          </span>
+          <motion.span
             className="font-mono text-[10px] text-orange-500"
             animate={{ opacity: [1, 0.5, 1] }}
             transition={{ duration: 2, repeat: Infinity }}

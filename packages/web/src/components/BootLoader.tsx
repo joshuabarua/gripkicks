@@ -21,7 +21,7 @@ export default function BootLoader({ visible }: { visible: boolean }) {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % transitionImages.length);
-    }, 180);
+    }, 260);
 
     return () => clearInterval(interval);
   }, [visible]);
@@ -53,6 +53,38 @@ export default function BootLoader({ visible }: { visible: boolean }) {
                   </span>
                 ))}
             </motion.div>
+            <motion.div
+              animate={{ x: [0, 500] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="flex gap-8 whitespace-nowrap"
+            >
+              {Array(20)
+                .fill(null)
+                .map((_, i) => (
+                  <span
+                    key={`mid-${i}`}
+                    className="font-tanker text-xl text-orange-500/20"
+                  >
+                    COMMUNITY DRIVEN - CLIMBING SHOES -
+                  </span>
+                ))}
+            </motion.div>
+            <motion.div
+              animate={{ x: [0, -500] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="flex gap-8 whitespace-nowrap"
+            >
+              {Array(20)
+                .fill(null)
+                .map((_, i) => (
+                  <span
+                    key={`bot-${i}`}
+                    className="font-tanker text-xl text-orange-500/20"
+                  >
+                    FIND YOUR FIT -
+                  </span>
+                ))}
+            </motion.div>
           </div>
 
           <div className="absolute top-6 left-1/2 -translate-x-1/2">
@@ -69,7 +101,7 @@ export default function BootLoader({ visible }: { visible: boolean }) {
                   initial={{ scale: 1.3, opacity: 0, rotate: -10 }}
                   animate={{ scale: 1, opacity: 1, rotate: 0 }}
                   exit={{ scale: 0.7, opacity: 0, rotate: 10 }}
-                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
                 >
                   <Image
                     src={transitionImages[currentImageIndex]}
@@ -95,7 +127,7 @@ export default function BootLoader({ visible }: { visible: boolean }) {
                   animate={{
                     width: `${((currentImageIndex + 1) / transitionImages.length) * 100}%`,
                   }}
-                  transition={{ duration: 0.15 }}
+                  transition={{ duration: 0.22 }}
                 />
               </div>
             </div>
