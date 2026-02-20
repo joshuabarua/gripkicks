@@ -54,6 +54,24 @@ export default function RootLayout({
     "https://static.cloudflareinsights.com/beacon.min.js";
 
   useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) return;
+
+    const warmBackend = async () => {
+      try {
+        await fetch(`${apiUrl}/health`, {
+          method: "GET",
+          cache: "no-store",
+        });
+      } catch {
+        // Ignore warm-up failures.
+      }
+    };
+
+    void warmBackend();
+  }, []);
+
+  useEffect(() => {
     let minTimeDone = false;
     let pageReady = document.readyState === "complete";
 

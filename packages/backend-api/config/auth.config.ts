@@ -1,7 +1,9 @@
-import { betterAuth } from 'better-auth';
-import convexAdapter from './convex-adapter';
+import { betterAuth } from "better-auth";
+import convexAdapter from "./convex-adapter";
+import { getAllowedOrigins } from "./cors-origins";
 
-const convexUrl = process.env.CONVEX_URL || 'https://peaceful-marten-189.convex.cloud';
+const convexUrl =
+  process.env.CONVEX_URL || "https://peaceful-marten-189.convex.cloud";
 
 export const auth = betterAuth({
   database: convexAdapter({
@@ -11,7 +13,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     async sendResetPassword(data, request) {
-      console.log('Password reset requested for:', data.user.email);
+      console.log("Password reset requested for:", data.user.email);
     },
   },
   socialProviders: {
@@ -23,7 +25,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       isAdmin: {
-        type: 'boolean',
+        type: "boolean",
         required: false,
         defaultValue: false,
       },
@@ -38,18 +40,16 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: [
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://192.168.0.71:3000',
-    'http://192.168.0.71:8000',
-    ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : []),
+    ...getAllowedOrigins(),
+    "http://localhost:8000",
+    "http://192.168.0.71:8000",
   ],
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3001',
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
   rateLimit: {
     window: 60,
-    max: process.env.NODE_ENV === 'production' ? 20 : 1000,
-    storage: 'memory',
+    max: process.env.NODE_ENV === "production" ? 20 : 1000,
+    storage: "memory",
     skipSuccessfulRequests: false,
     skipFailedRequests: false,
   },
