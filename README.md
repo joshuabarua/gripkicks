@@ -263,6 +263,24 @@ function MyComponent() {
   - `BETTER_AUTH_URL=https://api.grip-kicks.com`
   - `BETTER_AUTH_SECRET=<strong_secret>`
   - `CONVEX_URL=<convex_prod_url>`
+- **Optional rate-limit env vars** (defaults shown):
+  - `RATE_LIMIT_API_WINDOW_MS=60000`, `RATE_LIMIT_API_MAX=120`
+  - `RATE_LIMIT_AUTH_WINDOW_MS=60000`, `RATE_LIMIT_AUTH_MAX=30`
+  - `RATE_LIMIT_ACCOUNT_WINDOW_MS=60000`, `RATE_LIMIT_ACCOUNT_MAX=10`
+  - `RATE_LIMIT_CHECKOUT_WINDOW_MS=60000`, `RATE_LIMIT_CHECKOUT_MAX=12`
+  - `RATE_LIMIT_UPLOAD_WINDOW_MS=60000`, `RATE_LIMIT_UPLOAD_MAX=20`
+
+#### Cloudflare Recommendations
+
+- Keep Cloudflare edge rate limits as the first layer, and backend limits as the second layer.
+- Suggested edge limits:
+  - `/api/auth/*`: `10 requests / minute / IP`
+  - `/api/v1/auth/*`: `20 requests / minute / IP`
+  - `/api/v1/polar/checkout`: `12 requests / minute / IP`
+  - `/api/upload` and `/api/imagekit`: `20 requests / minute / IP`
+- Suggested cache rules:
+  - Cache static paths (`/imgs/*`, `/fonts/*`, `/_next/static/*`) aggressively
+  - Do not cache auth/session paths (`/api/auth/*`, user-specific API responses)
 
 #### Common production checks
 

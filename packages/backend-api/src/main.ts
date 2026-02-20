@@ -18,7 +18,7 @@ for (const envPath of envCandidates) {
 import { showRoutes } from "hono/dev";
 import { serve } from "@hono/node-server";
 import { cors } from "hono/cors";
-import { errorHandler, notFound } from "../middleware";
+import { createRateLimit, errorHandler, notFound } from "../middleware";
 import { auth } from "../config/auth.config";
 import Users from "../routes/users.routes";
 import AuthSync from "../routes/authSync.routes";
@@ -34,6 +34,50 @@ const app = createApp();
 
 // Set API base path
 const API_BASE = process.env.API_BASE || "/api/v1";
+
+const parseIntEnv = (value: string | undefined, fallback: number) => {
+  const parsed = value ? parseInt(value, 10) : NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const apiLimiter = createRateLimit({
+  keyPrefix: "api",
+  windowMs: parseIntEnv(process.env.RATE_LIMIT_API_WINDOW_MS, 60_000),
+  max: parseIntEnv(process.env.RATE_LIMIT_API_MAX, 120),
+});
+
+const authLimiter = createRateLimit({
+  keyPrefix: "auth",
+  windowMs: parseIntEnv(process.env.RATE_LIMIT_AUTH_WINDOW_MS, 60_000),
+  max: parseIntEnv(process.env.RATE_LIMIT_AUTH_MAX, 30),
+});
+
+const accountMutationLimiter = createRateLimit({
+  keyPrefix: "account-mutation",
+  windowMs: parseIntEnv(process.env.RATE_LIMIT_ACCOUNT_WINDOW_MS, 60_000),
+  max: parseIntEnv(process.env.RATE_LIMIT_ACCOUNT_MAX, 10),
+});
+
+const checkoutLimiter = createRateLimit({
+  keyPrefix: "checkout",
+  windowMs: parseIntEnv(process.env.RATE_LIMIT_CHECKOUT_WINDOW_MS, 60_000),
+  max: parseIntEnv(process.env.RATE_LIMIT_CHECKOUT_MAX, 12),
+});
+
+const imageUploadLimiter = createRateLimit({
+  keyPrefix: "upload",
+  windowMs: parseIntEnv(process.env.RATE_LIMIT_UPLOAD_WINDOW_MS, 60_000),
+  max: parseIntEnv(process.env.RATE_LIMIT_UPLOAD_MAX, 20),
+});
+
+app.use(`${API_BASE}/*`, apiLimiter);
+app.use("/api/auth/*", authLimiter);
+app.use(`${API_BASE}/auth/change-email`, accountMutationLimiter);
+app.use(`${API_BASE}/auth/change-password`, accountMutationLimiter);
+app.use(`${API_BASE}/auth/delete-account`, accountMutationLimiter);
+app.use(`${API_BASE}/polar/checkout`, checkoutLimiter);
+app.use("/api/upload", imageUploadLimiter);
+app.use("/api/imagekit", imageUploadLimiter);
 
 // Add CORS middleware for Better Auth routes
 app.use(

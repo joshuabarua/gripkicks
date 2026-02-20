@@ -1,35 +1,38 @@
-'use client';
+"use client";
 
-import { useOrientationStore } from '@/stores/orientationStore';
+import { useOrientationStore } from "@/stores/orientationStore";
+import { useShallow } from "zustand/react/shallow";
 
 interface OrientationScale {
   isPortrait: boolean;
   isLandscape: boolean;
   scale: number;
-  orientation: 'portrait' | 'landscape';
+  orientation: "portrait" | "landscape";
   screenWidth: number;
   screenHeight: number;
 }
 
 export function useOrientationScale(): OrientationScale {
-  return useOrientationStore((state) => ({
-    isPortrait: state.isPortrait,
-    isLandscape: state.isLandscape,
-    scale: state.scale,
-    orientation: state.orientation,
-    screenWidth: state.screenWidth,
-    screenHeight: state.screenHeight,
-  }));
+  return useOrientationStore(
+    useShallow((state) => ({
+      isPortrait: state.isPortrait,
+      isLandscape: state.isLandscape,
+      scale: state.scale,
+      orientation: state.orientation,
+      screenWidth: state.screenWidth,
+      screenHeight: state.screenHeight,
+    })),
+  );
 }
 
 export const useOrientation = useOrientationScale;
 
 export function getOrientationValue<T>(
-  orientation: 'portrait' | 'landscape',
+  orientation: "portrait" | "landscape",
   portraitValue: T,
-  landscapeValue: T
+  landscapeValue: T,
 ): T {
-  return orientation === 'portrait' ? portraitValue : landscapeValue;
+  return orientation === "portrait" ? portraitValue : landscapeValue;
 }
 
 export function scaleValue(value: number, scale: number): number {
