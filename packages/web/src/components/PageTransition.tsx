@@ -1,29 +1,37 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
 const transitionImages = [
-  '/imgs/transition/blue_hold.png',
-  '/imgs/transition/rock1.png',
-  '/imgs/transition/green_hold.png',
-  '/imgs/transition/plastic_hold1.png',
-  '/imgs/transition/yellow_hold.png',
-  '/imgs/transition/dark_blue.png',
+  "/imgs/transition/blue_hold.png",
+  "/imgs/transition/rock1.png",
+  "/imgs/transition/green_hold.png",
+  "/imgs/transition/plastic_hold1.png",
+  "/imgs/transition/yellow_hold.png",
+  "/imgs/transition/dark_blue.png",
 ];
 
-const MarqueeText = ({ children, reverse = false }: { children: React.ReactNode; reverse?: boolean }) => (
+const MarqueeText = ({
+  children,
+  reverse = false,
+}: {
+  children: React.ReactNode;
+  reverse?: boolean;
+}) => (
   <motion.div
     animate={{ x: reverse ? [0, 500] : [0, -500] }}
     transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
     className="flex gap-8 whitespace-nowrap"
   >
-    {Array(20).fill(null).map((_, i) => (
-      <span key={i} className="font-tanker text-xl text-orange-500/20">
-        {children}
-      </span>
-    ))}
+    {Array(20)
+      .fill(null)
+      .map((_, i) => (
+        <span key={i} className="font-tanker text-xl text-orange-500/20">
+          {children}
+        </span>
+      ))}
   </motion.div>
 );
 
@@ -35,8 +43,38 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
   const [imageCounter, setImageCounter] = useState(1);
   const [showContent, setShowContent] = useState(true);
 
+  const shouldRunTransition = (nextPath: string, previousPath: string) => {
+    if (typeof window === "undefined") return false;
+
+    const nextTopLevel = nextPath.split("/")[1] || "home";
+    const prevTopLevel = previousPath.split("/")[1] || "home";
+
+    if (nextTopLevel === prevTopLevel) {
+      return false;
+    }
+
+    const now = Date.now();
+    const lastTransitionAt = Number(
+      window.sessionStorage.getItem("gk:lastTransitionAt") || 0,
+    );
+
+    if (now - lastTransitionAt < 10000) {
+      return false;
+    }
+
+    window.sessionStorage.setItem("gk:lastTransitionAt", String(now));
+    return true;
+  };
+
   useEffect(() => {
     if (pathname !== prevPathname) {
+      if (!shouldRunTransition(pathname, prevPathname)) {
+        setPrevPathname(pathname);
+        setShowContent(true);
+        setIsTransitioning(false);
+        return;
+      }
+
       setShowContent(false);
       setIsTransitioning(true);
       setCurrentImageIndex(0);
@@ -53,11 +91,14 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
         setImageCounter((prev) => Math.min(prev + 1, transitionImages.length));
       }, 180);
 
-      const transitionTimeout = setTimeout(() => {
-        setIsTransitioning(false);
-        setPrevPathname(pathname);
-        setShowContent(true);
-      }, transitionImages.length * 180 + 400);
+      const transitionTimeout = setTimeout(
+        () => {
+          setIsTransitioning(false);
+          setPrevPathname(pathname);
+          setShowContent(true);
+        },
+        transitionImages.length * 180 + 400,
+      );
 
       return () => {
         clearInterval(imageInterval);
@@ -90,7 +131,9 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
             {/* Animated background text */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none select-none flex flex-col justify-center gap-4 opacity-30">
               <MarqueeText>GRIP KICKS • LOADING • </MarqueeText>
-              <MarqueeText reverse>COMMUNITY DRIVEN • CLIMBING SHOES • </MarqueeText>
+              <MarqueeText reverse>
+                COMMUNITY DRIVEN • CLIMBING SHOES •{" "}
+              </MarqueeText>
               <MarqueeText>FIND YOUR FIT • </MarqueeText>
             </div>
 
@@ -115,7 +158,9 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <span className="font-mono text-[10px] text-orange-500 tracking-[0.3em]">[LOADING]</span>
+              <span className="font-mono text-[10px] text-orange-500 tracking-[0.3em]">
+                [LOADING]
+              </span>
             </motion.div>
 
             {/* Center content */}
@@ -143,7 +188,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
                       exit={{ scale: 0.7, opacity: 0, rotate: 10 }}
                       transition={{ duration: 0.15, ease: "easeOut" }}
                       onError={(e) => {
-                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.style.display = "none";
                       }}
                     />
                   </AnimatePresence>
@@ -157,12 +202,17 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <span className="font-mono text-[10px] text-neutral-600">[{String(imageCounter).padStart(2, '0')}/{String(transitionImages.length).padStart(2, '0')}]</span>
+                <span className="font-mono text-[10px] text-neutral-600">
+                  [{String(imageCounter).padStart(2, "0")}/
+                  {String(transitionImages.length).padStart(2, "0")}]
+                </span>
                 <div className="w-24 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-orange-500"
                     initial={{ width: 0 }}
-                    animate={{ width: `${(imageCounter / transitionImages.length) * 100}%` }}
+                    animate={{
+                      width: `${(imageCounter / transitionImages.length) * 100}%`,
+                    }}
                     transition={{ duration: 0.15 }}
                   />
                 </div>
@@ -179,7 +229,9 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
               <div className="font-tanker text-2xl text-white mb-1">
                 GRIP <span className="text-orange-500">KICKS</span>
               </div>
-              <div className="font-mono text-[9px] text-neutral-600 tracking-wider">V.2024</div>
+              <div className="font-mono text-[9px] text-neutral-600 tracking-wider">
+                V.2024
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -190,7 +242,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: showContent ? 1 : 0 }}
         transition={{ duration: 0.3 }}
-        style={{ visibility: showContent ? 'visible' : 'hidden' }}
+        style={{ visibility: showContent ? "visible" : "hidden" }}
       >
         {children}
       </motion.div>

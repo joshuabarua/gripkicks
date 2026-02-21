@@ -13,8 +13,7 @@ export const getAllowedOrigins = () => {
     .map(normalizeOrigin)
     .filter(Boolean);
 
-  const origins =
-    configuredOrigins.length > 0 ? configuredOrigins : DEFAULT_ORIGINS;
+  const origins = [...DEFAULT_ORIGINS, ...configuredOrigins];
 
   return Array.from(new Set(origins));
 };

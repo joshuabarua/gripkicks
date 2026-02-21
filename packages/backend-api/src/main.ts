@@ -112,7 +112,17 @@ app.get("/api/auth/healthz", (c: Context) => {
 
 // Better Auth handler - handles all auth routes at /api/auth/*
 app.on(["GET", "POST"], "/api/auth/*", async (c: Context) => {
-  return auth.handler(c.req.raw);
+  try {
+    return await auth.handler(c.req.raw);
+  } catch (error) {
+    console.error("[auth] Unhandled auth route error", error);
+    return c.json(
+      {
+        error: "Authentication provider error",
+      },
+      500,
+    );
+  }
 });
 
 // Register API routes with base path
