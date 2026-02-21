@@ -12,12 +12,21 @@ interface ConvexAdapterConfig {
   debugLogs?: boolean;
 }
 
-// Helper to convert Convex ID format for Better Auth
-function toConvexHttpUrl(url: string): string {
-  if (url.includes(".convex.cloud")) {
-    return url.replace(".convex.cloud", ".convex.site");
+const withNoTrailingSlash = (url: string) => url.replace(/\/$/, "");
+
+function getConvexBaseUrls(url: string): string[] {
+  const normalized = withNoTrailingSlash(url);
+  const urls = [normalized];
+
+  if (normalized.includes(".convex.cloud")) {
+    urls.push(normalized.replace(".convex.cloud", ".convex.site"));
   }
-  return url;
+
+  if (normalized.includes(".convex.site")) {
+    urls.push(normalized.replace(".convex.site", ".convex.cloud"));
+  }
+
+  return Array.from(new Set(urls));
 }
 
 // Map Better Auth model names to our Convex model names
@@ -29,8 +38,7 @@ const modelMap: Record<string, string> = {
 };
 
 export const convexAdapter = (config: ConvexAdapterConfig) => {
-  const primaryBaseUrl = toConvexHttpUrl(config.convexUrl);
-  const fallbackBaseUrl = config.convexUrl;
+  const baseUrls = getConvexBaseUrls(config.convexUrl);
 
   const callConvex = async (
     model: string,
@@ -38,10 +46,9 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
     data: Record<string, unknown>,
   ) => {
     const mappedModel = modelMap[model] || model;
-    const endpoints = [
-      `${primaryBaseUrl}/api/auth-db/${mappedModel}/${operation}`,
-      `${fallbackBaseUrl}/api/auth-db/${mappedModel}/${operation}`,
-    ].filter((url, index, arr) => arr.indexOf(url) === index);
+    const endpoints = baseUrls.map(
+      (baseUrl) => `${baseUrl}/api/auth-db/${mappedModel}/${operation}`,
+    );
 
     if (config.debugLogs) {
       console.log(
