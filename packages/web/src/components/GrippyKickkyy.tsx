@@ -170,7 +170,7 @@ export function GrippyKickkyy({
         }}
       >
         {/* Click trigger area */}
-        <div className="w-9 h-9 rounded-xl border border-orange-400/35 bg-orange-500/25 hover:bg-orange-500/40 transition-all duration-300" />
+        <div className="w-[5px] h-[5px] rounded-full bg-orange-500/55 hover:bg-orange-500/80 transition-colors duration-300" />
       </div>
     );
   }
