@@ -36,6 +36,7 @@ Users.get("/shoes", getShoes);
 
 // Public user count (for marketing/founder meter)
 Users.get("/count", getUsersCount);
+Users.get("/users/count", getUsersCount);
 
 // User Stash (shoe collection)
 Users.get("/stash", protect, getUserStash);

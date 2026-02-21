@@ -1,18 +1,26 @@
-'use client';
-/* eslint-disable @next/next/no-img-element */
+"use client";
 
-import { useState, useEffect } from 'react';
-import { User, Mail, Camera, Footprints, Star, Edit2, Lock, AlertTriangle, ArrowUpRight } from 'lucide-react';
-import { fetchApi } from '@/lib/api-client';
-import { useSession } from '@/lib/auth';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ProfileForm } from '@/components/ProfileForm';
-import { ProfileImageUpload } from '@/components/ProfileImageUpload';
-import { PasswordChangeForm } from '@/components/PasswordChangeForm';
-import { EmailChangeForm } from '@/components/EmailChangeForm';
-import { AccountDeletion } from '@/components/AccountDeletion';
-import { FullPageLoading } from '@/components/ui/loading';
+import { useState, useEffect } from "react";
+import {
+  User,
+  Mail,
+  Footprints,
+  Star,
+  Edit2,
+  Lock,
+  AlertTriangle,
+  ArrowUpRight,
+} from "lucide-react";
+import { fetchApi } from "@/lib/api-client";
+import { useSession } from "@/lib/auth";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ProfileForm } from "@/components/ProfileForm";
+import { PasswordChangeForm } from "@/components/PasswordChangeForm";
+import { EmailChangeForm } from "@/components/EmailChangeForm";
+import { AccountDeletion } from "@/components/AccountDeletion";
+import { FullPageLoading } from "@/components/ui/loading";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 interface UserProfile {
   id: string;
@@ -30,40 +38,39 @@ interface UserProfile {
 }
 
 const footShapeLabels: Record<string, string> = {
-  egyptian: 'Egyptian',
-  roman: 'Roman',
-  greek: 'Greek',
-  germanic: 'Germanic',
-  celtic: 'Celtic',
+  egyptian: "Egyptian",
+  roman: "Roman",
+  greek: "Greek",
+  germanic: "Germanic",
+  celtic: "Celtic",
 };
 
 const tabs = [
-  { key: 'overview', label: 'Overview', icon: User },
-  { key: 'profile', label: 'Profile', icon: Edit2 },
-  { key: 'picture', label: 'Picture', icon: Camera },
-  { key: 'security', label: 'Security', icon: Lock },
-  { key: 'danger', label: 'Danger', icon: AlertTriangle },
+  { key: "overview", label: "Overview", icon: User },
+  { key: "profile", label: "Profile", icon: Edit2 },
+  { key: "security", label: "Security", icon: Lock },
+  { key: "danger", label: "Danger", icon: AlertTriangle },
 ] as const;
 
-type TabKey = typeof tabs[number]['key'];
+type TabKey = (typeof tabs)[number]["key"];
 
 export default function ProfilePage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [activeTab, setActiveTab] = useState<TabKey>("overview");
 
   useEffect(() => {
     async function loadProfile() {
       if (!session?.user) return;
-      
+
       try {
-        const data = await fetchApi<UserProfile>('/api/v1/profile');
+        const data = await fetchApi<UserProfile>("/api/v1/profile");
         if (data.isOk()) {
           setProfile(data.value);
         }
       } catch (err) {
-        console.error('Failed to load profile:', err);
+        console.error("Failed to load profile:", err);
       } finally {
         setLoading(false);
       }
@@ -87,7 +94,9 @@ export default function ProfilePage() {
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="text-center">
           <h1 className="font-tanker text-4xl mb-4">NOT LOGGED IN</h1>
-          <p className="font-sora text-neutral-500 mb-6">Please log in to view your profile</p>
+          <p className="font-sora text-neutral-500 mb-6">
+            Please log in to view your profile
+          </p>
           <Link href="/auth/login">
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -113,23 +122,23 @@ export default function ProfilePage() {
             transition={{ duration: 0.8 }}
             className="mb-12"
           >
-            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">[ACCOUNT]</p>
+            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">
+              [ACCOUNT]
+            </p>
             <div className="flex items-center gap-6">
               <div className="relative">
-                {profile?.image ? (
-                  <img
-                    src={profile.image}
-                    alt={profile.name}
-                    className="w-20 h-20 rounded-2xl object-cover border-2 border-orange-500/20"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center">
-                    <User className="h-10 w-10 text-neutral-600" />
-                  </div>
-                )}
+                <UserAvatar
+                  userId={profile?.id || session?.user?.id}
+                  name={profile?.name || session?.user?.name}
+                  email={profile?.email || session?.user?.email}
+                  className="w-20 h-20 rounded-2xl border-2 border-orange-500/20"
+                  size={160}
+                />
               </div>
               <div>
-                <h1 className="font-tanker text-4xl md:text-5xl">{profile?.name}</h1>
+                <h1 className="font-tanker text-4xl md:text-5xl">
+                  {profile?.name}
+                </h1>
                 <p className="font-sora text-neutral-500 flex items-center gap-2 mt-1">
                   <Mail className="h-4 w-4" />
                   {profile?.email}
@@ -155,8 +164,8 @@ export default function ProfilePage() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-sora text-sm transition-all whitespace-nowrap ${
                     activeTab === tab.key
-                      ? 'bg-orange-500 text-black font-medium'
-                      : 'bg-neutral-900 border border-neutral-800 text-neutral-400 hover:border-orange-500/30'
+                      ? "bg-orange-500 text-black font-medium"
+                      : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:border-orange-500/30"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -173,7 +182,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {activeTab === 'overview' && (
+            {activeTab === "overview" && (
               <div className="space-y-4">
                 {/* Info Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -184,13 +193,23 @@ export default function ProfilePage() {
                       </div>
                       {!profile?.footShape && (
                         <Link href="/footchecker">
-                          <motion.span whileHover={{ scale: 1.05 }} className="font-mono text-[10px] text-orange-500 cursor-pointer">[SET UP]</motion.span>
+                          <motion.span
+                            whileHover={{ scale: 1.05 }}
+                            className="font-mono text-[10px] text-orange-500 cursor-pointer"
+                          >
+                            [SET UP]
+                          </motion.span>
                         </Link>
                       )}
                     </div>
-                    <p className="font-mono text-[10px] text-neutral-600 mb-1">FOOT SHAPE</p>
+                    <p className="font-mono text-[10px] text-neutral-600 mb-1">
+                      FOOT SHAPE
+                    </p>
                     <p className="font-tanker text-2xl text-white capitalize">
-                      {profile?.footShape ? footShapeLabels[profile.footShape] || profile.footShape : 'Not set'}
+                      {profile?.footShape
+                        ? footShapeLabels[profile.footShape] ||
+                          profile.footShape
+                        : "Not set"}
                     </p>
                   </div>
 
@@ -201,13 +220,22 @@ export default function ProfilePage() {
                       </div>
                       {!profile?.favoriteShoe && (
                         <Link href="/stash">
-                          <motion.span whileHover={{ scale: 1.05 }} className="font-mono text-[10px] text-orange-500 cursor-pointer">[CHOOSE]</motion.span>
+                          <motion.span
+                            whileHover={{ scale: 1.05 }}
+                            className="font-mono text-[10px] text-orange-500 cursor-pointer"
+                          >
+                            [CHOOSE]
+                          </motion.span>
                         </Link>
                       )}
                     </div>
-                    <p className="font-mono text-[10px] text-neutral-600 mb-1">FAVORITE SHOE</p>
+                    <p className="font-mono text-[10px] text-neutral-600 mb-1">
+                      FAVORITE SHOE
+                    </p>
                     <p className="font-tanker text-2xl text-white">
-                      {profile?.favoriteShoe ? `${profile.favoriteShoe.brand} ${profile.favoriteShoe.name}` : 'Not set'}
+                      {profile?.favoriteShoe
+                        ? `${profile.favoriteShoe.brand} ${profile.favoriteShoe.name}`
+                        : "Not set"}
                     </p>
                   </div>
                 </div>
@@ -224,8 +252,12 @@ export default function ProfilePage() {
                       <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
                     </div>
                     <div className="relative">
-                      <p className="font-mono text-[10px] text-black/60 mb-2">[SETUP_REQUIRED]</p>
-                      <h3 className="font-tanker text-3xl text-black mb-3">COMPLETE YOUR PROFILE</h3>
+                      <p className="font-mono text-[10px] text-black/60 mb-2">
+                        [SETUP_REQUIRED]
+                      </p>
+                      <h3 className="font-tanker text-3xl text-black mb-3">
+                        COMPLETE YOUR PROFILE
+                      </h3>
                       <ol className="font-sora text-sm text-black/70 space-y-1 mb-4">
                         <li>1. Set up your foot profile in Foot Lab</li>
                         <li>2. Add your first shoe with comfort ratings</li>
@@ -247,35 +279,24 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {activeTab === 'profile' && (
+            {activeTab === "profile" && (
               <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
                 <ProfileForm />
               </div>
             )}
 
-            {activeTab === 'picture' && (
-              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
-                <ProfileImageUpload 
-                  currentImage={profile?.image}
-                  onImageUpdate={(url) => {
-                    setProfile(prev => prev ? { ...prev, image: url } : null);
-                  }}
-                />
-              </div>
-            )}
-
-            {activeTab === 'security' && (
+            {activeTab === "security" && (
               <div className="space-y-4">
                 <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
                   <PasswordChangeForm />
                 </div>
                 <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
-                  <EmailChangeForm currentEmail={profile?.email || ''} />
+                  <EmailChangeForm currentEmail={profile?.email || ""} />
                 </div>
               </div>
             )}
 
-            {activeTab === 'danger' && (
+            {activeTab === "danger" && (
               <div className="bg-neutral-900 border border-red-500/20 rounded-3xl p-6 md:p-8">
                 <AccountDeletion />
               </div>

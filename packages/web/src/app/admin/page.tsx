@@ -8,6 +8,7 @@ import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import ShoeImage from "@/components/ShoeImage";
 import { PaginatedList } from "@/components/ui/PaginatedList";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 import { BacklogManager } from "@/components/admin/BacklogManager";
 import ShoeImageUpload from "@/components/ShoeImageUpload";
 import {
@@ -968,21 +969,13 @@ export default function AdminDashboard() {
                       className="border-b border-white/10 hover:bg-white/5"
                     >
                       <td className="py-2 pr-3">
-                        <div className="w-8 h-8 rounded-full overflow-hidden bg-white/10">
-                          {user.image ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={user.image}
-                              alt={user.name || ""}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-white/50">
-                              {user.name?.[0]?.toUpperCase() ||
-                                user.email[0].toUpperCase()}
-                            </div>
-                          )}
-                        </div>
+                        <UserAvatar
+                          userId={user._id}
+                          name={user.name}
+                          email={user.email}
+                          className="w-8 h-8 rounded-full"
+                          size={64}
+                        />
                       </td>
                       <td className="py-2 pr-3 text-white">
                         {user.name || "-"}
