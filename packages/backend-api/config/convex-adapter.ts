@@ -29,7 +29,8 @@ const modelMap: Record<string, string> = {
 };
 
 export const convexAdapter = (config: ConvexAdapterConfig) => {
-  const baseUrl = toConvexHttpUrl(config.convexUrl);
+  const primaryBaseUrl = toConvexHttpUrl(config.convexUrl);
+  const fallbackBaseUrl = config.convexUrl;
 
   const callConvex = async (
     model: string,
@@ -37,7 +38,10 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
     data: Record<string, unknown>,
   ) => {
     const mappedModel = modelMap[model] || model;
-    const url = `${baseUrl}/api/auth-db/${mappedModel}/${operation}`;
+    const endpoints = [
+      `${primaryBaseUrl}/api/auth-db/${mappedModel}/${operation}`,
+      `${fallbackBaseUrl}/api/auth-db/${mappedModel}/${operation}`,
+    ].filter((url, index, arr) => arr.indexOf(url) === index);
 
     if (config.debugLogs) {
       console.log(
@@ -46,45 +50,67 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
       );
     }
 
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+    let lastError: Error | null = null;
 
-      const responseText = await response.text();
+    for (let i = 0; i < endpoints.length; i += 1) {
+      const url = endpoints[i];
 
-      if (!response.ok) {
-        console.error(
-          `[ConvexAdapter] Error: ${response.status} ${responseText}`,
-        );
-        throw new Error(
-          `Convex adapter error: ${response.status} - ${responseText}`,
-        );
-      }
-
-      let result;
       try {
-        result = JSON.parse(responseText);
-      } catch {
-        console.error(
-          `[ConvexAdapter] Failed to parse response:`,
-          responseText,
-        );
-        throw new Error(`Invalid JSON response from Convex`);
-      }
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
 
-      if (config.debugLogs) {
-        console.log(`[ConvexAdapter] Result:`, JSON.stringify(result, null, 2));
-      }
+        const responseText = await response.text();
 
-      // Return the data, ensuring it has the expected format
-      return result.data;
-    } catch (error) {
-      console.error(`[ConvexAdapter] Failed to call ${url}:`, error);
-      throw error;
+        if (!response.ok) {
+          if (response.status === 404 && i < endpoints.length - 1) {
+            if (config.debugLogs) {
+              console.warn(
+                `[ConvexAdapter] Endpoint not found at ${url}, trying fallback endpoint...`,
+              );
+            }
+            continue;
+          }
+
+          console.error(
+            `[ConvexAdapter] Error: ${response.status} ${responseText}`,
+          );
+          throw new Error(
+            `Convex adapter error: ${response.status} - ${responseText}`,
+          );
+        }
+
+        let result;
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          console.error(
+            `[ConvexAdapter] Failed to parse response:`,
+            responseText,
+          );
+          throw new Error(`Invalid JSON response from Convex`);
+        }
+
+        if (config.debugLogs) {
+          console.log(
+            `[ConvexAdapter] Result from ${url}:`,
+            JSON.stringify(result, null, 2),
+          );
+        }
+
+        // Return the data, ensuring it has the expected format
+        return result.data;
+      } catch (error) {
+        lastError = error as Error;
+        if (i === endpoints.length - 1) {
+          console.error(`[ConvexAdapter] Failed to call ${url}:`, error);
+        }
+      }
     }
+
+    throw lastError || new Error("Convex adapter request failed");
   };
 
   return createAdapterFactory({
