@@ -210,6 +210,7 @@ export function SignupForm() {
           whileTap={{ scale: 0.99 }}
           disabled={loading}
           onClick={async () => {
+            setError(null);
             track(analyticsEvents.signupStarted, { method: "google" });
             await signIn.social({
               provider: "google",
@@ -220,6 +221,16 @@ export function SignupForm() {
                 },
                 onResponse: () => {
                   setLoading(false);
+                },
+                onError: (ctx) => {
+                  const message =
+                    ctx.error.message ||
+                    "Google sign-up is currently unavailable. Try email for now.";
+                  setError(message);
+                  track(analyticsEvents.signupFailed, {
+                    method: "google",
+                    reason: message,
+                  });
                 },
               },
             });

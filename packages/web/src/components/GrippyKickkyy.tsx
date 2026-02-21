@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo, useRef } from 'react';
-import Lottie from 'lottie-react';
+import { useState, useEffect, useMemo, useRef } from "react";
+import Lottie from "lottie-react";
 
 interface LottieMethods {
   play: () => void;
@@ -17,21 +17,21 @@ interface LottieMethods {
   getDuration: (inFrames?: boolean) => number;
   animationContainerRef: React.RefObject<HTMLDivElement>;
   animationLoaded: boolean;
-  animationItem: import('lottie-web').AnimationItem | undefined;
+  animationItem: import("lottie-web").AnimationItem | undefined;
 }
 
 interface GrippyKickkyyProps {
-  trigger?: 'hover' | 'click' | 'auto' | 'konami' | 'run';
-  size?: 'small' | 'medium' | 'large' | 'fullscreen' | 'running';
-  position?: 'fixed' | 'absolute' | 'running';
+  trigger?: "hover" | "click" | "auto" | "konami" | "run";
+  size?: "small" | "medium" | "large" | "fullscreen" | "running";
+  position?: "fixed" | "absolute" | "running";
   className?: string;
 }
 
-export function GrippyKickkyy({ 
-  trigger = 'click', 
-  size = 'medium', 
-  position = 'fixed',
-  className = '' 
+export function GrippyKickkyy({
+  trigger = "click",
+  size = "medium",
+  position = "fixed",
+  className = "",
 }: GrippyKickkyyProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -41,33 +41,49 @@ export function GrippyKickkyy({
 
   // Load lottie animation
   useEffect(() => {
-    fetch('/lottie/GrippyKickyy.json')
-      .then(response => response.json())
-      .then(data => setAnimationData(data))
-      .catch(error => console.error('Error loading lottie animation:', error));
+    fetch("/lottie/GrippyKickyy.json")
+      .then((response) => response.json())
+      .then((data) => setAnimationData(data))
+      .catch((error) =>
+        console.error("Error loading lottie animation:", error),
+      );
   }, []);
 
   const sizeClasses = {
-    small: 'w-16 h-16',
-    medium: 'w-32 h-32', 
-    large: 'w-48 h-48',
-    fullscreen: 'w-screen h-screen',
-    running: 'w-24 h-24'
+    small: "w-16 h-16",
+    medium: "w-32 h-32",
+    large: "w-48 h-48",
+    fullscreen: "w-screen h-screen",
+    running: "w-24 h-24",
   };
 
   const positionClasses = {
-    fixed: 'fixed',
-    absolute: 'absolute',
-    running: 'fixed'
+    fixed: "fixed",
+    absolute: "absolute",
+    running: "fixed",
   };
 
   // Konami code: ↑↑↓↓←→←→BA
-  const konamiPattern = useMemo(() => ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'], []);
+  const konamiPattern = useMemo(
+    () => [
+      "ArrowUp",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowLeft",
+      "ArrowRight",
+      "b",
+      "a",
+    ],
+    [],
+  );
   const [isRunning, setIsRunning] = useState(true);
   const [runPosition, setRunPosition] = useState({ x: -100, y: 50 });
 
   useEffect(() => {
-    if (trigger !== 'konami') return;
+    if (trigger !== "konami") return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const newCode = [...konamiCode, e.key].slice(-10);
@@ -79,93 +95,93 @@ export function GrippyKickkyy({
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [konamiCode, trigger, konamiPattern]);
 
   const triggerAnimation = () => {
-    if (trigger === 'run') {
+    if (trigger === "run") {
       // Start running across screen at bottom
       setIsRunning(true);
       setIsVisible(true);
       setIsAnimating(true);
       setRunPosition({ x: -100, y: 15 }); // y: 15 means 15px from bottom
-      
 
       setTimeout(() => {
         if (lottieRef.current) {
-          lottieRef.current.setSpeed(3.5); 
+          lottieRef.current.setSpeed(3.5);
         }
-      }, 100); 
+      }, 100);
       let position = -100;
       const runInterval = setInterval(() => {
         position += 10;
         setRunPosition({ x: position, y: -5 });
-        
-        if (position > window.innerWidth * 2) { // 200vw (2x viewport width) to ensure full traversal
+
+        if (position > window.innerWidth * 2) {
+          // 200vw (2x viewport width) to ensure full traversal
           clearInterval(runInterval);
           setIsRunning(false);
           setIsVisible(false);
           setIsAnimating(false);
         }
-      }, 10); 
+      }, 10);
     } else {
       setIsVisible(true);
       setIsAnimating(true);
-      
+
       // Speed up animation when it starts
       setTimeout(() => {
         if (lottieRef.current) {
           lottieRef.current.setSpeed(2.5); // Ultra fast!
         }
       }, 100); // Small delay to ensure animation is loaded
-      
+
       // Auto-hide after animation completes
-      setTimeout(() => {
-        setIsAnimating(false);
-        setTimeout(() => setIsVisible(false), 100);
-      }, trigger === 'click' ? 3000 : 3000); // 3 second loop for click trigger
+      setTimeout(
+        () => {
+          setIsAnimating(false);
+          setTimeout(() => setIsVisible(false), 100);
+        },
+        trigger === "click" ? 3000 : 3000,
+      ); // 3 second loop for click trigger
     }
   };
 
   const handleClick = () => {
-    if (trigger === 'click') {
+    if (trigger === "click") {
       triggerAnimation();
     }
   };
 
   const handleMouseEnter = () => {
-    if (trigger === 'hover') {
+    if (trigger === "hover") {
       triggerAnimation();
     }
   };
 
-
-  if (!isVisible && trigger === 'click') {
+  if (!isVisible && trigger === "click") {
     return (
       <div
         className={`${positionClasses[position]} ${className} cursor-pointer transition-all duration-300 hover:scale-125 flex items-center justify-center`}
         onClick={handleClick}
-        style={{ 
-          ...(position === 'absolute' ? {} : { bottom: '20px', right: '20px' }),
-          zIndex: 9999 
+        style={{
+          ...(position === "absolute" ? {} : { bottom: "20px", right: "20px" }),
+          zIndex: 9999,
         }}
       >
         {/* Click trigger area */}
-        <div className="w-8 h-8 rounded-full transition-all duration-300 bg-blue-500 opacity-30 hover:opacity-60 flex items-center justify-center">
-          <div className="w-2 h-2 rounded-full bg-white"></div>
-        </div>
+        <div className="w-9 h-9 rounded-xl border border-orange-400/35 bg-orange-500/25 hover:bg-orange-500/40 transition-all duration-300" />
       </div>
     );
   }
 
-  if (!isVisible && trigger === 'hover') {
+  if (!isVisible && trigger === "hover") {
     return (
       <div
         className={`${positionClasses[position]} ${sizeClasses[size]} ${className} flex items-center justify-center pointer-events-auto`}
-        style={{ 
+        style={{
           zIndex: 9999,
-          opacity: 0.3
+          opacity: 0.3,
         }}
         onMouseEnter={handleMouseEnter}
       >
@@ -180,15 +196,19 @@ export function GrippyKickkyy({
 
   return (
     <div
-      className={`${positionClasses[position]} ${sizeClasses[size]} ${className} flex items-center justify-center ${trigger === 'hover' ? 'pointer-events-auto' : 'pointer-events-none'}`}
-      style={{ 
-        ...(trigger === 'run' 
-          ? { left: `${runPosition.x}px`, bottom: `${runPosition.y}px`, top: 'auto', transform: 'none' }
-          : { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
-        ),
+      className={`${positionClasses[position]} ${sizeClasses[size]} ${className} flex items-center justify-center ${trigger === "hover" ? "pointer-events-auto" : "pointer-events-none"}`}
+      style={{
+        ...(trigger === "run"
+          ? {
+              left: `${runPosition.x}px`,
+              bottom: `${runPosition.y}px`,
+              top: "auto",
+              transform: "none",
+            }
+          : { top: "50%", left: "50%", transform: "translate(-50%, -50%)" }),
         zIndex: 9999,
         opacity: isAnimating ? 1 : 0,
-        transition: trigger === 'run' ? 'none' : 'opacity 0.1s ease-in-out'
+        transition: trigger === "run" ? "none" : "opacity 0.1s ease-in-out",
       }}
       onMouseEnter={handleMouseEnter}
     >
@@ -206,35 +226,28 @@ export function GrippyKickkyy({
 // Preset configurations for different hiding spots
 export function FooterGrippy() {
   return (
-    <GrippyKickkyy 
-      trigger="click" 
-      size="large" 
+    <GrippyKickkyy
+      trigger="click"
+      size="large"
+      position="absolute"
+      className="bottom-8 right-6 md:right-10"
     />
   );
 }
 
 export function NavigationGrippy() {
   return (
-    <GrippyKickkyy 
-      trigger="hover" 
-      size="small" 
-      className="top-16 left-1/2"
-    />
+    <GrippyKickkyy trigger="hover" size="small" className="top-16 left-1/2" />
   );
 }
 
 export function KonamiGrippy() {
-  return (
-    <GrippyKickkyy 
-      trigger="konami" 
-      size="fullscreen"
-    />
-  );
+  return <GrippyKickkyy trigger="konami" size="fullscreen" />;
 }
 
 export function RunningGrippy() {
   const [shouldRun, setShouldRun] = useState(false);
-  
+
   // Rare timing intervals for production
   useEffect(() => {
     const scheduleNextRun = () => {
@@ -247,21 +260,15 @@ export function RunningGrippy() {
           scheduleNextRun();
         }, 2000); // Run takes about 2 seconds to cross screen
       }, randomDelay);
-      
+
       return timer;
     };
-    
+
     const timer = scheduleNextRun();
     return () => clearTimeout(timer);
   }, []);
 
   if (!shouldRun) return null;
 
-  return (
-    <GrippyKickkyy 
-      trigger="run" 
-      size="running"
-      position="running"
-    />
-  );
+  return <GrippyKickkyy trigger="run" size="running" position="running" />;
 }

@@ -34,7 +34,11 @@ const Scene = () => {
     <Suspense fallback={null}>
       <Canvas
         key={canvasKey}
-        style={{ backgroundColor: "transparent" }}
+        style={{
+          backgroundColor: "transparent",
+          pointerEvents: "none",
+          touchAction: "pan-y",
+        }}
         gl={{
           powerPreference: "high-performance",
           antialias: true,

@@ -5,6 +5,15 @@ import { getAllowedOrigins } from "./cors-origins";
 const convexUrl =
   process.env.CONVEX_URL || "https://peaceful-marten-189.convex.cloud";
 
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+if (!googleClientId || !googleClientSecret) {
+  console.warn(
+    "[auth] Google OAuth is disabled. Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET.",
+  );
+}
+
 export const auth = betterAuth({
   database: convexAdapter({
     convexUrl,
@@ -16,12 +25,15 @@ export const auth = betterAuth({
       console.log("Password reset requested for:", data.user.email);
     },
   },
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    },
-  },
+  socialProviders:
+    googleClientId && googleClientSecret
+      ? {
+          google: {
+            clientId: googleClientId,
+            clientSecret: googleClientSecret,
+          },
+        }
+      : {},
   user: {
     additionalFields: {
       isAdmin: {
