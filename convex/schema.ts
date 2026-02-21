@@ -6,13 +6,13 @@ export const footShapeValidator = v.union(
   v.literal("roman"),
   v.literal("greek"),
   v.literal("germanic"),
-  v.literal("celtic")
+  v.literal("celtic"),
 );
 
 export const backlogStatusValidator = v.union(
   v.literal("not_started"),
-  v.literal("in_progress"), 
-  v.literal("done")
+  v.literal("in_progress"),
+  v.literal("done"),
 );
 
 export default defineSchema({
@@ -22,7 +22,14 @@ export default defineSchema({
     brand: v.string(),
     imageUrl: v.optional(v.string()),
     slug: v.optional(v.string()),
-    gender: v.optional(v.union(v.literal("men"), v.literal("women"), v.literal("kids"), v.literal("unisex"))),
+    gender: v.optional(
+      v.union(
+        v.literal("men"),
+        v.literal("women"),
+        v.literal("kids"),
+        v.literal("unisex"),
+      ),
+    ),
     aggressiveness: v.string(),
     stiffness: v.string(),
     climbingDiscipline: v.string(),
@@ -73,13 +80,27 @@ export default defineSchema({
     image: v.optional(v.string()),
     isAdmin: v.optional(v.boolean()),
     onboardingComplete: v.boolean(),
-    betterAuthId: v.string(),
+    betterAuthId: v.optional(v.string()),
     footShape: v.optional(footShapeValidator),
     footVolume: v.optional(v.string()),
     favoriteShoeId: v.optional(v.id("shoes")),
     // Subscription fields (Polar.sh)
-    subscriptionStatus: v.optional(v.union(v.literal("active"), v.literal("canceled"), v.literal("past_due"), v.literal("founder"))),
-    subscriptionTier: v.optional(v.union(v.literal("monthly"), v.literal("yearly"), v.literal("lifetime"), v.literal("founder"))),
+    subscriptionStatus: v.optional(
+      v.union(
+        v.literal("active"),
+        v.literal("canceled"),
+        v.literal("past_due"),
+        v.literal("founder"),
+      ),
+    ),
+    subscriptionTier: v.optional(
+      v.union(
+        v.literal("monthly"),
+        v.literal("yearly"),
+        v.literal("lifetime"),
+        v.literal("founder"),
+      ),
+    ),
     polarCustomerId: v.optional(v.string()),
     polarSubscriptionId: v.optional(v.string()),
     subscriptionExpiresAt: v.optional(v.number()),
@@ -119,8 +140,9 @@ export default defineSchema({
     identifier: v.string(),
     value: v.string(),
     expiresAt: v.number(),
-  }).index("by_identifier", ["identifier"])
-   .index("by_expiresAt", ["expiresAt"]),
+  })
+    .index("by_identifier", ["identifier"])
+    .index("by_expiresAt", ["expiresAt"]),
 
   // User's shoe collection (stash)
   userShoes: defineTable({
@@ -168,25 +190,29 @@ export default defineSchema({
       confidence: v.number(),
       sampleSize: v.number(),
     }),
-    footProfile: v.optional(v.object({
-      shape: v.string(),
-      volume: v.string(),
-    })),
+    footProfile: v.optional(
+      v.object({
+        shape: v.string(),
+        volume: v.string(),
+      }),
+    ),
     lastUpdated: v.number(),
     version: v.number(),
-    history: v.array(v.object({
-      timestamp: v.number(),
-      previousScore: v.number(),
-      newScore: v.number(),
-      changeReason: v.union(
-        v.literal("shoe_added"),
-        v.literal("shoe_updated"),
-        v.literal("shoe_removed"),
-        v.literal("profile_updated"),
-        v.literal("recalculation")
-      ),
-      affectedShoes: v.array(v.string()),
-    })),
+    history: v.array(
+      v.object({
+        timestamp: v.number(),
+        previousScore: v.number(),
+        newScore: v.number(),
+        changeReason: v.union(
+          v.literal("shoe_added"),
+          v.literal("shoe_updated"),
+          v.literal("shoe_removed"),
+          v.literal("profile_updated"),
+          v.literal("recalculation"),
+        ),
+        affectedShoes: v.array(v.string()),
+      }),
+    ),
   })
     .index("by_userId", ["userId"])
     .index("by_overallScore", ["overallScore"]),
