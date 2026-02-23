@@ -14,6 +14,7 @@ import type * as authDb from "../authDb.js";
 import type * as backlog from "../backlog.js";
 import type * as http from "../http.js";
 import type * as popularity from "../popularity.js";
+import type * as recommendations from "../recommendations.js";
 import type * as rubberTechnologies from "../rubberTechnologies.js";
 import type * as seed from "../seed.js";
 import type * as shoes from "../shoes.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   backlog: typeof backlog;
   http: typeof http;
   popularity: typeof popularity;
+  recommendations: typeof recommendations;
   rubberTechnologies: typeof rubberTechnologies;
   seed: typeof seed;
   shoes: typeof shoes;
