@@ -122,7 +122,9 @@ export default defineSchema({
     accessTokenExpiresAt: v.optional(v.number()),
     refreshTokenExpiresAt: v.optional(v.number()),
     scope: v.optional(v.string()),
-  }).index("by_userId", ["userId"]),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_provider_accountId", ["providerId", "accountId"]),
 
   // Sessions (for Better Auth)
   sessions: defineTable({

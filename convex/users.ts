@@ -146,11 +146,25 @@ export const createOrUpdateFromBetterAuth = mutation({
     emailVerified: v.boolean(),
   },
   handler: async (ctx, args) => {
-    // Check if user already exists with this Better Auth ID
-    const existingUser = await ctx.db
+    // 1. Check if user already exists with this Better Auth ID
+    let existingUser = await ctx.db
       .query("users")
       .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
       .first();
+
+    // 2. Fall back to checking by email if no betterAuthId match
+    if (!existingUser) {
+      existingUser = await ctx.db
+        .query("users")
+        .withIndex("by_email", (q) => q.eq("email", args.email))
+        .first();
+
+      // If found by email but missing betterAuthId, link them
+      if (existingUser && !existingUser.betterAuthId) {
+        await ctx.db.patch(existingUser._id, { betterAuthId: args.betterAuthId });
+        existingUser = { ...existingUser, betterAuthId: args.betterAuthId };
+      }
+    }
 
     if (existingUser) {
       // Update existing user

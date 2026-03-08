@@ -14,14 +14,27 @@ export const createUser = mutation({
     image: v.optional(v.string()),
     isAdmin: v.optional(v.boolean()),
     createdAt: v.optional(v.any()),
-    updatedAt: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
-    // Check if user already exists
-    const existing = await ctx.db
+    // 1. Check if user already exists by Better Auth ID
+    let existing = await ctx.db
       .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
       .first();
+    
+    // 2. Fall back to checking by email if no betterAuthId match
+    if (!existing) {
+      existing = await ctx.db
+        .query("users")
+        .withIndex("by_email", (q) => q.eq("email", args.email))
+        .first();
+
+      // If found by email but missing betterAuthId, link them
+      if (existing && !existing.betterAuthId) {
+        await ctx.db.patch(existing._id, { betterAuthId: args.betterAuthId });
+        existing = { ...existing, betterAuthId: args.betterAuthId };
+      }
+    }
     
     if (existing) {
       // Return existing user in Better Auth format
@@ -56,7 +69,6 @@ export const createUser = mutation({
       emailVerified: user?.emailVerified ?? args.emailVerified,
       image: user?.image || null,
       createdAt: now,
-      updatedAt: now,
     };
   },
 });
@@ -80,7 +92,6 @@ export const updateUser = mutation({
       ...user,
       id: user._id,
       createdAt: user._creationTime,
-      updatedAt: Date.now(),
     } : null;
   },
 });
@@ -130,7 +141,6 @@ export const createSession = mutation({
     ipAddress: v.optional(v.string()),
     userAgent: v.optional(v.string()),
     createdAt: v.optional(v.any()),
-    updatedAt: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
     // Convert expiresAt to timestamp if it's a Date string
@@ -162,7 +172,6 @@ export const createSession = mutation({
       ipAddress: session?.ipAddress || null,
       userAgent: session?.userAgent || null,
       createdAt: now,
-      updatedAt: now,
     };
   },
 });
@@ -174,17 +183,16 @@ export const updateSession = mutation({
     expiresAt: v.optional(v.union(v.number(), v.string())),
     ipAddress: v.optional(v.string()),
     userAgent: v.optional(v.string()),
-    updatedAt: v.optional(v.any()), // Allow updatedAt but don't store it
   },
   handler: async (ctx, args) => {
-    const { id, updatedAt, ...updates } = args;
+    const { id, ...updates } = args;
     
     // Convert expiresAt to number if it's a string
     if (updates.expiresAt && typeof updates.expiresAt === 'string') {
       updates.expiresAt = new Date(updates.expiresAt).getTime();
     }
     
-    // Filter out undefined values and updatedAt (we don't store updatedAt)
+    // Filter out undefined values
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, val]) => val !== undefined)
     );
@@ -195,7 +203,6 @@ export const updateSession = mutation({
       ...session,
       id: session._id,
       createdAt: session._creationTime,
-      updatedAt: Date.now(),
     } : null;
   },
 });
@@ -293,10 +300,9 @@ export const createAccount = mutation({
     refreshTokenExpiresAt: v.optional(v.any()),
     scope: v.optional(v.string()),
     createdAt: v.optional(v.any()),
-    updatedAt: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
-    const { id, createdAt, updatedAt, ...rest } = args;
+    const { id, createdAt, ...rest } = args;
     
     // Convert any date fields to numbers
     const data = {
@@ -325,7 +331,6 @@ export const createAccount = mutation({
       refreshTokenExpiresAt: account?.refreshTokenExpiresAt ? new Date(account.refreshTokenExpiresAt).toISOString() : null,
       scope: account?.scope || null,
       createdAt: now,
-      updatedAt: now,
     };
   },
 });
@@ -353,7 +358,6 @@ export const updateAccount = mutation({
       ...account,
       id: account._id,
       createdAt: account._creationTime,
-      updatedAt: Date.now(),
     } : null;
   },
 });
@@ -397,11 +401,8 @@ export const findAccountByProviderAndAccountId = query({
   handler: async (ctx, args) => {
     const accounts = await ctx.db
       .query("accounts")
-      .filter((q) => 
-        q.and(
-          q.eq(q.field("providerId"), args.providerId),
-          q.eq(q.field("accountId"), args.accountId)
-        )
+      .withIndex("by_provider_accountId", (q) => 
+        q.eq("providerId", args.providerId).eq("accountId", args.accountId)
       )
       .first();
     return accounts ? {
@@ -452,7 +453,6 @@ export const updateVerification = mutation({
       ...verification,
       id: verification._id,
       createdAt: verification._creationTime,
-      updatedAt: Date.now(),
     } : null;
   },
 });
