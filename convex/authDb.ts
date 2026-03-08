@@ -32,7 +32,6 @@ export const createUser = mutation({
         emailVerified: existing.emailVerified,
         image: existing.image || null,
         createdAt: new Date(existing._creationTime).toISOString(),
-        updatedAt: new Date(existing._creationTime).toISOString(),
       };
     }
     
@@ -101,7 +100,6 @@ export const findUserById = query({
       ...user,
       id: user._id,
       createdAt: user._creationTime,
-      updatedAt: user._creationTime,
     } : null;
   },
 });
@@ -117,7 +115,6 @@ export const findUserByEmail = query({
       ...user,
       id: user._id,
       createdAt: user._creationTime,
-      updatedAt: user._creationTime,
     } : null;
   },
 });
@@ -245,7 +242,6 @@ export const findSessionById = query({
       ...session,
       id: session._id,
       createdAt: session._creationTime,
-      updatedAt: session._creationTime,
     } : null;
   },
 });
@@ -261,7 +257,6 @@ export const findSessionByToken = query({
       ...session,
       id: session._id,
       createdAt: session._creationTime,
-      updatedAt: session._creationTime,
     } : null;
   },
 });
@@ -277,7 +272,6 @@ export const findSessionsByUserId = query({
       ...session,
       id: session._id,
       createdAt: session._creationTime,
-      updatedAt: session._creationTime,
     }));
   },
 });
@@ -379,7 +373,6 @@ export const findAccountById = query({
       ...account,
       id: account._id,
       createdAt: account._creationTime,
-      updatedAt: account._creationTime,
     } : null;
   },
 });
@@ -395,7 +388,6 @@ export const findAccountByUserId = query({
       ...account,
       id: account._id,
       createdAt: account._creationTime,
-      updatedAt: account._creationTime,
     }));
   },
 });
@@ -416,7 +408,6 @@ export const findAccountByProviderAndAccountId = query({
       ...accounts,
       id: accounts._id,
       createdAt: accounts._creationTime,
-      updatedAt: accounts._creationTime,
     } : null;
   },
 });
@@ -439,7 +430,6 @@ export const createVerification = mutation({
       ...verification,
       id: verificationId,
       createdAt: verification._creationTime,
-      updatedAt: verification._creationTime,
     } : null;
   },
 });
@@ -527,7 +517,6 @@ export const findVerificationByIdentifier = query({
       ...verification,
       id: verification._id,
       createdAt: verification._creationTime,
-      updatedAt: verification._creationTime,
     } : null;
   },
 });

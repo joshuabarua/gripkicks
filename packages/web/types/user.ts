@@ -6,7 +6,6 @@ export interface User {
   emailVerified: boolean;
   image?: string | null;
   createdAt: Date;
-  updatedAt: Date;
   two_factor_enabled?: boolean;
   Session?: Session[];
   Account?: Account[];
@@ -18,7 +17,6 @@ export interface Session {
   token: string;
   user_id: string;
   created_at: Date;
-  updated_at: Date;
   ip_address: string;
   user_agent: string;
   user: User;
@@ -36,7 +34,6 @@ export interface Account {
   refresh_token_expires_at?: Date;
   scope?: string;
   created_at: Date;
-  updated_at: Date;
   user: User;
 }
 
@@ -51,7 +48,6 @@ export interface Provider {
   refresh_token_expires_at: Date;
   scope: string;
   created_at: Date;
-  updated_at: Date;
   user: User;
 }
 

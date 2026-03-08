@@ -95,7 +95,6 @@ export interface User {
   name?: string;
   isAdmin?: boolean;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface Session {

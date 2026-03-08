@@ -49,7 +49,6 @@ function sanitizeCreatePayload(
       "image",
       "isAdmin",
       "createdAt",
-      "updatedAt",
     ]);
   }
 
@@ -62,7 +61,6 @@ function sanitizeCreatePayload(
       "ipAddress",
       "userAgent",
       "createdAt",
-      "updatedAt",
     ]);
   }
 
@@ -81,7 +79,6 @@ function sanitizeCreatePayload(
       "refreshTokenExpiresAt",
       "scope",
       "createdAt",
-      "updatedAt",
     ]);
   }
 
@@ -92,7 +89,6 @@ function sanitizeCreatePayload(
       "value",
       "expiresAt",
       "createdAt",
-      "updatedAt",
     ]);
   }
 
