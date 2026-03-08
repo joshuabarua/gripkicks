@@ -503,15 +503,6 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
                 expiresBefore = new Date(expiresBefore).getTime();
               }
 
-              // Add a delay to prevent immediate cleanup of newly created verifications
-              // Better Auth sometimes calls cleanup immediately after creation
-              if (config.debugLogs) {
-                console.log(
-                  "[ConvexAdapter] Waiting 5 seconds before cleanup...",
-                );
-              }
-              await new Promise((resolve) => setTimeout(resolve, 5000)); // 5 second delay
-
               // Delete expired verifications
               const result = await callConvex(model, "deleteExpired", {
                 expiresBefore: expiresBefore as number,
