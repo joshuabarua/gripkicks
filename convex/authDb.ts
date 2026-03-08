@@ -13,7 +13,7 @@ export const createUser = mutation({
     emailVerified: v.boolean(),
     image: v.optional(v.string()),
     isAdmin: v.optional(v.boolean()),
-    createdAt: v.optional(v.any()),
+    createdAt: v.optional(v.union(v.string(), v.number())),
   },
   handler: async (ctx, args) => {
     // 1. Check if user already exists by Better Auth ID
@@ -99,6 +99,34 @@ export const updateUser = mutation({
 export const deleteUser = mutation({
   args: { id: v.id("users") },
   handler: async (ctx, args) => {
+    // 1. Delete all sessions for this user
+    const sessions = await ctx.db
+      .query("sessions")
+      .withIndex("by_userId", (q) => q.eq("userId", args.id))
+      .collect();
+    for (const session of sessions) {
+      await ctx.db.delete(session._id);
+    }
+
+    // 2. Delete all accounts for this user
+    const accounts = await ctx.db
+      .query("accounts")
+      .withIndex("by_userId", (q) => q.eq("userId", args.id))
+      .collect();
+    for (const account of accounts) {
+      await ctx.db.delete(account._id);
+    }
+
+    // 3. Delete all user shoes for this user
+    const userShoes = await ctx.db
+      .query("userShoes")
+      .withIndex("by_userId", (q) => q.eq("userId", args.id))
+      .collect();
+    for (const shoe of userShoes) {
+      await ctx.db.delete(shoe._id);
+    }
+
+    // 4. Finally delete the user
     await ctx.db.delete(args.id);
   },
 });
@@ -137,10 +165,10 @@ export const createSession = mutation({
     id: v.optional(v.string()),
     token: v.string(),
     userId: v.string(), // Accept string, will be cast to Id<"users">
-    expiresAt: v.any(), // Accept Date, string, or number
+    expiresAt: v.union(v.string(), v.number()), // Accept string or number
     ipAddress: v.optional(v.string()),
     userAgent: v.optional(v.string()),
-    createdAt: v.optional(v.any()),
+    createdAt: v.optional(v.union(v.string(), v.number())),
   },
   handler: async (ctx, args) => {
     // Convert expiresAt to timestamp if it's a Date string
@@ -294,12 +322,12 @@ export const createAccount = mutation({
     accessToken: v.optional(v.string()),
     refreshToken: v.optional(v.string()),
     idToken: v.optional(v.string()),
-    expiresAt: v.optional(v.any()),
+    expiresAt: v.optional(v.union(v.string(), v.number())),
     password: v.optional(v.string()),
-    accessTokenExpiresAt: v.optional(v.any()),
-    refreshTokenExpiresAt: v.optional(v.any()),
+    accessTokenExpiresAt: v.optional(v.union(v.string(), v.number())),
+    refreshTokenExpiresAt: v.optional(v.union(v.string(), v.number())),
     scope: v.optional(v.string()),
-    createdAt: v.optional(v.any()),
+    createdAt: v.optional(v.union(v.string(), v.number())),
   },
   handler: async (ctx, args) => {
     const { id, createdAt, ...rest } = args;

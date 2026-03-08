@@ -289,7 +289,7 @@ export function ShoeRadarMatcher() {
 
       {/* Metric Selectors */}
       <div className="flex items-center gap-4 mb-6">
-        <Select value={xMetric} onValueChange={setXMetric}>
+        <Select value={xMetric} onValueChange={(val) => setXMetric(val as ShoeMetricKey)}>
           <SelectTrigger className="bg-neutral-900 border-neutral-800 text-white rounded-lg py-2 pl-4 pr-10">
             <SelectValue />
           </SelectTrigger>
@@ -302,7 +302,7 @@ export function ShoeRadarMatcher() {
             ))}
           </SelectContent>
         </Select>
-        <Select value={yMetric} onValueChange={setYMetric}>
+        <Select value={yMetric} onValueChange={(val) => setYMetric(val as ShoeMetricKey)}>
           <SelectTrigger className="bg-neutral-900 border-neutral-800 text-white rounded-lg py-2 pl-4 pr-10">
             <SelectValue />
           </SelectTrigger>
