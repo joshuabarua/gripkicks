@@ -269,7 +269,7 @@ app.post("/api/stash/removeFromStash", async (c) => {
 // Update user profile (internal)
 app.post("/api/users/update", async (c) => {
   try {
-    const { id, name, phone, image, emailVerified, footShape, footVolume } = await c.req.json();
+    const { id, name, image, emailVerified, footShape, footVolume } = await c.req.json();
 
     if (!id) {
       return c.json({ success: false, message: "User ID is required" }, 400);
@@ -278,11 +278,10 @@ app.post("/api/users/update", async (c) => {
     const updated = await c.env.runMutation(api.users.update, {
       id: id as Id<"users">,
       name,
-      phone,
       image,
       emailVerified,
       footShape,
-      footVolume
+      footVolume,
     });
 
     return c.json({ success: true, data: updated });

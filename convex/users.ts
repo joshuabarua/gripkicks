@@ -95,7 +95,6 @@ export const update = mutation({
   args: {
     id: v.id("users"),
     name: v.optional(v.string()),
-    phone: v.optional(v.string()),
     image: v.optional(v.string()),
     emailVerified: v.optional(v.boolean()),
     footShape: v.optional(footShapeValidator),
@@ -103,6 +102,7 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
+    const user = await ctx.db.get(id);
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, v]) => v !== undefined)
     );

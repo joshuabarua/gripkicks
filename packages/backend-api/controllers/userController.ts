@@ -69,8 +69,6 @@ export const editProfile = async (c: Context): Promise<Response> => {
   const updateFields: Record<string, any> = {};
   if (typeof body.name === "string" && body.name !== "")
     updateFields.name = body.name;
-  if (typeof body.phone === "string" && body.phone !== "")
-    updateFields.phone = body.phone;
   if (typeof body.image === "string" && body.image !== "")
     updateFields.image = body.image;
   if (typeof body.footShape === "string" && body.footShape !== "")

@@ -10,7 +10,6 @@ import {
   CheckCircle2, 
   ChevronRight, 
   ChevronLeft,
-  User,
   Star,
   Sparkles,
   ArrowUpRight
@@ -21,7 +20,6 @@ import ShoeImage from '@/components/ShoeImage'
 import { ShoeSearch } from '@/components/ShoeSearch'
 import { shoeSizes } from '@/constants/shoe-data'
 import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { FullPageLoading } from '@/components/ui/loading'
@@ -36,7 +34,7 @@ interface ApiSuccessResponse {
   success: boolean
 }
 
-type OnboardingStep = 'welcome' | 'profile' | 'foot-data' | 'first-shoe' | 'complete'
+type OnboardingStep = 'welcome' | 'foot-data' | 'first-shoe' | 'complete'
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -53,20 +51,12 @@ export default function OnboardingPage() {
     notes: ''
   })
 
-  // Profile data
-  const [profileData, setProfileData] = useState({
-    name: '',
-    phone: '',
-    image: ''
-  })
-
   // Foot data
   const [footShape, setFootShape] = useState('')
   const [footVolume, setFootVolume] = useState('')
 
   const steps = useMemo(() => [
     { key: 'welcome', title: 'Welcome to GripKicks', description: 'Let&apos;s set up your profile' },
-    { key: 'profile', title: 'Your Profile', description: 'Tell us about yourself' },
     { key: 'foot-data', title: 'Foot Profile', description: 'Help us understand your feet' },
     { key: 'first-shoe', title: 'Your First Shoe', description: 'Add a climbing shoe to your collection' },
     { key: 'complete', title: 'All Set!', description: 'You&apos;re ready to climb' }
@@ -84,20 +74,8 @@ export default function OnboardingPage() {
   }, [currentStep, session, sessionLoading, router, steps])
 
   const handleNext = async () => {
-    if (currentStep === 'profile') {
-      // Save profile data
-      setIsLoading(true)
-      try {
-        await fetchApi('/api/v1/profile', {
-          method: 'PUT',
-          body: JSON.stringify(profileData)
-        })
-      } catch (error) {
-        console.error('Failed to save profile:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    } else if (currentStep === 'foot-data') {
+    if (currentStep === 'welcome') setCurrentStep('foot-data')
+    else if (currentStep === 'foot-data') {
       // Save foot data
       setIsLoading(true)
       try {
@@ -156,10 +134,8 @@ export default function OnboardingPage() {
   }
 
   const handlePrevious = () => {
-    const currentIndex = steps.findIndex(s => s.key === currentStep)
-    if (currentIndex > 0) {
-      setCurrentStep(steps[currentIndex - 1].key)
-    }
+    if (currentStep === 'foot-data') setCurrentStep('welcome')
+    else if (currentStep === 'first-shoe') setCurrentStep('foot-data')
   }
 
   const handleSkipOnboarding = async () => {
@@ -188,7 +164,6 @@ export default function OnboardingPage() {
     return <FullPageLoading text="Loading" />
   }
 
-  const inputClasses = "bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-orange-500 focus:ring-orange-500 rounded-xl h-12"
   const stepIndex = steps.findIndex(s => s.key === currentStep)
 
   return (
@@ -266,47 +241,6 @@ export default function OnboardingPage() {
                     LET&apos;S GET STARTED
                     <ChevronRight className="w-5 h-5" />
                   </motion.button>
-                </div>
-              )}
-
-              {currentStep === 'profile' && (
-                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8">
-                  <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
-                    <User className="w-7 h-7 text-orange-500" />
-                  </div>
-                  <h2 className="font-tanker text-3xl mb-2">TELL US ABOUT YOURSELF</h2>
-                  <p className="font-sora text-neutral-500 text-sm mb-8">This information helps us personalize your experience</p>
-
-                  <div className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[NAME]</Label>
-                      <Input
-                        id="name"
-                        value={profileData.name}
-                        onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                        placeholder="John Doe"
-                        className={inputClasses}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone" className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[PHONE_OPTIONAL]</Label>
-                      <Input
-                        id="phone"
-                        value={profileData.phone}
-                        onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                        placeholder="+1 (555) 123-4567"
-                        className={inputClasses}
-                      />
-                    </div>
-                    <div className="flex justify-between pt-4">
-                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePrevious} className="border border-neutral-700 hover:border-orange-500/30 text-neutral-400 font-sora text-sm px-6 py-3 rounded-2xl transition-all flex items-center gap-2">
-                        <ChevronLeft className="w-4 h-4" /> Back
-                      </motion.button>
-                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleNext} disabled={!profileData.name || isLoading} className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors flex items-center gap-2">
-                        {isLoading ? 'SAVING...' : 'NEXT'} <ChevronRight className="w-4 h-4" />
-                      </motion.button>
-                    </div>
-                  </div>
                 </div>
               )}
 

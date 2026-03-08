@@ -24,17 +24,6 @@ const profileSchema = z.object({
     .string()
     .min(1, "Name is required")
     .max(100, "Name must be less than 100 characters"),
-  phone: z
-    .string()
-    .optional()
-    .refine(
-      (val) =>
-        !val ||
-        /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/.test(
-          val,
-        ),
-      { message: "Please enter a valid phone number" },
-    ),
 });
 
 type ProfileData = z.infer<typeof profileSchema>;
@@ -42,7 +31,6 @@ type ProfileData = z.infer<typeof profileSchema>;
 export function ProfileForm() {
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
-    phone: "",
   });
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -59,7 +47,6 @@ export function ProfileForm() {
         const profileData = result.value;
         setFormData({
           name: profileData.name || "",
-          phone: profileData.phone || "",
         });
       }
     };
@@ -147,18 +134,6 @@ export function ProfileForm() {
               />
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                placeholder="+1 (555) 123-4567"
-                value={formData.phone}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
-            </div>
             {validationError && (
               <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
                 <AlertCircle className="h-4 w-4" />
@@ -239,7 +214,7 @@ function getErrorDisplayMessage(error: ApiError): string {
     case "UNAUTHORIZED":
       return "You don't have permission to update this profile";
     case "INVALID_DATA":
-      return "Please check your input data for errors (e.g., invalid phone format, long name, or invalid URL)";
+      return "Please check your input data for errors (e.g., long name or invalid formatting)";
     case "VALIDATION_ERROR":
       return "Please fill in at least one field to update";
     case "NETWORK_ERROR":
