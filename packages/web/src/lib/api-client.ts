@@ -2,7 +2,8 @@ import { hc } from "hono/client";
 import { ResultAsync } from "neverthrow";
 import { AppError, ErrorFactory } from "./errors";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// Use relative URL so requests go through Next.js proxy/rewrites
+const apiBaseUrl = "";
 
 export const apiClient = hc(apiBaseUrl, {
   fetch: (input: RequestInfo | URL, init?: RequestInit) => {

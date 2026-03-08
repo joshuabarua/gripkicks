@@ -31,6 +31,15 @@ const nextConfig: NextConfig = {
     domains: ["images.unsplash.com", "images.pexels.com"],
   },
 
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/:path*`,
+      },
+    ]
+  },
+
   // Allow importing generated Convex types from monorepo root
   webpack: (config) => {
     config.resolve.alias = {
