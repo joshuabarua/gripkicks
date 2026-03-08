@@ -12,6 +12,7 @@ interface SignOutButtonProps {
   className?: string
   children?: React.ReactNode
   onClick?: () => void
+  showIcon?: boolean
 }
 
 export function SignOutButton({
@@ -20,6 +21,7 @@ export function SignOutButton({
   className,
   children,
   onClick,
+  showIcon = true,
 }: SignOutButtonProps) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
@@ -73,7 +75,7 @@ export function SignOutButton({
         </span>
       ) : (
         <span className="flex items-center gap-2">
-          <LogOut className="h-4 w-4" />
+          {showIcon && <LogOut className="h-4 w-4" />}
           {children || "Sign out"}
         </span>
       )}

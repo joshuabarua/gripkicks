@@ -142,6 +142,7 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
                             variant="ghost"
                             className="nav-secondary-link group"
                             onClick={handleLogout}
+                            showIcon={false}
                         >
                             <AnimatedNavIcon
                                 icon={<LogOut className="w-3.5 h-3.5 text-black/30 group-hover:text-black/70 transition-colors" />}
