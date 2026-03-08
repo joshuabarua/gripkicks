@@ -101,6 +101,14 @@ app.get("/health", (c: Context) => {
   });
 });
 
+// Root endpoint
+app.get("/", (c: Context) => {
+  return c.json({
+    success: true,
+    message: "GripKicks API is running",
+  });
+});
+
 // Better Auth health check endpoint
 app.get("/api/auth/healthz", (c: Context) => {
   return c.json({
