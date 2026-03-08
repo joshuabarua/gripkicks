@@ -58,10 +58,13 @@ const Navigation: React.FC = () => {
     }
 
     // Set new timeout to hide navigation after 3 seconds of inactivity
-    timeoutRef.current = setTimeout(() => {
-      setIsVisible(false);
-    }, 3000);
-  }, []);
+    // Only hide if the menu is NOT active
+    if (!isActive) {
+      timeoutRef.current = setTimeout(() => {
+        setIsVisible(false);
+      }, 3000);
+    }
+  }, [isActive]);
 
   // Set up mouse movement and scroll listeners
   useEffect(() => {
