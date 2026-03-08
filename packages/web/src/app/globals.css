@@ -286,14 +286,14 @@ a {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	padding: 100px 40px 50px 40px;
+	padding: 80px 40px 40px 40px;
 	height: 100%;
 	z-index: 1000;
 	box-sizing: border-box;
 
 	.body {
 		display: flex;
-		gap: 10px;
+		gap: 6px;
 		flex-direction: column;
 		.linkContainer {
 			perspective: 150px;
@@ -310,7 +310,7 @@ a {
 			display: flex;
 			align-items: center;
 			gap: 12px;
-			font-size: var(--text-3xl);
+			font-size: 28px;
 		} 
 	}
 }
@@ -319,16 +319,16 @@ a {
 	.footer {
 		border-top: 1px solid rgba(0, 0, 0, 0.08);
 		width: 100%;
-		padding-top: var(--space-lg);
+		padding-top: var(--space-md);
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: var(--space-xs) var(--space-lg);
+		gap: 8px var(--space-lg);
 		.nav-secondary-link {
 			display: flex;
 			align-items: center;
-			gap: var(--space-xs);
-	font-size: 13px;
+			gap: 6px;
+	        font-size: 12px;
 			color: rgba(0, 0, 0, 0.45);
 			cursor: pointer;
 			transition: color 0.2s;
