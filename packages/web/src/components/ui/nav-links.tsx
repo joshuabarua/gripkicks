@@ -22,8 +22,8 @@ interface NavItem {
 const mainLinks: NavItem[] = [
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, animation: 'bounce' },
     { title: "Foot Lab", href: "/footchecker", icon: Footprints, animation: 'wiggle' },
-    { title: "Shoe Sanctuary", href: "/stash", icon: Archive, animation: 'pop' },
-    { title: "Shoe Matcher", href: "/matcher", icon: Target, animation: 'pulse' },
+    { title: "Sanctuary", href: "/stash", icon: Archive, animation: 'pop' },
+    { title: "Matcher", href: "/matcher", icon: Target, animation: 'pulse' },
     { title: "Sole Mate", href: "/findmyshoe", icon: Heart, animation: 'pulse' },
 ]
 
@@ -86,8 +86,30 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
     const adminLink: NavItem = { title: "Admin", href: "/admin", icon: Crown, animation: 'pop' };
 
     return (
-        <div className="nav">
-            <div className="body">
+        <div className="nav relative h-full flex flex-col justify-between">
+            {/* Top Right Logout Button */}
+            <motion.div
+                className="absolute top-6 right-8 z-50"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+            >
+                <SignOutButton
+                    variant="ghost"
+                    className="flex items-center gap-2 text-black/50 hover:text-black hover:bg-black/5 transition-colors rounded-full px-4 py-2 text-sm font-sora font-medium"
+                    onClick={handleLogout}
+                    showIcon={false}
+                >
+                    <AnimatedNavIcon
+                        icon={<LogOut className="w-4 h-4 shrink-0" />}
+                        animation="shake"
+                        size={8}
+                    />
+                    Logout
+                </SignOutButton>
+            </motion.div>
+
+            <div className="body flex flex-col gap-2">
                 {mainLinks.map((link, i) => (
                     <motion.div
                         key={`m_${i}`}
@@ -110,7 +132,7 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
                     </motion.div>
                 ))}
 
-                <div className="footer">
+                <div className="footer mt-auto border-t border-black/10 pt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
                     {[...secondaryLinks, ...(isAdmin ? [adminLink] : [])].map((link, i) => (
                         <motion.div
                             key={`s_${i}`}
@@ -130,28 +152,6 @@ export default function NavLinks({ handleLogout }: NavLinksProps) {
                             </Link>
                         </motion.div>
                     ))}
-                    <motion.div
-                        key="logout"
-                        variants={slideIn}
-                        custom={secondaryLinks.length}
-                        initial="initial"
-                        animate="enter"
-                        exit="exit"
-                    >
-                        <SignOutButton
-                            variant="ghost"
-                            className="nav-secondary-link group"
-                            onClick={handleLogout}
-                            showIcon={false}
-                        >
-                            <AnimatedNavIcon
-                                icon={<LogOut className="w-3.5 h-3.5 text-black/30 group-hover:text-black/70 transition-colors" />}
-                                animation="wiggle"
-                                size={8}
-                            />
-                            Logout
-                        </SignOutButton>
-                    </motion.div>
                 </div>
             </div>
         </div>
