@@ -44,6 +44,7 @@ export default function RootLayout({
   // Sync user to Convex when authenticated
   useUserSync();
   const [showBootLoader, setShowBootLoader] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
   const cloudflareBeaconToken = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
   const cloudflareBeaconSrc =
     process.env.NEXT_PUBLIC_CF_BEACON_SRC ||
@@ -68,36 +69,26 @@ export default function RootLayout({
   }, []);
 
   useEffect(() => {
-    let minTimeDone = false;
-    let pageReady = document.readyState === "complete";
+    const hydrationFrame = requestAnimationFrame(() => {
+      setIsHydrated(true);
+    });
 
-    const tryFinish = () => {
-      if (minTimeDone && pageReady) {
-        setShowBootLoader(false);
-      }
+    return () => {
+      cancelAnimationFrame(hydrationFrame);
     };
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
 
     const minTimer = setTimeout(() => {
-      minTimeDone = true;
-      tryFinish();
-    }, 1500);
-
-    const onLoad = () => {
-      pageReady = true;
-      tryFinish();
-    };
-
-    if (!pageReady) {
-      window.addEventListener("load", onLoad);
-    } else {
-      tryFinish();
-    }
+      setShowBootLoader(false);
+    }, 1200);
 
     return () => {
       clearTimeout(minTimer);
-      window.removeEventListener("load", onLoad);
     };
-  }, []);
+  }, [isHydrated]);
 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>

@@ -14,6 +14,91 @@ interface ConvexAdapterConfig {
 
 const withNoTrailingSlash = (url: string) => url.replace(/\/$/, "");
 
+const normalizeNullableRecord = (data: Record<string, unknown>) =>
+  Object.fromEntries(
+    Object.entries(data).map(([key, value]) => [
+      key,
+      value === null ? undefined : value,
+    ]),
+  );
+
+const pickFields = (
+  data: Record<string, unknown>,
+  allowedFields: readonly string[],
+) =>
+  Object.fromEntries(
+    Object.entries(data).filter(([key, value]) => {
+      if (!allowedFields.includes(key)) return false;
+      return value !== undefined;
+    }),
+  );
+
+function sanitizeCreatePayload(
+  model: string,
+  data: Record<string, unknown>,
+): Record<string, unknown> {
+  const normalizedData = normalizeNullableRecord(data);
+
+  if (model === "user") {
+    return pickFields(normalizedData, [
+      "id",
+      "betterAuthId",
+      "name",
+      "email",
+      "emailVerified",
+      "image",
+      "isAdmin",
+      "createdAt",
+      "updatedAt",
+    ]);
+  }
+
+  if (model === "session") {
+    return pickFields(normalizedData, [
+      "id",
+      "token",
+      "userId",
+      "expiresAt",
+      "ipAddress",
+      "userAgent",
+      "createdAt",
+      "updatedAt",
+    ]);
+  }
+
+  if (model === "account") {
+    return pickFields(normalizedData, [
+      "id",
+      "accountId",
+      "providerId",
+      "userId",
+      "accessToken",
+      "refreshToken",
+      "idToken",
+      "expiresAt",
+      "password",
+      "accessTokenExpiresAt",
+      "refreshTokenExpiresAt",
+      "scope",
+      "createdAt",
+      "updatedAt",
+    ]);
+  }
+
+  if (model === "verification") {
+    return pickFields(normalizedData, [
+      "id",
+      "identifier",
+      "value",
+      "expiresAt",
+      "createdAt",
+      "updatedAt",
+    ]);
+  }
+
+  return normalizedData;
+}
+
 function getConvexBaseUrls(url: string): string[] {
   const normalized = withNoTrailingSlash(url);
   const urls = [normalized];
@@ -139,15 +224,14 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             console.log(`[ConvexAdapter] CREATE ${model}:`, data);
           }
 
+          const sanitizedData = sanitizeCreatePayload(model, data);
+
           // Convert expiresAt from string to number if present (for verification model)
           // Also filter out extra fields that aren't in the validator
-          let finalData: Record<string, unknown> = data as Record<
-            string,
-            unknown
-          >;
+          let finalData: Record<string, unknown> = sanitizedData;
           if (model === "verification") {
             const { id, createdAt, updatedAt, expiresAt, ...rest } =
-              data as Record<string, unknown>;
+              sanitizedData as Record<string, unknown>;
             finalData = {
               ...rest,
               expiresAt:
@@ -198,6 +282,34 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             }
             // The session.id is already a proper Convex ID
             id = session?.id;
+          } else if (model === "account") {
+            const providerWhere = where.find((w) => w.field === "providerId");
+            const accountWhere = where.find((w) => w.field === "accountId");
+            const userIdWhere = where.find((w) => w.field === "userId");
+
+            if (providerWhere && accountWhere) {
+              const account = await callConvex(model, "findByProviderAccountId", {
+                providerId: providerWhere.value,
+                accountId: accountWhere.value,
+              });
+              if (config.debugLogs) {
+                console.log("[ConvexAdapter] Found account by provider/account:", account);
+              }
+              id = account?.id;
+            } else if (userIdWhere) {
+              const accounts = await callConvex(model, "findByUserId", {
+                userId: userIdWhere.value,
+              });
+              if (config.debugLogs) {
+                console.log("[ConvexAdapter] Found accounts by userId:", accounts);
+              }
+              id = Array.isArray(accounts) ? accounts[0]?.id : accounts?.id;
+            } else if (field === "id" || field === "_id") {
+              const account = await callConvex(model, "findById", {
+                id: value,
+              });
+              id = account?.id;
+            }
           } else if (field === "id" || field === "_id") {
             id = value as string;
           } else {
@@ -213,7 +325,7 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
           }
 
           if (config.debugLogs) {
-            console.log("[ConvexAdapter] Updating session with ID:", id);
+            console.log(`[ConvexAdapter] Updating ${model} with ID:`, id);
           }
 
           const result = await callConvex(model, "update", {

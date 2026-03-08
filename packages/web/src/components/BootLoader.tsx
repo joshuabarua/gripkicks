@@ -8,10 +8,11 @@ const transitionImages = [
   "/imgs/transition/blue_hold.png",
   "/imgs/transition/rock1.png",
   "/imgs/transition/green_hold.png",
-  "/imgs/transition/plastic_hold1.png",
   "/imgs/transition/yellow_hold.png",
-  "/imgs/transition/dark_blue.png",
 ];
+
+const IMAGE_CYCLE_DURATION_MS = 520;
+const IMAGE_TRANSITION_DURATION_S = 0.34;
 
 export default function BootLoader({ visible }: { visible: boolean }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -21,7 +22,7 @@ export default function BootLoader({ visible }: { visible: boolean }) {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % transitionImages.length);
-    }, 260);
+    }, IMAGE_CYCLE_DURATION_MS);
 
     return () => clearInterval(interval);
   }, [visible]);
@@ -101,7 +102,7 @@ export default function BootLoader({ visible }: { visible: boolean }) {
                   initial={{ scale: 1.3, opacity: 0, rotate: -10 }}
                   animate={{ scale: 1, opacity: 1, rotate: 0 }}
                   exit={{ scale: 0.7, opacity: 0, rotate: 10 }}
-                  transition={{ duration: 0.22, ease: "easeOut" }}
+                  transition={{ duration: IMAGE_TRANSITION_DURATION_S, ease: "easeOut" }}
                 >
                   <Image
                     src={transitionImages[currentImageIndex]}
@@ -127,7 +128,7 @@ export default function BootLoader({ visible }: { visible: boolean }) {
                   animate={{
                     width: `${((currentImageIndex + 1) / transitionImages.length) * 100}%`,
                   }}
-                  transition={{ duration: 0.22 }}
+                  transition={{ duration: IMAGE_TRANSITION_DURATION_S }}
                 />
               </div>
             </div>
