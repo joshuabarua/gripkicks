@@ -275,8 +275,15 @@ app.post("/api/users/update", async (c) => {
       return c.json({ success: false, message: "User ID is required" }, 400);
     }
 
+    // First find the user by their betterAuthId
+    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: id });
+    
+    if (!user) {
+      return c.json({ success: false, message: "User not found" }, 404);
+    }
+
     const updated = await c.env.runMutation(api.users.update, {
-      id: id as Id<"users">,
+      id: user._id,
       name,
       image,
       emailVerified,
@@ -288,6 +295,62 @@ app.post("/api/users/update", async (c) => {
   } catch (error) {
     console.error("Error updating user:", error);
     return c.json({ success: false, message: "Failed to update user" }, 500);
+  }
+});
+
+// Complete onboarding for a user
+app.post("/api/users/completeOnboarding", async (c) => {
+  try {
+    const { userId, footShape, favoriteShoeId } = await c.req.json();
+
+    if (!userId) {
+      return c.json({ success: false, message: "User ID is required" }, 400);
+    }
+
+    // Resolve betterAuthId to internal Convex user
+    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: userId });
+    
+    if (!user) {
+      return c.json({ success: false, message: "User not found" }, 404);
+    }
+
+    const updated = await c.env.runMutation(api.users.completeOnboarding, {
+      userId: user._id,
+      footShape,
+      favoriteShoeId: favoriteShoeId as Id<"shoes"> | undefined,
+    });
+
+    return c.json({ success: true, data: updated });
+  } catch (error) {
+    console.error("Error completing onboarding:", error);
+    return c.json({ success: false, message: "Failed to complete onboarding" }, 500);
+  }
+});
+
+// Delete user profile (internal)
+app.post("/api/users/delete", async (c) => {
+  try {
+    const { id } = await c.req.json();
+
+    if (!id) {
+      return c.json({ success: false, message: "User ID is required" }, 400);
+    }
+
+    // First find the user by their betterAuthId
+    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: id });
+    
+    if (!user) {
+      return c.json({ success: false, message: "User not found" }, 404);
+    }
+
+    await c.env.runMutation(api.authDb.deleteUser, {
+      id: user._id,
+    });
+
+    return c.json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return c.json({ success: false, message: "Failed to delete user" }, 500);
   }
 });
 

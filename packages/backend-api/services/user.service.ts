@@ -14,8 +14,12 @@ import { getConvexUrl } from '../utils/convexHelper';
 export interface User {
   id: string;
   email: string;
-  name: string;
+  name?: string;
   image?: string;
+  footShape?: string;
+  footVolume?: string;
+  onboardingComplete?: boolean;
+  favoriteShoe?: any;
 }
 
 export interface UpdateProfileData {
@@ -174,10 +178,10 @@ class UserService {
   private async findUserById(id: string): Promise<User | null> {
     try {
       const convexUrl = getConvexUrl();
-      const response = await fetch(`${convexUrl}/api/users/getById`, {
+      const response = await fetch(`${convexUrl}/api/users/findByBetterAuthId`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
+        body: JSON.stringify({ betterAuthId: id })
       });
 
       if (!response.ok) {
@@ -195,6 +199,10 @@ class UserService {
         email: user.email,
         name: user.name,
         image: user.image,
+        footShape: user.footShape,
+        footVolume: user.footVolume,
+        onboardingComplete: user.onboardingComplete,
+        favoriteShoe: user.favoriteShoe,
       };
     } catch (error) {
       console.error('Error fetching user by ID:', error);
