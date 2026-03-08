@@ -9,6 +9,7 @@ import {
   AppError,
 } from "../src/lib/errors";
 import { err, ResultAsync } from "neverthrow";
+import { getConvexUrl } from "../utils/convexHelper";
 
 export const getUsers = async (c: Context): Promise<Response> => {
   const result = await ResultAsync.fromPromise(
@@ -110,12 +111,22 @@ export const completeOnboarding = async (c: Context): Promise<Response> => {
 };
 
 export const getShoes = async (c: Context): Promise<Response> => {
-  const result = await ResultAsync.fromPromise(
-    Promise.resolve([]), // TODO: Replace with actual Convex query
-    (error: any) => new UnexpectedError("Failed to fetch shoes"),
-  );
-
-  return resultAsyncToHonoResponse(c, Promise.resolve(result));
+  try {
+    const convexUrl = getConvexUrl();
+    const response = await fetch(`${convexUrl}/api/v1/shoes`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch shoes: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return c.json(data);
+  } catch (error) {
+    return resultAsyncToHonoResponse(
+      c,
+      Promise.resolve(err(new UnexpectedError("Failed to fetch shoes"))),
+    );
+  }
 };
 
 export const getUsersCount = async (c: Context): Promise<Response> => {
