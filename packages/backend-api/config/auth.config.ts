@@ -51,6 +51,12 @@ export const auth = betterAuth({
       maxAge: 60 * 5,
     },
   },
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: process.env.NODE_ENV === "production" ? ".grip-kicks.com" : undefined,
+    }
+  },
   trustedOrigins: [
     ...getAllowedOrigins(),
     "http://localhost:8000",
