@@ -23,6 +23,7 @@ interface ShoeScore {
     performance: number;
     durability: number;
     aggressiveness: number;
+    stability: number;
     versatility: number;
   };
 }
@@ -348,6 +349,26 @@ function calculateRadarMetrics(
   else if (shoe.aggressiveness === "moderate") aggressiveness = 3;
   else if (shoe.aggressiveness === "low") aggressiveness = 1;
 
+  let stiffness = 2.5;
+  if (shoe.stiffness === "very_stiff") stiffness = 5;
+  else if (shoe.stiffness === "stiff") stiffness = 4;
+  else if (shoe.stiffness === "medium") stiffness = 3;
+  else if (shoe.stiffness === "soft") stiffness = 2;
+  else if (shoe.stiffness === "very_soft") stiffness = 1;
+
+  let volumeSupport = 2.5;
+  if (shoe.volume === "low_volume" || shoe.volume === "low") volumeSupport = 4;
+  else if (shoe.volume === "medium_volume" || shoe.volume === "medium") {
+    volumeSupport = 3;
+  } else if (shoe.volume === "high_volume" || shoe.volume === "high") {
+    volumeSupport = 2;
+  }
+
+  const stability = Math.min(
+    5,
+    durability * 0.45 + stiffness * 0.35 + volumeSupport * 0.2,
+  );
+
   // Versatility (based on climbing discipline and compatibility)
   let versatility = 2.5;
   if (shoe.climbingDiscipline === "all_around") versatility = 5;
@@ -364,6 +385,7 @@ function calculateRadarMetrics(
     performance: Math.min(5, performance),
     durability,
     aggressiveness,
+    stability,
     versatility: Math.min(5, versatility),
   };
 }
