@@ -1,16 +1,11 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { SignOutButton } from '@/components/signout-button';
 import { useSession } from '@/lib/auth';
-import { LayoutDashboard, Settings, Footprints, Archive, Heart, Box, Info, Shield, LogOut, Crown, Target } from 'lucide-react';
+import { LayoutDashboard, Settings, Footprints, Archive, Heart, Box, Info, Shield, Crown, Target } from 'lucide-react';
 import { AnimatedNavIcon } from '@/components/ui/AnimatedNavIcon';
 import type { LucideIcon } from 'lucide-react';
 
 type IconAnimation = 'bounce' | 'wiggle' | 'pulse' | 'spin' | 'pop' | 'shake';
-
-interface NavLinksProps {
-    handleLogout?: () => void;
-}
 
 interface NavItem {
     title: string;
@@ -79,36 +74,14 @@ const slideIn = {
     }
 }
 
-export default function NavLinks({ handleLogout }: NavLinksProps) {
+export default function NavLinks() {
     const { data: session } = useSession();
     const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
-
+    
     const adminLink: NavItem = { title: "Admin", href: "/admin", icon: Crown, animation: 'pop' };
 
     return (
         <div className="nav relative h-full flex flex-col justify-between">
-            {/* Top Right Logout Button */}
-            <motion.div
-                className="absolute top-6 right-8 z-50"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
-            >
-                <SignOutButton
-                    variant="ghost"
-                    className="flex items-center gap-2 text-black/50 hover:text-black hover:bg-black/5 transition-colors rounded-full px-4 py-2 text-sm font-sora font-medium"
-                    onClick={handleLogout}
-                    showIcon={false}
-                >
-                    <AnimatedNavIcon
-                        icon={<LogOut className="w-4 h-4 shrink-0" />}
-                        animation="shake"
-                        size={8}
-                    />
-                    Logout
-                </SignOutButton>
-            </motion.div>
-
             <div className="body flex flex-col gap-2">
                 {mainLinks.map((link, i) => (
                     <motion.div

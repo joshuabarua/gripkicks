@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import {
-  User,
-  Mail,
   Footprints,
   Star,
   Edit2,
@@ -14,13 +12,14 @@ import {
 import { fetchApi } from "@/lib/api-client";
 import { useSession } from "@/lib/auth";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ProfileForm } from "@/components/ProfileForm";
 import { PasswordChangeForm } from "@/components/PasswordChangeForm";
 import { EmailChangeForm } from "@/components/EmailChangeForm";
 import { AccountDeletion } from "@/components/AccountDeletion";
 import { FullPageLoading } from "@/components/ui/loading";
 import { UserAvatar } from "@/components/ui/UserAvatar";
+import { Button } from "@/components/ui/button";
 
 interface UserProfile {
   id: string;
@@ -45,20 +44,15 @@ const footShapeLabels: Record<string, string> = {
   celtic: "Celtic",
 };
 
-const tabs = [
-  { key: "overview", label: "Overview", icon: User },
-  { key: "profile", label: "Profile", icon: Edit2 },
-  { key: "security", label: "Security", icon: Lock },
-  { key: "danger", label: "Danger", icon: AlertTriangle },
-] as const;
-
-type TabKey = (typeof tabs)[number]["key"];
-
 export default function ProfilePage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<TabKey>("overview");
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  const toggleSection = (section: string) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
 
   useEffect(() => {
     async function loadProfile() {
@@ -139,169 +133,226 @@ export default function ProfilePage() {
                 <h1 className="font-tanker text-4xl md:text-5xl">
                   {profile?.name}
                 </h1>
-                <p className="font-sora text-neutral-500 flex items-center gap-2 mt-1">
-                  <Mail className="h-4 w-4" />
+                <p className="font-sora text-neutral-500 mt-1">
                   {profile?.email}
                 </p>
               </div>
             </div>
           </motion.div>
 
-          {/* Tab Navigation */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="flex gap-2 mb-8 overflow-x-auto pb-2"
-          >
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <motion.button
-                  key={tab.key}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-sora text-sm transition-all whitespace-nowrap ${
-                    activeTab === tab.key
-                      ? "bg-orange-500 text-black font-medium"
-                      : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:border-orange-500/30"
-                  }`}
+          <div className="space-y-6">
+            {/* Info Cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
+              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                    <Footprints className="w-5 h-5 text-orange-500" />
+                  </div>
+                  {!profile?.footShape && (
+                    <Link href="/footchecker">
+                      <motion.span
+                        whileHover={{ scale: 1.05 }}
+                        className="font-mono text-[10px] text-orange-500 cursor-pointer"
+                      >
+                        [SET UP]
+                      </motion.span>
+                    </Link>
+                  )}
+                </div>
+                <p className="font-mono text-[10px] text-neutral-600 mb-1">
+                  FOOT SHAPE
+                </p>
+                <p className="font-tanker text-2xl text-white capitalize">
+                  {profile?.footShape
+                    ? footShapeLabels[profile.footShape] || profile.footShape
+                    : "Not set"}
+                </p>
+              </div>
+
+              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                    <Star className="w-5 h-5 text-orange-500" />
+                  </div>
+                  {!profile?.favoriteShoe && (
+                    <Link href="/stash">
+                      <motion.span
+                        whileHover={{ scale: 1.05 }}
+                        className="font-mono text-[10px] text-orange-500 cursor-pointer"
+                      >
+                        [CHOOSE]
+                      </motion.span>
+                    </Link>
+                  )}
+                </div>
+                <p className="font-mono text-[10px] text-neutral-600 mb-1">
+                  FAVORITE SHOE
+                </p>
+                <p className="font-tanker text-2xl text-white">
+                  {profile?.favoriteShoe
+                    ? `${profile.favoriteShoe.brand} ${profile.favoriteShoe.name}`
+                    : "Not set"}
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Onboarding CTA */}
+            {!profile?.onboardingComplete && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 relative overflow-hidden"
+              >
+                <div className="absolute inset-0 opacity-20">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-black/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+                  <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
+                </div>
+                <div className="relative">
+                  <p className="font-mono text-[10px] text-black/60 mb-2">
+                    [SETUP_REQUIRED]
+                  </p>
+                  <h3 className="font-tanker text-3xl text-black mb-3">
+                    COMPLETE YOUR PROFILE
+                  </h3>
+                  <ol className="font-sora text-sm text-black/70 space-y-1 mb-4">
+                    <li>1. Set up your foot profile in Foot Lab</li>
+                    <li>2. Add your first shoe with comfort ratings</li>
+                    <li>3. Find your perfect match</li>
+                  </ol>
+                  <Link href="/footchecker">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-black text-orange-500 font-tanker text-lg px-6 py-3 rounded-2xl flex items-center gap-2"
+                    >
+                      START SETUP
+                      <ArrowUpRight className="w-5 h-5" />
+                    </motion.button>
+                  </Link>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Settings Sections */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              className="space-y-4"
+            >
+              {/* Profile Information */}
+              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl overflow-hidden">
+                <div 
+                  className="p-6 flex justify-between items-center cursor-pointer hover:bg-white/5 transition-colors"
+                  onClick={() => toggleSection("profile")}
                 >
-                  <Icon className="w-4 h-4" />
-                  {tab.label}
-                </motion.button>
-              );
-            })}
-          </motion.div>
-
-          {/* Tab Content */}
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {activeTab === "overview" && (
-              <div className="space-y-4">
-                {/* Info Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                        <Footprints className="w-5 h-5 text-orange-500" />
-                      </div>
-                      {!profile?.footShape && (
-                        <Link href="/footchecker">
-                          <motion.span
-                            whileHover={{ scale: 1.05 }}
-                            className="font-mono text-[10px] text-orange-500 cursor-pointer"
-                          >
-                            [SET UP]
-                          </motion.span>
-                        </Link>
-                      )}
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
+                      <Edit2 className="w-5 h-5 text-orange-500" />
                     </div>
-                    <p className="font-mono text-[10px] text-neutral-600 mb-1">
-                      FOOT SHAPE
-                    </p>
-                    <p className="font-tanker text-2xl text-white capitalize">
-                      {profile?.footShape
-                        ? footShapeLabels[profile.footShape] ||
-                          profile.footShape
-                        : "Not set"}
-                    </p>
+                    <div>
+                      <h3 className="font-tanker text-2xl text-white">Profile Information</h3>
+                      <p className="font-sora text-sm text-neutral-500">Update your name and avatar</p>
+                    </div>
                   </div>
-
-                  <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                        <Star className="w-5 h-5 text-orange-500" />
+                  <Button variant="ghost" size="sm" className="hidden sm:flex border border-white/10 rounded-full px-6">
+                    {expandedSection === "profile" ? "Close" : "Edit"}
+                  </Button>
+                </div>
+                <AnimatePresence>
+                  {expandedSection === "profile" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="border-t border-neutral-800 bg-black/20"
+                    >
+                      <div className="p-6 md:p-8">
+                        <ProfileForm />
                       </div>
-                      {!profile?.favoriteShoe && (
-                        <Link href="/stash">
-                          <motion.span
-                            whileHover={{ scale: 1.05 }}
-                            className="font-mono text-[10px] text-orange-500 cursor-pointer"
-                          >
-                            [CHOOSE]
-                          </motion.span>
-                        </Link>
-                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Security */}
+              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl overflow-hidden">
+                <div 
+                  className="p-6 flex justify-between items-center cursor-pointer hover:bg-white/5 transition-colors"
+                  onClick={() => toggleSection("security")}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
+                      <Lock className="w-5 h-5 text-orange-500" />
                     </div>
-                    <p className="font-mono text-[10px] text-neutral-600 mb-1">
-                      FAVORITE SHOE
-                    </p>
-                    <p className="font-tanker text-2xl text-white">
-                      {profile?.favoriteShoe
-                        ? `${profile.favoriteShoe.brand} ${profile.favoriteShoe.name}`
-                        : "Not set"}
-                    </p>
+                    <div>
+                      <h3 className="font-tanker text-2xl text-white">Security</h3>
+                      <p className="font-sora text-sm text-neutral-500">Change your password and email address</p>
+                    </div>
                   </div>
+                  <Button variant="ghost" size="sm" className="hidden sm:flex border border-white/10 rounded-full px-6">
+                    {expandedSection === "security" ? "Close" : "Edit"}
+                  </Button>
                 </div>
+                <AnimatePresence>
+                  {expandedSection === "security" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="border-t border-neutral-800 bg-black/20"
+                    >
+                      <div className="p-6 md:p-8 space-y-6">
+                        <PasswordChangeForm />
+                        <div className="h-px w-full bg-neutral-800" />
+                        <EmailChangeForm currentEmail={profile?.email || ""} />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-                {/* Onboarding CTA */}
-                {!profile?.onboardingComplete && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 relative overflow-hidden"
-                  >
-                    <div className="absolute inset-0 opacity-20">
-                      <div className="absolute top-0 right-0 w-64 h-64 bg-black/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-                      <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
+              {/* Danger Zone */}
+              <div className="bg-neutral-900 border border-red-500/20 rounded-3xl overflow-hidden">
+                <div 
+                  className="p-6 flex justify-between items-center cursor-pointer hover:bg-red-500/5 transition-colors"
+                  onClick={() => toggleSection("danger")}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
+                      <AlertTriangle className="w-5 h-5 text-red-500" />
                     </div>
-                    <div className="relative">
-                      <p className="font-mono text-[10px] text-black/60 mb-2">
-                        [SETUP_REQUIRED]
-                      </p>
-                      <h3 className="font-tanker text-3xl text-black mb-3">
-                        COMPLETE YOUR PROFILE
-                      </h3>
-                      <ol className="font-sora text-sm text-black/70 space-y-1 mb-4">
-                        <li>1. Set up your foot profile in Foot Lab</li>
-                        <li>2. Add your first shoe with comfort ratings</li>
-                        <li>3. Find your perfect match</li>
-                      </ol>
-                      <Link href="/footchecker">
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="bg-black text-orange-500 font-tanker text-lg px-6 py-3 rounded-2xl flex items-center gap-2"
-                        >
-                          START SETUP
-                          <ArrowUpRight className="w-5 h-5" />
-                        </motion.button>
-                      </Link>
+                    <div>
+                      <h3 className="font-tanker text-2xl text-red-500">Danger Zone</h3>
+                      <p className="font-sora text-sm text-neutral-500">Permanently delete your account</p>
                     </div>
-                  </motion.div>
-                )}
-              </div>
-            )}
-
-            {activeTab === "profile" && (
-              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
-                <ProfileForm />
-              </div>
-            )}
-
-            {activeTab === "security" && (
-              <div className="space-y-4">
-                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
-                  <PasswordChangeForm />
+                  </div>
+                  <Button variant="ghost" size="sm" className="hidden sm:flex border border-red-500/20 text-red-500 hover:bg-red-500/10 hover:text-red-400 rounded-full px-6">
+                    {expandedSection === "danger" ? "Close" : "Manage"}
+                  </Button>
                 </div>
-                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 md:p-8">
-                  <EmailChangeForm currentEmail={profile?.email || ""} />
-                </div>
+                <AnimatePresence>
+                  {expandedSection === "danger" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="border-t border-red-500/20 bg-black/20"
+                    >
+                      <div className="p-6 md:p-8">
+                        <AccountDeletion />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            )}
-
-            {activeTab === "danger" && (
-              <div className="bg-neutral-900 border border-red-500/20 rounded-3xl p-6 md:p-8">
-                <AccountDeletion />
-              </div>
-            )}
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
     </main>
