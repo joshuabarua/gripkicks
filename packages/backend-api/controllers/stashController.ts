@@ -22,29 +22,11 @@ export const getUserStash = async (c: Context): Promise<Response> => {
     (async () => {
       const convexUrl = getConvexUrl();
 
-      // Get user from Convex
-      const userResponse = await fetchWithTimeout(`${convexUrl}/api/users/findByBetterAuthId`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ betterAuthId: user.id })
-      });
-
-      if (!userResponse.ok) {
-        const errorText = await userResponse.text();
-        console.error('Failed to get user from Convex:', errorText);
-        return []; // Return empty stash if user not found
-      }
-
-      const userData = await userResponse.json();
-      if (!userData.data) {
-        return []; // User not synced yet, return empty stash
-      }
-
       // Get user's stash
       const stashResponse = await fetchWithTimeout(`${convexUrl}/api/stash/getUserStash`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: userData.data._id })
+        body: JSON.stringify({ betterAuthId: user.id })
       });
 
       if (!stashResponse.ok) {
@@ -64,7 +46,7 @@ export const getUserStash = async (c: Context): Promise<Response> => {
 export const addToStash = async (c: Context): Promise<Response> => {
   const user = c.get('user');
   if (!user || !user.id) {
-    return resultAsyncToHonoResponse(c, 
+    return resultAsyncToHonoResponse(c,
       Promise.resolve(err(new UnauthenticatedError('User not found in context')))
     );
   }
@@ -80,62 +62,12 @@ export const addToStash = async (c: Context): Promise<Response> => {
 
       const convexUrl = getConvexUrl();
 
-      // Get or sync user to Convex
-      let userResponse = await fetchWithTimeout(`${convexUrl}/api/users/findByBetterAuthId`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ betterAuthId: user.id })
-      });
-
-      let userData;
-      if (userResponse.ok) {
-        userData = await userResponse.json();
-      }
-
-      // Sync user if not found
-      if (!userResponse.ok || !userData?.data) {
-        console.log('User not found in Convex, syncing first...');
-
-        const syncResponse = await fetchWithTimeout(`${convexUrl}/api/sync-user-deduplicated`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            betterAuthId: user.id,
-            email: user.email,
-            name: user.name || '',
-            image: user.image || '',
-            emailVerified: user.emailVerified || false,
-          })
-        });
-
-        if (!syncResponse.ok) {
-          throw new UnexpectedError('Failed to sync user to Convex');
-        }
-
-        // Try getting user again
-        const userResponse2 = await fetchWithTimeout(`${convexUrl}/api/users/findByBetterAuthId`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ betterAuthId: user.id })
-        });
-
-        if (!userResponse2.ok) {
-          throw new UnexpectedError('Failed to find user after sync');
-        }
-
-        userData = await userResponse2.json();
-      }
-
-      if (!userData?.data) {
-        throw new NotFoundError('User not found in Convex');
-      }
-
-      // Add to stash
+      // Add to stash using betterAuthId
       const addResponse = await fetchWithTimeout(`${convexUrl}/api/stash/addToStash`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: userData.data._id,
+          betterAuthId: user.id,
           shoeId: shoeId
         })
       });

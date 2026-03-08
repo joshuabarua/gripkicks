@@ -207,14 +207,20 @@ app.delete("/api/v1/stash/:shoeId", async (c) => {
 // Get user's stash (internal)
 app.post("/api/stash/getUserStash", async (c) => {
   try {
-    const { userId } = await c.req.json();
+    const { betterAuthId } = await c.req.json();
 
-    if (!userId) {
-      return c.json({ success: false, message: "User ID is required" }, 400);
+    if (!betterAuthId) {
+      return c.json({ success: false, message: "BetterAuth ID is required" }, 400);
+    }
+
+    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+
+    if (!user) {
+      return c.json({ success: false, message: "User not found" }, 404);
     }
 
     const stash = await c.env.runQuery(api.stash.getUserStash, {
-      userId: userId as Id<"users">
+      userId: user._id
     });
 
     return c.json({ success: true, data: stash });
@@ -227,14 +233,20 @@ app.post("/api/stash/getUserStash", async (c) => {
 // Add to stash (internal)
 app.post("/api/stash/addToStash", async (c) => {
   try {
-    const { userId, shoeId } = await c.req.json();
+    const { betterAuthId, shoeId } = await c.req.json();
 
-    if (!userId || !shoeId) {
-      return c.json({ success: false, message: "User ID and Shoe ID are required" }, 400);
+    if (!betterAuthId || !shoeId) {
+      return c.json({ success: false, message: "BetterAuth ID and Shoe ID are required" }, 400);
+    }
+
+    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+
+    if (!user) {
+      return c.json({ success: false, message: "User not found" }, 404);
     }
 
     const userShoeId = await c.env.runMutation(api.stash.addToStash, {
-      userId: userId as Id<"users">,
+      userId: user._id,
       shoeId: shoeId as Id<"shoes">
     });
 
@@ -248,14 +260,20 @@ app.post("/api/stash/addToStash", async (c) => {
 // Remove from stash (internal)
 app.post("/api/stash/removeFromStash", async (c) => {
   try {
-    const { userId, shoeId } = await c.req.json();
+    const { betterAuthId, shoeId } = await c.req.json();
 
-    if (!userId || !shoeId) {
-      return c.json({ success: false, message: "User ID and Shoe ID are required" }, 400);
+    if (!betterAuthId || !shoeId) {
+      return c.json({ success: false, message: "BetterAuth ID and Shoe ID are required" }, 400);
+    }
+
+    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+
+    if (!user) {
+      return c.json({ success: false, message: "User not found" }, 404);
     }
 
     const removed = await c.env.runMutation(api.stash.removeFromStash, {
-      userId: userId as Id<"users">,
+      userId: user._id,
       shoeId: shoeId as Id<"shoes">
     });
 
