@@ -99,6 +99,46 @@ function sanitizeCreatePayload(
   return normalizedData;
 }
 
+const toTimestamp = (value: unknown) => {
+  if (typeof value === "string") {
+    return new Date(value).getTime();
+  }
+
+  return value;
+};
+
+function sanitizeUpdatePayload(
+  model: string,
+  data: Record<string, unknown>,
+): Record<string, unknown> {
+  const sanitizedData = sanitizeCreatePayload(model, data);
+
+  if (model === "session") {
+    return {
+      ...sanitizedData,
+      expiresAt: toTimestamp(sanitizedData.expiresAt),
+    };
+  }
+
+  if (model === "account") {
+    return {
+      ...sanitizedData,
+      expiresAt: toTimestamp(sanitizedData.expiresAt),
+      accessTokenExpiresAt: toTimestamp(sanitizedData.accessTokenExpiresAt),
+      refreshTokenExpiresAt: toTimestamp(sanitizedData.refreshTokenExpiresAt),
+    };
+  }
+
+  if (model === "verification") {
+    return {
+      ...sanitizedData,
+      expiresAt: toTimestamp(sanitizedData.expiresAt),
+    };
+  }
+
+  return sanitizedData;
+}
+
 function getConvexBaseUrls(url: string): string[] {
   const normalized = withNoTrailingSlash(url);
   const urls = [normalized];
@@ -328,9 +368,14 @@ export const convexAdapter = (config: ConvexAdapterConfig) => {
             console.log(`[ConvexAdapter] Updating ${model} with ID:`, id);
           }
 
+          const sanitizedUpdate = sanitizeUpdatePayload(
+            model,
+            update as Record<string, unknown>,
+          );
+
           const result = await callConvex(model, "update", {
             id,
-            data: update,
+            data: sanitizedUpdate,
           });
           return result;
         },
