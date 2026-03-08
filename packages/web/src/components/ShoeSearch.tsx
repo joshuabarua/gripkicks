@@ -33,7 +33,12 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
         )
         setSearchResults(results)
       } else {
-        setSearchResults(shoes.slice(0, 10)) // Show first 10 shoes when no search
+        // Show only La Sportiva shoes when no search query is active
+        const laSportivaShoes = shoes.filter(shoe => 
+          shoe.brand.toLowerCase() === 'la sportiva'
+        );
+        // Show up to 10 La Sportiva shoes, or fallback to first 10 shoes if none found
+        setSearchResults(laSportivaShoes.length > 0 ? laSportivaShoes.slice(0, 10) : shoes.slice(0, 10));
       }
     }, 300)
 
@@ -43,11 +48,16 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
   const fetchShoes = async () => {
     setIsLoading(true)
     try {
-      const response = await fetchApi<Shoe[]>('/api/v1/users/shoes')
+      const response = await fetchApi<Shoe[]>('/api/v1/shoes')
       if (response.isOk()) {
-        const shoes = response.value
-        setShoes(shoes)
-        setSearchResults(shoes.slice(0, 10))
+        const shoesData = response.value
+        setShoes(shoesData)
+        
+        // Initial state: Show only La Sportiva shoes
+        const laSportivaShoes = shoesData.filter(shoe => 
+          shoe.brand.toLowerCase() === 'la sportiva'
+        );
+        setSearchResults(laSportivaShoes.length > 0 ? laSportivaShoes.slice(0, 10) : shoesData.slice(0, 10))
       }
     } catch (error) {
       console.error('Failed to fetch shoes:', error)
