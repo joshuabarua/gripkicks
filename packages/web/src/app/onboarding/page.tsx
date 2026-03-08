@@ -255,27 +255,27 @@ export default function OnboardingPage() {
                   <div className="space-y-6">
                     <div>
                       <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[SELECT_SHAPE]</Label>
-                      <div className="grid gap-3 mt-3">
+                      <div className="grid grid-cols-2 gap-3 mt-3">
                         {[
-                          { value: 'egyptian', label: 'Egyptian', desc: 'Big toe is longest' },
-                          { value: 'roman', label: 'Roman', desc: 'First three toes similar length' },
-                          { value: 'greek', label: 'Greek', desc: 'Second toe is longest' },
-                          { value: 'germanic', label: 'Germanic', desc: 'Big toe and others equal' },
-                          { value: 'celtic', label: 'Celtic', desc: 'Big toe and second toe equal' }
+                          { value: 'egyptian', label: 'Egyptian', desc: 'Big toe longest' },
+                          { value: 'roman', label: 'Roman', desc: 'First 3 toes even' },
+                          { value: 'greek', label: 'Greek', desc: 'Second toe longest' },
+                          { value: 'germanic', label: 'Germanic', desc: 'Big toe, others even' },
+                          { value: 'celtic', label: 'Celtic', desc: 'Big & 2nd toe even' }
                         ].map((shape) => (
                           <motion.button
                             key={shape.value}
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => setFootShape(shape.value)}
-                            className={`p-4 rounded-2xl border text-left transition-all ${
+                            className={`p-3 rounded-2xl border text-left transition-all ${
                               footShape === shape.value
                                 ? 'border-orange-500 bg-orange-500/10'
                                 : 'border-neutral-800 hover:border-neutral-700 bg-neutral-800/50'
                             }`}
                           >
-                            <div className="font-sora font-medium text-white">{shape.label}</div>
-                            <div className="font-sora text-xs text-neutral-500">{shape.desc}</div>
+                            <div className="font-sora font-medium text-white text-sm">{shape.label}</div>
+                            <div className="font-sora text-[10px] text-neutral-500 mt-1 leading-tight">{shape.desc}</div>
                           </motion.button>
                         ))}
                       </div>
@@ -283,16 +283,28 @@ export default function OnboardingPage() {
 
                     <div className="space-y-2">
                       <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[FOOT_VOLUME]</Label>
-                      <Select value={footVolume} onValueChange={setFootVolume}>
-                        <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white rounded-xl h-12 focus:border-orange-500 focus:ring-orange-500">
-                          <SelectValue placeholder="Select your foot volume" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-neutral-800 border-neutral-700">
-                          <SelectItem value="low">Low - Narrow feet</SelectItem>
-                          <SelectItem value="medium">Medium - Average width</SelectItem>
-                          <SelectItem value="high">High - Wide feet</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="grid grid-cols-3 gap-3 mt-3">
+                        {[
+                          { value: 'low', label: 'Low', desc: 'Narrow' },
+                          { value: 'medium', label: 'Medium', desc: 'Average' },
+                          { value: 'high', label: 'High', desc: 'Wide' }
+                        ].map((volume) => (
+                          <motion.button
+                            key={volume.value}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            onClick={() => setFootVolume(volume.value)}
+                            className={`p-3 rounded-2xl border text-center transition-all ${
+                              footVolume === volume.value
+                                ? 'border-orange-500 bg-orange-500/10'
+                                : 'border-neutral-800 hover:border-neutral-700 bg-neutral-800/50'
+                            }`}
+                          >
+                            <div className="font-sora font-medium text-white text-sm">{volume.label}</div>
+                            <div className="font-sora text-[10px] text-neutral-500 mt-1 leading-tight">{volume.desc}</div>
+                          </motion.button>
+                        ))}
+                      </div>
                     </div>
 
                     <div className="flex justify-between pt-4">
