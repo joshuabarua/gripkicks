@@ -131,10 +131,10 @@ export default function ProfilePage() {
               </div>
               <div>
                 <h1 className="font-tanker text-4xl md:text-5xl">
-                  {profile?.name}
+                  {profile?.name || session?.user?.name || "User"}
                 </h1>
                 <p className="font-sora text-neutral-500 mt-1">
-                  {profile?.email}
+                  {profile?.email || session?.user?.email}
                 </p>
               </div>
             </div>

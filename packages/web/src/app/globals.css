@@ -274,8 +274,6 @@ a {
 
 	.nav-menu {
 	width: 520px;
-	height: auto;
-	min-height: 520px;
 	background-color: hsl(17, 83%, 54%);
 	border-radius: 25px;
 	position: absolute;

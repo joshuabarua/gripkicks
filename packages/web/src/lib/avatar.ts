@@ -34,7 +34,7 @@ export const getDicebearAvatarUrl = (identity: AvatarIdentity, size = 128) => {
     size: String(size),
   });
 
-  return `https://api.dicebear.com/9.x/adventurer-neutral/svg?${params.toString()}`;
+  return `https://api.dicebear.com/9.x/avataaars-neutral/svg?${params.toString()}`;
 };
 
 export const getInitials = ({ name, email }: AvatarIdentity) => {

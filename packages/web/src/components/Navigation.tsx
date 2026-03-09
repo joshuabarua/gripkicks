@@ -143,7 +143,7 @@ const Navigation: React.FC = () => {
                     userId={session.user.id}
                     name={session.user.name}
                     email={session.user.email}
-                    className="h-10 w-10 border-2 border-white/20"
+                    className="h-10 w-10"
                   />
                 </button>
               </DropdownMenuTrigger>
