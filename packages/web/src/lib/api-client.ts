@@ -2,6 +2,11 @@ import { hc } from "hono/client";
 import { ResultAsync } from "neverthrow";
 import { AppError, ErrorFactory } from "./errors";
 
+type ApiSuccessEnvelope<T> = {
+  success: true;
+  data: T;
+};
+
 // Use relative URL so requests go through Next.js proxy/rewrites
 const apiBaseUrl = "";
 
@@ -42,7 +47,19 @@ export function fetchApi<T>(
         );
       }
 
-      return res.json();
+      const json = await res.json();
+
+      if (
+        typeof json === "object" &&
+        json !== null &&
+        "success" in json &&
+        json.success === true &&
+        "data" in json
+      ) {
+        return (json as ApiSuccessEnvelope<T>).data;
+      }
+
+      return json as T;
     })(),
     (error) => {
       if (error instanceof AppError) {

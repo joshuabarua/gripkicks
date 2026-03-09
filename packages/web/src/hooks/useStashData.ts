@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { UserShoe } from "@/types/api";
@@ -48,8 +48,19 @@ export function useStashData(
   const [userShoes, setUserShoes] = useState<UserShoe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [realtimeEnabled, setRealtimeEnabled] = useState(false);
+  const hasAttemptedFallbackRef = useRef(false);
+  const onErrorRef = useRef<UseStashDataOptions["onError"]>(undefined);
 
   const { enabled = true, onError } = options ?? {};
+
+  useEffect(() => {
+    onErrorRef.current = onError;
+  }, [onError]);
+
+  useEffect(() => {
+    hasAttemptedFallbackRef.current = false;
+    setRealtimeEnabled(false);
+  }, [sessionUserId]);
 
   // Consolidated queries - only fetch what's needed
   const userData = useQuery(
@@ -107,16 +118,16 @@ export function useStashData(
       },
       (error) => {
         console.error("Failed to fetch user stash:", error);
-        onError?.("Failed to load your shoe collection");
+        onErrorRef.current?.("Failed to load your shoe collection");
       },
     );
     setIsLoading(false);
-  }, [sessionUserId, enabled, onError]);
+  }, [sessionUserId, enabled]);
 
   // Use real-time data when available, fallback to REST API
   useEffect(() => {
     if (realtimeStashData !== undefined) {
-      // Real-time data is available - map Convex structure to UserShoe type
+      hasAttemptedFallbackRef.current = false;
       const mappedUserShoes: UserShoe[] = realtimeStashData.map(
         (item: ConvexUserShoe) => ({
           _id: item._id,
@@ -150,14 +161,18 @@ export function useStashData(
       setUserShoes(mappedUserShoes);
       setRealtimeEnabled(true);
       setIsLoading(false);
-    } else if (userData && !realtimeEnabled) {
-      // User exists but no real-time data yet, try REST API as fallback
-      fetchUserStash();
+    } else if (
+      userData &&
+      !realtimeEnabled &&
+      !hasAttemptedFallbackRef.current
+    ) {
+      hasAttemptedFallbackRef.current = true;
+      void fetchUserStash();
     } else if (!sessionUserId) {
-      // No user session
       setUserShoes([]);
       setIsLoading(false);
       setRealtimeEnabled(false);
+      hasAttemptedFallbackRef.current = false;
     }
   }, [
     realtimeStashData,
@@ -167,19 +182,11 @@ export function useStashData(
     fetchUserStash,
   ]);
 
-  useEffect(() => {
-    if (sessionUserId && enabled) {
-      void fetchUserStash();
-    } else {
-      setUserShoes([]);
-      setIsLoading(false);
-    }
-  }, [sessionUserId, enabled, fetchUserStash]);
-
   const invalidateCache = useCallback(() => {
     if (sessionUserId) {
       shoeCache.delete(`user-stash-${sessionUserId}`);
     }
+    hasAttemptedFallbackRef.current = false;
   }, [sessionUserId]);
 
   return {
