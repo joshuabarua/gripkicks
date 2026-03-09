@@ -1,25 +1,14 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import ShoeImage from '@/components/ShoeImage';
 import { useShoeScoring } from '@/hooks/useShoeScoring';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useFootProfileStore } from '@/stores/footProfileStore';
-import type { Doc } from 'convex/_generated/dataModel';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Target, Zap, Shield, Heart, Search, Star, User, X, Compass } from 'lucide-react';
-
-type Shoe = Doc<'shoes'>;
-type ShoeMetricKey = 'comfort' | 'performance' | 'durability' | 'aggressiveness' | 'stability' | 'versatility';
+import { Card, CardContent } from '@/components/ui/card';
+import { Heart, Target, User, Zap, Shield } from 'lucide-react';
 
 interface ShoeMetrics {
   comfort: number;
@@ -30,86 +19,25 @@ interface ShoeMetrics {
   versatility: number;
 }
 
-interface ShoePosition {
-  shoe: Shoe;
-  x: number;
-  y: number;
-  score: number;
-  metrics: ShoeMetrics;
-}
-
 interface QuadrantInfo {
   name: string;
   description: string;
   icon: React.ReactNode;
   borderColor: string;
   bgColor: string;
+  accentClass: string;
 }
 
-interface MetricOption {
-  key: ShoeMetricKey;
-  label: string;
-  icon: React.ReactNode;
-  lowLabel: string;
-  highLabel: string;
-}
+type QuadrantKey = 'daily-drivers' | 'versatile-performers' | 'aggressive-comfort' | 'competition';
 
-const metricOptions: MetricOption[] = [
-  {
-    key: 'comfort',
-    label: 'Comfort',
-    icon: <Heart className="w-4 h-4" />,
-    lowLabel: 'Less Comfort',
-    highLabel: 'More Comfort',
-  },
-  {
-    key: 'performance',
-    label: 'Performance',
-    icon: <Zap className="w-4 h-4" />,
-    lowLabel: 'Less Performance',
-    highLabel: 'More Performance',
-  },
-  {
-    key: 'durability',
-    label: 'Durability',
-    icon: <Shield className="w-4 h-4" />,
-    lowLabel: 'Less Durable',
-    highLabel: 'More Durable',
-  },
-  {
-    key: 'aggressiveness',
-    label: 'Aggressiveness',
-    icon: <Target className="w-4 h-4" />,
-    lowLabel: 'Less Aggressive',
-    highLabel: 'More Aggressive',
-  },
-  {
-    key: 'stability',
-    label: 'Stability',
-    icon: <Compass className="w-4 h-4" />,
-    lowLabel: 'Less Stable',
-    highLabel: 'More Stable',
-  },
-  {
-    key: 'versatility',
-    label: 'Versatility',
-    icon: <Star className="w-4 h-4" />,
-    lowLabel: 'Less Versatile',
-    highLabel: 'More Versatile',
-  },
-];
-
-const metricOptionMap = Object.fromEntries(
-  metricOptions.map((option) => [option.key, option]),
-) as Record<ShoeMetricKey, MetricOption>;
-
-const quadrants: Record<string, QuadrantInfo> = {
+const quadrants: Record<QuadrantKey, QuadrantInfo> = {
   'daily-drivers': {
     name: 'Daily Drivers',
     description: 'Comfortable & versatile all-rounders',
     icon: <Heart className="w-4 h-4" />,
     borderColor: 'border-green-500/40',
     bgColor: 'bg-green-500/5',
+    accentClass: 'text-green-400/80',
   },
   'versatile-performers': {
     name: 'Versatile Performers',
@@ -117,6 +45,7 @@ const quadrants: Record<string, QuadrantInfo> = {
     icon: <Zap className="w-4 h-4" />,
     borderColor: 'border-blue-500/40',
     bgColor: 'bg-blue-500/5',
+    accentClass: 'text-blue-400/80',
   },
   'aggressive-comfort': {
     name: 'Aggressive Comfort',
@@ -124,139 +53,82 @@ const quadrants: Record<string, QuadrantInfo> = {
     icon: <Shield className="w-4 h-4" />,
     borderColor: 'border-orange-500/40',
     bgColor: 'bg-orange-500/5',
+    accentClass: 'text-orange-400/80',
   },
-  'competition': {
+  competition: {
     name: 'Competition',
     description: 'Max performance, max aggression',
     icon: <Target className="w-4 h-4" />,
     borderColor: 'border-red-500/40',
     bgColor: 'bg-red-500/5',
+    accentClass: 'text-red-400/80',
   },
 };
 
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function getQuadrantKey(metrics: ShoeMetrics): QuadrantKey {
+  const isPerformanceLed = metrics.performance >= metrics.comfort;
+  const isAggressiveLed = metrics.aggressiveness > metrics.versatility;
+
+  if (!isPerformanceLed && !isAggressiveLed) return 'daily-drivers';
+  if (isPerformanceLed && !isAggressiveLed) return 'versatile-performers';
+  if (!isPerformanceLed && isAggressiveLed) return 'aggressive-comfort';
+  return 'competition';
+}
+
 export function ShoeRadarMatcher() {
   const { profile: footProfile } = useFootProfileStore();
-  const [selectedShoe, setSelectedShoe] = useState<ShoePosition | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [xMetric, setXMetric] = useState<ShoeMetricKey>('comfort');
-  const [yMetric, setYMetric] = useState<ShoeMetricKey>('versatility');
-
+  const { isPremium, isFounder, loading: subscriptionLoading } = useSubscription();
   const { scoredShoes, isLoading } = useShoeScoring();
 
-  const xMetricOption = metricOptionMap[xMetric];
-  const yMetricOption = metricOptionMap[yMetric];
+  const recommendationLimit = isPremium || isFounder ? 5 : 1;
 
-  const quadrantMeta = useMemo(() => {
-    const quadrantsMeta: Record<string, QuadrantInfo> = {};
-    if (xMetric === 'comfort' && yMetric === 'versatility') {
-      quadrantsMeta['daily-drivers'] = quadrants['daily-drivers'];
-      quadrantsMeta['versatile-performers'] = quadrants['versatile-performers'];
-      quadrantsMeta['aggressive-comfort'] = quadrants['aggressive-comfort'];
-      quadrantsMeta['competition'] = quadrants['competition'];
-    } else if (xMetric === 'performance' && yMetric === 'aggressiveness') {
-      quadrantsMeta['daily-drivers'] = {
-        name: 'Endurance',
-        description: 'High performance with comfort',
-        icon: <Zap className="w-4 h-4" />,
-        borderColor: 'border-blue-500/40',
-        bgColor: 'bg-blue-500/5',
-      };
-      quadrantsMeta['versatile-performers'] = {
-        name: 'Speed',
-        description: 'High performance with aggressiveness',
-        icon: <Target className="w-4 h-4" />,
-        borderColor: 'border-red-500/40',
-        bgColor: 'bg-red-500/5',
-      };
-      quadrantsMeta['aggressive-comfort'] = {
-        name: 'Cruisers',
-        description: 'Comfortable with some performance',
-        icon: <Heart className="w-4 h-4" />,
-        borderColor: 'border-green-500/40',
-        bgColor: 'bg-green-500/5',
-      };
-      quadrantsMeta['competition'] = {
-        name: 'Racers',
-        description: 'High performance with low comfort',
-        icon: <Shield className="w-4 h-4" />,
-        borderColor: 'border-orange-500/40',
-        bgColor: 'bg-orange-500/5',
-      };
-    } else {
-      quadrantsMeta['daily-drivers'] = {
-        name: 'Low ' + xMetricOption.label + ' & Low ' + yMetricOption.label,
-        description: 'Low ' + xMetricOption.label + ' & Low ' + yMetricOption.label,
-        icon: <Heart className="w-4 h-4" />,
-        borderColor: 'border-green-500/40',
-        bgColor: 'bg-green-500/5',
-      };
-      quadrantsMeta['versatile-performers'] = {
-        name: 'High ' + xMetricOption.label + ' & Low ' + yMetricOption.label,
-        description: 'High ' + xMetricOption.label + ' & Low ' + yMetricOption.label,
-        icon: <Zap className="w-4 h-4" />,
-        borderColor: 'border-blue-500/40',
-        bgColor: 'bg-blue-500/5',
-      };
-      quadrantsMeta['aggressive-comfort'] = {
-        name: 'Low ' + xMetricOption.label + ' & High ' + yMetricOption.label,
-        description: 'Low ' + xMetricOption.label + ' & High ' + yMetricOption.label,
-        icon: <Shield className="w-4 h-4" />,
-        borderColor: 'border-orange-500/40',
-        bgColor: 'bg-orange-500/5',
-      };
-      quadrantsMeta['competition'] = {
-        name: 'High ' + xMetricOption.label + ' & High ' + yMetricOption.label,
-        description: 'High ' + xMetricOption.label + ' & High ' + yMetricOption.label,
-        icon: <Target className="w-4 h-4" />,
-        borderColor: 'border-red-500/40',
-        bgColor: 'bg-red-500/5',
-      };
-    }
-    return quadrantsMeta;
-  }, [xMetric, yMetric, xMetricOption.label, yMetricOption.label]);
-
-  const shoePositions = useMemo((): ShoePosition[] => {
+  const recommendedShoes = useMemo(() => {
     if (!scoredShoes || scoredShoes.length === 0) return [];
 
-    return scoredShoes
-      .filter((s) => {
-        if (!searchQuery.trim()) return true;
-        const q = searchQuery.toLowerCase();
-        return (
-          s.shoe.name.toLowerCase().includes(q) ||
-          s.shoe.brand.toLowerCase().includes(q)
-        );
-      })
-      .map((scored) => {
-        const xValue = scored.metrics[xMetric];
-        const yValue = scored.metrics[yMetric];
-        return {
-          shoe: scored.shoe,
-          x: Math.max(0.06, Math.min(0.94, xValue / 5)),
-          y: Math.max(0.06, Math.min(0.94, 1 - yValue / 5)),
-          score: scored.totalScore,
-          metrics: scored.metrics,
-        };
-      });
-  }, [scoredShoes, searchQuery, xMetric, yMetric]);
+    return scoredShoes.slice(0, recommendationLimit).map((scored) => {
+      const performanceWeight = scored.metrics.performance + scored.metrics.aggressiveness;
+      const comfortWeight = scored.metrics.comfort + scored.metrics.versatility;
+      const versatilityWeight = scored.metrics.versatility + scored.metrics.comfort;
+      const aggressiveWeight = scored.metrics.aggressiveness + scored.metrics.performance;
+      const horizontal = performanceWeight / Math.max(performanceWeight + comfortWeight, 0.001);
+      const vertical = 1 - aggressiveWeight / Math.max(aggressiveWeight + versatilityWeight, 0.001);
+
+      return {
+        shoe: scored.shoe,
+        score: scored.totalScore,
+        metrics: scored.metrics,
+        x: clamp(horizontal, 0.08, 0.92),
+        y: clamp(vertical, 0.08, 0.92),
+        quadrantKey: getQuadrantKey(scored.metrics),
+      };
+    });
+  }, [recommendationLimit, scoredShoes]);
 
   const quadrantCounts = useMemo(() => {
-    const counts = { 'daily-drivers': 0, 'versatile-performers': 0, 'aggressive-comfort': 0, 'competition': 0 };
-    for (const pos of shoePositions) {
-      if (pos.x < 0.5 && pos.y < 0.5) counts['daily-drivers']++;
-      else if (pos.x >= 0.5 && pos.y < 0.5) counts['versatile-performers']++;
-      else if (pos.x < 0.5 && pos.y >= 0.5) counts['aggressive-comfort']++;
-      else counts['competition']++;
-    }
-    return counts;
-  }, [shoePositions]);
+    return recommendedShoes.reduce(
+      (counts, shoe) => {
+        counts[shoe.quadrantKey] += 1;
+        return counts;
+      },
+      {
+        'daily-drivers': 0,
+        'versatile-performers': 0,
+        'aggressive-comfort': 0,
+        competition: 0,
+      } as Record<QuadrantKey, number>,
+    );
+  }, [recommendedShoes]);
 
-  if (isLoading) {
+  if (isLoading || subscriptionLoading) {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-neutral-500">Loading shoe matcher...</p>
+          <p className="text-neutral-500">Loading shoe radar...</p>
         </div>
       </div>
     );
@@ -267,259 +139,194 @@ export function ShoeRadarMatcher() {
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Shoe Radar</h1>
         <p className="text-neutral-400">
-          Every shoe plotted by comfort vs performance and versatility vs aggressiveness
+          Your best matches are auto-ranked into fixed categories based on your scoring profile.
         </p>
       </div>
 
-      {/* Search */}
-      <div className="mb-6">
-        <div className="relative max-w-md mx-auto">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-500" />
-          <Input
-            placeholder="Search shoes by name or brand..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-neutral-900 border-neutral-800 text-white placeholder:text-neutral-500"
-          />
-        </div>
-        <div className="text-center mt-2 text-sm text-neutral-500">
-          {shoePositions.length} shoes on grid
-        </div>
+      <div className="mb-6 flex flex-col items-center gap-3">
+        <Badge className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-4 py-1.5">
+          Showing top {recommendationLimit} {recommendationLimit === 1 ? 'shoe' : 'shoes'}
+        </Badge>
+        {!isPremium && !isFounder && (
+          <p className="text-sm text-neutral-500 text-center">
+            Free plan shows your best overall match. Premium unlocks the top 5 recommendations.
+          </p>
+        )}
       </div>
 
-      {/* Metric Selectors */}
-      <div className="flex items-center gap-4 mb-6">
-        <Select value={xMetric} onValueChange={(val) => setXMetric(val as ShoeMetricKey)}>
-          <SelectTrigger className="bg-neutral-900 border-neutral-800 text-white rounded-lg py-2 pl-4 pr-10">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {metricOptions.map((option) => (
-              <SelectItem key={option.key} value={option.key}>
-                {option.icon}
-                <span className="ml-2">{option.label}</span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={yMetric} onValueChange={(val) => setYMetric(val as ShoeMetricKey)}>
-          <SelectTrigger className="bg-neutral-900 border-neutral-800 text-white rounded-lg py-2 pl-4 pr-10">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {metricOptions.map((option) => (
-              <SelectItem key={option.key} value={option.key}>
-                {option.icon}
-                <span className="ml-2">{option.label}</span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Quadrant Grid */}
       <div className="relative bg-neutral-950 border border-neutral-800 rounded-2xl overflow-hidden" style={{ aspectRatio: '1 / 1', maxHeight: '680px' }}>
-        {/* Axis labels */}
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 text-xs text-neutral-500 pointer-events-none">
-          <span className="uppercase tracking-wider">{yMetricOption.highLabel}</span>
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 text-xs text-neutral-500 pointer-events-none uppercase tracking-wider">
+          More Versatile
         </div>
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 text-xs text-neutral-500 pointer-events-none">
-          <span className="uppercase tracking-wider">{yMetricOption.lowLabel}</span>
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 text-xs text-neutral-500 pointer-events-none uppercase tracking-wider">
+          More Aggressive
         </div>
         <div className="absolute left-3 top-1/2 -translate-y-1/2 z-20 text-xs text-neutral-500 pointer-events-none">
-          <span className="uppercase tracking-wider" style={{ writingMode: 'vertical-lr', transform: 'rotate(180deg)' }}>{xMetricOption.lowLabel}</span>
+          <span style={{ writingMode: 'vertical-lr', transform: 'rotate(180deg)' }} className="uppercase tracking-wider">More Comfortable</span>
         </div>
         <div className="absolute right-3 top-1/2 -translate-y-1/2 z-20 text-xs text-neutral-500 pointer-events-none">
-          <span className="uppercase tracking-wider" style={{ writingMode: 'vertical-lr' }}>{xMetricOption.highLabel}</span>
+          <span style={{ writingMode: 'vertical-lr' }} className="uppercase tracking-wider">More Performance</span>
         </div>
 
-        {/* Grid crosshairs */}
         <div className="absolute inset-0 pointer-events-none z-10">
           <div className="absolute left-1/2 top-0 bottom-0 w-px bg-neutral-800" />
           <div className="absolute top-1/2 left-0 right-0 h-px bg-neutral-800" />
         </div>
 
-        {/* Quadrant backgrounds */}
         <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 pointer-events-none z-0">
-          {/* Top-Left: Daily Drivers (Low X & Low Y) */}
-          <div className={`${quadrantMeta['daily-drivers'].bgColor} ${quadrantMeta['daily-drivers'].borderColor} border-r border-b p-3`}>
-            <div className="flex items-center gap-1.5 text-green-400/70">
-              {quadrantMeta['daily-drivers'].icon}
-              <span className="text-xs font-medium">{quadrantMeta['daily-drivers'].name}</span>
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-neutral-800/50 text-neutral-400 ml-auto">
-                {quadrantCounts['daily-drivers']}
-              </Badge>
-            </div>
+          <div className={`${quadrants['daily-drivers'].bgColor} ${quadrants['daily-drivers'].borderColor} border-r border-b p-3`}>
+            <QuadrantHeader quadrant={quadrants['daily-drivers']} count={quadrantCounts['daily-drivers']} />
           </div>
-          {/* Top-Right: Versatile Performers (High X & Low Y) */}
-          <div className={`${quadrantMeta['versatile-performers'].bgColor} ${quadrantMeta['versatile-performers'].borderColor} border-b p-3`}>
-            <div className="flex items-center gap-1.5 text-blue-400/70">
-              {quadrantMeta['versatile-performers'].icon}
-              <span className="text-xs font-medium">{quadrantMeta['versatile-performers'].name}</span>
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-neutral-800/50 text-neutral-400 ml-auto">
-                {quadrantCounts['versatile-performers']}
-              </Badge>
-            </div>
+          <div className={`${quadrants['versatile-performers'].bgColor} ${quadrants['versatile-performers'].borderColor} border-b p-3`}>
+            <QuadrantHeader quadrant={quadrants['versatile-performers']} count={quadrantCounts['versatile-performers']} />
           </div>
-          {/* Bottom-Left: Aggressive Comfort (Low X & High Y) */}
-          <div className={`${quadrantMeta['aggressive-comfort'].bgColor} ${quadrantMeta['aggressive-comfort'].borderColor} border-r p-3`}>
-            <div className="flex items-center gap-1.5 text-orange-400/70">
-              {quadrantMeta['aggressive-comfort'].icon}
-              <span className="text-xs font-medium">{quadrantMeta['aggressive-comfort'].name}</span>
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-neutral-800/50 text-neutral-400 ml-auto">
-                {quadrantCounts['aggressive-comfort']}
-              </Badge>
-            </div>
+          <div className={`${quadrants['aggressive-comfort'].bgColor} ${quadrants['aggressive-comfort'].borderColor} border-r p-3`}>
+            <QuadrantHeader quadrant={quadrants['aggressive-comfort']} count={quadrantCounts['aggressive-comfort']} />
           </div>
-          {/* Bottom-Right: Competition (High X & High Y) */}
-          <div className={`${quadrantMeta['competition'].bgColor} ${quadrantMeta['competition'].borderColor} p-3`}>
-            <div className="flex items-center gap-1.5 text-red-400/70">
-              {quadrantMeta['competition'].icon}
-              <span className="text-xs font-medium">{quadrantMeta['competition'].name}</span>
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-neutral-800/50 text-neutral-400 ml-auto">
-                {quadrantCounts['competition']}
-              </Badge>
-            </div>
+          <div className={`${quadrants.competition.bgColor} ${quadrants.competition.borderColor} p-3`}>
+            <QuadrantHeader quadrant={quadrants.competition} count={quadrantCounts.competition} />
           </div>
         </div>
 
-        {/* Center crosshair dot */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-2 h-2 bg-orange-500 rounded-full" />
 
-        {/* Shoe dots */}
-        {shoePositions.map((pos) => {
-          const isSelected = selectedShoe?.shoe._id === pos.shoe._id;
-          return (
-            <motion.div
-              key={pos.shoe._id}
-              className="absolute z-30 cursor-pointer"
-              style={{
-                left: `${pos.x * 100}%`,
-                top: `${pos.y * 100}%`,
-                transform: 'translate(-50%, -50%)',
-              }}
-              whileHover={{ scale: 1.3, zIndex: 40 }}
-              onClick={() => setSelectedShoe(isSelected ? null : pos)}
-            >
-              <div className={`relative ${isSelected ? 'ring-2 ring-orange-500 rounded-lg' : ''}`}>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-neutral-900 rounded-lg border border-neutral-700 overflow-hidden shadow-lg">
-                  <ShoeImage
-                    brand={pos.shoe.brand}
-                    shoeName={pos.shoe.name}
-                    imageUrl={pos.shoe.imageUrl ?? undefined}
-                    className="p-0.5"
-                    transformation={[{ height: 48, width: 48, crop: 'at_max', format: 'png' }]}
-                  />
-                </div>
-                {/* Match score indicator */}
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-neutral-900 border border-neutral-700 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-orange-400">{Math.round((pos.score / 5) * 100)}</span>
-                </div>
+        {recommendedShoes.map((pos, index) => (
+          <motion.div
+            key={pos.shoe._id}
+            className="absolute z-30"
+            style={{
+              left: `${pos.x * 100}%`,
+              top: `${pos.y * 100}%`,
+              transform: 'translate(-50%, -50%)',
+            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.08 }}
+          >
+            <div className="relative">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-neutral-900 rounded-lg border border-neutral-700 overflow-hidden shadow-lg">
+                <ShoeImage
+                  brand={pos.shoe.brand}
+                  shoeName={pos.shoe.name}
+                  imageUrl={pos.shoe.imageUrl ?? undefined}
+                  className="p-0.5"
+                  transformation={[{ height: 56, width: 56, crop: 'at_max', format: 'png' }]}
+                />
               </div>
-            </motion.div>
+              <div className="absolute -top-1 -left-1 min-w-5 h-5 rounded-full bg-orange-500 text-black text-[10px] font-bold flex items-center justify-center px-1.5">
+                {index + 1}
+              </div>
+              <div className="absolute -bottom-1 -right-1 min-w-6 h-5 rounded-full bg-neutral-900 border border-neutral-700 flex items-center justify-center px-1.5">
+                <span className="text-[8px] font-bold text-orange-400">{Math.round((pos.score / 5) * 100)}</span>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {recommendedShoes.map((shoe, index) => {
+          const quadrant = quadrants[shoe.quadrantKey];
+          return (
+            <Card key={shoe.shoe._id} className="bg-neutral-900 border-neutral-800">
+              <CardContent className="p-5">
+                <div className="flex items-start gap-4">
+                  <div className="w-20 h-20 bg-neutral-800 rounded-xl overflow-hidden flex-shrink-0">
+                    <ShoeImage
+                      brand={shoe.shoe.brand}
+                      shoeName={shoe.shoe.name}
+                      imageUrl={shoe.shoe.imageUrl ?? undefined}
+                      className="p-1"
+                      transformation={[{ height: 80, width: 80, crop: 'at_max', format: 'png' }]}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0 space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[11px] uppercase tracking-wider text-neutral-500 mb-1">Rank #{index + 1}</p>
+                        <h3 className="text-lg font-bold text-white truncate">{shoe.shoe.name}</h3>
+                        <p className="text-neutral-400 text-sm">{shoe.shoe.brand}</p>
+                      </div>
+                      <Badge className={`${quadrant.bgColor} ${quadrant.borderColor} border ${quadrant.accentClass}`}>
+                        {quadrant.name}
+                      </Badge>
+                    </div>
+
+                    <p className="text-sm text-neutral-500">{quadrant.description}</p>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <MetricBar label="Comfort" value={shoe.metrics.comfort} />
+                      <MetricBar label="Performance" value={shoe.metrics.performance} />
+                      <MetricBar label="Versatility" value={shoe.metrics.versatility} />
+                      <MetricBar label="Aggression" value={shoe.metrics.aggressiveness} />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           );
         })}
       </div>
 
-      {/* Selected Shoe Detail */}
-      {selectedShoe && (
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-6"
-        >
-          <Card className="bg-neutral-900 border-neutral-800">
-            <CardContent className="p-5">
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-neutral-800 rounded-lg overflow-hidden flex-shrink-0">
-                  <ShoeImage
-                    brand={selectedShoe.shoe.brand}
-                    shoeName={selectedShoe.shoe.name}
-                    imageUrl={selectedShoe.shoe.imageUrl ?? undefined}
-                    className="p-1"
-                    transformation={[{ height: 64, width: 64, crop: 'at_max', format: 'png' }]}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="text-lg font-bold text-white truncate">{selectedShoe.shoe.name}</h3>
-                      <p className="text-neutral-400 text-sm">{selectedShoe.shoe.brand}</p>
-                    </div>
-                    <button
-                      onClick={() => setSelectedShoe(null)}
-                      className="text-neutral-500 hover:text-white transition-colors flex-shrink-0"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-3">
-                      <div className="text-[11px] uppercase tracking-wider text-neutral-500 mb-1">X Position</div>
-                      <div className="text-white font-semibold">{xMetricOption.label}</div>
-                      <div className="text-sm text-orange-400">{selectedShoe.metrics[xMetric].toFixed(1)} / 5</div>
-                    </div>
-                    <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-3">
-                      <div className="text-[11px] uppercase tracking-wider text-neutral-500 mb-1">Y Position</div>
-                      <div className="text-white font-semibold">{yMetricOption.label}</div>
-                      <div className="text-sm text-orange-400">{selectedShoe.metrics[yMetric].toFixed(1)} / 5</div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                    <MetricBar label="Comfort" value={selectedShoe.metrics.comfort} icon={<Heart className="w-3 h-3" />} />
-                    <MetricBar label="Perform" value={selectedShoe.metrics.performance} icon={<Zap className="w-3 h-3" />} />
-                    <MetricBar label="Durable" value={selectedShoe.metrics.durability} icon={<Shield className="w-3 h-3" />} />
-                    <MetricBar label="Aggress" value={selectedShoe.metrics.aggressiveness} icon={<Target className="w-3 h-3" />} />
-                    <MetricBar label="Stable" value={selectedShoe.metrics.stability} icon={<Compass className="w-3 h-3" />} />
-                    <MetricBar label="Versatile" value={selectedShoe.metrics.versatility} icon={<Heart className="w-3 h-3" />} />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
-      {/* No profile hint */}
-      {!footProfile?.shape && !isLoading && (
-        <div className="mt-6 p-4 bg-neutral-900 border border-neutral-800 rounded-lg text-center">
-          <User className="w-6 h-6 text-neutral-600 mx-auto mb-2" />
+      {!recommendedShoes.length && !isLoading && (
+        <div className="mt-6 p-6 bg-neutral-900 border border-neutral-800 rounded-lg text-center">
           <p className="text-neutral-400 text-sm">
-            Complete your foot profile for personalized shoe positioning
+            No shoe recommendations are available yet.
           </p>
         </div>
       )}
 
-      {/* Legend */}
+      {!footProfile?.shape && !isLoading && (
+        <div className="mt-6 p-4 bg-neutral-900 border border-neutral-800 rounded-lg text-center">
+          <User className="w-6 h-6 text-neutral-600 mx-auto mb-2" />
+          <p className="text-neutral-400 text-sm">
+            Complete your foot profile for stronger recommendation accuracy.
+          </p>
+        </div>
+      )}
+
       <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {Object.entries(quadrantMeta).map(([key, q]) => (
-          <div key={key} className={`p-3 rounded-lg border ${q.borderColor} ${q.bgColor}`}>
-            <div className="flex items-center gap-1.5 mb-1">
-              {q.icon}
-              <span className="text-xs font-medium text-white">{q.name}</span>
+        {(Object.keys(quadrants) as QuadrantKey[]).map((key) => {
+          const quadrant = quadrants[key];
+          return (
+            <div key={key} className={`p-3 rounded-lg border ${quadrant.borderColor} ${quadrant.bgColor}`}>
+              <div className={`flex items-center gap-1.5 mb-1 ${quadrant.accentClass}`}>
+                {quadrant.icon}
+                <span className="text-xs font-medium text-white">{quadrant.name}</span>
+              </div>
+              <p className="text-[11px] text-neutral-500">{quadrant.description}</p>
             </div>
-            <p className="text-[11px] text-neutral-500">{q.description}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function MetricBar({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
-  const pct = (value / 5) * 100;
+function QuadrantHeader({ quadrant, count }: { quadrant: QuadrantInfo; count: number }) {
   return (
-    <div className="text-center">
-      <div className="flex items-center justify-center gap-1 text-orange-500 mb-1">
-        {icon}
+    <div className={`flex items-center gap-1.5 ${quadrant.accentClass}`}>
+      {quadrant.icon}
+      <span className="text-xs font-medium">{quadrant.name}</span>
+      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-neutral-800/50 text-neutral-400 ml-auto">
+        {count}
+      </Badge>
+    </div>
+  );
+}
+
+function MetricBar({ label, value }: { label: string; value: number }) {
+  const pct = (value / 5) * 100;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[10px] text-neutral-500 uppercase tracking-wider">{label}</span>
         <span className="text-xs text-white font-medium">{value.toFixed(1)}</span>
       </div>
-      <div className="h-1 bg-neutral-800 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
         <div className="h-full bg-orange-500 rounded-full" style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-[10px] text-neutral-500 mt-0.5 block">{label}</span>
     </div>
   );
 }

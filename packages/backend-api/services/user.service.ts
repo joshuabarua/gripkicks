@@ -234,6 +234,8 @@ class UserService {
         email: user.email,
         name: user.name,
         image: user.image,
+        footShape: user.footShape,
+        footVolume: user.footVolume,
       };
     } catch (error) {
       console.error('Error updating user:', error);
@@ -270,6 +272,8 @@ class UserService {
         email: user.email,
         name: user.name,
         image: user.image,
+        footShape: user.footShape,
+        footVolume: user.footVolume,
       };
     } catch (error) {
       console.error('Error updating onboarding status:', error);

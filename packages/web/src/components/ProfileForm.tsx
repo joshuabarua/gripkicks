@@ -28,7 +28,19 @@ const profileSchema = z.object({
 
 type ProfileData = z.infer<typeof profileSchema>;
 
-export function ProfileForm() {
+interface ProfileFormProps {
+  initialProfile?: ProfileData | null;
+  email?: string;
+  userId?: string;
+  onProfileUpdated?: (profile: ProfileData) => void;
+}
+
+export function ProfileForm({
+  initialProfile,
+  email,
+  userId,
+  onProfileUpdated,
+}: ProfileFormProps) {
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
   });
@@ -38,6 +50,13 @@ export function ProfileForm() {
   const { execute: loadProfileData } = profileLoader;
 
   useEffect(() => {
+    if (initialProfile) {
+      setFormData({
+        name: initialProfile.name || "",
+      });
+      return;
+    }
+
     const loadProfile = async () => {
       const result = await loadProfileData(() =>
         fetchApi<ProfileData>("/api/v1/profile"),
@@ -52,16 +71,18 @@ export function ProfileForm() {
     };
 
     loadProfile();
-  }, [loadProfileData]);
+  }, [initialProfile, loadProfileData]);
 
-  const updateProfile = (data: ProfileData): ResultAsync<void, ApiError> =>
+  const updateProfile = (data: ProfileData): ResultAsync<ProfileData, ApiError> =>
     ResultAsync.fromPromise(
-      fetchApi<void>("/api/v1/profile", {
+      fetchApi<{ name?: string }>("/api/v1/profile", {
         method: "PUT",
         body: JSON.stringify(data),
       }).then((resultAsync) =>
         resultAsync.match(
-          (value) => value,
+          (value) => ({
+            name: value.name || data.name,
+          }),
           (error) => {
             throw error;
           },
@@ -87,7 +108,9 @@ export function ProfileForm() {
     const result = await mutate(validationResult.data);
 
     if (result.isOk()) {
-      console.log("Profile updated successfully");
+      const updatedProfile = result.value;
+      setFormData(updatedProfile);
+      onProfileUpdated?.(updatedProfile);
     }
   };
 
@@ -101,7 +124,9 @@ export function ProfileForm() {
       <CardHeader>
         <div className="flex items-center gap-4">
           <UserAvatar
+            userId={userId}
             name={formData.name}
+            email={email}
             className="h-16 w-16 rounded-full"
             size={96}
           />

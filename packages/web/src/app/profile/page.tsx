@@ -49,9 +49,30 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const displayName = profile?.name || session?.user?.name || "User";
+  const displayEmail = profile?.email || session?.user?.email || "";
+  const displayUserId = profile?.id || session?.user?.id;
 
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? null : section);
+  };
+
+  const handleProfileUpdated = (updatedProfile: { name: string }) => {
+    setProfile((current) => {
+      if (!current) {
+        return {
+          id: displayUserId || "",
+          name: updatedProfile.name,
+          email: displayEmail,
+          onboardingComplete: false,
+        };
+      }
+
+      return {
+        ...current,
+        name: updatedProfile.name,
+      };
+    });
   };
 
   useEffect(() => {
@@ -122,19 +143,19 @@ export default function ProfilePage() {
             <div className="flex items-center gap-6">
               <div className="relative">
                 <UserAvatar
-                  userId={profile?.id || session?.user?.id}
-                  name={profile?.name || session?.user?.name}
-                  email={profile?.email || session?.user?.email}
+                  userId={displayUserId}
+                  name={displayName}
+                  email={displayEmail}
                   className="w-20 h-20 rounded-2xl border-2 border-orange-500/20"
                   size={160}
                 />
               </div>
               <div>
                 <h1 className="font-tanker text-4xl md:text-5xl">
-                  {profile?.name || session?.user?.name || "User"}
+                  {displayName}
                 </h1>
                 <p className="font-sora text-neutral-500 mt-1">
-                  {profile?.email || session?.user?.email}
+                  {displayEmail}
                 </p>
               </div>
             </div>
@@ -273,7 +294,12 @@ export default function ProfilePage() {
                       className="border-t border-neutral-800 bg-black/20"
                     >
                       <div className="p-6 md:p-8">
-                        <ProfileForm />
+                        <ProfileForm
+                          initialProfile={{ name: displayName }}
+                          email={displayEmail}
+                          userId={displayUserId}
+                          onProfileUpdated={handleProfileUpdated}
+                        />
                       </div>
                     </motion.div>
                   )}
