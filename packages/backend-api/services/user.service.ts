@@ -212,12 +212,18 @@ class UserService {
 
   private async performUpdate(userId: string, data: UpdateProfileData): Promise<User> {
     try {
+      const existingUser = await this.findUserById(userId);
+
+      if (!existingUser) {
+        throw new Error('User not found for profile update');
+      }
+
       const convexUrl = getConvexUrl();
       const response = await fetch(`${convexUrl}/api/users/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: userId,
+          id: existingUser.id,
           ...data
         })
       });

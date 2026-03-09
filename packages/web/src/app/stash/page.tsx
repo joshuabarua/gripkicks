@@ -34,9 +34,13 @@ export default function ShoeSanctuaryPage() {
   const [selectedShoe, setSelectedShoe] = useState<UserShoe | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [dialogSearchQuery, setDialogSearchQuery] = useState("");
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
+  const [dialogSelectedBrand, setDialogSelectedBrand] = useState<string>("all");
   const [selectedGender, setSelectedGender] = useState<
+    "all" | "men" | "women" | "kids" | "unisex"
+  >("all");
+  const [dialogSelectedGender, setDialogSelectedGender] = useState<
     "all" | "men" | "women" | "kids" | "unisex"
   >("all");
   const [selectedAggressiveness, setSelectedAggressiveness] =
@@ -63,8 +67,8 @@ export default function ShoeSanctuaryPage() {
   });
 
   // Debounced search function (300ms delay)
-  const debouncedSetSearchQuery = useMemo(
-    () => debounce((value: string) => setSearchQuery(value), 300),
+  const debouncedSetDialogSearchQuery = useMemo(
+    () => debounce((value: string) => setDialogSearchQuery(value), 300),
     [],
   );
 
@@ -112,86 +116,37 @@ export default function ShoeSanctuaryPage() {
   const brandGroups = useBrandGroups(userShoes);
 
   // Search for shoes with advanced filters
-  const searchResults = useMemo(() => {
-    let results: typeof allShoes = allShoes;
+  const dialogSearchResults = useMemo(() => {
+    const userShoeIds = new Set(userShoes.map((shoe) => shoe.shoeId));
 
-    // Filter by brand if selected
-    if (selectedBrand !== "all") {
-      results = results.filter((shoe) => shoe.brand === selectedBrand);
+    let results = allShoes.filter((shoe) => !userShoeIds.has(shoe._id));
+
+    if (dialogSelectedBrand !== "all") {
+      results = results.filter((shoe) => shoe.brand === dialogSelectedBrand);
     }
 
-    // Filter by gender if selected
-    if (selectedGender !== "all") {
+    if (dialogSelectedGender !== "all") {
       results = results.filter(
-        (shoe) => (shoe.gender ?? "").toLowerCase() === selectedGender,
+        (shoe) => (shoe.gender ?? "").toLowerCase() === dialogSelectedGender,
       );
     }
 
-    // Filter by aggressiveness if selected
-    if (selectedAggressiveness !== "all") {
-      results = results.filter(
-        (shoe) => shoe.aggressiveness === selectedAggressiveness,
-      );
-    }
-
-    // Filter by stiffness if selected
-    if (selectedStiffness !== "all") {
-      results = results.filter((shoe) => shoe.stiffness === selectedStiffness);
-    }
-
-    // Filter by climbing discipline if selected
-    if (selectedDiscipline !== "all") {
-      results = results.filter(
-        (shoe) => shoe.climbingDiscipline === selectedDiscipline,
-      );
-    }
-
-    // Filter by volume if selected
-    if (selectedVolume !== "all") {
-      results = results.filter((shoe) => shoe.volume === selectedVolume);
-    }
-
-    // Filter by comfort rating if selected
-    if (selectedComfortRating !== "all") {
-      const minRating = parseFloat(selectedComfortRating.replace("+", ""));
+    if (dialogSearchQuery.trim().length > 0) {
+      const normalizedQuery = dialogSearchQuery.toLowerCase();
       results = results.filter(
         (shoe) =>
-          shoe.avgComfortScore !== undefined &&
-          shoe.avgComfortScore >= minRating,
-      );
-    }
-
-    // Filter by performance rating if selected
-    if (selectedPerformanceRating !== "all") {
-      const minRating = parseFloat(selectedPerformanceRating.replace("+", ""));
-      results = results.filter(
-        (shoe) =>
-          shoe.avgPerformanceRating !== undefined &&
-          shoe.avgPerformanceRating >= minRating,
-      );
-    }
-
-    // Filter by search query
-    if (searchQuery.length > 2) {
-      results = results.filter(
-        (shoe) =>
-          shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          shoe.brand.toLowerCase().includes(searchQuery.toLowerCase()),
+          shoe.name.toLowerCase().includes(normalizedQuery) ||
+          shoe.brand.toLowerCase().includes(normalizedQuery),
       );
     }
 
     return results;
   }, [
-    searchQuery,
     allShoes,
-    selectedBrand,
-    selectedGender,
-    selectedAggressiveness,
-    selectedStiffness,
-    selectedDiscipline,
-    selectedVolume,
-    selectedComfortRating,
-    selectedPerformanceRating,
+    dialogSearchQuery,
+    dialogSelectedBrand,
+    dialogSelectedGender,
+    userShoes,
   ]);
 
   // Calculate active filters count
@@ -227,7 +182,6 @@ export default function ShoeSanctuaryPage() {
     setSelectedVolume("all");
     setSelectedComfortRating("all");
     setSelectedPerformanceRating("all");
-    setSearchQuery("");
   };
 
   const addShoeToSanctuary = async (shoeId: string) => {
@@ -237,7 +191,9 @@ export default function ShoeSanctuaryPage() {
         invalidateCache();
         fetchUserStash();
         setIsAddDialogOpen(false);
-        setSearchQuery("");
+        setDialogSearchQuery("");
+        setDialogSelectedBrand("all");
+        setDialogSelectedGender("all");
         toast.success("Shoe added to your sanctuary!");
         track(analyticsEvents.stashShoeAdded, { shoe_id: shoeId });
       },
@@ -366,14 +322,14 @@ export default function ShoeSanctuaryPage() {
               <AddShoeDialog
                 open={isAddDialogOpen}
                 onOpenChange={setIsAddDialogOpen}
-                searchQuery={searchQuery}
-                onSearchChange={debouncedSetSearchQuery}
-                selectedBrand={selectedBrand}
-                onBrandChange={setSelectedBrand}
-                selectedGender={selectedGender}
-                onGenderChange={setSelectedGender}
+                searchQuery={dialogSearchQuery}
+                onSearchChange={debouncedSetDialogSearchQuery}
+                selectedBrand={dialogSelectedBrand}
+                onBrandChange={setDialogSelectedBrand}
+                selectedGender={dialogSelectedGender}
+                onGenderChange={setDialogSelectedGender}
                 uniqueBrands={uniqueBrands}
-                searchResults={searchResults}
+                searchResults={dialogSearchResults}
                 onSelectShoe={addShoeToSanctuary}
               />
             </motion.div>

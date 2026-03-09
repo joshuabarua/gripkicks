@@ -4,11 +4,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import ShoeImage from '@/components/ShoeImage';
-import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { PaginatedList } from '@/components/ui/PaginatedList';
 import { Footprints, Plus, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 type BaseShoe = {
   _id: string;
@@ -49,6 +48,11 @@ export function AddShoeDialog({
   onSelectShoe,
 }: AddShoeDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [inputValue, setInputValue] = useState(searchQuery);
+
+  useEffect(() => {
+    setInputValue(searchQuery);
+  }, [searchQuery]);
 
   const genderOptions: { label: string; value: GenderFilter }[] = [
     { label: 'All', value: 'all' },
@@ -79,6 +83,8 @@ export function AddShoeDialog({
         onOpenChange(next);
         if (!next) {
           onBrandChange('all');
+          onGenderChange('all');
+          setInputValue('');
           onSearchChange('');
         }
       }}
@@ -108,8 +114,11 @@ export function AddShoeDialog({
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-500" />
             <Input
               placeholder="Search for shoes..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
+              value={inputValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                onSearchChange(e.target.value);
+              }}
               className="pl-12 bg-neutral-900 text-white placeholder:text-neutral-600 border-neutral-800 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-xl h-12 text-fluid-base"
             />
           </div>
@@ -188,6 +197,18 @@ export function AddShoeDialog({
             hasMore={searchResults.length > 0}
             isLoading={isLoading}
           />
+
+          {searchResults.length === 0 && !isLoading && (
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 px-6 py-10 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-orange-500/10 flex items-center justify-center">
+                <Footprints className="w-6 h-6 text-orange-500" />
+              </div>
+              <p className="font-sora text-white text-sm mb-1">No shoes match these filters</p>
+              <p className="font-sora text-neutral-500 text-xs">
+                Try clearing your dialog search, brand, or gender filter to view all shoes in the database.
+              </p>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
