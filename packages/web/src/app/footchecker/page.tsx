@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Loader2, Check, Footprints } from 'lucide-react';
 import { useSession } from '@/lib/auth';
 import { fetchApi } from '@/lib/api-client';
+import { normalizeBackendFootProfile, useFootProfileStore } from '@/stores/footProfileStore';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -105,6 +106,7 @@ const footVolumeInfo: Record<FootVolume, { name: string; description: string; ch
 
 export default function FootLabPage() {
   const { data: session } = useSession();
+  const setProfile = useFootProfileStore((state) => state.setProfile);
   const [selectedFootShape, setSelectedFootShape] = useState<FootShape | null>(null);
   const [selectedFootVolume, setSelectedFootVolume] = useState<FootVolume | null>(null);
   const [savedFootShape, setSavedFootShape] = useState<FootShape | null>(null);
@@ -113,17 +115,17 @@ export default function FootLabPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Load user's current foot shape on mount
-  useEffect(() => {
-    if (session?.user) {
-      loadUserFootProfile();
-    }
-  }, [session]);
-
-  const loadUserFootProfile = async () => {
+  const loadUserFootProfile = useCallback(async () => {
     try {
       const response = await fetchApi<{ footShape?: string; footVolume?: string }>('/api/v1/profile');
       if (response.isOk()) {
         const data = response.value;
+        const normalizedProfile = normalizeBackendFootProfile(data);
+
+        if (normalizedProfile) {
+          setProfile(normalizedProfile);
+        }
+
         if (data.footShape) {
           setSavedFootShape(data.footShape as FootShape);
           setSelectedFootShape(data.footShape as FootShape);
@@ -136,7 +138,13 @@ export default function FootLabPage() {
     } catch (error) {
       console.error('Failed to load foot profile:', error);
     }
-  };
+  }, [setProfile]);
+
+  useEffect(() => {
+    if (session?.user) {
+      loadUserFootProfile();
+    }
+  }, [loadUserFootProfile, session]);
 
   const saveFootProfile = async () => {
     if (!selectedFootShape || !selectedFootVolume || !session?.user) {
@@ -170,6 +178,15 @@ export default function FootLabPage() {
       if (result.isErr()) {
         setError(result.error.message || 'Failed to save foot profile');
         return;
+      }
+
+      const normalizedProfile = normalizeBackendFootProfile({
+        footShape: result.value.footShape || selectedFootShape,
+        footVolume: result.value.footVolume || selectedFootVolume,
+      });
+
+      if (normalizedProfile) {
+        setProfile(normalizedProfile);
       }
 
       setSavedFootShape((result.value.footShape as FootShape) || selectedFootShape);

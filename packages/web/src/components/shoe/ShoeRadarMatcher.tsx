@@ -101,6 +101,7 @@ export function ShoeRadarMatcher() {
         shoe: scored.shoe,
         score: scored.totalScore,
         metrics: scored.metrics,
+        breakdown: scored.breakdown,
         x: clamp(horizontal, 0.08, 0.92),
         y: clamp(vertical, 0.08, 0.92),
         quadrantKey: getQuadrantKey(scored.metrics),
@@ -152,6 +153,51 @@ export function ShoeRadarMatcher() {
             Free plan shows your best overall match. Premium unlocks the top 5 recommendations.
           </p>
         )}
+      </div>
+
+      <div className="mb-6 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4">
+        <div className="flex flex-col gap-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.25em] text-cyan-400 mb-2">Radar Debug</p>
+            <div className="flex flex-wrap gap-2 text-sm text-neutral-300">
+              <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
+                Shape: {footProfile?.shape || 'none'}
+              </Badge>
+              <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
+                Volume: {footProfile?.volume || 'none'}
+              </Badge>
+              <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
+                Ranked shoes: {recommendedShoes.length}
+              </Badge>
+            </div>
+          </div>
+
+          {!!recommendedShoes.length && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              {recommendedShoes.map((shoe, index) => (
+                <div key={shoe.shoe._id} className="rounded-xl border border-neutral-800 bg-black/30 p-3">
+                  <div className="flex items-center justify-between gap-3 mb-2">
+                    <div>
+                      <p className="text-xs font-semibold text-white">#{index + 1} {shoe.shoe.brand} {shoe.shoe.name}</p>
+                      <p className="text-[11px] text-neutral-500">{quadrants[shoe.quadrantKey].name}</p>
+                    </div>
+                    <Badge className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                      {shoe.score.toFixed(2)}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-neutral-400">
+                    <DebugMetric label="Foot" value={shoe.breakdown.footTypeCompatibility} />
+                    <DebugMetric label="Volume" value={shoe.breakdown.volumeCompatibility} />
+                    <DebugMetric label="Pref" value={shoe.breakdown.userPreferenceMatch} />
+                    <DebugMetric label="Community" value={shoe.breakdown.communityApproval} />
+                    <DebugMetric label="Overall" value={shoe.breakdown.overallRating} />
+                    <DebugMetric label="Learned" value={shoe.breakdown.learnedPreferenceBonus} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="relative bg-neutral-950 border border-neutral-800 rounded-2xl overflow-hidden" style={{ aspectRatio: '1 / 1', maxHeight: '680px' }}>
@@ -299,6 +345,15 @@ export function ShoeRadarMatcher() {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function DebugMetric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-lg border border-neutral-800 bg-neutral-950 px-2.5 py-2">
+      <div className="text-[10px] uppercase tracking-wider text-neutral-500">{label}</div>
+      <div className="text-sm text-white font-medium">{value.toFixed(2)}</div>
     </div>
   );
 }
