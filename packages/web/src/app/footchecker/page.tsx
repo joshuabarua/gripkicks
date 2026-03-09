@@ -159,15 +159,21 @@ export default function FootLabPage() {
     setSaving(true);
     setError(null);
     try {
-      await fetchApi('/api/v1/profile', {
+      const result = await fetchApi<{ footShape?: string; footVolume?: string }>('/api/v1/profile', {
         method: 'PUT',
         body: JSON.stringify({ 
           footShape: selectedFootShape,
           footVolume: selectedFootVolume,
         }),
       });
-      setSavedFootShape(selectedFootShape);
-      setSavedFootVolume(selectedFootVolume);
+
+      if (result.isErr()) {
+        setError(result.error.message || 'Failed to save foot profile');
+        return;
+      }
+
+      setSavedFootShape((result.value.footShape as FootShape) || selectedFootShape);
+      setSavedFootVolume((result.value.footVolume as FootVolume) || selectedFootVolume);
     } catch (error) {
       console.error('Failed to save foot profile:', error);
       setError('Failed to save foot profile');

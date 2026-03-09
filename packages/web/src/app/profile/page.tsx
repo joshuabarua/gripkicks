@@ -75,6 +75,10 @@ export default function ProfilePage() {
     });
   };
 
+  const handleProfileSaved = () => {
+    setExpandedSection(null);
+  };
+
   useEffect(() => {
     async function loadProfile() {
       if (!session?.user) return;
@@ -299,6 +303,7 @@ export default function ProfilePage() {
                           email={displayEmail}
                           userId={displayUserId}
                           onProfileUpdated={handleProfileUpdated}
+                          onSuccess={handleProfileSaved}
                         />
                       </div>
                     </motion.div>

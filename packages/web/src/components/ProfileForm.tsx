@@ -33,6 +33,7 @@ interface ProfileFormProps {
   email?: string;
   userId?: string;
   onProfileUpdated?: (profile: ProfileData) => void;
+  onSuccess?: () => void;
 }
 
 export function ProfileForm({
@@ -40,6 +41,7 @@ export function ProfileForm({
   email,
   userId,
   onProfileUpdated,
+  onSuccess,
 }: ProfileFormProps) {
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
@@ -111,6 +113,7 @@ export function ProfileForm({
       const updatedProfile = result.value;
       setFormData(updatedProfile);
       onProfileUpdated?.(updatedProfile);
+      onSuccess?.();
     }
   };
 
