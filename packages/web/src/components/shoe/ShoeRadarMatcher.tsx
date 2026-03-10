@@ -69,14 +69,49 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
-function getQuadrantKey(metrics: ShoeMetrics): QuadrantKey {
-  const isPerformanceLed = metrics.performance >= metrics.comfort;
-  const isAggressiveLed = metrics.aggressiveness > metrics.versatility;
+function getQuadrantKeyFromPosition(x: number, y: number): QuadrantKey {
+  const isPerformanceLed = x >= 0.5;
+  const isAggressiveLed = y >= 0.5;
 
   if (!isPerformanceLed && !isAggressiveLed) return 'daily-drivers';
   if (isPerformanceLed && !isAggressiveLed) return 'versatile-performers';
   if (!isPerformanceLed && isAggressiveLed) return 'aggressive-comfort';
   return 'competition';
+}
+
+function getAxisDescriptor(metrics: ShoeMetrics) {
+  const horizontalDelta = metrics.performance - metrics.comfort;
+  const verticalDelta = metrics.aggressiveness - metrics.versatility;
+
+  const horizontalLabel =
+    horizontalDelta > 0.55
+      ? 'Performance-first'
+      : horizontalDelta < -0.55
+        ? 'Comfort-first'
+        : 'Balanced feel';
+
+  const verticalLabel =
+    verticalDelta > 0.55
+      ? 'Aggression-led'
+      : verticalDelta < -0.55
+        ? 'Versatility-led'
+        : 'All-round profile';
+
+  return {
+    horizontalLabel,
+    verticalLabel,
+  };
+}
+
+function getTopTraits(metrics: ShoeMetrics) {
+  return [
+    { key: 'comfort', label: 'Comfort', value: metrics.comfort },
+    { key: 'performance', label: 'Performance', value: metrics.performance },
+    { key: 'versatility', label: 'Versatility', value: metrics.versatility },
+    { key: 'aggressiveness', label: 'Aggressive', value: metrics.aggressiveness },
+  ]
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 3);
 }
 
 export function ShoeRadarMatcher() {
@@ -96,18 +131,27 @@ export function ShoeRadarMatcher() {
       const aggressiveWeight = scored.metrics.aggressiveness + scored.metrics.performance;
       const horizontal = performanceWeight / Math.max(performanceWeight + comfortWeight, 0.001);
       const vertical = 1 - aggressiveWeight / Math.max(aggressiveWeight + versatilityWeight, 0.001);
+      const x = clamp(horizontal, 0.08, 0.92);
+      const y = clamp(vertical, 0.08, 0.92);
+      const quadrantKey = getQuadrantKeyFromPosition(x, y);
+      const descriptors = getAxisDescriptor(scored.metrics);
 
       return {
         shoe: scored.shoe,
         score: scored.totalScore,
         metrics: scored.metrics,
         breakdown: scored.breakdown,
-        x: clamp(horizontal, 0.08, 0.92),
-        y: clamp(vertical, 0.08, 0.92),
-        quadrantKey: getQuadrantKey(scored.metrics),
+        x,
+        y,
+        quadrantKey,
+        descriptors,
+        topTraits: getTopTraits(scored.metrics),
       };
     });
   }, [recommendationLimit, scoredShoes]);
+
+  const leadShoe = recommendedShoes[0];
+  const leadQuadrant = leadShoe ? quadrants[leadShoe.quadrantKey] : null;
 
   const quadrantCounts = useMemo(() => {
     return recommendedShoes.reduce(
@@ -136,71 +180,106 @@ export function ShoeRadarMatcher() {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6">
+    <div className="w-full max-w-[1440px] mx-auto px-4 py-6 sm:px-6 lg:px-8">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Shoe Radar</h1>
-        <p className="text-neutral-400">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Shoe Radar</h1>
+        <p className="text-neutral-400 max-w-2xl mx-auto">
           Your best matches are auto-ranked into fixed categories based on your scoring profile.
         </p>
       </div>
 
-      <div className="mb-6 flex flex-col items-center gap-3">
-        <Badge className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-4 py-1.5">
-          Showing top {recommendationLimit} {recommendationLimit === 1 ? 'shoe' : 'shoes'}
-        </Badge>
-        {!isPremium && !isFounder && (
-          <p className="text-sm text-neutral-500 text-center">
-            Free plan shows your best overall match. Premium unlocks the top 5 recommendations.
-          </p>
-        )}
-      </div>
-
-      <div className="mb-6 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4">
-        <div className="flex flex-col gap-4">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.25em] text-cyan-400 mb-2">Radar Debug</p>
-            <div className="flex flex-wrap gap-2 text-sm text-neutral-300">
-              <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
-                Shape: {footProfile?.shape || 'none'}
+      <div className="mb-6 grid grid-cols-1 xl:grid-cols-[1.4fr_1fr] gap-4">
+        <div className="rounded-3xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-3">
+              <Badge className="w-fit bg-orange-500/10 text-orange-400 border border-orange-500/20 px-4 py-1.5">
+                Showing top {recommendationLimit} {recommendationLimit === 1 ? 'shoe' : 'shoes'}
               </Badge>
-              <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
-                Volume: {footProfile?.volume || 'none'}
-              </Badge>
-              <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
-                Ranked shoes: {recommendedShoes.length}
-              </Badge>
-            </div>
-          </div>
-
-          {!!recommendedShoes.length && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-              {recommendedShoes.map((shoe, index) => (
-                <div key={shoe.shoe._id} className="rounded-xl border border-neutral-800 bg-black/30 p-3">
-                  <div className="flex items-center justify-between gap-3 mb-2">
-                    <div>
-                      <p className="text-xs font-semibold text-white">#{index + 1} {shoe.shoe.brand} {shoe.shoe.name}</p>
-                      <p className="text-[11px] text-neutral-500">{quadrants[shoe.quadrantKey].name}</p>
-                    </div>
-                    <Badge className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                      {shoe.score.toFixed(2)}
+              {leadShoe && leadQuadrant && (
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-neutral-500 mb-2">Lead profile</p>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <Badge className={`${leadQuadrant.bgColor} ${leadQuadrant.borderColor} border ${leadQuadrant.accentClass}`}>
+                      {leadQuadrant.name}
+                    </Badge>
+                    <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
+                      {leadShoe.descriptors.horizontalLabel}
+                    </Badge>
+                    <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
+                      {leadShoe.descriptors.verticalLabel}
                     </Badge>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-neutral-400">
-                    <DebugMetric label="Foot" value={shoe.breakdown.footTypeCompatibility} />
-                    <DebugMetric label="Volume" value={shoe.breakdown.volumeCompatibility} />
-                    <DebugMetric label="Pref" value={shoe.breakdown.userPreferenceMatch} />
-                    <DebugMetric label="Community" value={shoe.breakdown.communityApproval} />
-                    <DebugMetric label="Overall" value={shoe.breakdown.overallRating} />
-                    <DebugMetric label="Learned" value={shoe.breakdown.learnedPreferenceBonus} />
+                  <h2 className="text-2xl font-semibold text-white">
+                    {leadShoe.shoe.brand} {leadShoe.shoe.name}
+                  </h2>
+                  <p className="text-sm text-neutral-400 mt-2 max-w-2xl">
+                    {leadQuadrant.description}. The label now follows the actual radar position, so the chip and the plotted point stay in sync.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {!isPremium && !isFounder && (
+              <p className="text-sm text-neutral-500 sm:max-w-xs sm:text-right">
+                Free plan shows your best overall match. Premium unlocks the top 5 recommendations.
+              </p>
+            )}
+          </div>
+
+          {leadShoe && (
+            <div className="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {leadShoe.topTraits.map((trait) => (
+                <div key={trait.key} className="rounded-2xl border border-neutral-800 bg-black/30 p-4">
+                  <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 mb-2">Key signal</p>
+                  <div className="flex items-end justify-between gap-3">
+                    <div>
+                      <p className="text-sm text-neutral-400">{trait.label}</p>
+                      <p className="text-xl font-semibold text-white">{trait.value.toFixed(1)}</p>
+                    </div>
+                    <div className="h-10 w-10 rounded-xl border border-orange-500/20 bg-orange-500/10 flex items-center justify-center text-orange-400 text-xs font-semibold">
+                      {Math.round((trait.value / 5) * 100)}
+                    </div>
                   </div>
                 </div>
               ))}
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4 col-span-2 lg:col-span-1">
+                <p className="text-[11px] uppercase tracking-[0.25em] text-cyan-400 mb-2">Fit context</p>
+                <div className="flex flex-wrap gap-2 text-sm text-neutral-300">
+                  <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
+                    Shape: {footProfile?.shape || 'none'}
+                  </Badge>
+                  <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
+                    Volume: {footProfile?.volume || 'none'}
+                  </Badge>
+                  <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
+                    Ranked: {recommendedShoes.length}
+                  </Badge>
+                </div>
+              </div>
             </div>
           )}
         </div>
+
+        <div className="rounded-3xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-neutral-500 mb-4">Radar language</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {(Object.keys(quadrants) as QuadrantKey[]).map((key) => {
+              const quadrant = quadrants[key];
+              return (
+                <div key={key} className={`rounded-2xl border p-4 ${quadrant.borderColor} ${quadrant.bgColor}`}>
+                  <div className={`flex items-center gap-2 mb-2 ${quadrant.accentClass}`}>
+                    {quadrant.icon}
+                    <span className="text-sm font-medium text-white">{quadrant.name}</span>
+                  </div>
+                  <p className="text-sm text-neutral-400">{quadrant.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
-      <div className="relative bg-neutral-950 border border-neutral-800 rounded-2xl overflow-hidden" style={{ aspectRatio: '1 / 1', maxHeight: '680px' }}>
+      <div className="relative bg-neutral-950 border border-neutral-800 rounded-3xl overflow-hidden w-full" style={{ aspectRatio: '16 / 10', minHeight: '560px' }}>
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 text-xs text-neutral-500 pointer-events-none uppercase tracking-wider">
           More Versatile
         </div>
@@ -300,6 +379,23 @@ export function ShoeRadarMatcher() {
 
                     <p className="text-sm text-neutral-500">{quadrant.description}</p>
 
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
+                        {shoe.descriptors.horizontalLabel}
+                      </Badge>
+                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
+                        {shoe.descriptors.verticalLabel}
+                      </Badge>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {shoe.topTraits.map((trait) => (
+                        <Badge key={trait.key} variant="secondary" className="bg-orange-500/10 text-orange-300 border border-orange-500/20">
+                          {trait.label} {trait.value.toFixed(1)}
+                        </Badge>
+                      ))}
+                    </div>
+
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       <MetricBar label="Comfort" value={shoe.metrics.comfort} />
                       <MetricBar label="Performance" value={shoe.metrics.performance} />
@@ -330,30 +426,6 @@ export function ShoeRadarMatcher() {
           </p>
         </div>
       )}
-
-      <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {(Object.keys(quadrants) as QuadrantKey[]).map((key) => {
-          const quadrant = quadrants[key];
-          return (
-            <div key={key} className={`p-3 rounded-lg border ${quadrant.borderColor} ${quadrant.bgColor}`}>
-              <div className={`flex items-center gap-1.5 mb-1 ${quadrant.accentClass}`}>
-                {quadrant.icon}
-                <span className="text-xs font-medium text-white">{quadrant.name}</span>
-              </div>
-              <p className="text-[11px] text-neutral-500">{quadrant.description}</p>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function DebugMetric({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-lg border border-neutral-800 bg-neutral-950 px-2.5 py-2">
-      <div className="text-[10px] uppercase tracking-wider text-neutral-500">{label}</div>
-      <div className="text-sm text-white font-medium">{value.toFixed(2)}</div>
     </div>
   );
 }
