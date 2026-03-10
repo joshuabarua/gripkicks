@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Save, HelpCircle, ChevronDown, Trash2 } from 'lucide-react';
 import { shoeSizes, conditions, type ShoeSizeOption } from '@/constants/shoe-data';
@@ -109,15 +110,10 @@ export default function EditShoeDialog({
                       </div>
                     </div>
                   </div>
-                  <Input
+                  <RatingSlider
                     id="comfortScore"
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={editForm.comfortScore || ''}
-                    onChange={(e) => setEditForm({ ...editForm, comfortScore: e.target.value ? parseInt(e.target.value) : undefined })}
-                    placeholder="1-10"
-                    className="bg-neutral-900 text-white placeholder:text-neutral-600 border-neutral-800 rounded-xl focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20"
+                    value={editForm.comfortScore}
+                    onChange={(value) => setEditForm({ ...editForm, comfortScore: value })}
                   />
                 </div>
 
@@ -131,15 +127,10 @@ export default function EditShoeDialog({
                       </div>
                     </div>
                   </div>
-                  <Input
+                  <RatingSlider
                     id="performanceRating"
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={editForm.performanceRating || ''}
-                    onChange={(e) => setEditForm({ ...editForm, performanceRating: e.target.value ? parseInt(e.target.value) : undefined })}
-                    placeholder="1-10"
-                    className="bg-neutral-900 text-white placeholder:text-neutral-600 border-neutral-800 rounded-xl focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20"
+                    value={editForm.performanceRating}
+                    onChange={(value) => setEditForm({ ...editForm, performanceRating: value })}
                   />
                 </div>
 
@@ -153,15 +144,10 @@ export default function EditShoeDialog({
                       </div>
                     </div>
                   </div>
-                  <Input
+                  <RatingSlider
                     id="durabilityRating"
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={editForm.durabilityRating || ''}
-                    onChange={(e) => setEditForm({ ...editForm, durabilityRating: e.target.value ? parseInt(e.target.value) : undefined })}
-                    placeholder="1-10"
-                    className="bg-neutral-900 text-white placeholder:text-neutral-600 border-neutral-800 rounded-xl focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20"
+                    value={editForm.durabilityRating}
+                    onChange={(value) => setEditForm({ ...editForm, durabilityRating: value })}
                   />
                 </div>
               </div>
@@ -219,5 +205,50 @@ export default function EditShoeDialog({
         </Dialog>
       )}
     </AnimatePresence>
+  );
+}
+
+function RatingSlider({
+  id,
+  value,
+  onChange,
+}: {
+  id: string;
+  value?: number;
+  onChange: (value: number | undefined) => void;
+}) {
+  const [draftValue, setDraftValue] = useState(5);
+  const displayValue = value ?? draftValue;
+  const isUnset = value === undefined;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between text-xs text-neutral-500 font-sora">
+        <span>1</span>
+        <span className="text-white font-medium">{isUnset ? 'Not rated yet' : `${displayValue}/10`}</span>
+        <span>10</span>
+      </div>
+      <input
+        id={id}
+        type="range"
+        min="1"
+        max="10"
+        step="1"
+        value={displayValue}
+        onChange={(e) => {
+          const nextValue = Number.parseInt(e.target.value, 10);
+          setDraftValue(nextValue);
+          onChange(nextValue);
+        }}
+        className={`h-2 w-full cursor-pointer appearance-none rounded-full accent-orange-500 transition-opacity ${isUnset ? 'bg-neutral-900 opacity-45' : 'bg-neutral-800 opacity-100'}`}
+      />
+      <button
+        type="button"
+        onClick={() => onChange(undefined)}
+        className={`text-[11px] transition-colors ${isUnset ? 'text-neutral-700 hover:text-neutral-500' : 'text-neutral-500 hover:text-neutral-300'}`}
+      >
+        Clear rating
+      </button>
+    </div>
   );
 }

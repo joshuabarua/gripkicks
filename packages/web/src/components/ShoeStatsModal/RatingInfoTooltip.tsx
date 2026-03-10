@@ -16,12 +16,12 @@ export default function RatingInfoTooltip({
 }: RatingInfoTooltipProps) {
   const getMessage = () => {
     if (showCommunityAverages) {
-      return `Community score from ${totalRatings} users. Add your rating to help improve accuracy!`;
+      return `Community score based on ${totalRatings} member ratings.`;
     }
     if (!hasUserRatings) {
-      return "This is a calculated baseline rank based on shoe characteristics. Add your own ratings to help others!";
+      return "Not rated yet. Add your own comfort, performance, and durability ratings.";
     }
-    return "Your personal rank. Community score will show once 3+ users rate this shoe.";
+    return "Your personal ratings are saved. Community score will appear once 3 or more members rate this shoe.";
   };
 
   return (
@@ -33,7 +33,7 @@ export default function RatingInfoTooltip({
         </div>
       </TooltipTrigger>
       <TooltipContent className="bg-neutral-900 border border-neutral-700">
-        <p className="font-sora text-neutral-300">Rate your shoes on comfort, performance, and durability to help the community make better choices.</p>
+        <p className="font-sora text-neutral-300">Ratings stay unrated until you set them. Community score only appears once enough member ratings exist.</p>
       </TooltipContent>
     </Tooltip>
   );

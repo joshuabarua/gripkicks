@@ -213,7 +213,7 @@ export function ShoeRadarMatcher() {
                     {leadShoe.shoe.brand} {leadShoe.shoe.name}
                   </h2>
                   <p className="text-sm text-neutral-400 mt-2 max-w-2xl">
-                    {leadQuadrant.description}. The label now follows the actual radar position, so the chip and the plotted point stay in sync.
+                    {leadQuadrant.description}
                   </p>
                 </div>
               )}
@@ -230,10 +230,9 @@ export function ShoeRadarMatcher() {
             <div className="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-3">
               {leadShoe.topTraits.map((trait) => (
                 <div key={trait.key} className="rounded-2xl border border-neutral-800 bg-black/30 p-4">
-                  <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 mb-2">Key signal</p>
                   <div className="flex items-end justify-between gap-3">
                     <div>
-                      <p className="text-sm text-neutral-400">{trait.label}</p>
+                      <p className="text-xs uppercase tracking-[0.24em] text-neutral-500 mb-1">{trait.label}</p>
                       <p className="text-xl font-semibold text-white">{trait.value.toFixed(1)}</p>
                     </div>
                     <div className="h-10 w-10 rounded-xl border border-orange-500/20 bg-orange-500/10 flex items-center justify-center text-orange-400 text-xs font-semibold">
@@ -262,7 +261,7 @@ export function ShoeRadarMatcher() {
 
         <div className="rounded-3xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6">
           <p className="text-[11px] uppercase tracking-[0.28em] text-neutral-500 mb-4">Radar language</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             {(Object.keys(quadrants) as QuadrantKey[]).map((key) => {
               const quadrant = quadrants[key];
               return (
@@ -275,6 +274,20 @@ export function ShoeRadarMatcher() {
                 </div>
               );
             })}
+          </div>
+          <div className="rounded-2xl border border-neutral-800 bg-black/30 p-4 space-y-3">
+            <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500">How to read this</p>
+            <div className="space-y-2 text-sm text-neutral-400">
+              <p>
+                <span className="text-white font-medium">Position</span> shows the shoe&apos;s style profile across comfort, performance, versatility, and aggression.
+              </p>
+              <p>
+                <span className="text-white font-medium">Match</span> is your personalized fit score based on foot shape, volume, preferences, and learned signals.
+              </p>
+              <p>
+                <span className="text-white font-medium">Community</span> shows how strongly the wider data supports the shoe, rather than your personal fit alone.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -299,16 +312,16 @@ export function ShoeRadarMatcher() {
         </div>
 
         <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 pointer-events-none z-0">
-          <div className={`${quadrants['daily-drivers'].bgColor} ${quadrants['daily-drivers'].borderColor} border-r border-b p-3`}>
+          <div className={`${quadrants['daily-drivers'].bgColor} ${quadrants['daily-drivers'].borderColor} border-r border-b p-3 flex items-center justify-center`}>
             <QuadrantHeader quadrant={quadrants['daily-drivers']} count={quadrantCounts['daily-drivers']} />
           </div>
-          <div className={`${quadrants['versatile-performers'].bgColor} ${quadrants['versatile-performers'].borderColor} border-b p-3`}>
+          <div className={`${quadrants['versatile-performers'].bgColor} ${quadrants['versatile-performers'].borderColor} border-b p-3 flex items-center justify-center`}>
             <QuadrantHeader quadrant={quadrants['versatile-performers']} count={quadrantCounts['versatile-performers']} />
           </div>
-          <div className={`${quadrants['aggressive-comfort'].bgColor} ${quadrants['aggressive-comfort'].borderColor} border-r p-3`}>
+          <div className={`${quadrants['aggressive-comfort'].bgColor} ${quadrants['aggressive-comfort'].borderColor} border-r p-3 flex items-center justify-center`}>
             <QuadrantHeader quadrant={quadrants['aggressive-comfort']} count={quadrantCounts['aggressive-comfort']} />
           </div>
-          <div className={`${quadrants.competition.bgColor} ${quadrants.competition.borderColor} p-3`}>
+          <div className={`${quadrants.competition.bgColor} ${quadrants.competition.borderColor} p-3 flex items-center justify-center`}>
             <QuadrantHeader quadrant={quadrants.competition} count={quadrantCounts.competition} />
           </div>
         </div>
@@ -380,6 +393,18 @@ export function ShoeRadarMatcher() {
                     <p className="text-sm text-neutral-500">{quadrant.description}</p>
 
                     <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary" className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                        Match {Math.round((shoe.score / 5) * 100)}
+                      </Badge>
+                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
+                        Community {shoe.breakdown.communityApproval.toFixed(1)}/5
+                      </Badge>
+                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
+                        Overall {shoe.breakdown.overallRating.toFixed(1)}/5
+                      </Badge>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
                       <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
                         {shoe.descriptors.horizontalLabel}
                       </Badge>
@@ -432,10 +457,8 @@ export function ShoeRadarMatcher() {
 
 function QuadrantHeader({ quadrant, count }: { quadrant: QuadrantInfo; count: number }) {
   return (
-    <div className={`flex items-center gap-1.5 ${quadrant.accentClass}`}>
-      {quadrant.icon}
-      <span className="text-xs font-medium">{quadrant.name}</span>
-      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-neutral-800/50 text-neutral-400 ml-auto">
+    <div className="flex items-center justify-center">
+      <Badge variant="secondary" className={`text-[10px] px-2 py-0.5 bg-neutral-900/80 border border-neutral-700/80 ${quadrant.accentClass}`}>
         {count}
       </Badge>
     </div>
