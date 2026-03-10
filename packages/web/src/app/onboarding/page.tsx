@@ -103,7 +103,7 @@ export default function OnboardingPage() {
           })
         })
 
-        if (shoeResponse.isOk() && shoeResponse.value.success) {
+        if (shoeResponse.isOk()) {
           // Complete onboarding
           const onboardingResponse = await fetchApi<ApiSuccessResponse>('/api/v1/users/onboarding', {
             method: 'POST',

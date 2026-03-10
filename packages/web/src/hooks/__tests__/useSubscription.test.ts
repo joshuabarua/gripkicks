@@ -67,13 +67,10 @@ describe("useSubscription", () => {
     (fetchApi as ReturnType<typeof vi.fn>).mockReturnValue(
       ResultAsync.fromSafePromise(
         Promise.resolve({
-          success: true,
-          data: {
-            subscriptionStatus: "active",
-            subscriptionTier: "monthly",
-            isPremium: true,
-            isFounder: false,
-          },
+          subscriptionStatus: "active",
+          subscriptionTier: "monthly",
+          isPremium: true,
+          isFounder: false,
         }),
       ),
     );
@@ -116,13 +113,10 @@ describe("useSubscription", () => {
     const { fetchApi } = await import("@/lib/api-client");
     (fetchApi as ReturnType<typeof vi.fn>).mockReturnValue(
       ok({
-        success: true,
-        data: {
-          subscriptionStatus: "founder",
-          subscriptionTier: "founder",
-          isPremium: true,
-          isFounder: true,
-        },
+        subscriptionStatus: "founder",
+        subscriptionTier: "founder",
+        isPremium: true,
+        isFounder: true,
       }),
     );
 
@@ -163,13 +157,10 @@ describe("useSubscription", () => {
     const { fetchApi } = await import("@/lib/api-client");
     (fetchApi as ReturnType<typeof vi.fn>).mockReturnValue(
       ok({
-        success: true,
-        data: {
-          subscriptionStatus: null,
-          subscriptionTier: null,
-          isPremium: false,
-          isFounder: false,
-        },
+        subscriptionStatus: null,
+        subscriptionTier: null,
+        isPremium: false,
+        isFounder: false,
       }),
     );
 

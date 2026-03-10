@@ -100,6 +100,7 @@ async function migrate() {
   let skipped = 0;
   let created = 0;
   let compatCreated = 0;
+  let failed = 0;
 
   for (const sourceShoe of sourceShoes) {
     const key = shoeKey(sourceShoe);
@@ -110,33 +111,55 @@ async function migrate() {
       continue;
     }
 
-    const rubberTechnologyId = await ensureRubberTechnology(sourceShoe.rubberTechnology ?? undefined);
+    try {
+      const rubberTechnologyId = await ensureRubberTechnology(sourceShoe.rubberTechnology ?? undefined);
 
-    if (dryRun) {
+      if (dryRun) {
+        created += 1;
+        compatCreated += sourceShoe.footShapeCompat?.length ?? 0;
+        console.log(`+ Would create shoe: ${sourceShoe.brand} ${sourceShoe.name}${sourceShoe.gender ? ` (${sourceShoe.gender})` : ""}`);
+        continue;
+      }
+
+      const payload = {
+        name: sourceShoe.name,
+        brand: sourceShoe.brand,
+        imageUrl: sourceShoe.imageUrl ?? undefined,
+        slug: sourceShoe.slug ?? undefined,
+        gender: sourceShoe.gender ?? undefined,
+        aggressiveness: sourceShoe.aggressiveness,
+        stiffness: sourceShoe.stiffness,
+        climbingDiscipline: sourceShoe.climbingDiscipline,
+        volume: sourceShoe.volume,
+        rubberTechnologyId: rubberTechnologyId as never,
+        footShapeCompat: (sourceShoe.footShapeCompat ?? []).map((entry) => entry.footShape),
+      };
+
+      const createdShoeId = (await targetClient.mutation(api.shoes.create, payload)) as string;
+
+      existingTargetKeys.add(key);
       created += 1;
       compatCreated += sourceShoe.footShapeCompat?.length ?? 0;
-      console.log(`+ Would create shoe: ${sourceShoe.brand} ${sourceShoe.name}${sourceShoe.gender ? ` (${sourceShoe.gender})` : ""}`);
-      continue;
+      console.log(`+ Created shoe: ${sourceShoe.brand} ${sourceShoe.name}${sourceShoe.gender ? ` (${sourceShoe.gender})` : ""} -> ${createdShoeId}`);
+    } catch (error) {
+      failed += 1;
+      console.error(`! Failed shoe: ${sourceShoe.brand} ${sourceShoe.name}${sourceShoe.gender ? ` (${sourceShoe.gender})` : ""}`);
+      console.error({
+        shoe: {
+          name: sourceShoe.name,
+          brand: sourceShoe.brand,
+          slug: sourceShoe.slug,
+          gender: sourceShoe.gender,
+          aggressiveness: sourceShoe.aggressiveness,
+          stiffness: sourceShoe.stiffness,
+          climbingDiscipline: sourceShoe.climbingDiscipline,
+          volume: sourceShoe.volume,
+          rubberTechnology: sourceShoe.rubberTechnology,
+          footShapeCompat: sourceShoe.footShapeCompat?.map((entry) => entry.footShape) ?? [],
+        },
+      });
+      console.error(error);
     }
-
-    const createdShoeId = (await targetClient.mutation(api.shoes.create, {
-      name: sourceShoe.name,
-      brand: sourceShoe.brand,
-      imageUrl: sourceShoe.imageUrl ?? undefined,
-      slug: sourceShoe.slug ?? undefined,
-      gender: sourceShoe.gender ?? undefined,
-      aggressiveness: sourceShoe.aggressiveness,
-      stiffness: sourceShoe.stiffness,
-      climbingDiscipline: sourceShoe.climbingDiscipline,
-      volume: sourceShoe.volume,
-      rubberTechnologyId: rubberTechnologyId as never,
-      footShapeCompat: (sourceShoe.footShapeCompat ?? []).map((entry) => entry.footShape),
-    })) as string;
-
-    existingTargetKeys.add(key);
-    created += 1;
-    compatCreated += sourceShoe.footShapeCompat?.length ?? 0;
-    console.log(`+ Created shoe: ${sourceShoe.brand} ${sourceShoe.name}${sourceShoe.gender ? ` (${sourceShoe.gender})` : ""} -> ${createdShoeId}`);
   }
 
   console.log("\nMigration summary");
@@ -145,6 +168,7 @@ async function migrate() {
   console.log(`Created shoes: ${created}`);
   console.log(`Skipped existing shoes: ${skipped}`);
   console.log(`Foot shape compatibility rows created: ${compatCreated}`);
+  console.log(`Failed shoes: ${failed}`);
 }
 
 migrate().catch((error) => {

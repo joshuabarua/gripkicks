@@ -38,12 +38,12 @@ export function useSubscription(): UseSubscriptionReturn {
     setLoading(true);
     setError(null);
 
-    const result = await fetchApi<{ success: boolean; data: SubscriptionData }>(
+    const result = await fetchApi<SubscriptionData>(
       '/api/v1/polar/subscription'
     );
 
     if (result.isOk()) {
-      setData(result.value.data);
+      setData(result.value);
     } else {
       setError(result.error.message);
       setData(null);

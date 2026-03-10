@@ -103,9 +103,9 @@ export function useStashData(
     const cacheKey = `user-stash-${sessionUserId}`;
 
     setIsLoading(true);
-    const cachedData = shoeCache.get<{ data?: UserShoe[] }>(cacheKey);
+    const cachedData = shoeCache.get<UserShoe[]>(cacheKey);
     if (cachedData) {
-      setUserShoes(cachedData.data || []);
+      setUserShoes(cachedData);
       setIsLoading(false);
       return;
     }
@@ -113,7 +113,7 @@ export function useStashData(
     const result = await getUserStash();
     result.match(
       (value) => {
-        setUserShoes(value.data || []);
+        setUserShoes(value);
         shoeCache.set(cacheKey, value, 5 * 60 * 1000);
       },
       (error) => {

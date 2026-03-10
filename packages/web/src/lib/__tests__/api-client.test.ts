@@ -30,6 +30,23 @@ describe("fetchApi", () => {
     );
   });
 
+  it("should unwrap success envelopes", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ success: true, data: { userShoeId: "us_123" } }),
+      headers: new Headers({ "content-type": "application/json" }),
+    });
+
+    const { fetchApi } = await import("@/lib/api-client");
+    const result = await fetchApi<{ userShoeId: string }>("/api/test");
+
+    expect(result.isOk()).toBe(true);
+    result.match(
+      (data) => expect(data).toEqual({ userShoeId: "us_123" }),
+      () => expect.fail("Should not fail"),
+    );
+  });
+
   it("should throw AppError on non-ok response", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,

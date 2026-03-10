@@ -8,7 +8,13 @@ import type { UserShoe } from '@/types/api';
 export function useUserStash(userId?: string) {
   return useQuery({
     queryKey: queryKeys.userStash(userId || ''),
-    queryFn: () => getUserStash(),
+    queryFn: async () => {
+      const result = await getUserStash();
+      if (result.isErr()) {
+        throw result.error;
+      }
+      return result.value;
+    },
     enabled: !!userId,
     staleTime: 2 * 60 * 1000, // 2 minutes - user data changes frequently
     gcTime: 10 * 60 * 1000, // 10 minutes cache
