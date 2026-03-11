@@ -16,7 +16,7 @@ const hashString = (value: string) => {
 };
 
 export const getAvatarSeed = ({ userId, email }: AvatarIdentity) => {
-  return userId || email || "gripkicks";
+  return email || userId || "gripkicks";
 };
 
 export const getAvatarBackground = (seed: string) => {
