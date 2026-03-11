@@ -12,14 +12,6 @@ import NavLinks from '@/components/ui/nav-links';
 import { UserAvatar } from '@/components/ui/UserAvatar';
 import { SignOutButton } from '@/components/signout-button';
 import { User } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useOrientation } from "@/hooks/useOrientationScale";
 
 const menu = {
@@ -49,6 +41,7 @@ const menu = {
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
@@ -75,6 +68,7 @@ const Navigation: React.FC = () => {
 
   // Function to close menu (used after logout)
   const closeMenu = () => setIsActive(false);
+  const closeProfileMenu = () => setIsProfileMenuOpen(false);
 
   // Handle mouse movement and scroll to show navigation
   const handleUserActivity = useCallback(() => {
@@ -111,6 +105,7 @@ const Navigation: React.FC = () => {
   // Close menu when route changes
   useEffect(() => {
     setIsActive(false);
+    setIsProfileMenuOpen(false);
   }, [pathname]);
 
   // Add click outside listener
@@ -118,6 +113,7 @@ const Navigation: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
         setIsActive(false);
+        setIsProfileMenuOpen(false);
       }
     };
 
@@ -153,44 +149,77 @@ const Navigation: React.FC = () => {
         {/* Center element - User Avatar */}
         <li className="flex-1 flex justify-center">
           {isAuthenticated && session?.user && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="transition-transform hover:scale-105 outline-none rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                  <UserAvatar
-                    userId={session.user.id}
-                    name={session.user.name}
-                    email={session.user.email}
-                    className="h-10 w-10"
-                  />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="center"
-                className="mt-2 w-52 rounded-2xl border border-orange-500/15 bg-[#f4b183] p-2 text-black shadow-2xl"
+            <div className="relative flex items-start justify-center">
+              <AnimatePresence>
+                {isProfileMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    className="absolute left-1/2 top-0 z-0 w-[15rem] -translate-x-1/2 pt-3"
+                  >
+                    <motion.div
+                      initial={{ opacity: 0, scaleY: 0.35 }}
+                      animate={{ opacity: 1, scaleY: 1 }}
+                      exit={{ opacity: 0, scaleY: 0.35 }}
+                      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ transformOrigin: 'top center' }}
+                      className="overflow-hidden rounded-[1.75rem] border border-orange-500/15 bg-[#f4b183] pt-14 shadow-2xl"
+                    >
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ delay: 0.12, duration: 0.18, ease: 'easeOut' }}
+                        className="px-3 pb-3 text-black"
+                      >
+                        <div className="px-2 pb-3">
+                          <div className="flex flex-col space-y-1 font-sora">
+                            <p className="text-sm font-medium leading-none">{session.user.name}</p>
+                            <p className="text-xs leading-none text-black/60">{session.user.email}</p>
+                          </div>
+                        </div>
+                        <div className="h-px bg-black/10" />
+                        <div className="pt-2">
+                          <Link
+                            href="/profile"
+                            onClick={closeProfileMenu}
+                            className="flex w-full items-center gap-2 rounded-xl px-2 py-2 font-sora text-sm text-black transition-colors hover:bg-black/5"
+                          >
+                            <User className="h-4 w-4" />
+                            <span>Profile</span>
+                          </Link>
+                        </div>
+                        <div className="mt-2 h-px bg-black/10" />
+                        <div className="pt-2">
+                          <SignOutButton
+                            variant="ghost"
+                            className="h-auto w-full justify-start rounded-xl px-2 py-2 font-sora text-sm text-black hover:bg-black/5"
+                            onClick={() => {
+                              closeProfileMenu();
+                              closeMenu();
+                            }}
+                          />
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <button
+                onClick={() => setIsProfileMenuOpen((open) => !open)}
+                className="relative z-10 transition-transform hover:scale-105 outline-none rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                <DropdownMenuLabel className="font-sora">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{session.user.name}</p>
-                    <p className="text-xs leading-none text-black/60">{session.user.email}</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-black/10" />
-                <DropdownMenuItem asChild className="cursor-pointer rounded-xl font-sora text-black focus:bg-black/5">
-                  <Link href="/profile" className="flex w-full items-center gap-2">
-                    <User className="h-4 w-4" />
-                    <span>Profile</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-black/10" />
-                <DropdownMenuItem asChild className="cursor-pointer rounded-xl font-sora focus:bg-black/5 p-0">
-                  <SignOutButton
-                    variant="ghost"
-                    className="h-auto w-full justify-start px-2 py-1.5 font-sora text-sm text-black hover:bg-transparent"
-                    onClick={closeMenu}
-                  />
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <UserAvatar
+                  userId={session.user.id}
+                  name={session.user.name}
+                  email={session.user.email}
+                  className="h-10 w-10"
+                />
+              </button>
+            </div>
           )}
         </li>
 

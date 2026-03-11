@@ -76,6 +76,10 @@ export const editProfile = async (c: Context): Promise<Response> => {
     updateFields.footShape = body.footShape;
   if (typeof body.footVolume === "string" && body.footVolume !== "")
     updateFields.footVolume = body.footVolume;
+  if (typeof body.favoriteShoeId === "string")
+    updateFields.favoriteShoeId = body.favoriteShoeId;
+  if (body.favoriteShoeId === null)
+    updateFields.favoriteShoeId = null;
 
   if (Object.keys(updateFields).length === 0) {
     return resultAsyncToHonoResponse(
@@ -114,11 +118,11 @@ export const getShoes = async (c: Context): Promise<Response> => {
   try {
     const convexUrl = getConvexUrl();
     const response = await fetch(`${convexUrl}/api/v1/shoes`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch shoes: ${response.statusText}`);
     }
-    
+
     const data = await response.json();
     return c.json(data);
   } catch (error) {

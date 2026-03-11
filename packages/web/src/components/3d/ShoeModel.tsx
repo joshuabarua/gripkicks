@@ -7,17 +7,11 @@ import { useHighPerformanceMode, useAnimationsEnabled } from "@/stores/useAppSto
 // Preload the model for better performance
 useGLTF.preload("/glb/HeroShoe.glb");
 
-// Detect if user is on mobile/device with limited GPU
-const isLowPerformanceDevice = () => {
-  if (typeof window === 'undefined') return false;
-  return (
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-    navigator.hardwareConcurrency < 4 ||
-    ((navigator as unknown as { deviceMemory?: number }).deviceMemory ?? 8) < 4
-  );
+type ShoeModelProps = {
+  isLowPerformance?: boolean;
 };
 
-export default function ShoeModel() {
+export default function ShoeModel({ isLowPerformance = false }: ShoeModelProps) {
   const { nodes } = useGLTF("/glb/HeroShoe.glb");
   const { viewport } = useThree();
 
@@ -45,9 +39,8 @@ export default function ShoeModel() {
   const animateFrame = useCallback((t: number) => {
     if (!mesh.current || !animationsEnabled || highPerformanceMode) return;
     if (mesh.current.position && mesh.current.rotation) {
-      const isLowPerf = isLowPerformanceDevice() || highPerformanceMode;
-      const speed = isLowPerf ? 0.25 : 1;
-      const amplitude = isLowPerf ? 0.025 : 0.1;
+      const speed = 1;
+      const amplitude = 0.1;
 
       mesh.current.position.y = (Math.sin(t / (0.8 / speed))) * amplitude;
       mesh.current.position.z = 0.2 + (Math.sin(t / (2.5 / speed))) * 0.025;
@@ -57,7 +50,7 @@ export default function ShoeModel() {
   }, [animationsEnabled, highPerformanceMode]);
 
   useFrame((state) => {
-    if (animationsEnabled && !highPerformanceMode) {
+    if (animationsEnabled && !highPerformanceMode && !isLowPerformance) {
       animateFrame(state.clock.getElapsedTime());
     }
   });
@@ -83,7 +76,11 @@ export default function ShoeModel() {
           Kicks
         </Text>
 
-        <group ref={mesh}>
+        <group
+          ref={mesh}
+          position={isLowPerformance ? [0, 0.02, 0] : undefined}
+          rotation={isLowPerformance ? [0, 0.6, 0.26] : undefined}
+        >
           <mesh
             {...nodes.CimbingShoe}
             position={[0, -0.4, 0]}

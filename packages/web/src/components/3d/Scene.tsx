@@ -1,12 +1,41 @@
 "use client";
 
-import React, { Suspense, useState, useCallback } from "react";
+import React, { Suspense, useState, useCallback, useEffect, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import ShoeModel from "./ShoeModel";
 
 const Scene = () => {
   const [contextLost, setContextLost] = useState(false);
   const [canvasKey, setCanvasKey] = useState(0);
+  const [isLowPerformance, setIsLowPerformance] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const prefersReducedMotion =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const lowCoreCount = (navigator.hardwareConcurrency ?? 8) <= 4;
+    const lowMemory =
+      ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8) <= 4;
+    const smallViewport = window.innerWidth < 1024;
+
+    setIsLowPerformance(
+      Boolean(prefersReducedMotion || lowCoreCount || lowMemory || smallViewport),
+    );
+  }, []);
+
+  const canvasConfig = useMemo(
+    () => ({
+      gl: {
+        powerPreference: isLowPerformance ? "low-power" as const : "high-performance" as const,
+        antialias: !isLowPerformance,
+        preserveDrawingBuffer: false,
+        failIfMajorPerformanceCaveat: isLowPerformance,
+      },
+      dpr: isLowPerformance ? 1 : [1, 1.5] as const,
+    }),
+    [isLowPerformance],
+  );
 
   const handleContextLost = useCallback((event: WebGLContextEvent) => {
     event.preventDefault();
@@ -39,13 +68,8 @@ const Scene = () => {
           pointerEvents: "none",
           touchAction: "pan-y",
         }}
-        gl={{
-          powerPreference: "high-performance",
-          antialias: true,
-          preserveDrawingBuffer: true,
-          failIfMajorPerformanceCaveat: false,
-        }}
-        dpr={[1, 1.5]}
+        gl={canvasConfig.gl}
+        dpr={canvasConfig.dpr}
         onCreated={({ gl }) => {
           // Only add event listeners here, not in useEffect
           gl.domElement.addEventListener(
@@ -60,7 +84,7 @@ const Scene = () => {
       >
         <directionalLight intensity={2} position={[0, 3, 4]} />
         <ambientLight intensity={1} />
-        <ShoeModel />
+        <ShoeModel isLowPerformance={isLowPerformance} />
       </Canvas>
     </Suspense>
   );

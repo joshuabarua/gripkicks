@@ -19,7 +19,7 @@ class SyncDeduplicator {
     syncOperation: () => Promise<T>
   ): Promise<T> {
     const syncKey = this.getSyncKey(betterAuthId);
-    
+
     // Check if there's already a sync operation in progress
     if (syncOperations.has(syncKey)) {
       console.log(`Sync already in progress for ${betterAuthId}, waiting...`);
@@ -99,6 +99,7 @@ export const update = mutation({
     emailVerified: v.optional(v.boolean()),
     footShape: v.optional(footShapeValidator),
     footVolume: v.optional(v.string()),
+    favoriteShoeId: v.optional(v.union(v.id("shoes"), v.null())),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
@@ -174,7 +175,7 @@ export const createOrUpdateFromBetterAuth = mutation({
         image: args.image,
         emailVerified: args.emailVerified,
       });
-      
+
       console.log("Convex: Updated existing user:", existingUser._id);
       return existingUser._id;
     } else {
@@ -188,7 +189,7 @@ export const createOrUpdateFromBetterAuth = mutation({
         isAdmin: false,
         onboardingComplete: false,
       });
-      
+
       console.log("Convex: Created new user:", userId);
       return userId;
     }
@@ -205,7 +206,7 @@ export const findByBetterAuthId = query({
       .query("users")
       .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
       .first();
-    
+
     return user;
   },
 });
@@ -234,7 +235,7 @@ export const syncUserDeduplicated = mutation({
 
         if (existingUser) {
           console.log(`User ${args.email} already exists, updating...`);
-          
+
           // Update existing user if needed
           const updates: any = {};
           if (existingUser.email !== args.email) updates.email = args.email;
@@ -285,11 +286,11 @@ export const backfillUserNames = mutation({
       // Update if name is undefined, null, or empty string
       if (!user.name || user.name.trim() === "") {
         const generatedName = user.email.split("@")[0];
-        
+
         await ctx.db.patch(user._id, {
           name: generatedName,
         });
-        
+
         results.usersUpdated++;
         console.log(`Updated user ${user.email} with name: ${generatedName}`);
       }
@@ -322,19 +323,19 @@ export const removeIndoorOutdoorField = mutation({
           // Check if the document has the indoorOutdoor field
           if ("indoorOutdoor" in userShoe) {
             // Extract all fields except indoorOutdoor and system fields
-            const { 
-              indoorOutdoor, 
-              _id, 
-              _creationTime, 
-              ...fieldsToKeep 
+            const {
+              indoorOutdoor,
+              _id,
+              _creationTime,
+              ...fieldsToKeep
             } = userShoe as any;
-            
+
             // Delete the old document
             await ctx.db.delete(userShoe._id);
-            
+
             // Create a new document without the indoorOutdoor field
             const newId = await ctx.db.insert("userShoes", fieldsToKeep);
-            
+
             results.documentsUpdated++;
             console.log(`Recreated userShoe without indoorOutdoor field. Old ID: ${userShoe._id}, New ID: ${newId}`);
           }
@@ -346,7 +347,7 @@ export const removeIndoorOutdoorField = mutation({
       }
 
       console.log(`Migration complete. Updated ${results.documentsUpdated}/${results.totalDocuments} documents`);
-      
+
       return results;
     } catch (error) {
       console.error("Migration failed:", error);

@@ -27,6 +27,7 @@ import { useBrandGroups } from "@/hooks/useBrandGroups";
 import { AdvancedFilters } from "@/components/stash/AdvancedFilters";
 import { debounce } from "@/lib/debounce";
 import { analyticsEvents, captureError, track } from "@/lib/analytics";
+import { fetchApi } from "@/lib/api-client";
 import { getEffectiveShoeStats } from "@/components/ShoeStatsModal/utils";
 
 export default function ShoeSanctuaryPage() {
@@ -471,6 +472,12 @@ export default function ShoeSanctuaryPage() {
               result.match(
                 () => {
                   const newFavStatus = !selectedShoe.isFavourite;
+                  void fetchApi("/api/v1/profile", {
+                    method: "PUT",
+                    body: JSON.stringify({
+                      favoriteShoeId: newFavStatus ? selectedShoe.shoeId : null,
+                    }),
+                  });
                   setSelectedShoe((prev) =>
                     prev ? { ...prev, isFavourite: newFavStatus } : null,
                   );

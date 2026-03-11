@@ -28,6 +28,7 @@ export interface UpdateProfileData {
   image?: string;
   footShape?: string;
   footVolume?: string;
+  favoriteShoeId?: string | null;
 }
 
 class UserService {
@@ -133,9 +134,7 @@ class UserService {
   }
 
   private validateUpdateData(data: UpdateProfileData): Result<void, ValidationError> {
-    const hasValidFields = Object.values(data).some(
-      value => typeof value === 'string' && value !== ''
-    );
+    const hasValidFields = Object.values(data).some((value) => value !== undefined);
 
     if (!hasValidFields) {
       return err(new ValidationError('No valid fields to update'));
@@ -160,6 +159,14 @@ class UserService {
 
     if (data.footShape && !this.isValidFootShape(data.footShape)) {
       return err(new InvalidDataError('Invalid foot shape. Must be one of: egyptian, roman, greek, germanic, celtic'));
+    }
+
+    if (
+      data.favoriteShoeId !== undefined &&
+      data.favoriteShoeId !== null &&
+      typeof data.favoriteShoeId !== "string"
+    ) {
+      return err(new InvalidDataError("Invalid favorite shoe id"));
     }
 
     return ok(undefined);
