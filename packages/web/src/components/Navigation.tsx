@@ -149,15 +149,15 @@ const Navigation: React.FC = () => {
         {/* Center element - User Avatar */}
         <li className="flex-1 flex justify-center">
           {isAuthenticated && session?.user && (
-            <div className="relative flex items-start justify-center">
+            <div className="relative flex items-start justify-center w-10">
               <AnimatePresence>
                 {isProfileMenuOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: -8 }}
+                    initial={{ opacity: 0, y: -140 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
+                    exit={{ opacity: 0, y: -140 }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
-                    className="absolute left-1/2 top-0 z-0 w-[15rem] -translate-x-1/2 pt-3"
+                    className="absolute left-1/2 top-[-200px] z-0 w-[15rem] -translate-x-1/2"
                   >
                     <motion.div
                       initial={{ opacity: 0, scaleY: 0.35 }}
@@ -165,14 +165,14 @@ const Navigation: React.FC = () => {
                       exit={{ opacity: 0, scaleY: 0.35 }}
                       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                       style={{ transformOrigin: 'top center' }}
-                      className="overflow-hidden rounded-[1.75rem] border border-orange-500/15 bg-[#f4b183] pt-14 shadow-2xl"
+                      className="flex min-h-[28rem] overflow-hidden rounded-[1.75rem] border border-orange-500/15 bg-[#f4b183] pt-24 shadow-2xl"
                     >
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ delay: 0.12, duration: 0.18, ease: 'easeOut' }}
-                        className="px-3 pb-3 text-black"
+                        className="flex w-full flex-col justify-end px-3 pb-3 text-black"
                       >
                         <div className="px-2 pb-3">
                           <div className="flex flex-col space-y-1 font-sora">

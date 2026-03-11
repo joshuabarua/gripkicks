@@ -3,7 +3,11 @@
 import { useState, useMemo } from "react";
 import { useSession } from "@/lib/auth";
 import { useSubscription } from "@/hooks/useSubscription";
-import { useFindMyShoe, type AggregatedRating } from "@/hooks/useFindMyShoe";
+import {
+  useFindMyShoe,
+  type AggregatedRating,
+  type SoleMateClimberMatch,
+} from "@/hooks/useFindMyShoe";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -36,7 +40,7 @@ export default function SoleMatePage() {
   const { isPremium } = useSubscription();
   const {
     recommendations,
-    soleSiblingSpotlight,
+    soleMateMatches,
     isLoading,
     hasProfile,
     hasShoes,
@@ -75,16 +79,29 @@ export default function SoleMatePage() {
     return filtered;
   }, [recommendations, searchQuery, selectedCategory]);
 
-  const filteredSoleSiblings = useMemo(() => {
+  const filteredSoleMateMatches = useMemo(() => {
     if (searchQuery) {
-      return soleSiblingSpotlight.filter(
-        (r) =>
-          r.shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          r.shoe.brand.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
+      return soleMateMatches
+        .map((match) => ({
+          ...match,
+          shoes: match.shoes.filter(
+            (r) =>
+              r.shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              r.shoe.brand.toLowerCase().includes(searchQuery.toLowerCase()),
+          ),
+        }))
+        .filter((match) => match.shoes.length > 0);
     }
-    return soleSiblingSpotlight;
-  }, [soleSiblingSpotlight, searchQuery]);
+    return soleMateMatches;
+  }, [soleMateMatches, searchQuery]);
+
+  const spotlightShoeIds = useMemo(() => {
+    return new Set(
+      filteredSoleMateMatches.flatMap((match) =>
+        match.shoes.map((shoe) => shoe.shoe._id),
+      ),
+    );
+  }, [filteredSoleMateMatches]);
 
   if (isLoading) {
     return <FullPageLoading text="Finding Matches" />;
@@ -187,11 +204,10 @@ export default function SoleMatePage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedCategory(cat.key)}
-                    className={`px-5 py-3 rounded-xl font-sora text-sm whitespace-nowrap transition-all ${
-                      selectedCategory === cat.key
-                        ? "bg-orange-500 text-black font-medium"
-                        : "bg-neutral-800 border border-neutral-700 text-neutral-400 hover:border-orange-500/30"
-                    }`}
+                    className={`px-5 py-3 rounded-xl font-sora text-sm whitespace-nowrap transition-all ${selectedCategory === cat.key
+                      ? "bg-orange-500 text-black font-medium"
+                      : "bg-neutral-800 border border-neutral-700 text-neutral-400 hover:border-orange-500/30"
+                      }`}
                   >
                     {cat.label}
                   </motion.button>
@@ -200,7 +216,7 @@ export default function SoleMatePage() {
             </div>
           </motion.div>
 
-          {filteredSoleSiblings.length > 0 && isPremium && (
+          {filteredSoleMateMatches.length > 0 && isPremium && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -219,16 +235,15 @@ export default function SoleMatePage() {
                       SOLE MATE SPOTLIGHT
                     </h2>
                     <p className="font-sora text-xs text-neutral-400">
-                      Climbers with your exact foot profile love these shoes!
+                      Exact foot matches with different shoes rated above 8.5
                     </p>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  {filteredSoleSiblings.map((rating) => (
-                    <ShoeCard
-                      key={rating.shoe._id}
-                      rating={rating}
-                      isSpotlight
+                  {filteredSoleMateMatches.map((match) => (
+                    <SoleMateMatchCard
+                      key={match.user._id}
+                      match={match}
                     />
                   ))}
                 </div>
@@ -236,7 +251,7 @@ export default function SoleMatePage() {
             </motion.div>
           )}
 
-          {filteredSoleSiblings.length > 0 && !isPremium && (
+          {filteredSoleMateMatches.length > 0 && !isPremium && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -251,8 +266,7 @@ export default function SoleMatePage() {
                     SOLE MATE SPOTLIGHT
                   </h3>
                   <p className="font-sora text-neutral-400 mb-4 max-w-sm">
-                    Climbers with your exact foot profile have rated these shoes
-                    highly!
+                    Exact foot matches have different shoes rated above 8.5
                   </p>
                   <Link href="/pricing">
                     <motion.button
@@ -320,7 +334,7 @@ export default function SoleMatePage() {
               <>
                 <div className="space-y-3">
                   {filteredRatings
-                    .filter((r) => !isPremium || !r.isSoleSibling)
+                    .filter((r) => !isPremium || !spotlightShoeIds.has(r.shoe._id))
                     .map((rating, index) => (
                       <motion.div
                         key={rating.shoe._id}
@@ -371,6 +385,49 @@ export default function SoleMatePage() {
   );
 }
 
+function SoleMateMatchCard({
+  match,
+}: {
+  match: SoleMateClimberMatch;
+}) {
+  return (
+    <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-4">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-neutral-800">
+          {match.user.image ? (
+            <Image
+              src={match.user.image}
+              alt={match.user.name || "Climber"}
+              width={48}
+              height={48}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <Users className="h-5 w-5 text-orange-500" />
+          )}
+        </div>
+        <div>
+          <h3 className="font-sora font-semibold text-white">
+            {match.user.name || "Climber"}
+          </h3>
+          <p className="font-mono text-[10px] text-neutral-500">
+            {match.shoes.length} shoes above 8.5
+          </p>
+        </div>
+      </div>
+      <div className="space-y-3">
+        {match.shoes.map((rating) => (
+          <ShoeCard
+            key={`${match.user._id}-${rating.shoe._id}`}
+            rating={rating}
+            isSpotlight
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ShoeCard({
   rating,
   isSpotlight = false,
@@ -380,19 +437,17 @@ function ShoeCard({
 }) {
   return (
     <div
-      className={`flex items-center justify-between p-4 ${
-        isSpotlight
-          ? "bg-neutral-900/80 rounded-2xl border border-neutral-800"
-          : "bg-neutral-900 border border-neutral-800 rounded-2xl hover:border-orange-500/20 transition-all group cursor-pointer"
-      }`}
+      className={`flex items-center justify-between p-4 ${isSpotlight
+        ? "bg-neutral-900/80 rounded-2xl border border-neutral-800"
+        : "bg-neutral-900 border border-neutral-800 rounded-2xl hover:border-orange-500/20 transition-all group cursor-pointer"
+        }`}
     >
       <div className="flex items-center gap-4">
         <div
-          className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-            isSpotlight
-              ? "bg-neutral-800"
-              : "bg-neutral-800 group-hover:bg-neutral-700 transition-colors"
-          }`}
+          className={`w-14 h-14 rounded-xl flex items-center justify-center ${isSpotlight
+            ? "bg-neutral-800"
+            : "bg-neutral-800 group-hover:bg-neutral-700 transition-colors"
+            }`}
         >
           {rating.shoe.imageUrl ? (
             <Image
@@ -404,19 +459,17 @@ function ShoeCard({
             />
           ) : (
             <Footprints
-              className={`w-7 h-7 ${
-                isSpotlight
-                  ? "text-orange-500"
-                  : "text-neutral-600 group-hover:text-orange-500 transition-colors"
-              }`}
+              className={`w-7 h-7 ${isSpotlight
+                ? "text-orange-500"
+                : "text-neutral-600 group-hover:text-orange-500 transition-colors"
+                }`}
             />
           )}
         </div>
         <div>
           <h3
-            className={`font-sora font-semibold text-white ${
-              !isSpotlight && "group-hover:text-orange-500 transition-colors"
-            }`}
+            className={`font-sora font-semibold text-white ${!isSpotlight && "group-hover:text-orange-500 transition-colors"
+              }`}
           >
             {rating.shoe.name}
           </h3>
@@ -425,11 +478,10 @@ function ShoeCard({
           </p>
           <div className="flex items-center gap-2 mt-1">
             <span
-              className={`font-mono text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                isSpotlight
-                  ? "bg-orange-500/20 text-orange-500"
-                  : "bg-neutral-800 text-neutral-400"
-              }`}
+              className={`font-mono text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${isSpotlight
+                ? "bg-orange-500/20 text-orange-500"
+                : "bg-neutral-800 text-neutral-400"
+                }`}
             >
               <Star
                 className={`w-3 h-3 ${isSpotlight ? "fill-orange-500" : ""}`}

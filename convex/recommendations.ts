@@ -18,7 +18,12 @@ interface AggregatedShoeRating {
   avgDurabilityRating?: number;
   totalRatings: number;
   matchScore: number;
-  isSoleSibling: boolean;
+  isSoleMateMatch: boolean;
+  soleMateUsers?: {
+    _id: string;
+    name?: string;
+    image?: string;
+  }[];
 }
 
 interface PaginatedResult<T> {
@@ -65,7 +70,12 @@ export const getShoeRecommendations = query({
       )
       .collect();
 
-    const soleSiblingIds = new Set(usersWithSameProfile.map((u) => u._id));
+    const soleMateIds = new Set(usersWithSameProfile.map((u) => u._id));
+    const currentUserOwnedShoeIds = new Set(
+      allUserShoes
+        .filter((userShoe) => userShoe.userId === args.userId)
+        .map((userShoe) => userShoe.shoeId),
+    );
 
     const shoeRatingsMap = new Map<
       string,
@@ -73,7 +83,8 @@ export const getShoeRecommendations = query({
         comfortScores: number[];
         performanceRatings: number[];
         durabilityRatings: number[];
-        soleSiblingRatings: number[];
+        soleMateRatings: number[];
+        soleMateUsers: Set<string>;
       }
     >();
 
@@ -83,7 +94,8 @@ export const getShoeRecommendations = query({
         comfortScores: [],
         performanceRatings: [],
         durabilityRatings: [],
-        soleSiblingRatings: [],
+        soleMateRatings: [],
+        soleMateUsers: new Set<string>(),
       };
 
       if (userShoe.comfortScore !== undefined) {
@@ -96,9 +108,27 @@ export const getShoeRecommendations = query({
         existing.durabilityRatings.push(userShoe.durabilityRating);
       }
 
-      if (soleSiblingIds.has(userShoe.userId)) {
+      if (soleMateIds.has(userShoe.userId)) {
         if (userShoe.comfortScore !== undefined) {
-          existing.soleSiblingRatings.push(userShoe.comfortScore);
+          existing.soleMateRatings.push(userShoe.comfortScore);
+        }
+        if (
+          userShoe.comfortScore !== undefined &&
+          userShoe.performanceRating !== undefined &&
+          userShoe.durabilityRating !== undefined
+        ) {
+          const soleMateAverage =
+            (userShoe.comfortScore +
+              userShoe.performanceRating +
+              userShoe.durabilityRating) /
+            3;
+
+          if (
+            soleMateAverage > 8.5 &&
+            !currentUserOwnedShoeIds.has(userShoe.shoeId)
+          ) {
+            existing.soleMateUsers.add(userShoe.userId);
+          }
         }
       }
 
@@ -125,24 +155,29 @@ export const getShoeRecommendations = query({
         ratings.durabilityRatings.length;
 
       const volumeMatch = shoe.volume === args.footVolume ? 15 : 0;
-      const soleSiblingBonus =
-        ratings.soleSiblingRatings.length >= 3
-          ? (ratings.soleSiblingRatings.reduce((a, b) => a + b, 0) /
-              ratings.soleSiblingRatings.length) *
-            3
+      const soleMateBonus =
+        ratings.soleMateRatings.length >= 3
+          ? (ratings.soleMateRatings.reduce((a, b) => a + b, 0) /
+            ratings.soleMateRatings.length) *
+          3
           : 0;
       const ratingScore = (avgComfort + avgPerformance + avgDurability) * 2.5;
 
       const matchScore = Math.min(
         100,
-        Math.round(volumeMatch + soleSiblingBonus + ratingScore),
+        Math.round(volumeMatch + soleMateBonus + ratingScore),
       );
 
-      const isSoleSibling =
-        ratings.soleSiblingRatings.length >= 3 &&
-        ratings.soleSiblingRatings.reduce((a, b) => a + b, 0) /
-          ratings.soleSiblingRatings.length >=
-          7;
+      const isSoleMateMatch =
+        ratings.soleMateUsers.size > 0;
+
+      const soleMateUsers = usersWithSameProfile
+        .filter((user) => ratings.soleMateUsers.has(user._id))
+        .map((user) => ({
+          _id: user._id,
+          name: user.name,
+          image: user.image,
+        }));
 
       recommendations.push({
         _id: shoe._id,
@@ -160,7 +195,8 @@ export const getShoeRecommendations = query({
         avgDurabilityRating: avgDurability,
         totalRatings: ratings.comfortScores.length,
         matchScore,
-        isSoleSibling,
+        isSoleMateMatch,
+        soleMateUsers,
       });
     }
 
@@ -230,125 +266,6 @@ export const getTopShoesForFootShape = query({
   },
 });
 
-export const getSoleSiblings = query({
-  args: {
-    userId: v.id("users"),
-    footShape: footShapeValidator,
-    footVolume: v.string(),
-    page: v.optional(v.number()),
-    pageSize: v.optional(v.number()),
-  },
-  handler: async (ctx, args): Promise<PaginatedResult<any>> => {
-    const page = Math.max(1, args.page ?? 1);
-    const pageSize = Math.min(
-      MAX_PAGE_SIZE,
-      Math.max(1, args.pageSize ?? DEFAULT_PAGE_SIZE),
-    );
-
-    const usersWithSameProfile = await ctx.db
-      .query("users")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("footShape"), args.footShape),
-          q.eq(q.field("footVolume"), args.footVolume),
-          q.neq(q.field("_id"), args.userId),
-        ),
-      )
-      .collect();
-
-    if (usersWithSameProfile.length === 0) {
-      return {
-        items: [],
-        totalCount: 0,
-        hasMore: false,
-        currentPage: page,
-        totalPages: 0,
-      };
-    }
-
-    const userIds = usersWithSameProfile.map((u) => u._id);
-
-    const allUserShoes = await ctx.db.query("userShoes").collect();
-
-    const soleSiblingShoes = allUserShoes.filter((us) =>
-      userIds.includes(us.userId),
-    );
-
-    interface ShoeRatingAccumulator {
-      totalRatings: number;
-      comfortSum: number;
-      performanceSum: number;
-      durabilitySum: number;
-      raterCount: number;
-    }
-
-    const shoeRatingsMap = new Map<string, ShoeRatingAccumulator>();
-
-    for (const userShoe of soleSiblingShoes) {
-      const shoeId = userShoe.shoeId;
-      const existing = shoeRatingsMap.get(shoeId) || {
-        totalRatings: 0,
-        comfortSum: 0,
-        performanceSum: 0,
-        durabilitySum: 0,
-        raterCount: 0,
-      };
-
-      existing.raterCount++;
-      if (userShoe.comfortScore !== undefined) {
-        existing.comfortSum =
-          (existing.comfortSum || 0) + userShoe.comfortScore;
-        existing.totalRatings++;
-      }
-      if (userShoe.performanceRating !== undefined) {
-        existing.performanceSum =
-          (existing.performanceSum || 0) + userShoe.performanceRating;
-      }
-      if (userShoe.durabilityRating !== undefined) {
-        existing.durabilitySum =
-          (existing.durabilitySum || 0) + userShoe.durabilityRating;
-      }
-
-      shoeRatingsMap.set(shoeId, existing);
-    }
-
-    const soleSiblingRecommendations = [];
-    for (const [shoeId, data] of shoeRatingsMap) {
-      if (data.raterCount >= 3 && data.totalRatings >= 3) {
-        const shoe = await ctx.db.get(shoeId as any);
-        if (shoe) {
-          soleSiblingRecommendations.push({
-            shoe,
-            avgComfort: data.comfortSum / data.totalRatings,
-            avgPerformance: data.performanceSum / data.raterCount,
-            avgDurability: data.durabilitySum / data.raterCount,
-            totalRatings: data.totalRatings,
-            raterCount: data.raterCount,
-          });
-        }
-      }
-    }
-
-    soleSiblingRecommendations.sort((a, b) => b.avgComfort - a.avgComfort);
-
-    const totalCount = soleSiblingRecommendations.length;
-    const totalPages = Math.ceil(totalCount / pageSize);
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedItems = soleSiblingRecommendations.slice(
-      startIndex,
-      endIndex,
-    );
-
-    return {
-      items: paginatedItems,
-      totalCount,
-      hasMore: endIndex < totalCount,
-      currentPage: page,
-      totalPages,
-    };
-  },
-});
 
 export const getRecommendationCount = query({
   args: {

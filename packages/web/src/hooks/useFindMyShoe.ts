@@ -21,7 +21,21 @@ export interface AggregatedRating {
   avgDurabilityRating: number;
   totalRatings: number;
   matchScore: number;
-  isSoleSibling: boolean;
+  isSoleMateMatch: boolean;
+  soleMateUsers: {
+    _id: string;
+    name?: string;
+    image?: string;
+  }[];
+}
+
+export interface SoleMateClimberMatch {
+  user: {
+    _id: string;
+    name?: string;
+    image?: string;
+  };
+  shoes: AggregatedRating[];
 }
 
 interface ShoeRecommendation {
@@ -40,7 +54,12 @@ interface ShoeRecommendation {
   avgDurabilityRating?: number;
   totalRatings: number;
   matchScore: number;
-  isSoleSibling: boolean;
+  isSoleMateMatch: boolean;
+  soleMateUsers?: {
+    _id: string;
+    name?: string;
+    image?: string;
+  }[];
 }
 
 interface PaginatedResult {
@@ -53,7 +72,7 @@ interface PaginatedResult {
 
 interface UseFindMyShoeReturn {
   recommendations: AggregatedRating[];
-  soleSiblingSpotlight: AggregatedRating[];
+  soleMateMatches: SoleMateClimberMatch[];
   isLoading: boolean;
   hasProfile: boolean;
   hasShoes: boolean;
@@ -94,12 +113,12 @@ export function useFindMyShoe(
     >[0];
   const recommendationsArgs = (convexUser?.footShape && convexUser?.footVolume
     ? {
-        userId: convexUser._id,
-        footShape: convexUser.footShape,
-        footVolume: convexUser.footVolume,
-        page: currentPage,
-        pageSize,
-      }
+      userId: convexUser._id,
+      footShape: convexUser.footShape,
+      footVolume: convexUser.footVolume,
+      page: currentPage,
+      pageSize,
+    }
     : "skip") as unknown as Parameters<typeof useQuery>[1];
 
   const paginatedResult = useQuery(recommendationsQuery, recommendationsArgs);
@@ -142,13 +161,41 @@ export function useFindMyShoe(
         avgDurabilityRating: shoe.avgDurabilityRating ?? 0,
         totalRatings: shoe.totalRatings,
         matchScore: shoe.matchScore,
-        isSoleSibling: shoe.isSoleSibling,
+        isSoleMateMatch: shoe.isSoleMateMatch,
+        soleMateUsers: shoe.soleMateUsers ?? [],
       }),
     );
   }, [paginatedResult]);
 
-  const soleSiblingSpotlight = useMemo(() => {
-    return formattedRecommendations.filter((r) => r.isSoleSibling);
+  const soleMateMatches = useMemo(() => {
+    const groupedMatches = new Map<string, SoleMateClimberMatch>();
+
+    for (const rating of formattedRecommendations) {
+      if (!rating.isSoleMateMatch || rating.soleMateUsers.length === 0) {
+        continue;
+      }
+
+      for (const user of rating.soleMateUsers) {
+        const existing = groupedMatches.get(user._id);
+
+        if (existing) {
+          existing.shoes.push(rating);
+          continue;
+        }
+
+        groupedMatches.set(user._id, {
+          user,
+          shoes: [rating],
+        });
+      }
+    }
+
+    return Array.from(groupedMatches.values())
+      .map((match) => ({
+        ...match,
+        shoes: [...match.shoes].sort((a, b) => b.matchScore - a.matchScore),
+      }))
+      .sort((a, b) => b.shoes.length - a.shoes.length);
   }, [formattedRecommendations]);
 
   const goToPage = useCallback((page: number) => {
@@ -189,7 +236,7 @@ export function useFindMyShoe(
 
   return {
     recommendations: formattedRecommendations,
-    soleSiblingSpotlight,
+    soleMateMatches,
     isLoading,
     hasProfile,
     hasShoes,
