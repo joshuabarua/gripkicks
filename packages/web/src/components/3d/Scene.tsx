@@ -32,7 +32,7 @@ const Scene = () => {
         preserveDrawingBuffer: false,
         failIfMajorPerformanceCaveat: isLowPerformance,
       },
-      dpr: isLowPerformance ? 1 : [1, 1.5] as const,
+      dpr: isLowPerformance ? 1 : ([1, 1.5] as [number, number]),
     }),
     [isLowPerformance],
   );
