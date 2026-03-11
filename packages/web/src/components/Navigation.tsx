@@ -11,7 +11,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NavLinks from '@/components/ui/nav-links';
 import { UserAvatar } from '@/components/ui/UserAvatar';
 import { SignOutButton } from '@/components/signout-button';
-import { User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,8 +22,8 @@ import {
 
 const menu = {
   open: {
-    width: "520px",
-    height: "520px",
+    width: "420px",
+    height: "460px",
     top: "-25px",
     right: "-25px",
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] }
@@ -132,14 +131,14 @@ const Navigation: React.FC = () => {
             </Glow>
           </GlowArea>
         </li>
-        
+
         {/* Center element - User Avatar */}
         <li className="flex-1 flex justify-center">
           {isAuthenticated && session?.user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="transition-transform hover:scale-105 outline-none rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                  <UserAvatar 
+                  <UserAvatar
                     userId={session.user.id}
                     name={session.user.name}
                     email={session.user.email}
@@ -147,20 +146,13 @@ const Navigation: React.FC = () => {
                   />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-56 mt-2 z-[1000] border-white/10 bg-background/95 backdrop-blur-md">
+              <DropdownMenuContent align="center" className="w-48 mt-2 z-[1000] border-white/10 bg-background/95 backdrop-blur-md">
                 <DropdownMenuLabel className="font-sora">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">{session.user.name}</p>
                     <p className="text-xs leading-none text-muted-foreground">{session.user.email}</p>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-border/50" />
-                <DropdownMenuItem asChild className="cursor-pointer font-sora focus:bg-accent/50">
-                  <Link href="/profile" className="w-full flex items-center">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-border/50" />
                 <DropdownMenuItem asChild className="cursor-pointer font-sora focus:bg-accent/50 p-0">
                   <SignOutButton

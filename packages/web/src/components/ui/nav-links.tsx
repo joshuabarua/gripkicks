@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth';
-import { LayoutDashboard, Settings, Footprints, Archive, Heart, Box, Info, Shield, Crown, Target } from 'lucide-react';
+import { LayoutDashboard, Footprints, Archive, Heart, Info, Shield, Crown, Target } from 'lucide-react';
 import { AnimatedNavIcon } from '@/components/ui/AnimatedNavIcon';
 import type { LucideIcon } from 'lucide-react';
 
@@ -23,8 +23,6 @@ const mainLinks: NavItem[] = [
 ]
 
 const secondaryLinks: NavItem[] = [
-    { title: "Profile", href: "/profile", icon: Settings, animation: 'spin' },
-    { title: "3D Selector", href: "/selector", icon: Box, animation: 'wiggle' },
     { title: "About", href: "/about", icon: Info, animation: 'bounce' },
     { title: "Privacy", href: "/privacy", icon: Shield, animation: 'shake' },
 ]
@@ -77,7 +75,7 @@ const slideIn = {
 export default function NavLinks() {
     const { data: session } = useSession();
     const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
-    
+
     const adminLink: NavItem = { title: "Admin", href: "/admin", icon: Crown, animation: 'pop' };
 
     return (
