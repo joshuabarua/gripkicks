@@ -73,6 +73,10 @@ interface ToastProviderProps {
 export function ToastProvider({ children, maxToasts = 5 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
+  const removeToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }, []);
+
   const addToast = useCallback(
     (toast: Omit<Toast, "id">): string => {
       const id = `toast_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
@@ -91,12 +95,8 @@ export function ToastProvider({ children, maxToasts = 5 }: ToastProviderProps) {
 
       return id;
     },
-    [maxToasts],
+    [maxToasts, removeToast],
   );
-
-  const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  }, []);
 
   const success = useCallback(
     (message: string, description?: string) => {

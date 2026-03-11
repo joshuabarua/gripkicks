@@ -70,8 +70,7 @@ export function useSoulMateMatching() {
   const allUsers = useQuery(api.users.list);
   const allUserShoes = useQuery(api.popularity.list);
   const allShoes = useQuery(api.shoes.listAll);
-  const { userPreferenceProfile, learningInsights } =
-    useUserPreferenceLearning();
+  const { userPreferenceProfile } = useUserPreferenceLearning();
 
   const soulMateData = useMemo(() => {
     if (
@@ -265,8 +264,8 @@ function calculateSoulMateCompatibility(
   const compatibilityScore = Math.min(
     100,
     preferenceAlignment * preferenceWeight +
-      sharedScore * sharedWeight +
-      overlapScore * overlapWeight,
+    sharedScore * sharedWeight +
+    overlapScore * overlapWeight,
   );
 
   // Determine confidence level

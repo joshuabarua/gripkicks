@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Result, ResultAsync } from 'neverthrow';
+import { ResultAsync } from 'neverthrow';
 import { ApiError } from '@/lib/errors';
 
 interface UseAsyncState<T> {

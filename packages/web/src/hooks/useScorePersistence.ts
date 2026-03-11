@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
-import type { Doc } from "convex/_generated/dataModel";
 import { useUserStore } from "@/stores/userStore";
 import { useUserPreferenceLearning } from "./useUserPreferenceLearning";
 import { useShoeScoring } from "./useShoeScoring";
 import { useSoulMateMatching } from "./useSoulMateMatching";
-
-type User = Doc<"users">;
-type UserShoe = Doc<"userShoes">;
 
 interface UserScoreProfile {
   userId: string;
@@ -40,11 +36,11 @@ interface ScoreUpdateHistory {
   previousScore: number;
   newScore: number;
   changeReason:
-    | "shoe_added"
-    | "shoe_updated"
-    | "shoe_removed"
-    | "profile_updated"
-    | "recalculation";
+  | "shoe_added"
+  | "shoe_updated"
+  | "shoe_removed"
+  | "profile_updated"
+  | "recalculation";
   affectedShoes: string[];
 }
 
@@ -67,9 +63,8 @@ interface ScoreHistoryPoint {
 
 export function useScorePersistence() {
   const { user } = useUserStore();
-  const { userPreferenceProfile, learningInsights } =
-    useUserPreferenceLearning();
-  const { scoredShoes } = useShoeScoring();
+  const { userPreferenceProfile } = useUserPreferenceLearning();
+  useShoeScoring();
 
   // Resolve Better Auth ID → Convex user ID
   const convexUser = useQuery(
@@ -125,10 +120,10 @@ export function useScorePersistence() {
     const overallScore = Math.min(
       100,
       preferenceScore +
-        sampleSizeBonus +
-        confidenceBonus +
-        brandDiversityBonus +
-        disciplineVersatilityBonus,
+      sampleSizeBonus +
+      confidenceBonus +
+      brandDiversityBonus +
+      disciplineVersatilityBonus,
     );
 
     return {

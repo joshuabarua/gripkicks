@@ -79,5 +79,5 @@ export function useUserSync() {
         }
       }
     }
-  }, [session?.user?.id, isPending, isHydrated, storedUser, setUser]);
+  }, [session?.user, isPending, isHydrated, storedUser, setUser]);
 }

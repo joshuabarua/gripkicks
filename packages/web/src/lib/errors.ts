@@ -1,4 +1,4 @@
-import { Result, ResultAsync, err, ok } from "neverthrow";
+import { Result, ResultAsync, err } from "neverthrow";
 
 export type ErrorSeverity = "low" | "medium" | "high" | "critical";
 

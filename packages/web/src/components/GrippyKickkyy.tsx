@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Lottie from "lottie-react";
 
 interface LottieMethods {
@@ -79,30 +79,10 @@ export function GrippyKickkyy({
     ],
     [],
   );
-  const [isRunning, setIsRunning] = useState(true);
   const [runPosition, setRunPosition] = useState({ x: -100, y: 50 });
 
-  useEffect(() => {
-    if (trigger !== "konami") return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const newCode = [...konamiCode, e.key].slice(-10);
-      setKonamiCode(newCode);
-
-      if (JSON.stringify(newCode) === JSON.stringify(konamiPattern)) {
-        triggerAnimation();
-        setKonamiCode([]);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [konamiCode, trigger, konamiPattern]);
-
-  const triggerAnimation = () => {
+  const triggerAnimation = useCallback(() => {
     if (trigger === "run") {
-      // Start running across screen at bottom
-      setIsRunning(true);
       setIsVisible(true);
       setIsAnimating(true);
       setRunPosition({ x: -100, y: 15 }); // y: 15 means 15px from bottom
@@ -118,9 +98,7 @@ export function GrippyKickkyy({
         setRunPosition({ x: position, y: -5 });
 
         if (position > window.innerWidth * 2) {
-          // 200vw (2x viewport width) to ensure full traversal
           clearInterval(runInterval);
-          setIsRunning(false);
           setIsVisible(false);
           setIsAnimating(false);
         }
@@ -145,7 +123,24 @@ export function GrippyKickkyy({
         trigger === "click" ? 3000 : 3000,
       ); // 3 second loop for click trigger
     }
-  };
+  }, [trigger]);
+
+  useEffect(() => {
+    if (trigger !== "konami") return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const newCode = [...konamiCode, e.key].slice(-10);
+      setKonamiCode(newCode);
+
+      if (JSON.stringify(newCode) === JSON.stringify(konamiPattern)) {
+        triggerAnimation();
+        setKonamiCode([]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [konamiCode, trigger, konamiPattern, triggerAnimation]);
 
   const handleClick = () => {
     if (trigger === "click") {
@@ -200,11 +195,11 @@ export function GrippyKickkyy({
       style={{
         ...(trigger === "run"
           ? {
-              left: `${runPosition.x}px`,
-              bottom: `${runPosition.y}px`,
-              top: "auto",
-              transform: "none",
-            }
+            left: `${runPosition.x}px`,
+            bottom: `${runPosition.y}px`,
+            top: "auto",
+            transform: "none",
+          }
           : { top: "50%", left: "50%", transform: "translate(-50%, -50%)" }),
         zIndex: 9999,
         opacity: isAnimating ? 1 : 0,

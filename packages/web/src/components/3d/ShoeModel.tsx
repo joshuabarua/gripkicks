@@ -20,14 +20,13 @@ const isLowPerformanceDevice = () => {
 export default function ShoeModel() {
   const { nodes } = useGLTF("/glb/HeroShoe.glb");
   const { viewport } = useThree();
-  
+
   // Get performance settings from store
   const highPerformanceMode = useHighPerformanceMode();
   const animationsEnabled = useAnimationsEnabled();
-  
+
   // Adaptive material settings based on device performance and user preferences
   const materialSettings = useMemo(() => {
-    const isLowPerf = isLowPerformanceDevice() || highPerformanceMode;
     return {
       thickness: 0.2,
       roughness: 0.1,
@@ -37,11 +36,11 @@ export default function ShoeModel() {
       transmission: 1,
       samples: 2,
     };
-  }, [highPerformanceMode]);
+  }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mesh = useRef<any>({});
-  
+
   // Reduce or disable animations based on settings
   const animateFrame = useCallback((t: number) => {
     if (!mesh.current || !animationsEnabled || highPerformanceMode) return;
@@ -49,7 +48,7 @@ export default function ShoeModel() {
       const isLowPerf = isLowPerformanceDevice() || highPerformanceMode;
       const speed = isLowPerf ? 0.25 : 1;
       const amplitude = isLowPerf ? 0.025 : 0.1;
-      
+
       mesh.current.position.y = (Math.sin(t / (0.8 / speed))) * amplitude;
       mesh.current.position.z = 0.2 + (Math.sin(t / (2.5 / speed))) * 0.025;
       mesh.current.rotation.y = (t / 2) * speed;
@@ -85,8 +84,8 @@ export default function ShoeModel() {
         </Text>
 
         <group ref={mesh}>
-          <mesh 
-            {...nodes.CimbingShoe} 
+          <mesh
+            {...nodes.CimbingShoe}
             position={[0, -0.4, 0]}
             geometry={(nodes.CimbingShoe as Mesh).geometry}
           >

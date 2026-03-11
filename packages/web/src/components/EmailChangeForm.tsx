@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@/hooks/useAsync';
 import { fetchApi } from '@/lib/api-client';
-import { ApiError } from '@/lib/errors';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,7 +39,7 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError(null);
-    
+
     const validationResult = emailChangeSchema.safeParse(formData);
     if (!validationResult.success) {
       const firstError = validationResult.error.issues[0];
@@ -53,9 +52,9 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
       setValidationError('New email must be different from current email');
       return;
     }
-    
+
     const result = await mutate(validationResult.data);
-    
+
     if (result.isOk()) {
       setFormData({
         newEmail: '',

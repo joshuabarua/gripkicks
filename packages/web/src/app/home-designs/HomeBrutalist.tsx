@@ -4,7 +4,7 @@ import React from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { ArrowDownRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {

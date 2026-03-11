@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { waitFor } from "@testing-library/dom";
 import { ResultAsync, ok } from "neverthrow";
 
@@ -174,7 +174,9 @@ describe("useSubscription", () => {
     expect(typeof result.current.refresh).toBe("function");
     expect(fetchApi).toHaveBeenCalledTimes(1);
 
-    result.current.refresh();
+    await act(async () => {
+      result.current.refresh();
+    });
 
     expect(fetchApi).toHaveBeenCalledTimes(2);
   });

@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import styles from './style.module.scss';
 
 interface NavButtonProps {
     isActive: boolean;
