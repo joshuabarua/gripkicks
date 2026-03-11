@@ -20,6 +20,9 @@ export interface Shoe {
   _id: string;
   name: string;
   brand: string;
+  modelName: string;
+  variantLabel?: string;
+  parentModelId?: string;
   imageUrl?: string;
   slug?: string;
   gender?: 'men' | 'women' | 'kids' | 'unisex';
@@ -53,6 +56,9 @@ export interface UserShoe {
     _id: string;
     name: string;
     brand: string;
+    modelName: string;
+    variantLabel?: string;
+    parentModelId?: string;
     imageUrl?: string;
     slug?: string;
     gender?: "men" | "women" | "kids" | "unisex";

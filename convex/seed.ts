@@ -95,6 +95,51 @@ const climbingShoes = [
 
 type FootShape = "egyptian" | "roman" | "greek" | "germanic" | "celtic";
 
+function cleanupModelName(name: string) {
+  return name
+    .replace(/[()]/g, " ")
+    .replace(/\s+-\s+/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function deriveModelName(name: string) {
+  return cleanupModelName(
+    name
+      .replace(/\blow\s*volume\b/gi, " ")
+      .replace(/\blv\b/gi, " ")
+      .replace(/\bhigh\s*volume\b/gi, " ")
+      .replace(/\bhv\b/gi, " ")
+      .replace(/\bmid\s*volume\b/gi, " ")
+      .replace(/\bmv\b/gi, " ")
+      .replace(/\bwomen'?s\b/gi, " ")
+      .replace(/\bwomens\b/gi, " ")
+      .replace(/\bwomen\b/gi, " ")
+      .replace(/\bmen'?s\b/gi, " ")
+      .replace(/\bmens\b/gi, " ")
+      .replace(/\bmen\b/gi, " ")
+      .replace(/\bkids\b/gi, " ")
+      .replace(/\bkid\b/gi, " ")
+      .replace(/\byouth\b/gi, " ")
+      .replace(/\bjunior\b/gi, " ")
+      .replace(/\bjr\b/gi, " "),
+  );
+}
+
+function deriveVariantLabel(name: string) {
+  const labels = new Set<string>();
+
+  if (/\blow\s*volume\b|\blv\b/i.test(name)) labels.add("LV");
+  if (/\bhigh\s*volume\b|\bhv\b/i.test(name)) labels.add("HV");
+  if (/\bmid\s*volume\b|\bmv\b/i.test(name)) labels.add("MV");
+  if (/\bwomen'?s\b|\bwomens\b|\bwomen\b/i.test(name)) labels.add("Women");
+  if (/\bmen'?s\b|\bmens\b|\bmen\b/i.test(name)) labels.add("Men");
+  if (/\bkids\b|\bkid\b|\byouth\b|\bjunior\b|\bjr\b/i.test(name)) labels.add("Kids");
+
+  const variantLabel = Array.from(labels).join(" ").trim();
+  return variantLabel || undefined;
+}
+
 export const seedDatabase = mutation({
   args: {},
   handler: async (ctx) => {
@@ -127,10 +172,22 @@ export const seedDatabase = mutation({
         rubberTechsCreated++;
       }
 
-      // Create shoe
+      const modelName = deriveModelName(shoeData.name);
+      const variantLabel = deriveVariantLabel(shoeData.name);
+      const siblingModels = await ctx.db
+        .query("shoes")
+        .withIndex("by_brand_modelName", (q) =>
+          q.eq("brand", shoeData.brand).eq("modelName", modelName),
+        )
+        .collect();
+      const parentModel = siblingModels.find((candidate) => !candidate.variantLabel);
+
       const shoeId = await ctx.db.insert("shoes", {
         name: shoeData.name,
         brand: shoeData.brand,
+        modelName,
+        variantLabel,
+        parentModelId: parentModel?._id,
         aggressiveness: shoeData.aggressiveness,
         stiffness: shoeData.stiffness,
         climbingDiscipline: shoeData.climbingDiscipline,

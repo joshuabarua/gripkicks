@@ -7,7 +7,8 @@ import ShoeImage from '@/components/ShoeImage';
 import { PaginatedList } from '@/components/ui/PaginatedList';
 import { Footprints, Plus, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { groupShoesByModel } from '@/utils/shoeVariants';
 
 type BaseShoe = {
   _id: string;
@@ -49,6 +50,10 @@ export function AddShoeDialog({
 }: AddShoeDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState(searchQuery);
+  const groupedSearchResults = useMemo(
+    () => groupShoesByModel(searchResults),
+    [searchResults],
+  );
 
   useEffect(() => {
     setInputValue(searchQuery);
@@ -147,11 +152,10 @@ export function AddShoeDialog({
                   key={option.value}
                   type="button"
                   onClick={() => onGenderChange(option.value)}
-                  className={`px-3 py-1 rounded-full text-xs font-mono transition-colors border ${
-                    selectedGender === option.value
+                  className={`px-3 py-1 rounded-full text-xs font-mono transition-colors border ${selectedGender === option.value
                       ? 'bg-orange-500 text-black border-orange-500'
                       : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-orange-500/40'
-                  }`}
+                    }`}
                 >
                   {option.label}
                 </button>
@@ -160,45 +164,63 @@ export function AddShoeDialog({
           </div>
 
           <PaginatedList
-            items={searchResults}
-            renderItem={(shoe: BaseShoe) => (
+            items={groupedSearchResults}
+            renderItem={(group) => (
               <div
-                key={shoe._id}
-                className="flex items-center justify-between p-fluid-md rounded-2xl bg-neutral-900 hover:bg-neutral-800 cursor-pointer transition-all duration-300 border border-neutral-800 hover:border-orange-500/30 group"
-                onClick={() => onSelectShoe(shoe._id)}
+                key={group.groupKey}
+                className="rounded-2xl border border-neutral-800 bg-neutral-900 p-fluid-md transition-all duration-300 hover:border-orange-500/30"
               >
-                <div className="flex items-center gap-4">
+                <div className="mb-3 flex items-center gap-4">
                   <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
                     <ShoeImage
-                      brand={shoe.brand}
-                      shoeName={shoe.name}
-                      imageUrl={shoe.imageUrl ?? undefined}
-                      slug={shoe.slug ?? undefined}
+                      brand={group.brand}
+                      shoeName={group.baseName}
+                      imageUrl={group.variants[0]?.item.imageUrl ?? undefined}
+                      slug={group.variants[0]?.item.slug ?? undefined}
                       className="p-1.5"
                       transformation={[{ height: 64, width: 64, crop: 'at_max', cropMode: 'pad_resize', format: 'png', quality: 75 }]}
-                      gender={['men', 'women', 'kids', 'unisex'].includes((shoe.gender ?? '').toLowerCase())
-                        ? (shoe.gender?.toLowerCase() as 'men' | 'women' | 'kids' | 'unisex')
+                      gender={['men', 'women', 'kids', 'unisex'].includes((group.variants[0]?.item.gender ?? '').toLowerCase())
+                        ? (group.variants[0]?.item.gender?.toLowerCase() as 'men' | 'women' | 'kids' | 'unisex')
                         : undefined}
                     />
                   </div>
                   <div>
-                    <p className="font-sora font-medium text-white group-hover:text-orange-500 transition-colors">
-                      {shoe.name}
+                    <p className="font-sora font-medium text-white">
+                      {group.baseName}
                     </p>
-                    <p className="text-xs text-neutral-500 font-mono">{shoe.brand}</p>
+                    <p className="text-xs text-neutral-500 font-mono">{group.brand}</p>
                   </div>
                 </div>
-                <Plus className="w-5 h-5 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-90 transition-all duration-300" />
+                <div className="space-y-2">
+                  {group.variants.map(({ item: shoe, variantLabel }) => (
+                    <button
+                      key={shoe._id}
+                      type="button"
+                      onClick={() => onSelectShoe(shoe._id)}
+                      className="group flex w-full items-center justify-between rounded-xl border border-neutral-800 bg-neutral-950/70 px-3 py-2 text-left transition-all duration-300 hover:border-orange-500/30 hover:bg-neutral-800"
+                    >
+                      <div>
+                        <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
+                          {group.variants.length > 1 ? variantLabel || "Standard" : "Add shoe"}
+                        </p>
+                        <p className="font-sora text-sm text-white transition-colors group-hover:text-orange-500">
+                          {shoe.name}
+                        </p>
+                      </div>
+                      <Plus className="w-5 h-5 text-neutral-600 transition-all duration-300 group-hover:text-orange-500 group-hover:rotate-90" />
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             className="max-h-96 space-y-fluid-xs pr-2 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent"
             loadingIndicator={loadingIndicator}
             onEndReached={handleEndReached}
-            hasMore={searchResults.length > 0}
+            hasMore={groupedSearchResults.length > 0}
             isLoading={isLoading}
           />
 
-          {searchResults.length === 0 && !isLoading && (
+          {groupedSearchResults.length === 0 && !isLoading && (
             <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 px-6 py-10 text-center">
               <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-orange-500/10 flex items-center justify-center">
                 <Footprints className="w-6 h-6 text-orange-500" />

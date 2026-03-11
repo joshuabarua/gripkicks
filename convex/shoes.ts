@@ -12,6 +12,80 @@ interface PaginatedResult<T> {
 const DEFAULT_PAGE_SIZE = 50;
 const MAX_PAGE_SIZE = 100;
 
+function cleanupModelName(name: string) {
+  return name
+    .replace(/[()]/g, " ")
+    .replace(/\s+-\s+/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function deriveModelName(name: string) {
+  return cleanupModelName(
+    name
+      .replace(/\blow\s*volume\b/gi, " ")
+      .replace(/\blv\b/gi, " ")
+      .replace(/\bhigh\s*volume\b/gi, " ")
+      .replace(/\bhv\b/gi, " ")
+      .replace(/\bmid\s*volume\b/gi, " ")
+      .replace(/\bmv\b/gi, " ")
+      .replace(/\bwomen'?s\b/gi, " ")
+      .replace(/\bwomens\b/gi, " ")
+      .replace(/\bwomen\b/gi, " ")
+      .replace(/\bmen'?s\b/gi, " ")
+      .replace(/\bmens\b/gi, " ")
+      .replace(/\bmen\b/gi, " ")
+      .replace(/\bkids\b/gi, " ")
+      .replace(/\bkid\b/gi, " ")
+      .replace(/\byouth\b/gi, " ")
+      .replace(/\bjunior\b/gi, " ")
+      .replace(/\bjr\b/gi, " "),
+  );
+}
+
+function deriveVariantLabel(
+  name: string,
+  gender?: "men" | "women" | "kids" | "unisex",
+) {
+  const labels = new Set<string>();
+
+  if (/\blow\s*volume\b|\blv\b/i.test(name)) labels.add("LV");
+  if (/\bhigh\s*volume\b|\bhv\b/i.test(name)) labels.add("HV");
+  if (/\bmid\s*volume\b|\bmv\b/i.test(name)) labels.add("MV");
+  if (/\bwomen'?s\b|\bwomens\b|\bwomen\b/i.test(name) || gender === "women") labels.add("Women");
+  if (/\bmen'?s\b|\bmens\b|\bmen\b/i.test(name) || gender === "men") labels.add("Men");
+  if (/\bkids\b|\bkid\b|\byouth\b|\bjunior\b|\bjr\b/i.test(name) || gender === "kids") labels.add("Kids");
+
+  const variantLabel = Array.from(labels).join(" ").trim();
+  return variantLabel || undefined;
+}
+
+async function resolveParentModelId(
+  ctx: any,
+  brand: string,
+  modelName: string,
+  variantLabel?: string,
+  currentId?: string,
+) {
+  if (!variantLabel) {
+    return undefined;
+  }
+
+  const candidates = await ctx.db
+    .query("shoes")
+    .withIndex("by_brand_modelName", (q: any) =>
+      q.eq("brand", brand).eq("modelName", modelName),
+    )
+    .collect();
+
+  return candidates.find((candidate: any) => {
+    if (currentId && candidate._id === currentId) {
+      return false;
+    }
+    return !candidate.variantLabel;
+  })?._id;
+}
+
 export const list = query({
   args: {
     cursor: v.optional(v.string()),
@@ -136,6 +210,9 @@ export const create = mutation({
   args: {
     name: v.string(),
     brand: v.string(),
+    modelName: v.optional(v.string()),
+    variantLabel: v.optional(v.string()),
+    parentModelId: v.optional(v.id("shoes")),
     imageUrl: v.optional(v.string()),
     slug: v.optional(v.string()),
     gender: v.optional(
@@ -154,9 +231,31 @@ export const create = mutation({
     footShapeCompat: v.optional(v.array(footShapeValidator)),
   },
   handler: async (ctx, args) => {
-    const { footShapeCompat, ...shoeData } = args;
+    const {
+      footShapeCompat,
+      modelName,
+      variantLabel,
+      parentModelId,
+      ...shoeData
+    } = args;
+    const normalizedModelName = modelName?.trim() || deriveModelName(args.name);
+    const normalizedVariantLabel =
+      variantLabel?.trim() || deriveVariantLabel(args.name, args.gender);
+    const normalizedParentModelId =
+      parentModelId ||
+      (await resolveParentModelId(
+        ctx,
+        args.brand,
+        normalizedModelName,
+        normalizedVariantLabel,
+      ));
 
-    const shoeId = await ctx.db.insert("shoes", shoeData);
+    const shoeId = await ctx.db.insert("shoes", {
+      ...shoeData,
+      modelName: normalizedModelName,
+      variantLabel: normalizedVariantLabel,
+      parentModelId: normalizedParentModelId,
+    });
 
     // Add foot shape compatibility entries
     if (footShapeCompat) {
@@ -228,6 +327,9 @@ export const update = mutation({
     id: v.id("shoes"),
     name: v.optional(v.string()),
     brand: v.optional(v.string()),
+    modelName: v.optional(v.string()),
+    variantLabel: v.optional(v.string()),
+    parentModelId: v.optional(v.id("shoes")),
     imageUrl: v.optional(v.string()),
     slug: v.optional(v.string()),
     gender: v.optional(
@@ -245,18 +347,75 @@ export const update = mutation({
     rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
   },
   handler: async (ctx, args) => {
-    const { id, ...updates } = args;
+    const { id, modelName, variantLabel, parentModelId, ...updates } = args;
 
     const shoe = await ctx.db.get(id);
     if (!shoe) {
       throw new Error("Shoe not found");
     }
 
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([, v]) => v !== undefined),
-    );
+    const nextName = updates.name ?? shoe.name;
+    const nextBrand = updates.brand ?? shoe.brand;
+    const nextGender = updates.gender ?? shoe.gender;
+    const nextModelName =
+      modelName !== undefined
+        ? modelName.trim() || deriveModelName(nextName)
+        : shoe.modelName || deriveModelName(nextName);
+    const nextVariantLabel =
+      variantLabel !== undefined
+        ? variantLabel.trim() || undefined
+        : shoe.variantLabel || deriveVariantLabel(nextName, nextGender);
+    const nextParentModelId =
+      parentModelId !== undefined
+        ? parentModelId
+        : await resolveParentModelId(
+          ctx,
+          nextBrand,
+          nextModelName,
+          nextVariantLabel,
+          id,
+        );
 
-    return await ctx.db.patch(id, filteredUpdates);
+    return await ctx.db.patch(id, {
+      ...Object.fromEntries(
+        Object.entries(updates).filter(([, value]) => value !== undefined),
+      ),
+      modelName: nextModelName,
+      variantLabel: nextVariantLabel,
+      parentModelId: nextParentModelId,
+    });
+  },
+});
+
+export const backfillVariantMetadata = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const shoes = await ctx.db.query("shoes").collect();
+    let updatedCount = 0;
+
+    for (const shoe of shoes) {
+      const modelName = shoe.modelName || deriveModelName(shoe.name);
+      const variantLabel =
+        shoe.variantLabel || deriveVariantLabel(shoe.name, shoe.gender);
+      const parentModelId =
+        shoe.parentModelId ||
+        (await resolveParentModelId(
+          ctx,
+          shoe.brand,
+          modelName,
+          variantLabel,
+          shoe._id,
+        ));
+
+      await ctx.db.patch(shoe._id, {
+        modelName,
+        variantLabel,
+        parentModelId,
+      });
+      updatedCount += 1;
+    }
+
+    return { updatedCount };
   },
 });
 

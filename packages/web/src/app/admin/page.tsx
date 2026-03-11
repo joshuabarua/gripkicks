@@ -35,6 +35,9 @@ type Shoe = {
   _id: Id<"shoes">;
   name: string;
   brand: string;
+  modelName: string;
+  variantLabel?: string;
+  parentModelId?: Id<"shoes">;
   imageUrl?: string;
   slug?: string;
   gender?: "men" | "women" | "kids" | "unisex";
@@ -64,6 +67,7 @@ export default function AdminDashboard() {
   );
   const deleteShoe = useMutation(api.shoes.remove);
   const createShoe = useMutation(api.shoes.create);
+  const backfillVariantMetadata = useMutation(api.shoes.backfillVariantMetadata);
 
   const [editingId, setEditingId] = useState<Id<"shoes"> | null>(null);
   const [editForm, setEditForm] = useState<EditingShoe | null>(null);
@@ -76,6 +80,8 @@ export default function AdminDashboard() {
   const [newShoe, setNewShoe] = useState({
     name: "",
     brand: "",
+    modelName: "",
+    variantLabel: "",
     imageUrl: "",
     slug: "",
     gender: "unisex" as const,
@@ -90,6 +96,8 @@ export default function AdminDashboard() {
   );
   const [userSearchTerm, setUserSearchTerm] = useState("");
   const [brandFilter, setBrandFilter] = useState<string>("all");
+  const [isBackfillingVariants, setIsBackfillingVariants] = useState(false);
+  const [backfillResult, setBackfillResult] = useState<string | null>(null);
 
   const uniqueBrands = [...new Set(shoes?.map((s) => s.brand) || [])].sort();
 
@@ -167,12 +175,16 @@ export default function AdminDashboard() {
 
     await createShoe({
       ...newShoe,
+      modelName: newShoe.modelName.trim() || undefined,
+      variantLabel: newShoe.variantLabel.trim() || undefined,
       slug: newShoe.slug.trim() || undefined,
     });
     setShowAddForm(false);
     setNewShoe({
       name: "",
       brand: "",
+      modelName: "",
+      variantLabel: "",
       imageUrl: "",
       slug: "",
       gender: "unisex",
@@ -182,6 +194,19 @@ export default function AdminDashboard() {
       volume: "medium",
       rubberTechnologyId: undefined,
     });
+  };
+
+  const handleBackfillVariants = async () => {
+    try {
+      setIsBackfillingVariants(true);
+      setBackfillResult(null);
+      const result = await backfillVariantMetadata({});
+      setBackfillResult(`Backfilled ${result.updatedCount} shoes.`);
+    } catch {
+      setBackfillResult("Backfill failed. Please try again.");
+    } finally {
+      setIsBackfillingVariants(false);
+    }
   };
 
   const genderOptions = ["men", "women", "kids", "unisex"];
@@ -207,33 +232,30 @@ export default function AdminDashboard() {
         <div className="flex gap-2 mb-6">
           <button
             onClick={() => setActiveTab("shoes")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "shoes"
-                ? "bg-accent text-white"
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === "shoes"
+              ? "bg-accent text-white"
+              : "bg-white/10 text-white/70 hover:bg-white/20"
+              }`}
           >
             <Footprints className="w-4 h-4" />
             Shoes ({shoes?.length || 0})
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "users"
-                ? "bg-accent text-white"
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === "users"
+              ? "bg-accent text-white"
+              : "bg-white/10 text-white/70 hover:bg-white/20"
+              }`}
           >
             <Users className="w-4 h-4" />
             Users ({users?.length || 0})
           </button>
           <button
             onClick={() => setActiveTab("backlog")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "backlog"
-                ? "bg-accent text-white"
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === "backlog"
+              ? "bg-accent text-white"
+              : "bg-white/10 text-white/70 hover:bg-white/20"
+              }`}
           >
             <ListTodo className="w-4 h-4" />
             Backlog
@@ -246,7 +268,19 @@ export default function AdminDashboard() {
               <div className="text-white/60">
                 {filteredShoes.length} shoes in database
               </div>
-              <div className="flex gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-end">
+                  <button
+                    onClick={handleBackfillVariants}
+                    disabled={isBackfillingVariants}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                  >
+                    {isBackfillingVariants ? "Backfilling..." : "Backfill Variants"}
+                  </button>
+                  {backfillResult && (
+                    <div className="mt-1 text-xs text-white/60">{backfillResult}</div>
+                  )}
+                </div>
                 <select
                   value={brandFilter}
                   onChange={(e) => setBrandFilter(e.target.value)}
@@ -336,6 +370,36 @@ export default function AdminDashboard() {
                             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white mt-2"
                           />
                         )}
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-white/70 text-sm mb-1">
+                            Model Name
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Drago"
+                            value={newShoe.modelName}
+                            onChange={(e) =>
+                              setNewShoe({ ...newShoe, modelName: e.target.value })
+                            }
+                            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-white/70 text-sm mb-1">
+                            Variant Label
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. LV"
+                            value={newShoe.variantLabel}
+                            onChange={(e) =>
+                              setNewShoe({ ...newShoe, variantLabel: e.target.value })
+                            }
+                            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
+                          />
+                        </div>
                       </div>
                       <div>
                         <label className="block text-white/70 text-sm mb-1">
@@ -637,10 +701,10 @@ export default function AdminDashboard() {
                                 (shoe.gender ?? "").toLowerCase(),
                               )
                                 ? (shoe.gender?.toLowerCase() as
-                                    | "men"
-                                    | "women"
-                                    | "kids"
-                                    | "unisex")
+                                  | "men"
+                                  | "women"
+                                  | "kids"
+                                  | "unisex")
                                 : undefined
                             }
                           />
@@ -696,6 +760,50 @@ export default function AdminDashboard() {
 
                           <div>
                             <label className="text-[10px] uppercase tracking-wide text-white/50">
+                              Model
+                            </label>
+                            {isEditingCurrentShoe && currentEditForm ? (
+                              <input
+                                type="text"
+                                value={currentEditForm.modelName || ""}
+                                onChange={(e) =>
+                                  setEditForm((prev) =>
+                                    prev
+                                      ? { ...prev, modelName: e.target.value }
+                                      : prev,
+                                  )
+                                }
+                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                              />
+                            ) : (
+                              <div className="text-white/70">{shoe.modelName}</div>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                              Variant
+                            </label>
+                            {isEditingCurrentShoe && currentEditForm ? (
+                              <input
+                                type="text"
+                                value={currentEditForm.variantLabel || ""}
+                                onChange={(e) =>
+                                  setEditForm((prev) =>
+                                    prev
+                                      ? { ...prev, variantLabel: e.target.value }
+                                      : prev,
+                                  )
+                                }
+                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                              />
+                            ) : (
+                              <div className="text-white/70">{shoe.variantLabel}</div>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] uppercase tracking-wide text-white/50">
                               Slug
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -729,10 +837,10 @@ export default function AdminDashboard() {
                                   setEditForm((prev) =>
                                     prev
                                       ? {
-                                          ...prev,
-                                          gender: e.target
-                                            .value as typeof prev.gender,
-                                        }
+                                        ...prev,
+                                        gender: e.target
+                                          .value as typeof prev.gender,
+                                      }
                                       : prev,
                                   )
                                 }
@@ -761,9 +869,9 @@ export default function AdminDashboard() {
                                   setEditForm((prev) =>
                                     prev
                                       ? {
-                                          ...prev,
-                                          aggressiveness: e.target.value,
-                                        }
+                                        ...prev,
+                                        aggressiveness: e.target.value,
+                                      }
                                       : prev,
                                   )
                                 }
@@ -812,9 +920,9 @@ export default function AdminDashboard() {
                                   setEditForm((prev) =>
                                     prev
                                       ? {
-                                          ...prev,
-                                          climbingDiscipline: e.target.value,
-                                        }
+                                        ...prev,
+                                        climbingDiscipline: e.target.value,
+                                      }
                                       : prev,
                                   )
                                 }

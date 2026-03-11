@@ -20,6 +20,9 @@ export default defineSchema({
   shoes: defineTable({
     name: v.string(),
     brand: v.string(),
+    modelName: v.string(),
+    variantLabel: v.optional(v.string()),
+    parentModelId: v.optional(v.id("shoes")),
     imageUrl: v.optional(v.string()),
     slug: v.optional(v.string()),
     gender: v.optional(
@@ -42,6 +45,8 @@ export default defineSchema({
   })
     .index("by_brand", ["brand"])
     .index("by_name", ["name"])
+    .index("by_brand_modelName", ["brand", "modelName"])
+    .index("by_parentModelId", ["parentModelId"])
     .searchIndex("search_shoes", {
       searchField: "name",
       filterFields: ["brand"],

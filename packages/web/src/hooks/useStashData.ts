@@ -30,6 +30,9 @@ interface ConvexUserShoe {
     _creationTime: number;
     name: string;
     brand: string;
+    modelName: string;
+    variantLabel?: string;
+    parentModelId?: Id<"shoes">;
     imageUrl?: string;
     slug?: string;
     gender?: "men" | "women" | "kids" | "unisex";
@@ -134,18 +137,21 @@ export function useStashData(
           shoeId: item.shoeId,
           shoe: item.shoe
             ? {
-                _id: item.shoe._id,
-                name: item.shoe.name,
-                brand: item.shoe.brand,
-                imageUrl: item.shoe.imageUrl,
-                slug: item.shoe.slug,
-                gender: item.shoe.gender,
-                aggressiveness: item.shoe.aggressiveness,
-                stiffness: item.shoe.stiffness,
-                climbingDiscipline: item.shoe.climbingDiscipline,
-                volume: item.shoe.volume,
-                rubberTechnologyId: item.shoe.rubberTechnologyId,
-              }
+              _id: item.shoe._id,
+              name: item.shoe.name,
+              brand: item.shoe.brand,
+              modelName: item.shoe.modelName,
+              variantLabel: item.shoe.variantLabel,
+              parentModelId: item.shoe.parentModelId,
+              imageUrl: item.shoe.imageUrl,
+              slug: item.shoe.slug,
+              gender: item.shoe.gender,
+              aggressiveness: item.shoe.aggressiveness,
+              stiffness: item.shoe.stiffness,
+              climbingDiscipline: item.shoe.climbingDiscipline,
+              volume: item.shoe.volume,
+              rubberTechnologyId: item.shoe.rubberTechnologyId,
+            }
             : undefined,
           size: item.size,
           purchaseDate: item.purchaseDate,
