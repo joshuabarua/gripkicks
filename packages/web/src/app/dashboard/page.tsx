@@ -292,22 +292,6 @@ export default function Dashboard() {
                 </div>
               </motion.div>
 
-              {/* 3D Selector */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => router.push('/selector')}
-                className="col-span-6 md:col-span-4 bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/50 transition-all min-h-[180px]"
-              >
-                <div className="flex justify-between items-start">
-                  <span className="font-mono text-[10px] tracking-[0.2em] text-orange-500">[INTERACTIVE]</span>
-                  <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
-                </div>
-                <div>
-                  <h4 className="font-tanker text-2xl text-white mb-1">3D Selector</h4>
-                  <p className="font-sora text-neutral-500 text-xs">Explore shoes in 3D</p>
-                </div>
-              </motion.div>
             </div>
           </motion.div>
 

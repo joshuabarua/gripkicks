@@ -336,30 +336,6 @@ export default function HomeCreative() {
               </div>
             </motion.div>
 
-            {/* 3D Selector CTA */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              viewport={{ once: true }}
-              onClick={() => router.push("/selector")}
-              className={`${isPhonePortrait ? "col-span-1 min-h-[180px]" : "col-span-6 md:col-span-4 row-span-2"} bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/50 transition-all`}
-            >
-              <div className="flex justify-between items-start">
-                <span className="text-[10px] tracking-[0.2em] text-orange-500 uppercase">
-                  Interactive
-                </span>
-                <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
-              </div>
-              <div>
-                <h4 className="font-tanker text-fluid-3xl md:text-2xl text-white mb-1">
-                  3D Selector
-                </h4>
-                <p className="font-sora text-neutral-500 text-xs">
-                  Explore shoes in 3D
-                </p>
-              </div>
-            </motion.div>
           </div>
 
           {/* Bottom Stats */}

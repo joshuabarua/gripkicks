@@ -22,8 +22,8 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
         return
       }
 
-      // Don't redirect if already on auth, onboarding, selector, or home pages
-      const publicPaths = ['/auth', '/onboarding', '/selector', '/']
+      // Don't redirect if already on auth, onboarding, or home pages
+      const publicPaths = ['/auth', '/onboarding', '/']
       if (publicPaths.some(path => window.location.pathname === path || window.location.pathname.startsWith(path))) {
         setIsCheckingOnboarding(false)
         return
@@ -31,11 +31,11 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
 
       try {
         const result = await fetchApi('/api/v1/profile');
-        
+
         // Handle the Result type properly
         if (result.isOk()) {
           const profileData = result.value as { onboardingComplete?: boolean };
-          
+
           // If user hasn't completed onboarding, redirect to onboarding
           if (!profileData.onboardingComplete) {
             router.push('/onboarding')

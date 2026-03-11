@@ -92,13 +92,6 @@ export default function HomeMinimalist() {
                   {isAuthenticated ? "Dashboard" : "Get Started"}
                   <ArrowRight className="ml-3 w-4 h-4" />
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => router.push("/selector")}
-                  className="border-black text-black hover:bg-black hover:text-white rounded-none px-8 py-6 text-sm tracking-wider"
-                >
-                  3D Selector
-                </Button>
               </div>
             </div>
 

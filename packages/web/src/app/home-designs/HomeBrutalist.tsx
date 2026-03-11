@@ -4,7 +4,7 @@ import React from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
@@ -98,22 +98,6 @@ export default function HomeBrutalist() {
               </p>
             </motion.div>
 
-            <motion.div
-              whileHover={{ x: 8 }}
-              onClick={() => router.push("/selector")}
-              className="bg-white text-black p-8 cursor-pointer group"
-            >
-              <div className="flex justify-between items-start mb-16">
-                <span className="font-mono text-xs">[02]</span>
-                <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform" />
-              </div>
-              <h3 className="font-tanker text-4xl md:text-5xl mb-4">
-                3D SELECTOR
-              </h3>
-              <p className="font-mono text-xs text-black/60 max-w-xs">
-                EXPLORE CLIMBING SHOES IN INTERACTIVE 3D VIEW
-              </p>
-            </motion.div>
           </div>
 
           {/* Features Grid */}

@@ -11,7 +11,6 @@ import {
   Zap,
   Target,
   Star,
-  Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -295,43 +294,6 @@ export default function HomeCombined() {
                 </h4>
                 <p className="font-mono text-[10px] text-neutral-500">
                   FIND_YOUR_FIT
-                </p>
-              </div>
-            </motion.div>
-
-            {/* 3D Selector CTA */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.02 }}
-              onClick={() => router.push("/selector")}
-              className="col-span-6 md:col-span-4 row-span-2 bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 rounded-2xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/50 transition-all relative overflow-hidden"
-            >
-              {/* Sparkle animation */}
-              <motion.div
-                className="absolute top-4 right-4"
-                animate={{ rotate: 360, scale: [1, 1.2, 1] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
-                <Sparkles className="w-4 h-4 text-orange-500/50" />
-              </motion.div>
-
-              <div className="flex justify-between items-start">
-                <span className="font-mono text-[10px] text-orange-500">
-                  [INTERACTIVE]
-                </span>
-                <motion.div whileHover={{ rotate: 45 }}>
-                  <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 transition-colors" />
-                </motion.div>
-              </div>
-              <div>
-                <h4 className="font-tanker text-2xl md:text-3xl text-white mb-1">
-                  3D SELECTOR
-                </h4>
-                <p className="font-mono text-[10px] text-neutral-500">
-                  EXPLORE_IN_3D
                 </p>
               </div>
             </motion.div>

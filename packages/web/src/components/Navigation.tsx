@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NavLinks from '@/components/ui/nav-links';
 import { UserAvatar } from '@/components/ui/UserAvatar';
 import { SignOutButton } from '@/components/signout-button';
+import { User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -146,18 +147,28 @@ const Navigation: React.FC = () => {
                   />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-48 mt-2 z-[1000] border-white/10 bg-background/95 backdrop-blur-md">
+              <DropdownMenuContent
+                align="center"
+                className="mt-2 w-52 rounded-2xl border border-orange-500/15 bg-[#f4b183] p-2 text-black shadow-2xl"
+              >
                 <DropdownMenuLabel className="font-sora">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">{session.user.name}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{session.user.email}</p>
+                    <p className="text-xs leading-none text-black/60">{session.user.email}</p>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-border/50" />
-                <DropdownMenuItem asChild className="cursor-pointer font-sora focus:bg-accent/50 p-0">
+                <DropdownMenuSeparator className="bg-black/10" />
+                <DropdownMenuItem asChild className="cursor-pointer rounded-xl font-sora text-black focus:bg-black/5">
+                  <Link href="/profile" className="flex w-full items-center gap-2">
+                    <User className="h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-black/10" />
+                <DropdownMenuItem asChild className="cursor-pointer rounded-xl font-sora focus:bg-black/5 p-0">
                   <SignOutButton
                     variant="ghost"
-                    className="w-full flex justify-start px-2 py-1.5 h-auto font-sora text-sm hover:bg-transparent"
+                    className="h-auto w-full justify-start px-2 py-1.5 font-sora text-sm text-black hover:bg-transparent"
                     onClick={closeMenu}
                   />
                 </DropdownMenuItem>
