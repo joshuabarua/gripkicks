@@ -293,9 +293,10 @@ app.post("/api/users/update", async (c) => {
       return c.json({ success: false, message: "User ID is required" }, 400);
     }
 
-    // First find the user by their betterAuthId
-    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: id });
-    
+    const user =
+      (await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: id })) ||
+      (await c.env.runQuery(api.users.getById, { id: id as Id<"users"> }));
+
     if (!user) {
       return c.json({ success: false, message: "User not found" }, 404);
     }
@@ -325,9 +326,10 @@ app.post("/api/users/completeOnboarding", async (c) => {
       return c.json({ success: false, message: "User ID is required" }, 400);
     }
 
-    // Resolve betterAuthId to internal Convex user
-    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: userId });
-    
+    const user =
+      (await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: userId })) ||
+      (await c.env.runQuery(api.users.getById, { id: userId as Id<"users"> }));
+
     if (!user) {
       return c.json({ success: false, message: "User not found" }, 404);
     }
@@ -354,9 +356,10 @@ app.post("/api/users/delete", async (c) => {
       return c.json({ success: false, message: "User ID is required" }, 400);
     }
 
-    // First find the user by their betterAuthId
-    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: id });
-    
+    const user =
+      (await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: id })) ||
+      (await c.env.runQuery(api.users.getById, { id: id as Id<"users"> }));
+
     if (!user) {
       return c.json({ success: false, message: "User not found" }, 404);
     }
@@ -678,7 +681,7 @@ app.post("/api/auth-db/:model/:operation", async (c) => {
           ...body,
           expiresAt: typeof body.expiresAt === 'string' ? new Date(body.expiresAt).getTime() : body.expiresAt
         };
-        
+
         // Filter out extra fields that aren't in the validator
         const { id, createdAt, updatedAt, ...validFields } = processedBody;
         result = await c.env.runMutation(api.authDb.createVerification, validFields);

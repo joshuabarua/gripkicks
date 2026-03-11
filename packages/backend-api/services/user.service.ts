@@ -227,13 +227,14 @@ class UserService {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: existingUser.id,
+          id: userId,
           ...data
         })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update user in database');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to update user in database');
       }
 
       const result = await response.json();
