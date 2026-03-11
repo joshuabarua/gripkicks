@@ -1,5 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
+import { useReducedEffects } from "@/hooks/useReducedEffects";
 import React, {
     ComponentPropsWithoutRef,
     CSSProperties,
@@ -16,6 +17,7 @@ export const GlowArea = (props: GlowAreaProps) => {
     const element = useRef<HTMLDivElement>(null);
     const frameId = useRef<number | null>(null);
     const latestCoords = useRef<{ x: number; y: number } | null>(null);
+    const isReducedEffects = useReducedEffects();
 
     const updateGlow = () => {
         if (latestCoords.current && element.current) {
@@ -32,6 +34,7 @@ export const GlowArea = (props: GlowAreaProps) => {
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isReducedEffects) return;
         const bounds = e.currentTarget.getBoundingClientRect();
         latestCoords.current = {
             x: e.clientX - bounds.left,
@@ -73,6 +76,7 @@ interface GlowProps extends ComponentPropsWithoutRef<"div"> {
 export const Glow = (props: GlowProps) => {
     const { className, color = "#EB5E28", children, ...rest } = props;
     const element = useRef<HTMLDivElement>(null);
+    const isReducedEffects = useReducedEffects();
 
     useEffect(() => {
         element.current?.style.setProperty(
@@ -90,7 +94,7 @@ export const Glow = (props: GlowProps) => {
             <div
                 {...rest}
                 style={{
-                    backgroundImage: `radial-gradient(
+                    backgroundImage: isReducedEffects ? "none" : `radial-gradient(
             var(--glow-size) var(--glow-size) at calc(var(--glow-x, -99999px) - var(--glow-left, 0px))
             calc(var(--glow-y, -99999px) - var(--glow-top, 0px)),
             ${color} 0%,

@@ -17,6 +17,7 @@ import { AnimatedNavIcon } from "@/components/ui/AnimatedNavIcon";
 import { motion } from "framer-motion";
 import { fetchApi } from "@/lib/api-client";
 import { useOrientation } from "@/hooks/useOrientationScale";
+import { useReducedEffects } from "@/hooks/useReducedEffects";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
@@ -28,6 +29,7 @@ export default function HomeCreative() {
   const router = useRouter();
   const [totalUsers, setTotalUsers] = React.useState<number | null>(null);
   const { isPortrait, screenWidth } = useOrientation();
+  const isReducedEffects = useReducedEffects();
 
   React.useEffect(() => {
     async function loadUserCount() {
@@ -134,8 +136,8 @@ export default function HomeCreative() {
 
         <motion.div
           className="absolute bottom-8 inset-x-0 mx-auto w-fit flex flex-col items-center gap-2"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          animate={isReducedEffects ? undefined : { y: [0, 8, 0] }}
+          transition={isReducedEffects ? undefined : { duration: 2, repeat: Infinity }}
         >
           <span className="text-[10px] tracking-[0.3em] text-orange-500/60 uppercase">
             Scroll
@@ -161,8 +163,10 @@ export default function HomeCreative() {
           </div>
           <div className="flex-1 overflow-hidden">
             <motion.div
-              animate={{ x: [0, -600] }}
-              transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+              animate={isReducedEffects ? undefined : { x: [0, -600] }}
+              transition={
+                isReducedEffects ? undefined : { duration: 18, repeat: Infinity, ease: "linear" }
+              }
               className="flex gap-6 whitespace-nowrap"
             >
               {[...activityFeed, ...activityFeed].map((activity, index) => (
@@ -270,7 +274,7 @@ export default function HomeCreative() {
             >
               <AnimatedNavIcon
                 icon={<Zap className="w-8 h-8 text-orange-500" />}
-                animation="pulse"
+                animation="pop"
                 size={32}
               />
               <div>
@@ -297,7 +301,7 @@ export default function HomeCreative() {
                     <Footprints className="w-6 h-6 text-orange-500" />
                   </div>
                 }
-                animation="wiggle"
+                animation="pop"
                 size={48}
               />
               <div>
@@ -323,7 +327,7 @@ export default function HomeCreative() {
                     <Target className="w-6 h-6 text-orange-500" />
                   </div>
                 }
-                animation="spin"
+                animation="pop"
                 size={48}
               />
               <div>
@@ -533,8 +537,10 @@ export default function HomeCreative() {
 
       <section className="py-8 bg-orange-500 overflow-hidden">
         <motion.div
-          animate={{ x: [0, -1000] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          animate={isReducedEffects ? undefined : { x: [0, -1000] }}
+          transition={
+            isReducedEffects ? undefined : { duration: 20, repeat: Infinity, ease: "linear" }
+          }
           className="flex gap-8 whitespace-nowrap"
         >
           {Array(10)

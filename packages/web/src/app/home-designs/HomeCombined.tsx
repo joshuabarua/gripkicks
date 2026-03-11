@@ -13,6 +13,7 @@ import {
   Star,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useReducedEffects } from "@/hooks/useReducedEffects";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
@@ -22,13 +23,17 @@ const Scene = dynamic(() => import("@/components/3d/Scene"), {
 const MarqueeText = ({
   children,
   reverse = false,
+  isReducedEffects = false,
 }: {
   children: React.ReactNode;
   reverse?: boolean;
+  isReducedEffects?: boolean;
 }) => (
   <motion.div
-    animate={{ x: reverse ? [0, 1000] : [0, -1000] }}
-    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+    animate={isReducedEffects ? undefined : { x: reverse ? [0, 1000] : [0, -1000] }}
+    transition={
+      isReducedEffects ? undefined : { duration: 20, repeat: Infinity, ease: "linear" }
+    }
     className="flex gap-8 whitespace-nowrap"
   >
     {Array(10)
@@ -44,6 +49,7 @@ const MarqueeText = ({
 export default function HomeCombined() {
   const { data: session } = useSession();
   const router = useRouter();
+  const isReducedEffects = useReducedEffects();
 
   const isAuthenticated = !!session?.user;
   const userName = session?.user?.name?.toUpperCase() || "CLIMBER";
@@ -58,8 +64,8 @@ export default function HomeCombined() {
 
         <motion.div
           className="absolute bottom-8 left-8"
-          animate={{ y: [0, 5, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
+          animate={isReducedEffects ? undefined : { y: [0, 5, 0] }}
+          transition={isReducedEffects ? undefined : { duration: 1.5, repeat: Infinity }}
         >
           <ArrowDownRight className="w-8 h-8 text-orange-500" />
         </motion.div>
@@ -67,7 +73,7 @@ export default function HomeCombined() {
 
       {/* First Marquee */}
       <section className="py-4 bg-orange-500 overflow-hidden">
-        <MarqueeText>
+        <MarqueeText isReducedEffects={isReducedEffects}>
           <span className="text-black">FIND YOUR GRIP</span>
           <span className="text-black/40 mx-4">•</span>
           <span className="text-black">COMMUNITY BUILT</span>
@@ -83,15 +89,15 @@ export default function HomeCombined() {
         <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
           <motion.div
             className="font-tanker text-[25vw] leading-none text-white/[0.02] absolute -top-[5vw] -left-[5vw]"
-            animate={{ x: [0, 20, 0] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            animate={undefined}
+            transition={undefined}
           >
             GRIP
           </motion.div>
           <motion.div
             className="font-tanker text-[25vw] leading-none text-white/[0.02] absolute bottom-[5vw] -right-[10vw]"
-            animate={{ x: [0, -20, 0] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            animate={undefined}
+            transition={undefined}
           >
             KICKS
           </motion.div>
@@ -123,8 +129,8 @@ export default function HomeCombined() {
                     <br />
                     <motion.span
                       className="text-orange-500"
-                      animate={{ opacity: [1, 0.7, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      animate={isReducedEffects ? undefined : { opacity: [1, 0.7, 1] }}
+                      transition={isReducedEffects ? undefined : { duration: 2, repeat: Infinity }}
                     >
                       BACK
                     </motion.span>
@@ -135,8 +141,8 @@ export default function HomeCombined() {
                     <br />
                     <motion.span
                       className="text-orange-500"
-                      animate={{ opacity: [1, 0.7, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      animate={isReducedEffects ? undefined : { opacity: [1, 0.7, 1] }}
+                      transition={isReducedEffects ? undefined : { duration: 2, repeat: Infinity }}
                     >
                       FIT AWAITS
                     </motion.span>
@@ -153,8 +159,8 @@ export default function HomeCombined() {
               </p>
               <motion.div
                 className="w-2 h-2 bg-orange-500 rounded-full mt-4 ml-auto"
-                animate={{ scale: [1, 1.5, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
+                animate={undefined}
+                transition={undefined}
               />
             </div>
           </motion.div>
@@ -180,8 +186,8 @@ export default function HomeCombined() {
                   backgroundImage:
                     "repeating-linear-gradient(45deg, transparent, transparent 10px, black 10px, black 20px)",
                 }}
-                animate={{ backgroundPosition: ["0px 0px", "40px 40px"] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                animate={undefined}
+                transition={undefined}
               />
 
               <div className="relative flex justify-between items-start">
@@ -217,8 +223,8 @@ export default function HomeCombined() {
               className="col-span-6 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between group hover:border-orange-500/30 transition-colors"
             >
               <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity }}
+                animate={undefined}
+                transition={undefined}
               >
                 <Zap className="w-8 h-8 text-orange-500" />
               </motion.div>
@@ -310,8 +316,8 @@ export default function HomeCombined() {
               <div className="flex justify-between items-start">
                 <motion.div
                   className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center"
-                  animate={{ rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  animate={undefined}
+                  transition={undefined}
                 >
                   <Star className="w-6 h-6 text-orange-500" />
                 </motion.div>
@@ -371,7 +377,7 @@ export default function HomeCombined() {
 
       {/* Second Marquee - Reverse */}
       <section className="py-4 bg-white overflow-hidden">
-        <MarqueeText reverse>
+        <MarqueeText reverse isReducedEffects={isReducedEffects}>
           <span className="text-black">BUILT BY CLIMBERS</span>
           <span className="text-orange-500 mx-4">★</span>
           <span className="text-black">FOR CLIMBERS</span>
@@ -390,8 +396,8 @@ export default function HomeCombined() {
             backgroundImage:
               "repeating-linear-gradient(-45deg, transparent, transparent 20px, black 20px, black 40px)",
           }}
-          animate={{ backgroundPosition: ["0px 0px", "80px 80px"] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          animate={undefined}
+          transition={undefined}
         />
 
         <div className="relative max-w-4xl mx-auto text-center">
@@ -406,8 +412,8 @@ export default function HomeCombined() {
               READY TO
               <br />
               <motion.span
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                animate={isReducedEffects ? undefined : { opacity: [1, 0.5, 1] }}
+                transition={isReducedEffects ? undefined : { duration: 1.5, repeat: Infinity }}
               >
                 CLIMB?
               </motion.span>
@@ -436,8 +442,8 @@ export default function HomeCombined() {
           </span>
           <motion.span
             className="font-mono text-[10px] text-orange-500"
-            animate={{ opacity: [1, 0.5, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            animate={undefined}
+            transition={undefined}
           >
             BUILT_FOR_CLIMBERS
           </motion.span>
