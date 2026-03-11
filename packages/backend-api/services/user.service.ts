@@ -158,6 +158,10 @@ class UserService {
       return err(new InvalidDataError('Name too long (max 100 characters)'));
     }
 
+    if (data.footShape && !this.isValidFootShape(data.footShape)) {
+      return err(new InvalidDataError('Invalid foot shape. Must be one of: egyptian, roman, greek, germanic, celtic'));
+    }
+
     return ok(undefined);
   }
 
@@ -234,7 +238,7 @@ class UserService {
 
       const result = await response.json();
       const user = result.data;
-      
+
       return {
         id: user._id,
         email: user.email,
@@ -272,7 +276,7 @@ class UserService {
 
       const result = await response.json();
       const user = result.data;
-      
+
       return {
         id: user._id,
         email: user.email,
