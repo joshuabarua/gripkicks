@@ -72,3 +72,7 @@ yarn-npx.md
 # License files
 LICENSE*
 license*
+
+# Project documentation
+prod-deployment-checklist.md
+stack-inventory.md
