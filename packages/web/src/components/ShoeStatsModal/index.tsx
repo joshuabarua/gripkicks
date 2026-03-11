@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { UserShoe } from '@/types/api';
-import { calculateDefaultStats } from './utils';
+import { calculateDefaultStats, getEffectiveShoeStats } from './utils';
 import ShoeTags from './ShoeTags';
 import RatingInfoTooltip from './RatingInfoTooltip';
 import PersonalStatsSection from './PersonalStatsSection';
@@ -95,16 +95,24 @@ export default function ShoeStatsModal({
 
   const defaultStats = calculateDefaultStats({ aggressiveness, climbingDiscipline, stiffness });
   const showCommunityAverages = !!(totalRatings && totalRatings >= 3);
+  const personalStats = getEffectiveShoeStats(
+    { aggressiveness, climbingDiscipline, stiffness },
+    {
+      comfortScore: shoe.comfortScore,
+      performanceRating: shoe.performanceRating,
+      durabilityRating: shoe.durabilityRating,
+    },
+  );
 
   const comfortScore = showCommunityAverages
     ? avgComfortScore || defaultStats.comfort
-    : shoe.comfortScore || defaultStats.comfort;
+    : personalStats.comfort;
   const performanceRating = showCommunityAverages
     ? avgPerformanceRating || defaultStats.performance
-    : shoe.performanceRating || defaultStats.performance;
+    : personalStats.performance;
   const durabilityRating = showCommunityAverages
     ? avgDurabilityRating || defaultStats.durability
-    : shoe.durabilityRating || defaultStats.durability;
+    : personalStats.durability;
 
   const hasUserRatings = !!(shoe.comfortScore || shoe.performanceRating || shoe.durabilityRating);
 

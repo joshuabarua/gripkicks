@@ -6,7 +6,7 @@ import { memo } from 'react';
 import { Star } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
 import type { UserShoe } from "@/types/api";
-import { calculateDefaultStats } from '@/components/ShoeStatsModal/utils';
+import { getEffectiveShoeStats } from '@/components/ShoeStatsModal/utils';
 
 interface CloudShoeProps {
   shoe: UserShoe;
@@ -27,17 +27,18 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
   const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
 
-  const avgScore = (() => {
-    const defaultStats = calculateDefaultStats({
+  const avgScore = getEffectiveShoeStats(
+    {
       aggressiveness: characteristicSource?.aggressiveness,
       climbingDiscipline: characteristicSource?.climbingDiscipline,
       stiffness: characteristicSource?.stiffness,
-    });
-    const comfort = shoe.comfortScore || defaultStats.comfort;
-    const performance = shoe.performanceRating || defaultStats.performance;
-    const durability = shoe.durabilityRating || defaultStats.durability;
-    return ((comfort + performance + durability) / 3).toFixed(1);
-  })();
+    },
+    {
+      comfortScore: shoe.comfortScore,
+      performanceRating: shoe.performanceRating,
+      durabilityRating: shoe.durabilityRating,
+    },
+  ).average.toFixed(1);
 
   useEffect(() => {
     if (isInView) return;

@@ -64,6 +64,33 @@ export const calculateDefaultStats = (shoe: ShoeCharacteristics): DefaultStats =
   return { comfort, performance, durability };
 };
 
+export interface UserProvidedStats {
+  comfortScore?: number;
+  performanceRating?: number;
+  durabilityRating?: number;
+}
+
+export interface EffectiveShoeStats extends DefaultStats {
+  average: number;
+}
+
+export const getEffectiveShoeStats = (
+  shoe: ShoeCharacteristics,
+  stats?: UserProvidedStats,
+): EffectiveShoeStats => {
+  const defaults = calculateDefaultStats(shoe);
+  const comfort = stats?.comfortScore ?? defaults.comfort;
+  const performance = stats?.performanceRating ?? defaults.performance;
+  const durability = stats?.durabilityRating ?? defaults.durability;
+
+  return {
+    comfort,
+    performance,
+    durability,
+    average: Number(((comfort + performance + durability) / 3).toFixed(1)),
+  };
+};
+
 export const getStatBarColor = (value: number, isCommunityAverage: boolean): string => {
   if (isCommunityAverage) {
     if (value >= 8) return 'bg-gradient-to-r from-green-400 to-green-600';

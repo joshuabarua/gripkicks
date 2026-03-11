@@ -33,8 +33,8 @@ export default function EditShoeDialog({
     <AnimatePresence>
       {editingShoe && (
         <Dialog open={!!editingShoe} onOpenChange={() => setEditingShoe(null)}>
-          <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-3xl rounded-3xl shadow-2xl shadow-orange-500/5 p-0 overflow-hidden">
-            <DialogHeader className="space-y-3 border-b border-neutral-800 px-8 py-7">
+          <DialogContent className="bg-neutral-950 text-white border border-neutral-800 w-[min(96vw,56rem)] max-w-4xl rounded-3xl shadow-2xl shadow-orange-500/5 p-0 overflow-hidden">
+            <DialogHeader className="space-y-3 border-b border-neutral-800 px-5 py-6 sm:px-8 sm:py-7">
               <div className="flex items-center gap-fluid-sm">
                 <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[EDIT_STATS]</p>
               </div>
@@ -44,8 +44,8 @@ export default function EditShoeDialog({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-8 px-8 py-8">
-              <div className="rounded-2xl border border-orange-500/15 bg-orange-500/5 px-5 py-4">
+            <div className="space-y-6 px-5 py-6 sm:space-y-8 sm:px-8 sm:py-8">
+              <div className="rounded-2xl border border-orange-500/15 bg-orange-500/5 px-4 py-4 sm:px-5">
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 rounded-xl bg-orange-500/15 p-2 text-orange-400">
                     <SlidersHorizontal className="h-4 w-4" />
@@ -57,7 +57,7 @@ export default function EditShoeDialog({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="size" className="text-neutral-400 font-sora text-xs">Size</Label>
                   <select
@@ -112,7 +112,7 @@ export default function EditShoeDialog({
                   />
                 </div>
 
-                <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 md:col-span-2">
+                <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
                     <Label htmlFor="comfortScore" className="text-neutral-400 font-sora text-xs">Comfort (1-10)</Label>
                     <div className="group relative">
@@ -129,7 +129,7 @@ export default function EditShoeDialog({
                   />
                 </div>
 
-                <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 md:col-span-2">
+                <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
                     <Label htmlFor="performanceRating" className="text-neutral-400 font-sora text-xs">Performance (1-10)</Label>
                     <div className="group relative">
@@ -146,7 +146,7 @@ export default function EditShoeDialog({
                   />
                 </div>
 
-                <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 md:col-span-2">
+                <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
                     <Label htmlFor="durabilityRating" className="text-neutral-400 font-sora text-xs">Durability (1-10)</Label>
                     <div className="group relative">
@@ -187,7 +187,7 @@ export default function EditShoeDialog({
                 )}
               </div>
 
-              <div className="flex gap-3 border-t border-neutral-800 pt-6">
+              <div className="flex flex-col gap-3 border-t border-neutral-800 pt-6 sm:flex-row">
                 <Button
                   variant="outline"
                   className="flex-1 border-neutral-800 bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800 hover:border-neutral-700 rounded-xl py-3"

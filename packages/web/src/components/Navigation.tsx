@@ -20,6 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useOrientation } from "@/hooks/useOrientationScale";
 
 const menu = {
   open: {
@@ -51,10 +52,26 @@ const Navigation: React.FC = () => {
   const navRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
+  const { orientation, screenWidth } = useOrientation();
 
   // Use Better Auth session hook to check if user is authenticated
   const { data: session, isPending } = useSession();
   const isAuthenticated = !!session?.user;
+  const isPhonePortrait =
+    orientation === "portrait" && screenWidth > 0 && screenWidth < 768;
+  const menuVariants = isPhonePortrait
+    ? {
+      open: {
+        width: "min(92vw, 360px)",
+        height: "430px",
+        top: "-18px",
+        right: "-12px",
+        transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] }
+      },
+      closed: menu.closed,
+      closedText: menu.closedText
+    }
+    : menu;
 
   // Function to close menu (used after logout)
   const closeMenu = () => setIsActive(false);
@@ -186,7 +203,7 @@ const Navigation: React.FC = () => {
                 {isActive && (
                   <motion.div
                     className="nav-menu"
-                    variants={menu}
+                    variants={menuVariants}
                     animate={isActive ? "open" : "closed"}
                     initial="closed"
                     exit="closed"

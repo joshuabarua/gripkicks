@@ -113,4 +113,45 @@ describe("fetchApi", () => {
       );
     }
   });
+
+  it("should dedupe concurrent identical requests", async () => {
+    let resolveFetch:
+      | ((value: {
+        ok: boolean;
+        json: () => Promise<{ data: string }>;
+        headers: Headers;
+      }) => void)
+      | undefined;
+
+    mockFetch.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveFetch = resolve;
+        }),
+    );
+
+    const { fetchApi } = await import("@/lib/api-client");
+
+    const first = fetchApi<{ data: string }>("/api/test");
+    const second = fetchApi<{ data: string }>("/api/test");
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(first).toBe(second);
+
+    resolveFetch?.({
+      ok: true,
+      json: () => Promise.resolve({ data: "deduped" }),
+      headers: new Headers({ "content-type": "application/json" }),
+    });
+
+    const firstResult = await first;
+    const secondResult = await second;
+
+    expect(firstResult.isOk()).toBe(true);
+    expect(secondResult.isOk()).toBe(true);
+    firstResult.match(
+      (data) => expect(data).toEqual({ data: "deduped" }),
+      () => expect.fail("Should not fail"),
+    );
+  });
 });
