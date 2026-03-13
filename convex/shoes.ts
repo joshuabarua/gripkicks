@@ -451,18 +451,19 @@ export const getMissingRubberTechnologyReport = query({
 
     return missingShoes.map((shoe) => {
       const brandMatches = rubberTechnologies.filter(
-        (rubberTechnology) => rubberTechnology.brand === shoe.brand,
+        (rubberTechnology) =>
+          rubberTechnology.brand === (shoe.brand ?? "Unknown brand"),
       );
 
       return {
         shoeId: shoe._id,
-        name: shoe.name,
-        brand: shoe.brand,
+        name: shoe.name ?? "Unknown shoe",
+        brand: shoe.brand ?? "Unknown brand",
         modelName: shoe.modelName ?? null,
         brandMatchCount: brandMatches.length,
         brandMatches: brandMatches.map((rubberTechnology) => ({
           id: rubberTechnology._id,
-          compound: rubberTechnology.compound,
+          compound: rubberTechnology.compound ?? "Unknown compound",
         })),
       };
     });

@@ -115,10 +115,6 @@ export default function AdminDashboard() {
 
   const users = useQuery(api.users.list);
   const rubberTechnologies = useQuery(api.rubberTechnologies.list);
-  const missingRubberTechnologyReport = useQuery(
-    api.shoes.getMissingRubberTechnologyReport,
-  );
-
   const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
   const currentAdminUser = users?.find(
     (user) => user.email === session?.user.email,
@@ -126,6 +122,11 @@ export default function AdminDashboard() {
   const currentAdminHasPremium =
     currentAdminUser?.subscriptionStatus === "active" ||
     currentAdminUser?.subscriptionStatus === "founder";
+  const shouldLoadMissingRubberTechnologyReport = !isPending && !!session?.user && !!isAdmin;
+  const missingRubberTechnologyReport = useQuery(
+    api.shoes.getMissingRubberTechnologyReport,
+    shouldLoadMissingRubberTechnologyReport ? {} : "skip",
+  );
 
   useEffect(() => {
     if (!isPending && (!session?.user || !isAdmin)) {
