@@ -35,7 +35,7 @@ type Shoe = {
   _id: Id<"shoes">;
   name: string;
   brand: string;
-  modelName: string;
+  modelName?: string;
   variantLabel?: string;
   parentModelId?: Id<"shoes">;
   imageUrl?: string;
