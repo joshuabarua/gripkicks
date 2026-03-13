@@ -458,7 +458,7 @@ export const getMissingRubberTechnologyReport = query({
         shoeId: shoe._id,
         name: shoe.name,
         brand: shoe.brand,
-        modelName: shoe.modelName,
+        modelName: shoe.modelName ?? null,
         brandMatchCount: brandMatches.length,
         brandMatches: brandMatches.map((rubberTechnology) => ({
           id: rubberTechnology._id,
