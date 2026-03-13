@@ -20,7 +20,7 @@ export default defineSchema({
   shoes: defineTable({
     name: v.string(),
     brand: v.string(),
-    modelName: v.string(),
+    modelName: v.optional(v.string()),
     variantLabel: v.optional(v.string()),
     parentModelId: v.optional(v.id("shoes")),
     imageUrl: v.optional(v.string()),
