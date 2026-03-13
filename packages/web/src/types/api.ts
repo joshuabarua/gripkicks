@@ -20,7 +20,7 @@ export interface Shoe {
   _id: string;
   name: string;
   brand: string;
-  modelName: string;
+  modelName?: string;
   variantLabel?: string;
   parentModelId?: string;
   imageUrl?: string;
