@@ -55,6 +55,8 @@ export default function AdminDashboard() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const shoes = useQuery(api.shoes.listAll);
+  const grantFounderStatus = useMutation(api.subscriptions.grantFounderStatus);
+  const revokeFounderStatus = useMutation(api.subscriptions.revokeFounderStatus);
   const updateShoe = useMutation(api.shoes.update).withOptimisticUpdate(
     (localStore, args) => {
       const shoe = localStore
@@ -98,6 +100,8 @@ export default function AdminDashboard() {
   const [brandFilter, setBrandFilter] = useState<string>("all");
   const [isBackfillingVariants, setIsBackfillingVariants] = useState(false);
   const [backfillResult, setBackfillResult] = useState<string | null>(null);
+  const [isGrantingPremiumAccess, setIsGrantingPremiumAccess] = useState(false);
+  const [premiumAccessMessage, setPremiumAccessMessage] = useState<string | null>(null);
 
   const uniqueBrands = [...new Set(shoes?.map((s) => s.brand) || [])].sort();
 
@@ -105,6 +109,12 @@ export default function AdminDashboard() {
   const rubberTechnologies = useQuery(api.rubberTechnologies.list);
 
   const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
+  const currentAdminUser = users?.find(
+    (user) => user.email === session?.user.email,
+  );
+  const currentAdminHasPremium =
+    currentAdminUser?.subscriptionStatus === "active" ||
+    currentAdminUser?.subscriptionStatus === "founder";
 
   useEffect(() => {
     if (!isPending && (!session?.user || !isAdmin)) {
@@ -209,6 +219,42 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleEnablePremiumTesting = async () => {
+    if (!currentAdminUser?.betterAuthId) {
+      setPremiumAccessMessage("Could not find your Better Auth ID for this admin account.");
+      return;
+    }
+
+    try {
+      setIsGrantingPremiumAccess(true);
+      setPremiumAccessMessage(null);
+      await grantFounderStatus({ betterAuthId: currentAdminUser.betterAuthId });
+      setPremiumAccessMessage("Premium testing access enabled for your admin account. Refresh gated pages if they are already open.");
+    } catch {
+      setPremiumAccessMessage("Failed to enable premium testing access. Please try again.");
+    } finally {
+      setIsGrantingPremiumAccess(false);
+    }
+  };
+
+  const handleDisablePremiumTesting = async () => {
+    if (!currentAdminUser?.betterAuthId) {
+      setPremiumAccessMessage("Could not find your Better Auth ID for this admin account.");
+      return;
+    }
+
+    try {
+      setIsGrantingPremiumAccess(true);
+      setPremiumAccessMessage(null);
+      await revokeFounderStatus({ betterAuthId: currentAdminUser.betterAuthId });
+      setPremiumAccessMessage("Premium testing access removed from your admin account. Refresh gated pages if they are already open.");
+    } catch {
+      setPremiumAccessMessage("Failed to remove premium testing access. Please try again.");
+    } finally {
+      setIsGrantingPremiumAccess(false);
+    }
+  };
+
   const genderOptions = ["men", "women", "kids", "unisex"];
   const aggressivenessOptions = ["flat", "moderate", "aggressive"];
   const stiffnessOptions = ["soft", "medium", "stiff"];
@@ -227,6 +273,46 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+        </div>
+
+        <div className="mb-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 p-5">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1">
+              <p className="text-xs uppercase tracking-[0.24em] text-orange-400">Testing access</p>
+              <h2 className="text-lg font-semibold text-white">Toggle premium features on your admin profile</h2>
+              <p className="text-sm text-white/60">
+                This switches your current admin account between standard access and founder access so premium-gated UI can be tested both ways.
+              </p>
+              <p className="text-xs text-white/50">
+                Current status: {currentAdminHasPremium ? "Premium enabled" : "Standard access"}
+              </p>
+              {premiumAccessMessage && (
+                <p className="text-sm text-orange-200">{premiumAccessMessage}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <button
+                onClick={handleEnablePremiumTesting}
+                disabled={isGrantingPremiumAccess || !currentAdminUser?.betterAuthId || currentAdminHasPremium}
+                className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-orange-400 disabled:cursor-not-allowed disabled:bg-orange-500/40 disabled:text-black/60"
+              >
+                {isGrantingPremiumAccess && !currentAdminHasPremium
+                  ? "Enabling..."
+                  : "Enable premium testing"}
+              </button>
+
+              <button
+                onClick={handleDisablePremiumTesting}
+                disabled={isGrantingPremiumAccess || !currentAdminUser?.betterAuthId || !currentAdminHasPremium}
+                className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/5 disabled:text-white/40"
+              >
+                {isGrantingPremiumAccess && currentAdminHasPremium
+                  ? "Disabling..."
+                  : "Disable premium testing"}
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="flex gap-2 mb-6">

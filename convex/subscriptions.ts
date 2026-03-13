@@ -78,6 +78,27 @@ export const grantFounderStatus = mutation({
   },
 });
 
+export const revokeFounderStatus = mutation({
+  args: { betterAuthId: v.string() },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
+      .first();
+
+    if (!user) {
+      throw new Error(`User not found with betterAuthId: ${args.betterAuthId}`);
+    }
+
+    await ctx.db.patch(user._id, {
+      subscriptionStatus: undefined,
+      subscriptionTier: undefined,
+    });
+
+    return await ctx.db.get(user._id);
+  },
+});
+
 export const isPremium = query({
   args: { betterAuthId: v.string() },
   handler: async (ctx, args) => {
