@@ -31,7 +31,7 @@ export interface Shoe {
   climbingDiscipline: string;
   volume: string;
   rubberTechnologyId?: string;
-  rubberTechnology?: RubberTechnology;
+  rubberTechnology?: RubberTechnology | null;
 }
 
 export interface RubberTechnology {

@@ -86,6 +86,19 @@ async function resolveParentModelId(
   })?._id;
 }
 
+async function ensureRubberTechnologyExists(
+  ctx: any,
+  rubberTechnologyId: string,
+) {
+  const rubberTechnology = await ctx.db.get(rubberTechnologyId);
+
+  if (!rubberTechnology) {
+    throw new Error("Rubber technology not found");
+  }
+
+  return rubberTechnology;
+}
+
 export const list = query({
   args: {
     cursor: v.optional(v.string()),
@@ -227,7 +240,7 @@ export const create = mutation({
     stiffness: v.string(),
     climbingDiscipline: v.string(),
     volume: v.string(),
-    rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
+    rubberTechnologyId: v.id("rubberTechnologies"),
     footShapeCompat: v.optional(v.array(footShapeValidator)),
   },
   handler: async (ctx, args) => {
@@ -249,6 +262,8 @@ export const create = mutation({
         normalizedModelName,
         normalizedVariantLabel,
       ));
+
+    await ensureRubberTechnologyExists(ctx, args.rubberTechnologyId);
 
     const shoeId = await ctx.db.insert("shoes", {
       ...shoeData,
@@ -375,6 +390,13 @@ export const update = mutation({
           nextVariantLabel,
           id,
         );
+    const nextRubberTechnologyId = updates.rubberTechnologyId ?? shoe.rubberTechnologyId;
+
+    if (!nextRubberTechnologyId) {
+      throw new Error("Rubber technology is required for every shoe");
+    }
+
+    await ensureRubberTechnologyExists(ctx, nextRubberTechnologyId);
 
     return await ctx.db.patch(id, {
       ...Object.fromEntries(
@@ -416,6 +438,76 @@ export const backfillVariantMetadata = mutation({
     }
 
     return { updatedCount };
+  },
+});
+
+export const getMissingRubberTechnologyReport = query({
+  args: {},
+  handler: async (ctx) => {
+    const shoes = await ctx.db.query("shoes").collect();
+    const rubberTechnologies = await ctx.db.query("rubberTechnologies").collect();
+
+    const missingShoes = shoes.filter((shoe) => !shoe.rubberTechnologyId);
+
+    return missingShoes.map((shoe) => {
+      const brandMatches = rubberTechnologies.filter(
+        (rubberTechnology) => rubberTechnology.brand === shoe.brand,
+      );
+
+      return {
+        shoeId: shoe._id,
+        name: shoe.name,
+        brand: shoe.brand,
+        modelName: shoe.modelName,
+        brandMatchCount: brandMatches.length,
+        brandMatches: brandMatches.map((rubberTechnology) => ({
+          id: rubberTechnology._id,
+          compound: rubberTechnology.compound,
+        })),
+      };
+    });
+  },
+});
+
+export const backfillMissingRubberTechnology = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const shoes = await ctx.db.query("shoes").collect();
+    const rubberTechnologies = await ctx.db.query("rubberTechnologies").collect();
+
+    let updatedCount = 0;
+    const skipped: Array<{ shoeId: string; reason: string }> = [];
+
+    for (const shoe of shoes) {
+      if (shoe.rubberTechnologyId) {
+        continue;
+      }
+
+      const brandMatches = rubberTechnologies.filter(
+        (rubberTechnology) => rubberTechnology.brand === shoe.brand,
+      );
+
+      if (brandMatches.length === 1) {
+        await ctx.db.patch(shoe._id, {
+          rubberTechnologyId: brandMatches[0]._id,
+        });
+        updatedCount += 1;
+        continue;
+      }
+
+      skipped.push({
+        shoeId: shoe._id,
+        reason:
+          brandMatches.length === 0
+            ? `No rubber technology found for brand ${shoe.brand}`
+            : `Multiple rubber technologies found for brand ${shoe.brand}`,
+      });
+    }
+
+    return {
+      updatedCount,
+      skipped,
+    };
   },
 });
 

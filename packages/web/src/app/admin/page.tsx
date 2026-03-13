@@ -70,6 +70,9 @@ export default function AdminDashboard() {
   const deleteShoe = useMutation(api.shoes.remove);
   const createShoe = useMutation(api.shoes.create);
   const backfillVariantMetadata = useMutation(api.shoes.backfillVariantMetadata);
+  const backfillMissingRubberTechnology = useMutation(
+    api.shoes.backfillMissingRubberTechnology,
+  );
 
   const [editingId, setEditingId] = useState<Id<"shoes"> | null>(null);
   const [editForm, setEditForm] = useState<EditingShoe | null>(null);
@@ -100,6 +103,11 @@ export default function AdminDashboard() {
   const [brandFilter, setBrandFilter] = useState<string>("all");
   const [isBackfillingVariants, setIsBackfillingVariants] = useState(false);
   const [backfillResult, setBackfillResult] = useState<string | null>(null);
+  const [isBackfillingRubberTechnology, setIsBackfillingRubberTechnology] =
+    useState(false);
+  const [rubberBackfillResult, setRubberBackfillResult] = useState<string | null>(
+    null,
+  );
   const [isGrantingPremiumAccess, setIsGrantingPremiumAccess] = useState(false);
   const [premiumAccessMessage, setPremiumAccessMessage] = useState<string | null>(null);
 
@@ -107,6 +115,9 @@ export default function AdminDashboard() {
 
   const users = useQuery(api.users.list);
   const rubberTechnologies = useQuery(api.rubberTechnologies.list);
+  const missingRubberTechnologyReport = useQuery(
+    api.shoes.getMissingRubberTechnologyReport,
+  );
 
   const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
   const currentAdminUser = users?.find(
@@ -183,8 +194,16 @@ export default function AdminDashboard() {
       return;
     }
 
+    if (!newShoe.rubberTechnologyId) {
+      alert("Please select a rubber technology before creating a shoe.");
+      return;
+    }
+
+    const rubberTechnologyId = newShoe.rubberTechnologyId;
+
     await createShoe({
       ...newShoe,
+      rubberTechnologyId,
       modelName: newShoe.modelName.trim() || undefined,
       variantLabel: newShoe.variantLabel.trim() || undefined,
       slug: newShoe.slug.trim() || undefined,
@@ -202,7 +221,7 @@ export default function AdminDashboard() {
       stiffness: "medium",
       climbingDiscipline: "sport",
       volume: "medium",
-      rubberTechnologyId: undefined,
+      rubberTechnologyId: rubberTechnologies?.[0]?._id,
     });
   };
 
@@ -216,6 +235,31 @@ export default function AdminDashboard() {
       setBackfillResult("Backfill failed. Please try again.");
     } finally {
       setIsBackfillingVariants(false);
+    }
+  };
+
+  const handleBackfillRubberTechnology = async () => {
+    try {
+      setIsBackfillingRubberTechnology(true);
+      setRubberBackfillResult(null);
+      const result = await backfillMissingRubberTechnology({});
+
+      if (result.skipped.length > 0) {
+        setRubberBackfillResult(
+          `Backfilled ${result.updatedCount} shoes. ${result.skipped.length} still need manual review.`,
+        );
+        return;
+      }
+
+      setRubberBackfillResult(
+        `Backfilled ${result.updatedCount} shoes missing rubber technology.`,
+      );
+    } catch {
+      setRubberBackfillResult(
+        "Rubber technology backfill failed. Please try again.",
+      );
+    } finally {
+      setIsBackfillingRubberTechnology(false);
     }
   };
 
@@ -365,6 +409,25 @@ export default function AdminDashboard() {
                   </button>
                   {backfillResult && (
                     <div className="mt-1 text-xs text-white/60">{backfillResult}</div>
+                  )}
+                </div>
+                <div className="flex flex-col items-end">
+                  <button
+                    onClick={handleBackfillRubberTechnology}
+                    disabled={
+                      isBackfillingRubberTechnology ||
+                      !missingRubberTechnologyReport?.length
+                    }
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                  >
+                    {isBackfillingRubberTechnology
+                      ? "Backfilling Rubber..."
+                      : `Backfill Rubber (${missingRubberTechnologyReport?.length || 0})`}
+                  </button>
+                  {rubberBackfillResult && (
+                    <div className="mt-1 text-xs text-white/60 text-right max-w-xs">
+                      {rubberBackfillResult}
+                    </div>
                   )}
                 </div>
                 <select
@@ -534,7 +597,7 @@ export default function AdminDashboard() {
                           }
                           className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
                         >
-                          <option value="">None</option>
+                          <option value="">Select rubber technology...</option>
                           {rubberTechnologies?.map((rubber) => (
                             <option key={rubber._id} value={rubber._id}>
                               {rubber.brand} - {rubber.compound}
@@ -661,7 +724,8 @@ export default function AdminDashboard() {
                         disabled={
                           !newShoe.name ||
                           !newShoe.brand ||
-                          newShoe.brand === "__new"
+                          newShoe.brand === "__new" ||
+                          !newShoe.rubberTechnologyId
                         }
                         className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-600/50 disabled:cursor-not-allowed text-white rounded-lg"
                       >
@@ -1043,12 +1107,54 @@ export default function AdminDashboard() {
                             )}
                           </div>
 
+                          <div>
+                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                              Rubber
+                            </label>
+                            {isEditingCurrentShoe && currentEditForm ? (
+                              <select
+                                value={currentEditForm.rubberTechnologyId || ""}
+                                onChange={(e) =>
+                                  setEditForm((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          rubberTechnologyId:
+                                            (e.target.value as Id<"rubberTechnologies">) ||
+                                            undefined,
+                                        }
+                                      : prev,
+                                  )
+                                }
+                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                              >
+                                <option value="">Select</option>
+                                {rubberTechnologies?.map((rubber) => (
+                                  <option key={rubber._id} value={rubber._id}>
+                                    {rubber.brand} - {rubber.compound}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <div className="text-white/70">
+                                {shoe.rubberTechnology
+                                  ? `${shoe.rubberTechnology.brand} ${shoe.rubberTechnology.compound}`
+                                  : "Missing rubber technology"}
+                              </div>
+                            )}
+                          </div>
+
                           <div className="flex items-center">
                             <div className="flex gap-1.5">
                               {isEditingCurrentShoe && currentEditForm ? (
                                 <>
                                   <button
                                     onClick={async () => {
+                                      if (!currentEditForm.rubberTechnologyId) {
+                                        alert("Please select a rubber technology before saving.");
+                                        return;
+                                      }
+
                                       await updateShoe({
                                         id: shoe._id,
                                         ...currentEditForm,
