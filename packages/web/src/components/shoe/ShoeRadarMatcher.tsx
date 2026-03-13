@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import ShoeImage from '@/components/ShoeImage';
@@ -17,6 +18,30 @@ interface ShoeMetrics {
   aggressiveness: number;
   stability: number;
   versatility: number;
+}
+
+interface RadarEntryInput {
+  shoe: {
+    _id: string;
+    brand: string;
+    name: string;
+    imageUrl?: string;
+  };
+  score: number;
+  metrics: ShoeMetrics;
+  breakdown: {
+    footTypeCompatibility: number;
+    volumeCompatibility: number;
+    userPreferenceMatch: number;
+    communityApproval: number;
+    overallRating: number;
+    learnedPreferenceBonus: number;
+  };
+}
+
+interface PositionedRadarEntry extends RadarEntryInput {
+  baseX: number;
+  baseY: number;
 }
 
 interface QuadrantInfo {
@@ -67,6 +92,69 @@ const quadrants: Record<QuadrantKey, QuadrantInfo> = {
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
+}
+
+function buildVisibleRadarPositions(
+  entries: RadarEntryInput[],
+) {
+  const groupedEntries = new Map<string, PositionedRadarEntry[]>();
+
+  entries.forEach((entry) => {
+    const performanceWeight = entry.metrics.performance + entry.metrics.aggressiveness;
+    const comfortWeight = entry.metrics.comfort + entry.metrics.versatility;
+    const versatilityWeight = entry.metrics.versatility + entry.metrics.comfort;
+    const aggressiveWeight = entry.metrics.aggressiveness + entry.metrics.performance;
+    const baseX = clamp(
+      performanceWeight / Math.max(performanceWeight + comfortWeight, 0.001),
+      0.08,
+      0.92,
+    );
+    const baseY = clamp(
+      1 - aggressiveWeight / Math.max(aggressiveWeight + versatilityWeight, 0.001),
+      0.08,
+      0.92,
+    );
+    const groupKey = `${baseX.toFixed(3)}:${baseY.toFixed(3)}`;
+    const group = groupedEntries.get(groupKey) ?? [];
+
+    group.push({ ...entry, baseX, baseY });
+    groupedEntries.set(groupKey, group);
+  });
+
+  return Array.from(groupedEntries.values()).flatMap((group) => {
+    if (group.length === 1) {
+      const onlyEntry = group[0];
+      const quadrantKey = getQuadrantKeyFromPosition(onlyEntry.baseX, onlyEntry.baseY);
+      const descriptors = getAxisDescriptor(onlyEntry.metrics);
+
+      return {
+        ...onlyEntry,
+        x: onlyEntry.baseX,
+        y: onlyEntry.baseY,
+        quadrantKey,
+        descriptors,
+        topTraits: getTopTraits(onlyEntry.metrics),
+      };
+    }
+
+    return group.map((entry, index) => {
+      const angle = (Math.PI * 2 * index) / group.length;
+      const radius = 0.028 + Math.floor(index / 4) * 0.012;
+      const x = clamp(entry.baseX + Math.cos(angle) * radius, 0.08, 0.92);
+      const y = clamp(entry.baseY + Math.sin(angle) * radius, 0.08, 0.92);
+      const quadrantKey = getQuadrantKeyFromPosition(x, y);
+      const descriptors = getAxisDescriptor(entry.metrics);
+
+      return {
+        ...entry,
+        x,
+        y,
+        quadrantKey,
+        descriptors,
+        topTraits: getTopTraits(entry.metrics),
+      };
+    });
+  });
 }
 
 function getQuadrantKeyFromPosition(x: number, y: number): QuadrantKey {
@@ -124,30 +212,14 @@ export function ShoeRadarMatcher() {
   const recommendedShoes = useMemo(() => {
     if (!scoredShoes || scoredShoes.length === 0) return [];
 
-    return scoredShoes.slice(0, recommendationLimit).map((scored) => {
-      const performanceWeight = scored.metrics.performance + scored.metrics.aggressiveness;
-      const comfortWeight = scored.metrics.comfort + scored.metrics.versatility;
-      const versatilityWeight = scored.metrics.versatility + scored.metrics.comfort;
-      const aggressiveWeight = scored.metrics.aggressiveness + scored.metrics.performance;
-      const horizontal = performanceWeight / Math.max(performanceWeight + comfortWeight, 0.001);
-      const vertical = 1 - aggressiveWeight / Math.max(aggressiveWeight + versatilityWeight, 0.001);
-      const x = clamp(horizontal, 0.08, 0.92);
-      const y = clamp(vertical, 0.08, 0.92);
-      const quadrantKey = getQuadrantKeyFromPosition(x, y);
-      const descriptors = getAxisDescriptor(scored.metrics);
-
-      return {
+    return buildVisibleRadarPositions(
+      scoredShoes.slice(0, recommendationLimit).map((scored) => ({
         shoe: scored.shoe,
         score: scored.totalScore,
         metrics: scored.metrics,
         breakdown: scored.breakdown,
-        x,
-        y,
-        quadrantKey,
-        descriptors,
-        topTraits: getTopTraits(scored.metrics),
-      };
-    });
+      })),
+    );
   }, [recommendationLimit, scoredShoes]);
 
   const leadShoe = recommendedShoes[0];
@@ -186,6 +258,14 @@ export function ShoeRadarMatcher() {
         <p className="text-neutral-400 max-w-2xl mx-auto">
           Your best matches are auto-ranked into fixed categories based on your scoring profile.
         </p>
+        <div className="mt-4 flex justify-center">
+          <Link
+            href="/radar-lab"
+            className="inline-flex items-center rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-orange-500/40 hover:text-white"
+          >
+            Open public radar
+          </Link>
+        </div>
       </div>
 
       <div className="mb-6 grid grid-cols-1 xl:grid-cols-[1.4fr_1fr] gap-4">
@@ -219,11 +299,11 @@ export function ShoeRadarMatcher() {
               )}
             </div>
 
-            {!isPremium && !isFounder && (
-              <p className="text-sm text-neutral-500 sm:max-w-xs sm:text-right">
-                Free plan shows your best overall match. Premium unlocks the top 5 recommendations.
-              </p>
-            )}
+            <p className="text-sm text-neutral-500 sm:max-w-xs sm:text-right">
+              {isPremium || isFounder
+                ? 'Your radar is showing the top 5 ranked shoes.'
+                : 'Your radar is showing the top ranked shoe.'}
+            </p>
           </div>
 
           {leadShoe && (
