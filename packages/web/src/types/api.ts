@@ -36,9 +36,10 @@ export interface Shoe {
 
 export interface RubberTechnology {
   _id: string;
-  name: string;
-  description?: string;
-  compound?: string;
+  brand: string;
+  compound: string;
+  stickiness: string;
+  durability: string;
 }
 
 export interface FootShapeCompat {
