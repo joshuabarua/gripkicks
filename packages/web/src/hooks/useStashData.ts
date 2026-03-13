@@ -30,7 +30,7 @@ interface ConvexUserShoe {
     _creationTime: number;
     name: string;
     brand: string;
-    modelName: string;
+    modelName?: string;
     variantLabel?: string;
     parentModelId?: Id<"shoes">;
     imageUrl?: string;
