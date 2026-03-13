@@ -9,15 +9,7 @@ import { Footprints, Plus, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { groupShoesByModel } from '@/utils/shoeVariants';
-
-type BaseShoe = {
-  _id: string;
-  name: string;
-  brand: string;
-  imageUrl?: string | null;
-  gender?: string | null;
-  slug?: string | null;
-};
+import type { Shoe } from '@/types/api';
 
 type GenderFilter = 'all' | 'men' | 'women' | 'kids' | 'unisex';
 
@@ -31,7 +23,7 @@ interface AddShoeDialogProps {
   selectedGender: GenderFilter;
   onGenderChange: (value: GenderFilter) => void;
   uniqueBrands: string[];
-  searchResults: BaseShoe[];
+  searchResults: Shoe[];
   onSelectShoe: (shoeId: string) => void;
 }
 
