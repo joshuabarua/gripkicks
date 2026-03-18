@@ -28,10 +28,7 @@ export function MatchScoreTooltip({ score, breakdown }: MatchScoreTooltipProps) 
   const communityScorePct = ((breakdown.communityApproval / 5) * 15).toFixed(0);
   const overallScorePct = ((breakdown.overallRating / 5) * 10).toFixed(0);
   
-  // Calculate a visual bonus percentage
-  const soleMateBonusPct = breakdown.soleMateMatch > 0 
-    ? ((breakdown.soleMateMatch / 5) * 100).toFixed(0) 
-    : 0;
+  const soleMateOwners = breakdown.soleMateMatch;
 
   return (
     <TooltipProvider>
@@ -74,10 +71,10 @@ export function MatchScoreTooltip({ score, breakdown }: MatchScoreTooltipProps) 
                 <span className="text-green-400">+{overallScorePct}%</span>
               </div>
               
-              {breakdown.soleMateMatch > 0 && (
+              {soleMateOwners > 0 && (
                 <div className="flex justify-between items-center pt-2 mt-2 border-t border-neutral-800">
-                  <span className="text-cyan-400 font-medium">Sole Mate Bonus</span>
-                  <span className="text-cyan-400 font-bold">+{soleMateBonusPct}%</span>
+                  <span className="text-cyan-400 font-medium">Sole Mates</span>
+                  <span className="text-cyan-400 font-bold">{soleMateOwners} with your profile</span>
                 </div>
               )}
             </div>

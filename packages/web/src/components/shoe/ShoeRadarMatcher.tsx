@@ -497,7 +497,7 @@ export function ShoeRadarMatcher() {
                       />
                     </div>
                     
-                    <SoleMateSignals shoeId={shoe.shoe._id} />
+                    <SoleMateSignals shoeId={shoe.shoe._id} soleMateCount={shoe.breakdown.soleMateMatch} />
                   </div>
                 </div>
               </CardContent>

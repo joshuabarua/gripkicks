@@ -21,59 +21,65 @@ export function RealityCheck({
   communityReality,
   description,
 }: RealityCheckProps) {
-  // If we don't have enough data, don't show the reality check
-  if (communityReality === undefined) return null;
+  if (brandClaim === undefined || communityReality === undefined) return null;
+
+  const brandPct = (brandClaim / 5) * 100;
+  const communityPct = (communityReality / 5) * 100;
+  const delta = communityReality - brandClaim;
+  const deltaAbs = Math.abs(delta).toFixed(1);
+  const isHigher = delta > 0.1;
+  const isLower = delta < -0.1;
 
   return (
-    <div className="bg-neutral-900 p-4 rounded-xl border border-neutral-800">
-      <div className="flex justify-between items-center mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-white">{label}</span>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs font-medium text-neutral-300">{label}</span>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Info className="w-3.5 h-3.5 text-neutral-500" />
+                <Info className="w-3 h-3 text-neutral-600" />
               </TooltipTrigger>
-              <TooltipContent className="bg-neutral-800 border-neutral-700 text-neutral-200">
+              <TooltipContent className="bg-neutral-900 border-neutral-700 text-neutral-200">
                 <p className="max-w-xs text-xs">{description}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((level) => {
-            const isFilled = level <= Math.round(communityReality);
-            return (
-              <div
-                key={level}
-                className={`w-2 h-2 rounded-[1px] ${
-                  isFilled ? "bg-orange-500" : "bg-neutral-700"
-                }`}
-              />
-            );
-          })}
-          <span className="text-xs text-neutral-500 ml-1">
-            {communityReality.toFixed(1)}/5
+        {isHigher && (
+          <span className="text-[10px] font-medium text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-full">
+            +{deltaAbs} vs brand
           </span>
-        </div>
+        )}
+        {isLower && (
+          <span className="text-[10px] font-medium text-orange-400 bg-orange-400/10 border border-orange-400/20 px-1.5 py-0.5 rounded-full">
+            -{deltaAbs} vs brand
+          </span>
+        )}
       </div>
 
-      {brandClaim !== undefined && (
-        <div className="flex justify-between items-center text-xs">
-          <span className="text-neutral-500">Official Claim</span>
-          <span className="text-neutral-400 font-medium">
-            {brandClaim}/5
-          </span>
+      <div className="space-y-1.5">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-neutral-600 w-16 shrink-0">Brand</span>
+          <div className="flex-1 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-neutral-500 rounded-full transition-all"
+              style={{ width: `${brandPct}%` }}
+            />
+          </div>
+          <span className="text-[10px] text-neutral-500 w-6 text-right">{brandClaim}</span>
         </div>
-      )}
-
-      {brandClaim !== undefined && brandClaim !== Math.round(communityReality) && (
-        <p className="text-xs text-neutral-400 mt-2">
-          {brandClaim > communityReality
-            ? `Users rate this ${brandClaim - Math.round(communityReality)} points lower than the brand claims.`
-            : `Users rate this ${Math.round(communityReality) - brandClaim} points higher than the brand claims.`}
-        </p>
-      )}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-neutral-600 w-16 shrink-0">Community</span>
+          <div className="flex-1 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-orange-500 rounded-full transition-all"
+              style={{ width: `${communityPct}%` }}
+            />
+          </div>
+          <span className="text-[10px] text-neutral-500 w-6 text-right">{communityReality.toFixed(1)}</span>
+        </div>
+      </div>
     </div>
   );
 }
