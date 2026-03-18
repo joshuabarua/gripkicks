@@ -47,6 +47,8 @@ type Shoe = {
   volume: string;
   rubberTechnologyId?: Id<"rubberTechnologies">;
   rubberTechnology?: RubberTechnology | null;
+  brandAggressiveness?: number;
+  brandStiffness?: number;
 };
 
 type EditingShoe = Partial<Shoe> & { _id: Id<"shoes"> };
@@ -95,6 +97,8 @@ export default function AdminDashboard() {
     climbingDiscipline: "sport",
     volume: "medium",
     rubberTechnologyId: undefined as Id<"rubberTechnologies"> | undefined,
+    brandAggressiveness: undefined as number | undefined,
+    brandStiffness: undefined as number | undefined,
   });
   const [activeTab, setActiveTab] = useState<"shoes" | "users" | "backlog">(
     "shoes",
@@ -223,6 +227,8 @@ export default function AdminDashboard() {
       climbingDiscipline: "sport",
       volume: "medium",
       rubberTechnologyId: rubberTechnologies?.[0]?._id,
+      brandAggressiveness: undefined,
+      brandStiffness: undefined,
     });
   };
 
@@ -605,6 +611,48 @@ export default function AdminDashboard() {
                             </option>
                           ))}
                         </select>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-white/70 text-sm mb-1">
+                            Brand Aggressiveness (1–5)
+                          </label>
+                          <input
+                            type="number"
+                            min={1}
+                            max={5}
+                            step={1}
+                            placeholder="e.g. 4"
+                            value={newShoe.brandAggressiveness ?? ""}
+                            onChange={(e) =>
+                              setNewShoe({
+                                ...newShoe,
+                                brandAggressiveness: e.target.value ? Number(e.target.value) : undefined,
+                              })
+                            }
+                            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-white/70 text-sm mb-1">
+                            Brand Stiffness (1–5)
+                          </label>
+                          <input
+                            type="number"
+                            min={1}
+                            max={5}
+                            step={1}
+                            placeholder="e.g. 3"
+                            value={newShoe.brandStiffness ?? ""}
+                            onChange={(e) =>
+                              setNewShoe({
+                                ...newShoe,
+                                brandStiffness: e.target.value ? Number(e.target.value) : undefined,
+                              })
+                            }
+                            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
+                          />
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
