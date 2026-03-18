@@ -206,6 +206,25 @@ export const deleteUserShoe = mutation({
   },
 });
 
+export const getSoleMateUserCount = query({
+  args: {
+    footShape: v.string(),
+    footVolume: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const matchingUsers = await ctx.db
+      .query("users")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("footShape"), args.footShape),
+          q.eq(q.field("footVolume"), args.footVolume),
+        ),
+      )
+      .collect();
+    return matchingUsers.length;
+  },
+});
+
 export const getOutliersForShoe = query({
   args: {
     shoeId: v.id("shoes"),

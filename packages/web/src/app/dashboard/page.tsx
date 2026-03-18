@@ -19,6 +19,7 @@ import type { UserShoe } from '@/types/api';
 import { FullPageLoading } from '@/components/ui/loading';
 import ShoeImage from '@/components/ShoeImage';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
+import { useFootProfileStore } from '@/stores/footProfileStore';
 
 interface Profile {
   name?: string;
@@ -47,6 +48,7 @@ export default function Dashboard() {
   const [userShoes, setUserShoes] = useState<UserShoe[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { profile: footProfile } = useFootProfileStore();
 
   useEffect(() => {
     if (!isPending && session?.user) {
@@ -178,16 +180,21 @@ export default function Dashboard() {
               </AnimatedIcon>
             </motion.div>
 
-            {/* Match Accuracy */}
+            {/* Foot Profile Status */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.25 }}
-              className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between"
+              onClick={() => router.push('/foot-lab')}
+              className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between cursor-pointer hover:border-orange-500/30 transition-colors group"
             >
               <div>
-                <div className="font-tanker text-3xl text-white">98%</div>
-                <p className="font-sora text-neutral-500 text-xs">Match Accuracy</p>
+                <div className="font-tanker text-2xl text-white capitalize">
+                  {footProfile ? `${footProfile.shape}` : 'Not Set'}
+                </div>
+                <p className="font-sora text-neutral-500 text-xs">
+                  {footProfile ? `${footProfile.volume} Volume` : 'Foot Profile'}
+                </p>
               </div>
               <AnimatedIcon animation="spin" trigger="both" delay={0.25}>
                 <Zap className="w-8 h-8 text-orange-500" />
@@ -254,7 +261,7 @@ export default function Dashboard() {
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => router.push('/footchecker')}
+                onClick={() => router.push('/foot-lab')}
                 className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
               >
                 <div className="flex justify-between items-start">
@@ -266,8 +273,8 @@ export default function Dashboard() {
                   <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
                 </div>
                 <div>
-                  <h4 className="font-tanker text-xl text-white mb-1">Foot Profile</h4>
-                  <p className="font-sora text-neutral-500 text-xs">Update measurements</p>
+                  <h4 className="font-tanker text-xl text-white mb-1">Foot Lab</h4>
+                  <p className="font-sora text-neutral-500 text-xs">Profile &amp; insights</p>
                 </div>
               </motion.div>
 
