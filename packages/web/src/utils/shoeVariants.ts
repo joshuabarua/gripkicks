@@ -108,7 +108,8 @@ export function groupUserShoesByModel<T extends UserShoeLike>(userShoes: T[]) {
     if (!details) continue;
 
     const modelName = getStoredModelName(details);
-    const groupKey = `${details.brand.toLowerCase()}::${modelName.toLowerCase()}`;
+    const brandName = details.brand || "Unknown";
+    const groupKey = `${brandName.toLowerCase()}::${modelName.toLowerCase()}`;
     const existing = grouped.get(groupKey);
     const variant = {
       item,
@@ -143,7 +144,8 @@ export function groupShoesByModel<T extends ShoeLike>(shoes: T[]) {
 
   for (const item of shoes) {
     const modelName = getStoredModelName(item);
-    const groupKey = `${item.brand.toLowerCase()}::${modelName.toLowerCase()}`;
+    const brandName = item.brand || "Unknown";
+    const groupKey = `${brandName.toLowerCase()}::${modelName.toLowerCase()}`;
     const existing = grouped.get(groupKey);
     const variant = {
       item,

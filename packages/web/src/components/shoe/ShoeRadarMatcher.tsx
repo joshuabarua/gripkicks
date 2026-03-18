@@ -10,6 +10,9 @@ import { useFootProfileStore } from '@/stores/footProfileStore';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Heart, Target, User, Zap, Shield } from 'lucide-react';
+import { MatchScoreTooltip } from './MatchScoreTooltip';
+import { RealityCheck } from './RealityCheck';
+import { SoleMateSignals } from './SoleMateSignals';
 
 interface ShoeMetrics {
   comfort: number;
@@ -26,9 +29,15 @@ interface RadarEntryInput {
     brand: string;
     name: string;
     imageUrl?: string;
+    brandAggressiveness?: number;
+    brandStiffness?: number;
   };
   score: number;
   metrics: ShoeMetrics;
+  realityDelta: {
+    aggressiveness: number;
+    stiffness: number;
+  };
   breakdown: {
     footTypeCompatibility: number;
     volumeCompatibility: number;
@@ -36,6 +45,7 @@ interface RadarEntryInput {
     communityApproval: number;
     overallRating: number;
     learnedPreferenceBonus: number;
+    soleMateMatch: number;
   };
 }
 
@@ -217,6 +227,7 @@ export function ShoeRadarMatcher() {
         shoe: scored.shoe,
         score: scored.totalScore,
         metrics: scored.metrics,
+        realityDelta: scored.realityDelta,
         breakdown: scored.breakdown,
       })),
     );
@@ -472,11 +483,9 @@ export function ShoeRadarMatcher() {
 
                     <p className="text-sm text-neutral-500">{quadrant.description}</p>
 
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary" className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-                        Match {Math.round((shoe.score / 5) * 100)}
-                      </Badge>
-                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <MatchScoreTooltip score={shoe.score} breakdown={shoe.breakdown} />
+                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300 ml-2">
                         Community {shoe.breakdown.communityApproval.toFixed(1)}/5
                       </Badge>
                       <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
@@ -507,6 +516,23 @@ export function ShoeRadarMatcher() {
                       <MetricBar label="Versatility" value={shoe.metrics.versatility} />
                       <MetricBar label="Aggression" value={shoe.metrics.aggressiveness} />
                     </div>
+
+                    <div className="mt-4 space-y-3">
+                      <RealityCheck 
+                        label="Aggressiveness" 
+                        brandClaim={shoe.shoe.brandAggressiveness} 
+                        communityReality={shoe.metrics.aggressiveness}
+                        description="How aggressive the shoe feels compared to official marketing specs."
+                      />
+                      <RealityCheck 
+                        label="Stiffness" 
+                        brandClaim={shoe.shoe.brandStiffness} 
+                        communityReality={shoe.metrics.stability}
+                        description="Community consensus on support and stiffness compared to the brand's technical claims."
+                      />
+                    </div>
+                    
+                    <SoleMateSignals shoeId={shoe.shoe._id} />
                   </div>
                 </div>
               </CardContent>

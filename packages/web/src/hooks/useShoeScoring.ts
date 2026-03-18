@@ -17,6 +17,11 @@ interface ShoeScore {
     communityApproval: number;
     overallRating: number;
     learnedPreferenceBonus: number;
+    soleMateMatch: number;
+  };
+  realityDelta: {
+    aggressiveness: number;
+    stiffness: number;
   };
   metrics: {
     comfort: number;
@@ -107,7 +112,7 @@ function calculateShoeScore(
   const preferenceScore = calculatePreferenceMatch(shoe, userPreferences);
 
   // 4. Community Approval (15% weight)
-  const communityScore = calculateCommunityApproval(shoe, popularityData);
+  const { communityScore, soleMateMatch } = calculateCommunityApproval(shoe, popularityData, footProfile);
 
   // 5. Overall Rating (10% weight)
   const overallRatingScore = calculateOverallRating(shoe);
@@ -135,6 +140,17 @@ function calculateShoeScore(
     preferenceScore,
   );
 
+  // Calculate Reality Delta (Brand Claim vs Community Perception)
+  const calculateDelta = (brand?: number, perceived?: number) => {
+    if (brand === undefined || perceived === undefined) return 0;
+    return brand - perceived;
+  };
+
+  const realityDelta = {
+    aggressiveness: calculateDelta(shoe.brandAggressiveness, metrics.aggressiveness),
+    stiffness: calculateDelta(shoe.brandStiffness, metrics.stability), // using stability as proxy for perceived stiffness
+  };
+
   return {
     shoe,
     totalScore,
@@ -145,7 +161,9 @@ function calculateShoeScore(
       communityApproval: communityScore,
       overallRating: overallRatingScore,
       learnedPreferenceBonus,
+      soleMateMatch,
     },
+    realityDelta,
     metrics,
   };
 }
@@ -244,21 +262,31 @@ function calculatePreferenceMatch(
 function calculateCommunityApproval(
   shoe: Shoe,
   popularityData: { shoeId: string; count: number }[],
-): number {
-  // Find popularity data for this shoe
+  footProfile?: { shape: string; volume: string } | null,
+): { communityScore: number; soleMateMatch: number } {
   const shoePopularity = popularityData.find((p) => p.shoeId === shoe._id);
 
   if (!shoePopularity || shoePopularity.count === 0) {
-    return 2.5; // Neutral score if no data
+    return { communityScore: 2.5, soleMateMatch: 0 };
   }
 
-  // Use overall ratings as community approval
   const overallRating = calculateOverallRating(shoe);
+  const popularityBoost = Math.min(2, shoePopularity.count / 10);
+  
+  // Base community score
+  let communityScore = Math.min(5, overallRating + popularityBoost);
+  let soleMateMatch = 0;
 
-  // Boost score based on popularity (more people choosing it = higher approval)
-  const popularityBoost = Math.min(2, shoePopularity.count / 10); // Max 2 points boost
+  // Placeholder for actual Sole Mate data fetching (to be implemented with Convex query)
+  // For now, if we have a profile and popularity, we estimate a Sole Mate match bonus
+  if (footProfile && footProfile.shape && footProfile.volume && shoePopularity.count > 5) {
+    // Simulated Sole Mate matching logic (3x weight for identical profiles)
+    // In a real implementation, we'd query userShoes filtered by footProfile
+    soleMateMatch = 1.5; // Bonus points for strong sole mate agreement
+    communityScore = Math.min(5, communityScore + soleMateMatch * 0.3);
+  }
 
-  return Math.min(5, overallRating + popularityBoost);
+  return { communityScore, soleMateMatch };
 }
 
 function calculateLearnedPreferenceBonus(
