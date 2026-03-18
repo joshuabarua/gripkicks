@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Heart, Target, User, Zap, Shield } from 'lucide-react';
 import { MatchScoreTooltip } from './MatchScoreTooltip';
 import { RealityCheck } from './RealityCheck';
+import { SoleMateSignals } from './SoleMateSignals';
 
 interface ShoeMetrics {
   comfort: number;
@@ -530,6 +531,8 @@ export function ShoeRadarMatcher() {
                         description="Community consensus on support and stiffness compared to the brand's technical claims."
                       />
                     </div>
+                    
+                    <SoleMateSignals shoeId={shoe.shoe._id} />
                   </div>
                 </div>
               </CardContent>
