@@ -205,3 +205,80 @@ export const deleteUserShoe = mutation({
     await ctx.db.delete(args.userShoeId);
   },
 });
+
+export const getSoleMateAggregates = query({
+  args: {
+    footShape: v.string(),
+    footVolume: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const matchingUsers = await ctx.db
+      .query("users")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("footShape"), args.footShape),
+          q.eq(q.field("footVolume"), args.footVolume),
+        ),
+      )
+      .collect();
+
+    if (matchingUsers.length === 0) return [];
+
+    const aggregates = new Map<
+      string,
+      {
+        comfortTotal: number;
+        comfortCount: number;
+        performanceTotal: number;
+        performanceCount: number;
+        durabilityTotal: number;
+        durabilityCount: number;
+        ownerCount: number;
+      }
+    >();
+
+    for (const user of matchingUsers) {
+      const userShoes = await ctx.db
+        .query("userShoes")
+        .withIndex("by_userId", (q) => q.eq("userId", user._id))
+        .collect();
+
+      for (const userShoe of userShoes) {
+        const key = userShoe.shoeId as string;
+        const agg = aggregates.get(key) ?? {
+          comfortTotal: 0,
+          comfortCount: 0,
+          performanceTotal: 0,
+          performanceCount: 0,
+          durabilityTotal: 0,
+          durabilityCount: 0,
+          ownerCount: 0,
+        };
+        agg.ownerCount += 1;
+        if (userShoe.comfortScore !== undefined) {
+          agg.comfortTotal += userShoe.comfortScore;
+          agg.comfortCount += 1;
+        }
+        if (userShoe.performanceRating !== undefined) {
+          agg.performanceTotal += userShoe.performanceRating;
+          agg.performanceCount += 1;
+        }
+        if (userShoe.durabilityRating !== undefined) {
+          agg.durabilityTotal += userShoe.durabilityRating;
+          agg.durabilityCount += 1;
+        }
+        aggregates.set(key, agg);
+      }
+    }
+
+    return Array.from(aggregates.entries()).map(([shoeId, agg]) => ({
+      shoeId,
+      ownerCount: agg.ownerCount,
+      avgComfort: agg.comfortCount > 0 ? agg.comfortTotal / agg.comfortCount : null,
+      avgPerformance:
+        agg.performanceCount > 0 ? agg.performanceTotal / agg.performanceCount : null,
+      avgDurability:
+        agg.durabilityCount > 0 ? agg.durabilityTotal / agg.durabilityCount : null,
+    }));
+  },
+});

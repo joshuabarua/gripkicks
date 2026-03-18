@@ -5,6 +5,14 @@ import type { Doc } from "convex/_generated/dataModel";
 import { useFootProfileStore } from "@/stores/footProfileStore";
 import { useUserPreferenceLearning } from "./useUserPreferenceLearning";
 
+interface SoleMateAggregate {
+  shoeId: string;
+  ownerCount: number;
+  avgComfort: number | null;
+  avgPerformance: number | null;
+  avgDurability: number | null;
+}
+
 type Shoe = Doc<"shoes">;
 
 interface ShoeScore {
@@ -65,6 +73,18 @@ export function useShoeScoring(userPreferences?: {
     return userPreferences;
   }, [isLearningReady, userPreferenceProfile, userPreferences]);
 
+  const soleMateData = useQuery(
+    api.stash.getSoleMateAggregates,
+    footProfile?.shape && footProfile?.volume
+      ? { footShape: footProfile.shape, footVolume: footProfile.volume }
+      : "skip",
+  );
+
+  const soleMateMap = useMemo(() => {
+    if (!soleMateData) return new Map<string, SoleMateAggregate>();
+    return new Map(soleMateData.map((s) => [s.shoeId, s]));
+  }, [soleMateData]);
+
   const scoredShoes = useMemo(() => {
     if (!shoes || !popularityData) return [];
 
@@ -76,6 +96,7 @@ export function useShoeScoring(userPreferences?: {
           effectivePreferences,
           popularityData,
           userPreferenceProfile,
+          soleMateMap,
         );
         return score;
       })
@@ -86,6 +107,7 @@ export function useShoeScoring(userPreferences?: {
     footProfile,
     effectivePreferences,
     userPreferenceProfile,
+    soleMateMap,
   ]);
 
   const isLoading = shoes === undefined || popularityData === undefined;
@@ -101,6 +123,7 @@ function calculateShoeScore(
     | undefined,
   popularityData: { shoeId: string; count: number }[],
   learnedPreferences?: LearnedPreferences | null,
+  soleMateMap?: Map<string, SoleMateAggregate>,
 ): ShoeScore {
   // 1. Foot Type Compatibility (30% weight)
   const footTypeScore = calculateFootTypeCompatibility(shoe, footProfile);
@@ -112,7 +135,11 @@ function calculateShoeScore(
   const preferenceScore = calculatePreferenceMatch(shoe, userPreferences);
 
   // 4. Community Approval (15% weight)
-  const { communityScore, soleMateMatch } = calculateCommunityApproval(shoe, popularityData, footProfile);
+  const { communityScore, soleMateMatch } = calculateCommunityApproval(
+    shoe,
+    popularityData,
+    soleMateMap,
+  );
 
   // 5. Overall Rating (10% weight)
   const overallRatingScore = calculateOverallRating(shoe);
@@ -138,6 +165,7 @@ function calculateShoeScore(
     footTypeScore,
     volumeScore,
     preferenceScore,
+    soleMateMap?.get(shoe._id),
   );
 
   // Calculate Reality Delta (Brand Claim vs Community Perception)
@@ -259,10 +287,15 @@ function calculatePreferenceMatch(
   return (comfortMatch + performanceMatch + durabilityMatch) / 3;
 }
 
+function blend(general: number, soleMate: number | null, soleMateWeight = 3): number {
+  if (soleMate === null) return general;
+  return (general + soleMate * soleMateWeight) / (1 + soleMateWeight);
+}
+
 function calculateCommunityApproval(
   shoe: Shoe,
   popularityData: { shoeId: string; count: number }[],
-  footProfile?: { shape: string; volume: string } | null,
+  soleMateMap?: Map<string, SoleMateAggregate>,
 ): { communityScore: number; soleMateMatch: number } {
   const shoePopularity = popularityData.find((p) => p.shoeId === shoe._id);
 
@@ -270,21 +303,20 @@ function calculateCommunityApproval(
     return { communityScore: 2.5, soleMateMatch: 0 };
   }
 
-  const overallRating = calculateOverallRating(shoe);
-  const popularityBoost = Math.min(2, shoePopularity.count / 10);
-  
-  // Base community score
-  let communityScore = Math.min(5, overallRating + popularityBoost);
-  let soleMateMatch = 0;
+  const soleMate = soleMateMap?.get(shoe._id) ?? null;
+  const soleMateMatch = soleMate?.ownerCount ?? 0;
 
-  // Placeholder for actual Sole Mate data fetching (to be implemented with Convex query)
-  // For now, if we have a profile and popularity, we estimate a Sole Mate match bonus
-  if (footProfile && footProfile.shape && footProfile.volume && shoePopularity.count > 5) {
-    // Simulated Sole Mate matching logic (3x weight for identical profiles)
-    // In a real implementation, we'd query userShoes filtered by footProfile
-    soleMateMatch = 1.5; // Bonus points for strong sole mate agreement
-    communityScore = Math.min(5, communityScore + soleMateMatch * 0.3);
-  }
+  const generalComfort = shoe.avgComfortScore ?? 2.5;
+  const generalPerformance = shoe.avgPerformanceRating ?? 2.5;
+  const generalDurability = shoe.avgDurabilityRating ?? 2.5;
+
+  const blendedComfort = blend(generalComfort, soleMate?.avgComfort ?? null);
+  const blendedPerformance = blend(generalPerformance, soleMate?.avgPerformance ?? null);
+  const blendedDurability = blend(generalDurability, soleMate?.avgDurability ?? null);
+
+  const blendedRating = (blendedComfort + blendedPerformance + blendedDurability) / 3;
+  const popularityBoost = Math.min(2, shoePopularity.count / 10);
+  const communityScore = Math.min(5, blendedRating + popularityBoost);
 
   return { communityScore, soleMateMatch };
 }
@@ -359,16 +391,20 @@ function calculateRadarMetrics(
   footTypeScore: number,
   volumeScore: number,
   preferenceScore: number,
+  soleMate?: SoleMateAggregate,
 ): ShoeScore["metrics"] {
-  // Comfort (base rating + compatibility factors)
-  const comfort =
-    (shoe.avgComfortScore || 2.5) + (footTypeScore + volumeScore) / 5;
+  const baseComfort = blend(shoe.avgComfortScore ?? 2.5, soleMate?.avgComfort ?? null);
+  const basePerformance = blend(shoe.avgPerformanceRating ?? 2.5, soleMate?.avgPerformance ?? null);
+  const baseDurability = blend(shoe.avgDurabilityRating ?? 2.5, soleMate?.avgDurability ?? null);
 
-  // Performance (base rating + user preference)
-  const performance = (shoe.avgPerformanceRating || 2.5) + preferenceScore / 5;
+  // Comfort (blended rating + compatibility factors)
+  const comfort = baseComfort + (footTypeScore + volumeScore) / 5;
 
-  // Durability (base rating)
-  const durability = shoe.avgDurabilityRating || 2.5;
+  // Performance (blended rating + user preference)
+  const performance = basePerformance + preferenceScore / 5;
+
+  // Durability (blended rating)
+  const durability = baseDurability;
 
   // Aggressiveness (convert to 1-5 scale)
   let aggressiveness = 2.5;
