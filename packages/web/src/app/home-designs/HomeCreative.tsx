@@ -140,7 +140,7 @@ export default function HomeCreative() {
               <div className="w-fluid-3xl h-fluid-3xl flex items-center justify-center bg-orange-500/5 rounded-2xl group-hover:bg-orange-500/10 transition-all duration-500">
                 <Footprints className="text-orange-500" size={32} />
               </div>
-              <h3 className="font-tanker text-fluid-4xl leading-none">Foot Lab</h3>
+              <h3 className="font-tanker text-fluid-4xl leading-none">Foot Scan</h3>
               <p className="font-sora text-fluid-base text-neutral-500 leading-snug tracking-tight">
                 Precise morphology analysis. Egyptian, Roman, Greek—know your shape, find your shoe.
               </p>

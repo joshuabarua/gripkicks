@@ -9,16 +9,14 @@ import {
   Star,
   ArrowUpRight,
   TrendingUp,
-  Activity,
   Heart,
-  Zap
+  Target,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { fetchApi } from '@/lib/api-client';
 import type { UserShoe } from '@/types/api';
 import { FullPageLoading } from '@/components/ui/loading';
 import ShoeImage from '@/components/ShoeImage';
-import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { useFootProfileStore } from '@/stores/footProfileStore';
 
 interface Profile {
@@ -59,9 +57,7 @@ export default function Dashboard() {
   const loadUserData = async () => {
     try {
       const profileResult = await fetchApi<Profile>('/api/v1/profile');
-      if (profileResult.isOk()) {
-        setProfile(profileResult.value);
-      }
+      if (profileResult.isOk()) setProfile(profileResult.value);
 
       const shoesResult = await fetchApi<UserShoe[]>('/api/v1/stash');
       if (shoesResult.isOk()) {
@@ -74,341 +70,326 @@ export default function Dashboard() {
     }
   };
 
-  if (isPending || isLoading) {
-    return <FullPageLoading />;
-  }
+  if (isPending || isLoading) return <FullPageLoading />;
+  if (!session?.user) { router.push('/auth/login'); return null; }
 
-  if (!session?.user) {
-    router.push('/auth/login');
-    return null;
-  }
-
-  const userName = profile?.name || session.user.name || 'Climber';
+  const firstName = (profile?.name || session.user.name || 'Climber').split(' ')[0];
   const avgComfort = userShoes.length > 0
-    ? (userShoes.reduce((acc, shoe) => acc + (shoe.comfortScore || 0), 0) / userShoes.length).toFixed(1)
-    : '-';
-  const favCount = Array.isArray(userShoes) ? userShoes.filter(shoe => shoe.isFavourite).length : 0;
+    ? (userShoes.reduce((acc, s) => acc + (s.comfortScore || 0), 0) / userShoes.length).toFixed(1)
+    : '—';
+  const favCount = userShoes.filter(s => s.isFavourite).length;
+  const footShape = footProfile?.shape || profile?.footShape;
+  const footVolume = footProfile?.volume || profile?.footVolume;
+  const hasFootProfile = !!(footShape && footVolume);
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      {/* Marquee */}
-      <section className="py-4 bg-orange-500/10 backdrop-blur-sm">
-        <MarqueeText>DASHBOARD • YOUR STATS • GRIP KICKS • </MarqueeText>
+      <section className="py-4 bg-orange-500/10 backdrop-blur-sm overflow-hidden">
+        <MarqueeText>YOUR GEAR • YOUR STATS • GRIP KICKS • </MarqueeText>
       </section>
 
-      <section className="px-6 md:px-12 lg:px-16 py-12">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mb-16"
-          >
+      <section className="px-6 md:px-12 lg:px-16 py-12 max-w-7xl mx-auto">
+
+        {/* Hero Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-12 mb-12"
+        >
+          <div>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Your Dashboard</p>
-            <h1 className="font-tanker text-5xl md:text-7xl lg:text-8xl">
-              Hey {userName.split(' ')[0]},<br />
+            <h1 className="font-tanker text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
+              Hey {firstName},<br />
               <span className="text-orange-500">ready to climb?</span>
             </h1>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => router.push('/stash')}
+            className="group flex items-center gap-3 font-tanker text-2xl text-orange-500 hover:text-orange-400 transition-colors shrink-0"
+          >
+            View Collection
+            <div className="w-10 h-10 rounded-full border border-orange-500/30 flex items-center justify-center group-hover:border-orange-500 transition-colors">
+              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
+            </div>
+          </motion.button>
+        </motion.div>
+
+        {/* Stats Bento */}
+        <div className="grid grid-cols-12 gap-4 auto-rows-[140px] mb-12">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="col-span-12 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between"
+          >
+            <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+              <Plus className="w-6 h-6 text-orange-500" />
+            </div>
+            <div>
+              <div className="font-tanker text-7xl text-white leading-none">{userShoes.length}</div>
+              <p className="font-sora text-neutral-500 text-sm mt-2">Shoes in your collection</p>
+            </div>
           </motion.div>
 
-          {/* Stats Bento Grid */}
-          <div className="grid grid-cols-12 gap-4 auto-rows-[140px] mb-12">
-            {/* Total Shoes - Large */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="col-span-12 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between"
-            >
-              <AnimatedIcon animation="pop" trigger="scroll" delay={0}>
-                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                  <Plus className="w-6 h-6 text-orange-500" />
-                </div>
-              </AnimatedIcon>
-              <div>
-                <div className="font-tanker text-5xl text-white">{userShoes.length}</div>
-                <p className="font-sora text-neutral-500 text-sm mt-1">Total Shoes</p>
-              </div>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.08 }}
+            className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between"
+          >
+            <div>
+              <div className="font-tanker text-4xl text-white">{favCount}</div>
+              <p className="font-sora text-neutral-500 text-xs mt-1">Favorites</p>
+            </div>
+            <Heart className="w-8 h-8 text-orange-500" />
+          </motion.div>
 
-            {/* Favorites */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between"
-            >
-              <div>
-                <div className="font-tanker text-3xl text-white">{favCount}</div>
-                <p className="font-sora text-neutral-500 text-xs">Favorites</p>
-              </div>
-              <AnimatedIcon animation="pulse" trigger="both" delay={0.1}>
-                <Heart className="w-8 h-8 text-orange-500" />
-              </AnimatedIcon>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.12 }}
+            className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between"
+          >
+            <div>
+              <div className="font-tanker text-4xl text-white">{avgComfort}</div>
+              <p className="font-sora text-neutral-500 text-xs mt-1">Avg Comfort</p>
+            </div>
+            <Star className="w-8 h-8 text-orange-500" />
+          </motion.div>
 
-            {/* Avg Comfort */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.15 }}
-              className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between"
-            >
-              <div>
-                <div className="font-tanker text-3xl text-white">{avgComfort}</div>
-                <p className="font-sora text-neutral-500 text-xs">Avg Comfort</p>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.16 }}
+            onClick={() => router.push('/footscan')}
+            className="col-span-12 md:col-span-8 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between cursor-pointer hover:border-orange-500/30 transition-all group"
+          >
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-orange-500/20 transition-colors">
+                <Footprints className="w-6 h-6 text-orange-500" />
               </div>
-              <AnimatedIcon animation="float" trigger="both" delay={0.15}>
-                <Star className="w-8 h-8 text-orange-500" />
-              </AnimatedIcon>
-            </motion.div>
+              <div>
+                {hasFootProfile ? (
+                  <>
+                    <div className="font-tanker text-2xl text-white capitalize">
+                      {footShape} <span className="text-white/30">·</span> {footVolume} volume
+                    </div>
+                    <p className="font-sora text-neutral-500 text-xs mt-0.5">Your foot profile — tap to update</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="font-tanker text-xl text-orange-500">Set up your foot profile</div>
+                    <p className="font-sora text-neutral-500 text-xs mt-0.5">Takes 30 seconds — unlocks better matches</p>
+                  </>
+                )}
+              </div>
+            </div>
+            <ArrowUpRight className="w-5 h-5 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-45 transition-all flex-shrink-0" />
+          </motion.div>
+        </div>
 
-            {/* Foot Shape */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between"
+        {/* Where to next */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="border-t border-white/5 pt-12 mb-12"
+        >
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <h2 className="font-tanker text-4xl md:text-5xl leading-none">Where to next?</h2>
+            <button
+              onClick={() => router.push('/findmyshoe')}
+              className="group flex items-center gap-2 font-tanker text-xl text-orange-500 hover:text-orange-400 transition-colors"
             >
-              <div>
-                <div className="font-tanker text-2xl text-white capitalize">{profile?.footShape || 'Not set'}</div>
-                <p className="font-sora text-neutral-500 text-xs">Foot Shape</p>
-              </div>
-              <AnimatedIcon animation="bounce" trigger="both" delay={0.2}>
-                <Footprints className="w-8 h-8 text-orange-500" />
-              </AnimatedIcon>
-            </motion.div>
-
-            {/* Foot Profile Status */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.25 }}
-              onClick={() => router.push('/foot-lab')}
-              className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between cursor-pointer hover:border-orange-500/30 transition-colors group"
-            >
-              <div>
-                <div className="font-tanker text-2xl text-white capitalize">
-                  {footProfile ? `${footProfile.shape}` : 'Not Set'}
-                </div>
-                <p className="font-sora text-neutral-500 text-xs">
-                  {footProfile ? `${footProfile.volume} Volume` : 'Foot Profile'}
-                </p>
-              </div>
-              <AnimatedIcon animation="spin" trigger="both" delay={0.25}>
-                <Zap className="w-8 h-8 text-orange-500" />
-              </AnimatedIcon>
-            </motion.div>
+              Find my shoe
+              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
+            </button>
           </div>
 
-          {/* Quick Actions */}
+          <div className="grid grid-cols-12 gap-4">
+            <motion.div
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.985 }}
+              onClick={() => router.push('/stash')}
+              className="col-span-12 md:col-span-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 flex flex-col justify-between cursor-pointer group relative overflow-hidden min-h-[180px]"
+            >
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-black/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
+              </div>
+              <div className="relative flex justify-between items-start">
+                <h3 className="font-tanker text-4xl md:text-5xl text-black">Shoe Sanctuary</h3>
+                <div className="w-12 h-12 bg-black/10 rounded-full flex items-center justify-center group-hover:bg-black/20 transition-colors">
+                  <ArrowUpRight className="w-6 h-6 text-black group-hover:rotate-45 transition-transform" />
+                </div>
+              </div>
+              <p className="relative font-sora text-black/70 max-w-md">Your full climbing shoe collection</p>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.985 }}
+              onClick={() => router.push('/findmyshoe')}
+              className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
+            >
+              <div className="flex justify-between items-start">
+                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-orange-500" />
+                </div>
+                <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
+              </div>
+              <div>
+                <h4 className="font-tanker text-xl text-white mb-1">Sole Mate</h4>
+                <p className="font-sora text-neutral-500 text-xs">Discover shoes made for you</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.985 }}
+              onClick={() => router.push('/footscan')}
+              className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
+            >
+              <div className="flex justify-between items-start">
+                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+                  <Footprints className="w-6 h-6 text-orange-500" />
+                </div>
+                <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
+              </div>
+              <div>
+                <h4 className="font-tanker text-xl text-white mb-1">Foot Scan</h4>
+                <p className="font-sora text-neutral-500 text-xs">Update your foot profile</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.985 }}
+              onClick={() => router.push('/matcher')}
+              className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
+            >
+              <div className="flex justify-between items-start">
+                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+                  <Target className="w-6 h-6 text-orange-500" />
+                </div>
+                <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
+              </div>
+              <div>
+                <h4 className="font-tanker text-xl text-white mb-1">Radar</h4>
+                <p className="font-sora text-neutral-500 text-xs">Visual shoe matcher</p>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Recent Shoes */}
+        {userShoes.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-12"
+            className="border-t border-white/5 pt-12"
           >
-            <p className="font-mono text-xs text-orange-500 mb-4 tracking-[0.3em]">[QUICK_ACTIONS]</p>
-            <div className="grid grid-cols-12 gap-4">
-              {/* Shoe Sanctuary CTA */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => router.push('/stash')}
-                className="col-span-12 md:col-span-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 flex flex-col justify-between cursor-pointer group relative overflow-hidden min-h-[180px]"
-              >
-                <div className="absolute inset-0 opacity-20">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-black/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-                  <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
-                </div>
-                <div className="relative flex justify-between items-start">
-                  <div>
-                    <p className="font-mono text-[10px] text-black/60 mb-2">[COLLECTION]</p>
-                    <h3 className="font-tanker text-4xl md:text-5xl text-black">Shoe Sanctuary</h3>
-                  </div>
-                  <div className="w-12 h-12 bg-black/10 rounded-full flex items-center justify-center group-hover:bg-black/20 transition-colors">
-                    <ArrowUpRight className="w-6 h-6 text-black group-hover:rotate-45 transition-transform" />
-                  </div>
-                </div>
-                <p className="relative font-sora text-black/70 max-w-md">
-                  View and manage your climbing shoe collection
-                </p>
-              </motion.div>
+            <div className="flex items-end justify-between mb-8">
+              <h2 className="font-tanker text-4xl md:text-5xl leading-none">Recent Shoes</h2>
+              {userShoes.length > 3 && (
+                <button
+                  onClick={() => router.push('/stash')}
+                  className="group flex items-center gap-2 font-tanker text-xl text-orange-500 hover:text-orange-400 transition-colors"
+                >
+                  View all
+                  <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
+                </button>
+              )}
+            </div>
+            <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
+              <div className="space-y-3">
+                {userShoes.slice(0, 3).map((shoe, index) => {
+                  const details = shoe.shoe ?? shoe.shoeDetails;
+                  const brand = details?.brand ?? 'Unknown Brand';
+                  const name = details?.name ?? 'Unknown Shoe';
+                  const imageUrl = details?.imageUrl;
+                  const slug = details?.slug;
+                  const gender = details?.gender;
 
-              {/* Find Matches */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => router.push('/findmyshoe')}
-                className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
-              >
-                <div className="flex justify-between items-start">
-                  <AnimatedIcon animation="float" trigger="hover">
-                    <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-orange-500" />
-                    </div>
-                  </AnimatedIcon>
-                  <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
-                </div>
-                <div>
-                  <h4 className="font-tanker text-xl text-white mb-1">Find Matches</h4>
-                  <p className="font-sora text-neutral-500 text-xs">Discover shoes for you</p>
-                </div>
-              </motion.div>
-
-              {/* Foot Lab */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => router.push('/foot-lab')}
-                className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
-              >
-                <div className="flex justify-between items-start">
-                  <AnimatedIcon animation="bounce" trigger="hover">
-                    <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                      <Footprints className="w-6 h-6 text-orange-500" />
-                    </div>
-                  </AnimatedIcon>
-                  <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
-                </div>
-                <div>
-                  <h4 className="font-tanker text-xl text-white mb-1">Foot Lab</h4>
-                  <p className="font-sora text-neutral-500 text-xs">Profile &amp; insights</p>
-                </div>
-              </motion.div>
-
-              {/* Profile */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => router.push('/profile')}
-                className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
-              >
-                <div className="flex justify-between items-start">
-                  <AnimatedIcon animation="pulse" trigger="hover">
-                    <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                      <Activity className="w-6 h-6 text-orange-500" />
-                    </div>
-                  </AnimatedIcon>
-                  <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
-                </div>
-                <div>
-                  <h4 className="font-tanker text-xl text-white mb-1">Account</h4>
-                  <p className="font-sora text-neutral-500 text-xs">Manage your profile</p>
-                </div>
-              </motion.div>
-
+                  return (
+                    <motion.div
+                      key={shoe._id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.08 }}
+                      onClick={() => router.push('/stash')}
+                      className="flex items-center justify-between p-4 rounded-2xl bg-neutral-800/50 hover:bg-neutral-800 border border-transparent hover:border-orange-500/10 cursor-pointer transition-all group"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
+                          <ShoeImage
+                            brand={brand}
+                            shoeName={name}
+                            imageUrl={imageUrl}
+                            slug={slug}
+                            className="p-2"
+                            transformation={[{ height: 56, width: 56, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 75 }]}
+                            gender={gender}
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-sora font-medium text-white group-hover:text-orange-500 transition-colors">{name}</h3>
+                          <p className="font-sora text-[10px] text-neutral-600">{brand}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="flex items-center gap-1">
+                            <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
+                            <span className="font-sora text-xs text-neutral-400">{shoe.comfortScore || 0}</span>
+                          </div>
+                          <span className="font-sora text-[10px] text-neutral-600">Comfort</span>
+                        </div>
+                        <ArrowUpRight className="w-4 h-4 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
+        )}
 
-          {/* Recent Shoes */}
-          {userShoes.length > 0 && (
+        {userShoes.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="border-t border-white/5 pt-16 text-center"
+          >
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6"
             >
-              <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Recent Shoes</p>
-              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
-                <div className="space-y-4">
-                  {userShoes.slice(0, 3).map((shoe, index) => {
-                    const details = shoe.shoe ?? shoe.shoeDetails;
-                    const brand = details?.brand ?? 'Unknown Brand';
-                    const name = details?.name ?? 'Unknown Shoe';
-                    const imageUrl = details?.imageUrl;
-                    const slug = details?.slug;
-                    const gender = details?.gender;
-
-                    return (
-                      <motion.div
-                        key={shoe._id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                        onClick={() => router.push('/stash')}
-                        className="flex items-center justify-between p-4 rounded-2xl bg-neutral-800/50 hover:bg-neutral-800 border border-neutral-800 hover:border-orange-500/20 cursor-pointer transition-all group"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
-                            <ShoeImage
-                              brand={brand}
-                              shoeName={name}
-                              imageUrl={imageUrl}
-                              slug={slug}
-                              className="p-2"
-                              transformation={[{ height: 56, width: 56, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 75 }]}
-                              gender={gender}
-                            />
-                          </div>
-                          <div>
-                            <h3 className="font-sora font-medium text-white group-hover:text-orange-500 transition-colors">{name}</h3>
-                            <p className="font-sora text-[10px] text-neutral-600">{brand}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <div className="flex items-center gap-1">
-                              <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
-                              <span className="font-sora text-xs text-neutral-400">{shoe.comfortScore || 0}</span>
-                            </div>
-                            <span className="font-sora text-[10px] text-neutral-600">Comfort</span>
-                          </div>
-                          <ArrowUpRight className="w-4 h-4 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-                {userShoes.length > 3 && (
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    onClick={() => router.push('/stash')}
-                    className="w-full mt-4 py-3 rounded-2xl border border-neutral-800 hover:border-orange-500/30 text-neutral-400 hover:text-orange-500 font-sora text-sm transition-all flex items-center justify-center gap-2"
-                  >
-                    View All Shoes
-                    <ArrowUpRight className="w-4 h-4" />
-                  </motion.button>
-                )}
-              </div>
+              <Plus className="w-10 h-10 text-orange-500" />
             </motion.div>
-          )}
-
-          {/* Empty State */}
-          {userShoes.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-center py-16"
+            <h3 className="font-tanker text-4xl text-white mb-3">NO SHOES YET</h3>
+            <p className="font-sora text-neutral-500 mb-8 max-w-sm mx-auto">
+              Add your shoes so we can start figuring out what fits you best
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => router.push('/stash')}
+              className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors"
             >
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6"
-              >
-                <Plus className="w-10 h-10 text-orange-500" />
-              </motion.div>
-              <h3 className="font-tanker text-3xl text-white mb-2">NO SHOES YET</h3>
-              <p className="font-sora text-neutral-500 mb-6">
-                Add your shoes so we can start figuring out what fits you best
-              </p>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => router.push('/stash')}
-                className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors"
-              >
-                ADD YOUR FIRST SHOE
-              </motion.button>
-            </motion.div>
-          )}
-        </div>
+              ADD YOUR FIRST SHOE
+            </motion.button>
+          </motion.div>
+        )}
       </section>
 
-      {/* Bottom Marquee */}
-      <section className="py-8 bg-orange-500 overflow-hidden">
+      <section className="py-8 bg-orange-500 overflow-hidden mt-16">
         <motion.div
           animate={{ x: [0, -1000] }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -416,11 +397,11 @@ export default function Dashboard() {
         >
           {Array(10).fill(null).map((_, i) => (
             <span key={i} className="font-tanker text-2xl text-black/80">
-              TRACK • ANALYZE • CLIMB • REPEAT •
+              SCAN • MATCH • CLIMB • REPEAT •
             </span>
           ))}
         </motion.div>
       </section>
-    </main >
+    </main>
   );
 }

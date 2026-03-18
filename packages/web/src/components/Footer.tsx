@@ -7,7 +7,7 @@ import { FooterGrippy } from "./GrippyKickkyy";
 const footerLinks = {
   product: [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Foot Lab", href: "/footchecker" },
+    { title: "Foot Scan", href: "/footscan" },
     { title: "Shoe Sanctuary", href: "/stash" },
     { title: "Sole Mate", href: "/findmyshoe" },
   ],
@@ -36,9 +36,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-4">
-              [PRODUCT]
-            </p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 mb-4">Product</p>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.href}>
@@ -54,9 +52,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-4">
-              [COMPANY]
-            </p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 mb-4">Company</p>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.href}>

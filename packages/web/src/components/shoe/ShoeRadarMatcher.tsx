@@ -8,7 +8,6 @@ import { useShoeScoring } from '@/hooks/useShoeScoring';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFootProfileStore } from '@/stores/footProfileStore';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { Heart, Target, User, Zap, Shield } from 'lucide-react';
 import { MatchScoreTooltip } from './MatchScoreTooltip';
 import { RealityCheck } from './RealityCheck';
@@ -221,7 +220,6 @@ export function ShoeRadarMatcher() {
 
   const recommendedShoes = useMemo(() => {
     if (!scoredShoes || scoredShoes.length === 0) return [];
-
     return buildVisibleRadarPositions(
       scoredShoes.slice(0, recommendationLimit).map((scored) => ({
         shoe: scored.shoe,
@@ -255,122 +253,121 @@ export function ShoeRadarMatcher() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-neutral-500">Loading shoe radar...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4" />
+          <p className="font-sora text-neutral-500 text-sm">Loading shoe radar...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-4 py-6 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-white">Shoe Radar</h1>
-        <Link
-          href="/radar-lab"
-          className="inline-flex items-center rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-orange-500/40 hover:text-white"
-        >
-          Public radar
-        </Link>
+    <div className="w-full max-w-[1440px] mx-auto px-4 py-8 sm:px-6 lg:px-8">
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">Shoe Matcher</p>
+          <h1 className="font-tanker text-5xl md:text-6xl text-white leading-none">RADAR</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <Badge className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-4 py-1.5 font-sora">
+            Top {recommendationLimit} {recommendationLimit === 1 ? 'match' : 'matches'}
+          </Badge>
+          <Link
+            href="/radar-lab"
+            className="font-sora inline-flex items-center rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-orange-500/40 hover:text-white"
+          >
+            Public radar
+          </Link>
+        </div>
       </div>
 
-      <div className="mb-6 grid grid-cols-1 xl:grid-cols-[1.4fr_1fr] gap-4">
-        <div className="rounded-3xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="space-y-3">
-              <Badge className="w-fit bg-orange-500/10 text-orange-400 border border-orange-500/20 px-4 py-1.5">
-                Showing top {recommendationLimit} {recommendationLimit === 1 ? 'shoe' : 'shoes'}
-              </Badge>
-              {leadShoe && leadQuadrant && (
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.28em] text-neutral-500 mb-2">Lead profile</p>
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    <Badge className={`${leadQuadrant.bgColor} ${leadQuadrant.borderColor} border ${leadQuadrant.accentClass}`}>
-                      {leadQuadrant.name}
-                    </Badge>
-                    <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
-                      {leadShoe.descriptors.horizontalLabel}
-                    </Badge>
-                    <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
-                      {leadShoe.descriptors.verticalLabel}
-                    </Badge>
-                  </div>
-                  <h2 className="text-2xl font-semibold text-white">
-                    {leadShoe.shoe.brand} {leadShoe.shoe.name}
-                  </h2>
-                  <p className="text-sm text-neutral-400 mt-2 max-w-2xl">
-                    {leadQuadrant.description}
-                  </p>
+      {/* Glowing Top Match hero */}
+      {leadShoe && leadQuadrant && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="rounded-3xl border border-orange-500/40 bg-neutral-950 p-6 sm:p-8 mb-6 shadow-[0_0_60px_rgba(249,115,22,0.08)]"
+        >
+          <div className="flex flex-col lg:flex-row lg:items-start gap-6">
+            <div className="flex items-start gap-5 flex-1 min-w-0">
+              <div className="w-24 h-24 bg-neutral-900 rounded-2xl overflow-hidden flex-shrink-0 border border-orange-500/20">
+                <ShoeImage
+                  brand={leadShoe.shoe.brand}
+                  shoeName={leadShoe.shoe.name}
+                  imageUrl={leadShoe.shoe.imageUrl ?? undefined}
+                  className="p-1"
+                  transformation={[{ height: 96, width: 96, crop: 'at_max', format: 'png' }]}
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-orange-500">Your top match</p>
+                  <Badge className={`${leadQuadrant.bgColor} ${leadQuadrant.borderColor} border ${leadQuadrant.accentClass} font-sora`}>
+                    {leadQuadrant.name}
+                  </Badge>
                 </div>
-              )}
-            </div>
-
-          </div>
-
-          {leadShoe && (
-            <div className="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {leadShoe.topTraits.map((trait) => (
-                <div key={trait.key} className="rounded-2xl border border-neutral-800 bg-black/30 p-4">
-                  <div className="flex items-end justify-between gap-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.24em] text-neutral-500 mb-1">{trait.label}</p>
-                      <p className="text-xl font-semibold text-white">{trait.value.toFixed(1)}</p>
-                    </div>
-                    <div className="h-10 w-10 rounded-xl border border-orange-500/20 bg-orange-500/10 flex items-center justify-center text-orange-400 text-xs font-semibold">
-                      {Math.round((trait.value / 5) * 100)}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4 col-span-2 lg:col-span-1">
-                <p className="text-[11px] uppercase tracking-[0.25em] text-cyan-400 mb-2">Fit context</p>
-                <div className="flex flex-wrap gap-2 text-sm text-neutral-300">
-                  <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
-                    Shape: {footProfile?.shape || 'none'}
+                <h2 className="font-tanker text-3xl md:text-4xl text-white leading-none mb-1">{leadShoe.shoe.name}</h2>
+                <p className="font-sora text-neutral-400 text-sm mb-4">{leadShoe.shoe.brand}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <MatchScoreTooltip score={leadShoe.score} breakdown={leadShoe.breakdown} />
+                  <Badge variant="secondary" className="bg-neutral-900 border border-neutral-800 text-neutral-300 font-sora">
+                    {leadShoe.descriptors.horizontalLabel}
                   </Badge>
-                  <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
-                    Volume: {footProfile?.volume || 'none'}
+                  <Badge variant="secondary" className="bg-neutral-900 border border-neutral-800 text-neutral-300 font-sora">
+                    {leadShoe.descriptors.verticalLabel}
                   </Badge>
-                  <Badge variant="secondary" className="bg-neutral-900 text-neutral-300 border border-neutral-800">
-                    Ranked: {recommendedShoes.length}
-                  </Badge>
+                  {footProfile?.shape && (
+                    <Badge variant="secondary" className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-sora">
+                      {footProfile.shape} · {footProfile.volume}
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
-          )}
-        </div>
 
-        <div className="rounded-3xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6">
-          <p className="text-[11px] uppercase tracking-[0.28em] text-neutral-500 mb-4">Radar language</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-            {(Object.keys(quadrants) as QuadrantKey[]).map((key) => {
-              const quadrant = quadrants[key];
-              return (
-                <div key={key} className={`rounded-2xl border p-4 ${quadrant.borderColor} ${quadrant.bgColor}`}>
-                  <div className={`flex items-center gap-2 mb-2 ${quadrant.accentClass}`}>
-                    {quadrant.icon}
-                    <span className="text-sm font-medium text-white">{quadrant.name}</span>
-                  </div>
-                  <p className="text-sm text-neutral-400">{quadrant.description}</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-3 lg:min-w-[300px]">
+              {leadShoe.topTraits.map((trait) => (
+                <div key={trait.key} className="rounded-2xl border border-neutral-800 bg-black/30 p-4">
+                  <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-1">{trait.label}</p>
+                  <p className="font-tanker text-2xl text-white">{trait.value.toFixed(1)}</p>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div className="relative bg-neutral-950 border border-neutral-800 rounded-3xl overflow-hidden w-full" style={{ aspectRatio: '16 / 10', minHeight: '560px' }}>
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 text-xs text-neutral-500 pointer-events-none uppercase tracking-wider">
+          <div className="mt-6 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <RealityCheck
+              label="Aggressiveness"
+              brandClaim={leadShoe.shoe.brandAggressiveness}
+              communityReality={leadShoe.metrics.aggressiveness}
+              description="How aggressive the shoe feels compared to official marketing specs."
+            />
+            <RealityCheck
+              label="Stiffness"
+              brandClaim={leadShoe.shoe.brandStiffness}
+              communityReality={leadShoe.metrics.stability}
+              description="Community consensus on support and stiffness compared to the brand's technical claims."
+            />
+          </div>
+          <SoleMateSignals shoeId={leadShoe.shoe._id} soleMateCount={leadShoe.breakdown.soleMateMatch} />
+        </motion.div>
+      )}
+
+      {/* Radar Grid */}
+      <div className="relative bg-neutral-950 border border-neutral-800 rounded-3xl overflow-hidden w-full mb-8" style={{ aspectRatio: '16 / 10', minHeight: '560px' }}>
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 text-xs text-neutral-500 pointer-events-none uppercase tracking-wider font-sora">
           More Versatile
         </div>
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 text-xs text-neutral-500 pointer-events-none uppercase tracking-wider">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 text-xs text-neutral-500 pointer-events-none uppercase tracking-wider font-sora">
           More Aggressive
         </div>
         <div className="absolute left-3 top-1/2 -translate-y-1/2 z-20 text-xs text-neutral-500 pointer-events-none">
-          <span style={{ writingMode: 'vertical-lr', transform: 'rotate(180deg)' }} className="uppercase tracking-wider">More Comfortable</span>
+          <span style={{ writingMode: 'vertical-lr', transform: 'rotate(180deg)' }} className="uppercase tracking-wider font-sora">More Comfortable</span>
         </div>
         <div className="absolute right-3 top-1/2 -translate-y-1/2 z-20 text-xs text-neutral-500 pointer-events-none">
-          <span style={{ writingMode: 'vertical-lr' }} className="uppercase tracking-wider">More Performance</span>
+          <span style={{ writingMode: 'vertical-lr' }} className="uppercase tracking-wider font-sora">More Performance</span>
         </div>
 
         <div className="absolute inset-0 pointer-events-none z-10">
@@ -399,17 +396,13 @@ export function ShoeRadarMatcher() {
           <motion.div
             key={pos.shoe._id}
             className="absolute z-30"
-            style={{
-              left: `${pos.x * 100}%`,
-              top: `${pos.y * 100}%`,
-              transform: 'translate(-50%, -50%)',
-            }}
+            style={{ left: `${pos.x * 100}%`, top: `${pos.y * 100}%`, transform: 'translate(-50%, -50%)' }}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: index * 0.08 }}
           >
             <div className="relative">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-neutral-900 rounded-lg border border-neutral-700 overflow-hidden shadow-lg">
+              <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden shadow-lg ${index === 0 ? 'border-2 border-orange-500/70 bg-neutral-900 shadow-orange-500/20' : 'border border-neutral-700 bg-neutral-900'}`}>
                 <ShoeImage
                   brand={pos.shoe.brand}
                   shoeName={pos.shoe.name}
@@ -418,7 +411,7 @@ export function ShoeRadarMatcher() {
                   transformation={[{ height: 56, width: 56, crop: 'at_max', format: 'png' }]}
                 />
               </div>
-              <div className="absolute -top-1 -left-1 min-w-5 h-5 rounded-full bg-orange-500 text-black text-[10px] font-bold flex items-center justify-center px-1.5">
+              <div className={`absolute -top-1 -left-1 min-w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center px-1.5 ${index === 0 ? 'bg-orange-500 text-black' : 'bg-neutral-700 text-white'}`}>
                 {index + 1}
               </div>
               <div className="absolute -bottom-1 -right-1 min-w-6 h-5 rounded-full bg-neutral-900 border border-neutral-700 flex items-center justify-center px-1.5">
@@ -429,97 +422,95 @@ export function ShoeRadarMatcher() {
         ))}
       </div>
 
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {recommendedShoes.map((shoe) => {
-          const quadrant = quadrants[shoe.quadrantKey];
-          return (
-            <Card key={shoe.shoe._id} className="bg-neutral-900 border-neutral-800">
-              <CardContent className="p-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-20 h-20 bg-neutral-800 rounded-xl overflow-hidden flex-shrink-0">
-                    <ShoeImage
-                      brand={shoe.shoe.brand}
-                      shoeName={shoe.shoe.name}
-                      imageUrl={shoe.shoe.imageUrl ?? undefined}
-                      className="p-1"
-                      transformation={[{ height: 80, width: 80, crop: 'at_max', format: 'png' }]}
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0 space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="text-lg font-bold text-white truncate">{shoe.shoe.name}</h3>
-                        <p className="text-neutral-400 text-sm">{shoe.shoe.brand}</p>
+      {/* Unified ranked list — shows shoes #2+ */}
+      {recommendedShoes.length > 1 && (
+        <div>
+          <div className="flex items-end justify-between mb-6">
+            <h2 className="font-tanker text-3xl md:text-4xl text-white leading-none">All Matches</h2>
+            <p className="font-sora text-xs text-neutral-500 uppercase tracking-[0.2em]">{recommendedShoes.length - 1} more</p>
+          </div>
+          <div className="space-y-3">
+            {recommendedShoes.slice(1).map((shoe, idx) => {
+              const quadrant = quadrants[shoe.quadrantKey];
+              return (
+                <motion.div
+                  key={shoe.shoe._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.06 }}
+                  className="bg-neutral-950 border border-neutral-800 rounded-3xl p-5 hover:border-neutral-700 transition-colors"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 flex flex-col items-center gap-2">
+                      <span className="font-tanker text-2xl text-white/20">{idx + 2}</span>
+                      <div className="w-16 h-16 bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800">
+                        <ShoeImage
+                          brand={shoe.shoe.brand}
+                          shoeName={shoe.shoe.name}
+                          imageUrl={shoe.shoe.imageUrl ?? undefined}
+                          className="p-1"
+                          transformation={[{ height: 64, width: 64, crop: 'at_max', format: 'png' }]}
+                        />
                       </div>
-                      <Badge className={`${quadrant.bgColor} ${quadrant.borderColor} border ${quadrant.accentClass}`}>
-                        {quadrant.name}
-                      </Badge>
                     </div>
-
-                    <div className="flex flex-wrap gap-2 items-center">
-                      <MatchScoreTooltip score={shoe.score} breakdown={shoe.breakdown} />
-                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300 ml-2">
-                        Community {shoe.breakdown.communityApproval.toFixed(1)}/5
-                      </Badge>
-                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
-                        Overall {shoe.breakdown.overallRating.toFixed(1)}/5
-                      </Badge>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+                        <div>
+                          <h3 className="font-tanker text-xl text-white leading-none mb-0.5">{shoe.shoe.name}</h3>
+                          <p className="font-sora text-neutral-500 text-sm">{shoe.shoe.brand}</p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <MatchScoreTooltip score={shoe.score} breakdown={shoe.breakdown} />
+                          <Badge className={`${quadrant.bgColor} ${quadrant.borderColor} border ${quadrant.accentClass} font-sora`}>
+                            {quadrant.name}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                        <MetricBar label="Comfort" value={shoe.metrics.comfort} />
+                        <MetricBar label="Performance" value={shoe.metrics.performance} />
+                        <MetricBar label="Versatility" value={shoe.metrics.versatility} />
+                        <MetricBar label="Aggression" value={shoe.metrics.aggressiveness} />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <RealityCheck
+                          label="Aggressiveness"
+                          brandClaim={shoe.shoe.brandAggressiveness}
+                          communityReality={shoe.metrics.aggressiveness}
+                          description="How aggressive the shoe feels compared to official marketing specs."
+                        />
+                        <RealityCheck
+                          label="Stiffness"
+                          brandClaim={shoe.shoe.brandStiffness}
+                          communityReality={shoe.metrics.stability}
+                          description="Community consensus on support and stiffness compared to the brand's technical claims."
+                        />
+                      </div>
+                      <SoleMateSignals shoeId={shoe.shoe._id} soleMateCount={shoe.breakdown.soleMateMatch} />
                     </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
-                        {shoe.descriptors.horizontalLabel}
-                      </Badge>
-                      <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
-                        {shoe.descriptors.verticalLabel}
-                      </Badge>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      <MetricBar label="Comfort" value={shoe.metrics.comfort} />
-                      <MetricBar label="Performance" value={shoe.metrics.performance} />
-                      <MetricBar label="Versatility" value={shoe.metrics.versatility} />
-                      <MetricBar label="Aggression" value={shoe.metrics.aggressiveness} />
-                    </div>
-
-                    <div className="mt-4 space-y-3">
-                      <RealityCheck 
-                        label="Aggressiveness" 
-                        brandClaim={shoe.shoe.brandAggressiveness} 
-                        communityReality={shoe.metrics.aggressiveness}
-                        description="How aggressive the shoe feels compared to official marketing specs."
-                      />
-                      <RealityCheck 
-                        label="Stiffness" 
-                        brandClaim={shoe.shoe.brandStiffness} 
-                        communityReality={shoe.metrics.stability}
-                        description="Community consensus on support and stiffness compared to the brand's technical claims."
-                      />
-                    </div>
-                    
-                    <SoleMateSignals shoeId={shoe.shoe._id} soleMateCount={shoe.breakdown.soleMateMatch} />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {!recommendedShoes.length && !isLoading && (
-        <div className="mt-6 p-6 bg-neutral-900 border border-neutral-800 rounded-lg text-center">
-          <p className="text-neutral-400 text-sm">
-            No shoe recommendations are available yet.
-          </p>
+        <div className="p-6 bg-neutral-900 border border-neutral-800 rounded-3xl text-center">
+          <p className="font-sora text-neutral-400 text-sm">No shoe recommendations available yet.</p>
         </div>
       )}
 
       {!footProfile?.shape && !isLoading && (
-        <div className="mt-6 p-4 bg-neutral-900 border border-neutral-800 rounded-lg text-center">
-          <User className="w-6 h-6 text-neutral-600 mx-auto mb-2" />
-          <p className="text-neutral-400 text-sm">
+        <div className="mt-6 p-5 bg-neutral-900 border border-neutral-800 rounded-3xl flex items-center gap-4">
+          <User className="w-6 h-6 text-neutral-600 flex-shrink-0" />
+          <p className="font-sora text-neutral-400 text-sm flex-1">
             Complete your foot profile for stronger recommendation accuracy.
           </p>
+          <Link href="/footscan" className="font-sora text-sm text-orange-500 hover:text-orange-400 transition-colors shrink-0">
+            Set up →
+          </Link>
         </div>
       )}
     </div>
