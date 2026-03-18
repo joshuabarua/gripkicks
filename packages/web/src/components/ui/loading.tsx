@@ -60,7 +60,7 @@ export function Loading({
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           />
           <div className="flex flex-col items-center gap-3">
-            <span className="font-mono text-[10px] text-orange-500 tracking-[0.3em]">[{text.toUpperCase()}]</span>
+            <span className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">{text}</span>
             <div className={`${sizeClasses[size]} h-[2px] bg-neutral-800 rounded-full overflow-hidden`}>
               <motion.div
                 className="h-full bg-orange-500"
@@ -87,7 +87,7 @@ export function Loading({
           />
         ))}
       </div>
-      <span className={`font-mono ${textSizes[size]} text-neutral-600 tracking-[0.2em]`}>[{text.toUpperCase()}]</span>
+      <span className={`font-sora ${textSizes[size]} uppercase tracking-[0.2em] text-neutral-600`}>{text}</span>
       {showProgress && (
         <div className={`${sizeClasses[size]} h-[2px] bg-neutral-800 rounded-full overflow-hidden`}>
           <motion.div
@@ -138,8 +138,8 @@ export function LoadingBar({
   return (
     <div className="flex items-center gap-3">
       {showLabel && (
-        <span className="font-mono text-[10px] text-neutral-600">
-          {isIndeterminate ? '[...]' : `[${Math.round(progress)}%]`}
+        <span className="font-sora text-[10px] text-neutral-600">
+          {isIndeterminate ? '···' : `${Math.round(progress)}%`}
         </span>
       )}
       <div className={`${sizeClasses[size]} bg-neutral-800 rounded-full overflow-hidden`}>
@@ -192,7 +192,7 @@ export function FullPageLoading({ text = 'Loading' }: { text?: string }) {
             ))}
           </div>
 
-          <span className="font-mono text-[10px] text-neutral-600 tracking-[0.2em]">[{text.toUpperCase()}]</span>
+          <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-600">{text}</span>
 
           <div className="w-24 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
             <motion.div

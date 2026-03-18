@@ -23,9 +23,9 @@ export function LoginForm() {
         <div className="space-y-2">
           <Label
             htmlFor="email"
-            className="font-mono text-[10px] text-orange-500 tracking-[0.2em]"
+            className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
           >
-            [EMAIL]
+            Email
           </Label>
           <Input
             id="email"
@@ -41,9 +41,9 @@ export function LoginForm() {
           <div className="flex items-center justify-between">
             <Label
               htmlFor="password"
-              className="font-mono text-[10px] text-orange-500 tracking-[0.2em]"
+              className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
             >
-              [PASSWORD]
+              Password
             </Label>
             <Link
               href="/auth/reset-password"

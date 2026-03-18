@@ -133,8 +133,8 @@ function ErrorFallback({
               <Icon className="w-6 h-6 text-orange-500" />
             </div>
             <div>
-              <p className="font-mono text-[10px] text-neutral-500 tracking-[0.2em]">
-                [{error.code}]
+              <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+                {error.code}
               </p>
               <h2 className="font-tanker text-2xl">SOMETHING WENT WRONG</h2>
             </div>

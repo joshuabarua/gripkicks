@@ -180,7 +180,7 @@ export default function ShoeStatsModal({
               </div>
 
               <div>
-                <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-fluid-xs">[SHOE_STATS]</p>
+                <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 mb-fluid-xs">Shoe Stats</p>
                 <div className="flex items-center gap-fluid-sm flex-wrap">
                   <h2 className="text-fluid-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
                   <div className="flex items-center gap-1.5">

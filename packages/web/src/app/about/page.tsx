@@ -21,7 +21,7 @@ export default function AboutPage() {
 
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-xs text-orange-500 mb-4 tracking-[0.3em]">[WHY_GRIPKICKS]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Why GripKicks</p>
             <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
               BORN FROM<br />
               <span className="text-orange-500">FRUSTRATION</span>
@@ -42,7 +42,7 @@ export default function AboutPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }} className="mb-16">
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">[THE_STORY]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">The Story</p>
             <div className="space-y-8 font-sora text-lg text-neutral-300 leading-relaxed">
               <p>
                 I have extremely weird climbing feet. Low volume, narrow, but big. 
@@ -76,7 +76,7 @@ export default function AboutPage() {
 
           {/* Values Grid */}
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">[WHAT_WE_BELIEVE]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">What We Believe</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-12">
               BUILT ON<br /><span className="text-orange-500">PRINCIPLES</span>
             </h2>
@@ -130,7 +130,7 @@ export default function AboutPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">[HOW_IT_WORKS]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">How It Works</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-16">
               SIMPLE BY<br /><span className="text-orange-500">DESIGN</span>
             </h2>

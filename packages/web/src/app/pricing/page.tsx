@@ -106,8 +106,8 @@ export default function PricingPage() {
 
         <div className="max-w-5xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-xs text-orange-500 mb-4 tracking-[0.3em]">
-              [PRICING]
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">
+              Pricing
             </p>
             <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
               SIMPLE
@@ -156,8 +156,8 @@ export default function PricingPage() {
               </p>
               <div className="bg-black/10 rounded-2xl p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-mono text-[10px] text-black/60 tracking-[0.2em]">
-                    [FOUNDER_SPOTS]
+                  <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-black/60">
+                    Founder spots
                   </span>
                   <span className="font-sora text-sm text-black font-medium">
                     {spotsRemaining !== null
@@ -241,8 +241,8 @@ export default function PricingPage() {
                     <Users className="w-6 h-6 text-neutral-400" />
                   </div>
                 </AnimatedIcon>
-                <p className="font-mono text-[10px] text-neutral-500 tracking-[0.2em] mb-2">
-                  [FREE_TIER]
+                <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-2">
+                  Free tier
                 </p>
                 <h3 className="font-tanker text-4xl mb-1">FREE</h3>
                 <p className="font-sora text-neutral-500 text-sm">
@@ -310,8 +310,8 @@ export default function PricingPage() {
                     <Zap className="w-6 h-6 text-orange-500" />
                   </div>
                 </AnimatedIcon>
-                <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-2">
-                  [PREMIUM]
+                <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-orange-500 mb-2">
+                  Premium
                 </p>
                 <div className="flex items-baseline gap-2 mb-1">
                   <h3 className="font-tanker text-5xl">
@@ -457,8 +457,8 @@ export default function PricingPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">
-              [PREMIUM_FEATURE]
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">
+              Premium feature
             </p>
             <h2 className="font-tanker text-4xl md:text-6xl mb-6">
               MEET YOUR
@@ -534,8 +534,8 @@ export default function PricingPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">
-              [NO_BS]
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">
+              No BS
             </p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-12">
               STRAIGHT

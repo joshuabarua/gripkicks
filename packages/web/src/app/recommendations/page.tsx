@@ -9,7 +9,7 @@ export default function RecommendationsPage() {
   return (
     <div className="min-h-svh flex items-center justify-center px-6 py-16 bg-black text-white">
       <div className="max-w-2xl w-full text-center space-y-6">
-        <p className="font-mono text-[10px] tracking-[0.25em] text-orange-500">[RECOMMENDATIONS]</p>
+        <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">Recommendations</p>
         <h1 className="font-so-cloudy uppercase text-4xl md:text-6xl leading-tight">Personalized picks coming soon</h1>
         <p className="font-sora text-neutral-400 text-base md:text-lg">
           We&apos;re training the recommender to tailor shoes to your climbing style. In the meantime, keep building your Shoe Sanctuary so we can rank comfort, performance, and durability for you.

@@ -36,7 +36,7 @@ export default function EditShoeDialog({
           <DialogContent className="bg-neutral-950 text-white border border-neutral-800 w-[min(96vw,56rem)] max-w-4xl rounded-3xl shadow-2xl shadow-orange-500/5 p-0 overflow-hidden">
             <DialogHeader className="space-y-3 border-b border-neutral-800 px-5 py-6 sm:px-8 sm:py-7">
               <div className="flex items-center gap-fluid-sm">
-                <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[EDIT_STATS]</p>
+                <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30">Edit Stats</p>
               </div>
               <DialogTitle className="text-white font-so-cloudy uppercase text-fluid-xl">Edit Shoe Stats</DialogTitle>
               <DialogDescription className="text-fluid-sm text-neutral-500 font-sora">

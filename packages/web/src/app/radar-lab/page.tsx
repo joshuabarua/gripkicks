@@ -93,7 +93,7 @@ export default function RadarLabPage() {
     <div className="min-h-screen bg-black text-white px-4 py-8 sm:px-6 lg:px-8">
       <div className="max-w-[1500px] mx-auto space-y-6">
         <div className="space-y-3">
-          <p className="text-xs uppercase tracking-[0.3em] text-orange-500">[PUBLIC_RADAR_LAB]</p>
+          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">Public Radar Lab</p>
           <h1 className="text-4xl sm:text-5xl font-bold">Radar Lab</h1>
           <p className="max-w-3xl text-neutral-400 text-sm sm:text-base">
             Public QA page for testing radar density. This page plots popular shoes without login, foot profile, or match scoring so you can inspect where models cluster on the radar.

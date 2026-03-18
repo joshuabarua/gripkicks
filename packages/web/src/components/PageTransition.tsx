@@ -158,8 +158,8 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <span className="font-mono text-[10px] text-orange-500 tracking-[0.3em]">
-                [LOADING]
+              <span className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">
+                Loading
               </span>
             </motion.div>
 

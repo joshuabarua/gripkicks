@@ -53,7 +53,7 @@ export default function PrivacyPage() {
 
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-xs text-orange-500 mb-4 tracking-[0.3em]">[PRIVACY_PROMISE]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Privacy Promise</p>
             <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
               YOUR DATA<br />
               <span className="text-orange-500">YOUR RULES</span>
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">[TL;DR]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">TL;DR</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-8">
               THE SHORT<br /><span className="text-orange-500">VERSION</span>
             </h2>
@@ -127,7 +127,7 @@ export default function PrivacyPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">[OUR_PROMISES]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">Our Promises</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-12">
               SIX PROMISES<br /><span className="text-orange-500">WE KEEP</span>
             </h2>
@@ -158,7 +158,7 @@ export default function PrivacyPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-6">[WHAT_WE_COLLECT]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">What We Collect</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-12">
               EXACTLY WHAT<br /><span className="text-orange-500">WE NEED</span>
             </h2>

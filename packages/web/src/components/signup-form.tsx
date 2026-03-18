@@ -52,9 +52,9 @@ export function SignupForm() {
           <div className="space-y-2">
             <Label
               htmlFor="first-name"
-              className="font-mono text-[10px] text-orange-500 tracking-[0.2em]"
+              className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
             >
-              [FIRST_NAME]
+              First name
             </Label>
             <Input
               id="first-name"
@@ -68,9 +68,9 @@ export function SignupForm() {
           <div className="space-y-2">
             <Label
               htmlFor="last-name"
-              className="font-mono text-[10px] text-orange-500 tracking-[0.2em]"
+              className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
             >
-              [LAST_NAME]
+              Last name
             </Label>
             <Input
               id="last-name"
@@ -85,9 +85,9 @@ export function SignupForm() {
         <div className="space-y-2">
           <Label
             htmlFor="email"
-            className="font-mono text-[10px] text-orange-500 tracking-[0.2em]"
+            className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
           >
-            [EMAIL]
+            Email
           </Label>
           <Input
             id="email"
@@ -102,9 +102,9 @@ export function SignupForm() {
         <div className="space-y-2">
           <Label
             htmlFor="password"
-            className="font-mono text-[10px] text-orange-500 tracking-[0.2em]"
+            className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
           >
-            [PASSWORD]
+            Password
           </Label>
           <Input
             id="password"
@@ -120,9 +120,9 @@ export function SignupForm() {
         <div className="space-y-2">
           <Label
             htmlFor="password_confirmation"
-            className="font-mono text-[10px] text-orange-500 tracking-[0.2em]"
+            className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
           >
-            [CONFIRM]
+            Confirm password
           </Label>
           <Input
             id="password_confirmation"

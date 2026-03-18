@@ -42,8 +42,8 @@ function SuccessContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <p className="font-mono text-[10px] text-orange-500 tracking-[0.3em] mb-4">
-            [WELCOME_TO_PREMIUM]
+          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">
+            Welcome to premium
           </p>
           <h1 className="font-tanker text-5xl md:text-6xl mb-4">
             YOU&apos;RE <span className="text-orange-500">IN</span>
