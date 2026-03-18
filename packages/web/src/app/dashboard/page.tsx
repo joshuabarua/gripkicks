@@ -105,7 +105,7 @@ export default function Dashboard() {
             transition={{ duration: 0.8 }}
             className="mb-16"
           >
-            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">[DASHBOARD]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Your Dashboard</p>
             <h1 className="font-tanker text-5xl md:text-7xl lg:text-8xl">
               Hey {userName.split(' ')[0]},<br />
               <span className="text-orange-500">ready to climb?</span>
@@ -309,7 +309,7 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <p className="font-mono text-xs text-orange-500 mb-4 tracking-[0.3em]">[RECENT_SHOES]</p>
+              <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Recent Shoes</p>
               <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
                 <div className="space-y-4">
                   {userShoes.slice(0, 3).map((shoe, index) => {
@@ -343,16 +343,16 @@ export default function Dashboard() {
                           </div>
                           <div>
                             <h3 className="font-sora font-medium text-white group-hover:text-orange-500 transition-colors">{name}</h3>
-                            <p className="font-mono text-[10px] text-neutral-600">{brand}</p>
+                            <p className="font-sora text-[10px] text-neutral-600">{brand}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="text-right">
                             <div className="flex items-center gap-1">
                               <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
-                              <span className="font-mono text-xs text-neutral-400">{shoe.comfortScore || 0}</span>
+                              <span className="font-sora text-xs text-neutral-400">{shoe.comfortScore || 0}</span>
                             </div>
-                            <span className="font-mono text-[10px] text-neutral-600">COMFORT</span>
+                            <span className="font-sora text-[10px] text-neutral-600">Comfort</span>
                           </div>
                           <ArrowUpRight className="w-4 h-4 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
                         </div>

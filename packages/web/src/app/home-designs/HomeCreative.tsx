@@ -90,17 +90,6 @@ export default function HomeCreative() {
           <Scene />
         </motion.div>
 
-        <div className="z-10 text-center pointer-events-none px-fluid-md">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h1 className="font-tanker text-title-xl leading-[0.85] tracking-tight">
-              GRIP<span className="text-orange-500">KICKS</span>
-            </h1>
-          </motion.div>
-        </div>
 
         <motion.div
           className="absolute bottom-12 inset-x-0 mx-auto w-fit flex flex-col items-center gap-4 opacity-30 will-change-transform"

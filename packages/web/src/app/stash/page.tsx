@@ -330,9 +330,7 @@ export default function ShoeSanctuaryPage() {
               className="flex flex-col md:flex-row md:items-end md:justify-between gap-fluid-lg"
             >
               <div>
-                <p className="font-mono text-xs text-orange-500 mb-fluid-sm tracking-[0.3em]">
-                  [SANCTUARY]
-                </p>
+                <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Shoe Sanctuary</p>
                 <h1 className="font-so-cloudy uppercase text-fluid-6xl md:text-fluid-7xl text-white leading-none">
                   Shoe
                   <br />
@@ -406,9 +404,7 @@ export default function ShoeSanctuaryPage() {
                 <div className="w-full max-w-4xl space-y-4">
                   <div className="text-center mb-6">
                     <LoadingBar size="lg" />
-                    <span className="font-mono text-[10px] text-neutral-500 tracking-[0.2em] mt-4 block">
-                      [LOADING_SANCTUARY]
-                    </span>
+                    <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-600 mt-4 block">Loading your collection</span>
                   </div>
                   {/* Show skeleton cards while loading */}
                   {Array.from({ length: 6 }).map((_, i) => (

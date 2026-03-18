@@ -141,9 +141,7 @@ export default function ProfilePage() {
             transition={{ duration: 0.8 }}
             className="mb-12"
           >
-            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">
-              [ACCOUNT]
-            </p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Your Account</p>
             <div className="flex items-center gap-6">
               <div className="relative">
                 <UserAvatar
@@ -182,16 +180,14 @@ export default function ProfilePage() {
                     <Link href="/footchecker">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
-                        className="font-mono text-[10px] text-orange-500 cursor-pointer"
+                        className="font-sora text-[10px] text-orange-500 cursor-pointer uppercase tracking-wide"
                       >
-                        [SET UP]
+                        Set up
                       </motion.span>
                     </Link>
                   )}
                 </div>
-                <p className="font-mono text-[10px] text-neutral-600 mb-1">
-                  FOOT SHAPE
-                </p>
+                <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Foot Shape</p>
                 <p className="font-tanker text-2xl text-white capitalize">
                   {profile?.footShape
                     ? footShapeLabels[profile.footShape] || profile.footShape
@@ -208,16 +204,14 @@ export default function ProfilePage() {
                     <Link href="/stash">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
-                        className="font-mono text-[10px] text-orange-500 cursor-pointer"
+                        className="font-sora text-[10px] text-orange-500 cursor-pointer uppercase tracking-wide"
                       >
-                        [CHOOSE]
+                        Choose
                       </motion.span>
                     </Link>
                   )}
                 </div>
-                <p className="font-mono text-[10px] text-neutral-600 mb-1">
-                  FAVORITE SHOE
-                </p>
+                <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Favourite Shoe</p>
                 <p className="font-tanker text-2xl text-white">
                   {profile?.favoriteShoe
                     ? `${profile.favoriteShoe.brand} ${profile.favoriteShoe.name}`
@@ -238,9 +232,7 @@ export default function ProfilePage() {
                   <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
                 </div>
                 <div className="relative">
-                  <p className="font-mono text-[10px] text-black/60 mb-2">
-                    [SETUP_REQUIRED]
-                  </p>
+                  <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-black/50 mb-2">Getting started</p>
                   <h3 className="font-tanker text-3xl text-black mb-3">
                     COMPLETE YOUR PROFILE
                   </h3>

@@ -167,9 +167,7 @@ export default function SoleMatePage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">
-              [SOLE_MATE]
-            </p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Sole Mate</p>
             <h1 className="font-tanker text-6xl md:text-8xl mb-4">
               FIND YOUR
               <br />
