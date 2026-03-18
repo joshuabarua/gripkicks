@@ -34,12 +34,12 @@ export default defineSchema({
       ),
     ),
     aggressiveness: v.string(),
+    brandAggressiveness: v.optional(v.number()),
     stiffness: v.string(),
+    brandStiffness: v.optional(v.number()),
     climbingDiscipline: v.string(),
     volume: v.string(),
     rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
-    brandAggressiveness: v.optional(v.number()),
-    brandStiffness: v.optional(v.number()),
     avgComfortScore: v.optional(v.number()),
     avgPerformanceRating: v.optional(v.number()),
     avgDurabilityRating: v.optional(v.number()),
@@ -163,10 +163,10 @@ export default defineSchema({
     comfortScore: v.optional(v.number()),
     performanceRating: v.optional(v.number()),
     durabilityRating: v.optional(v.number()),
-    isFavourite: v.optional(v.boolean()),
     perceivedAggressiveness: v.optional(v.number()),
     perceivedStiffness: v.optional(v.number()),
     perceivedVolumeFit: v.optional(v.string()),
+    isFavourite: v.optional(v.boolean()),
   })
     .index("by_userId", ["userId"])
     .index("by_shoeId", ["shoeId"])
