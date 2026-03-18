@@ -25,8 +25,9 @@ export default function ShoeMatcherPage() {
             <div className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Target className="w-10 h-10 text-orange-500" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Shoe Matcher</h1>
-            <p className="text-neutral-400">
+            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">[MATCHER]</p>
+            <h1 className="font-tanker text-5xl text-white mb-2">SHOE MATCHER</h1>
+            <p className="font-sora text-neutral-400">
               See where every shoe lands based on how it actually performs
             </p>
           </div>
@@ -35,7 +36,7 @@ export default function ShoeMatcherPage() {
             <div className="flex items-start gap-3">
               <Zap className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-white mb-1">See How Shoes Compare</h3>
+                <h3 className="font-sora font-semibold text-white mb-1">See How Shoes Compare</h3>
                 <p className="text-sm text-neutral-400">
                   Every shoe plotted on a grid by comfort, performance, and aggressiveness
                 </p>
@@ -45,7 +46,7 @@ export default function ShoeMatcherPage() {
             <div className="flex items-start gap-3">
               <Activity className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-white mb-1">Find Your Style</h3>
+                <h3 className="font-sora font-semibold text-white mb-1">Find Your Style</h3>
                 <p className="text-sm text-neutral-400">
                   Bouldering, sport, all-around — see what fits your climbing
                 </p>
@@ -55,7 +56,7 @@ export default function ShoeMatcherPage() {
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-white mb-1">Visual Grid</h3>
+                <h3 className="font-sora font-semibold text-white mb-1">Visual Grid</h3>
                 <p className="text-sm text-neutral-400">
                   Shoe images placed on a quadrant so you can spot the right zone fast
                 </p>
