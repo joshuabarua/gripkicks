@@ -232,3 +232,36 @@ To migrate existing code to use neverthrow:
 - **Better error information**: Structured error data with types and details
 - **Composable**: Results can be mapped and chained safely
 - **No exceptions**: Predictable control flow without unexpected throws
+
+---
+
+## Import Guide
+
+### Canonical sources
+
+| Context | Import from |
+|---|---|
+| Backend | `packages/backend-api/src/lib/errors.ts` |
+| Frontend | `packages/web/src/lib/errors.ts` |
+
+**Deprecated** (backward compat only): `packages/backend-api/lib/errors.ts` — avoid new imports here.
+
+### Backend
+```typescript
+import { AppError, ValidationError, NotFoundError } from '../src/lib/errors';
+```
+
+### Frontend
+```typescript
+import { ApiError, AppError } from '@/lib/errors';
+```
+
+### Available error types (backend)
+`AppError`, `ValidationError` (400), `NotFoundError` (404), `UnauthorizedError` (401), `UnauthenticatedError` (401), `DatabaseError` (500), `InvalidDataError` (400), `UnexpectedError` (500)
+
+### Migration checklist
+- [x] Re-export file for backward compatibility
+- [x] Document canonical source location
+- [ ] Update all imports to use canonical source
+- [ ] Remove legacy re-export file
+- [ ] Consider shared error package for monorepo
