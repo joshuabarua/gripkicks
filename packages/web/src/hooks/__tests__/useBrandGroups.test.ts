@@ -36,13 +36,13 @@ describe("useBrandGroups", () => {
     const laSportivaGroup = result.current.find(
       (g) => g.brand === "La Sportiva",
     );
-    expect(laSportivaGroup?.shoes).toHaveLength(2);
+    expect(laSportivaGroup?.models).toHaveLength(2);
 
     const scarpaGroup = result.current.find((g) => g.brand === "Scarpa");
-    expect(scarpaGroup?.shoes).toHaveLength(1);
+    expect(scarpaGroup?.models).toHaveLength(1);
 
     const fiveTenGroup = result.current.find((g) => g.brand === "Five Ten");
-    expect(fiveTenGroup?.shoes).toHaveLength(1);
+    expect(fiveTenGroup?.models).toHaveLength(1);
   });
 
   it("handles shoes without brand gracefully", () => {
@@ -54,7 +54,7 @@ describe("useBrandGroups", () => {
     const { result } = renderHook(() => useBrandGroups(userShoes));
 
     const unknownGroup = result.current.find((g) => g.brand === "Unknown");
-    expect(unknownGroup?.shoes).toHaveLength(2);
+    expect(unknownGroup?.models).toHaveLength(1);
   });
 
   it("memoizes results", () => {
