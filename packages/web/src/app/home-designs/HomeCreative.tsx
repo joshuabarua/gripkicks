@@ -166,7 +166,7 @@ export default function HomeCreative() {
               </div>
               <h3 className="font-tanker text-fluid-4xl leading-none">Smart Match</h3>
               <p className="font-sora text-fluid-base text-neutral-500 leading-snug tracking-tight">
-                Data-driven recommendations. We map your volume to the world's best rubber.
+                Data-driven recommendations. We map your volume to the world&apos;s best rubber.
               </p>
             </motion.div>
 
