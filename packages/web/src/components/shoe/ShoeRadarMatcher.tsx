@@ -264,19 +264,14 @@ export function ShoeRadarMatcher() {
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 py-6 sm:px-6 lg:px-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Shoe Radar</h1>
-        <p className="text-neutral-400 max-w-2xl mx-auto">
-          Your best matches are auto-ranked into fixed categories based on your scoring profile.
-        </p>
-        <div className="mt-4 flex justify-center">
-          <Link
-            href="/radar-lab"
-            className="inline-flex items-center rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-orange-500/40 hover:text-white"
-          >
-            Open public radar
-          </Link>
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-white">Shoe Radar</h1>
+        <Link
+          href="/radar-lab"
+          className="inline-flex items-center rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-orange-500/40 hover:text-white"
+        >
+          Public radar
+        </Link>
       </div>
 
       <div className="mb-6 grid grid-cols-1 xl:grid-cols-[1.4fr_1fr] gap-4">
@@ -310,11 +305,6 @@ export function ShoeRadarMatcher() {
               )}
             </div>
 
-            <p className="text-sm text-neutral-500 sm:max-w-xs sm:text-right">
-              {isPremium || isFounder
-                ? 'Your radar is showing the top 5 ranked shoes.'
-                : 'Your radar is showing the top ranked shoe.'}
-            </p>
           </div>
 
           {leadShoe && (
@@ -365,20 +355,6 @@ export function ShoeRadarMatcher() {
                 </div>
               );
             })}
-          </div>
-          <div className="rounded-2xl border border-neutral-800 bg-black/30 p-4 space-y-3">
-            <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500">How to read this</p>
-            <div className="space-y-2 text-sm text-neutral-400">
-              <p>
-                <span className="text-white font-medium">Position</span> shows the shoe&apos;s style profile across comfort, performance, versatility, and aggression.
-              </p>
-              <p>
-                <span className="text-white font-medium">Match</span> is your personalized fit score based on foot shape, volume, preferences, and learned signals.
-              </p>
-              <p>
-                <span className="text-white font-medium">Community</span> shows how strongly the wider data supports the shoe, rather than your personal fit alone.
-              </p>
-            </div>
           </div>
         </div>
       </div>
@@ -454,7 +430,7 @@ export function ShoeRadarMatcher() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {recommendedShoes.map((shoe, index) => {
+        {recommendedShoes.map((shoe) => {
           const quadrant = quadrants[shoe.quadrantKey];
           return (
             <Card key={shoe.shoe._id} className="bg-neutral-900 border-neutral-800">
@@ -472,7 +448,6 @@ export function ShoeRadarMatcher() {
                   <div className="flex-1 min-w-0 space-y-3">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="text-[11px] uppercase tracking-wider text-neutral-500 mb-1">Rank #{index + 1}</p>
                         <h3 className="text-lg font-bold text-white truncate">{shoe.shoe.name}</h3>
                         <p className="text-neutral-400 text-sm">{shoe.shoe.brand}</p>
                       </div>
@@ -480,8 +455,6 @@ export function ShoeRadarMatcher() {
                         {quadrant.name}
                       </Badge>
                     </div>
-
-                    <p className="text-sm text-neutral-500">{quadrant.description}</p>
 
                     <div className="flex flex-wrap gap-2 items-center">
                       <MatchScoreTooltip score={shoe.score} breakdown={shoe.breakdown} />
@@ -500,14 +473,6 @@ export function ShoeRadarMatcher() {
                       <Badge variant="secondary" className="bg-neutral-950 border border-neutral-800 text-neutral-300">
                         {shoe.descriptors.verticalLabel}
                       </Badge>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      {shoe.topTraits.map((trait) => (
-                        <Badge key={trait.key} variant="secondary" className="bg-orange-500/10 text-orange-300 border border-orange-500/20">
-                          {trait.label} {trait.value.toFixed(1)}
-                        </Badge>
-                      ))}
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

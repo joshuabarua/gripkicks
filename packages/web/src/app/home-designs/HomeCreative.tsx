@@ -96,9 +96,9 @@ export default function HomeCreative() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="font-sora text-fluid-lg text-neutral-400 mt-fluid-md max-w-lg mx-auto leading-tight tracking-tight">
-              The technical soul of your climbing gear.
-            </p>
+            <h1 className="font-tanker text-title-xl leading-[0.85] tracking-tight">
+              GRIP<span className="text-orange-500">KICKS</span>
+            </h1>
           </motion.div>
         </div>
 
@@ -216,7 +216,6 @@ export default function HomeCreative() {
           <h2 className="font-tanker text-title-md leading-[0.85] tracking-tight">
             {remainingSlots} spots left for <span className="text-orange-500 italic">Life</span>
           </h2>
-          
           <p className="font-sora text-fluid-lg text-neutral-400 max-w-xl mx-auto leading-tight tracking-tight">
             The first 1,000 climbers get lifetime premium. No subscriptions, just better climbing.
           </p>
@@ -253,7 +252,7 @@ export default function HomeCreative() {
       </section>
 
       {/* Ticker: Pure Motion */}
-      <div className="py-fluid-md bg-orange-500 overflow-hidden select-none relative z-10 shadow-2xl contain-strict">
+      <div className="py-fluid-md bg-orange-500 overflow-hidden select-none relative z-10 shadow-2xl">
         <motion.div
           animate={isReducedEffects ? undefined : { x: [0, -1000] }}
           transition={isReducedEffects ? undefined : { duration: 40, repeat: Infinity, ease: "linear" }}
