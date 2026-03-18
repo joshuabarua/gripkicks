@@ -1,22 +1,18 @@
 "use client";
 
-import React from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import {
   ArrowUpRight,
   Footprints,
-  Zap,
   Target,
   Activity,
   Sparkles,
-  Flame,
 } from "lucide-react";
-import { AnimatedNavIcon } from "@/components/ui/AnimatedNavIcon";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { fetchApi } from "@/lib/api-client";
-import { useOrientation } from "@/hooks/useOrientationScale";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
@@ -24,27 +20,44 @@ const Scene = dynamic(() => import("@/components/3d/Scene"), {
   loading: () => null,
 });
 
+const ACTIVITY_FEED = [
+  { user: "Mika", action: "fit note", shoe: "Solutions" },
+  { user: "Sage", action: "matched", shoe: "Sole Mate" },
+  { user: "Rhea", action: "shared", shoe: "Foot Lab" },
+  { user: "Noor", action: "saved", shoe: "Mastia" },
+];
+
+const SOCIAL_STATS = [
+  { label: "Community Powered", value: "100%" },
+  { label: "Data Ownership", value: "Verified" },
+];
+
 export default function HomeCreative() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [totalUsers, setTotalUsers] = React.useState<number | null>(null);
-  const { isPortrait, screenWidth } = useOrientation();
+  const [totalUsers, setTotalUsers] = useState<number | null>(null);
   const isReducedEffects = useReducedEffects();
+  const { scrollY } = useScroll();
 
-  React.useEffect(() => {
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 400], [1, 0.95]);
+
+  useEffect(() => {
+    let mounted = true;
     async function loadUserCount() {
       try {
-        const response = await fetchApi<{ count: number }>(
-          "/api/v1/users/count",
-        );
-        if (response.isOk()) {
+        const response = await fetchApi<{ count: number }>("/api/v1/users/count");
+        if (response.isOk() && mounted) {
           setTotalUsers(response.value.count);
         }
       } catch {
-        setTotalUsers(null);
+        if (mounted) setTotalUsers(null);
       }
     }
     loadUserCount();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const isAuthenticated = !!session?.user;
@@ -52,506 +65,211 @@ export default function HomeCreative() {
   const founderSpotsTotal = 1000;
   const claimedSlots = totalUsers ?? 0;
   const remainingSlots = Math.max(0, founderSpotsTotal - claimedSlots);
-  const claimedPercent = Math.min(
-    100,
-    (claimedSlots / founderSpotsTotal) * 100,
-  );
-  const isPhonePortrait = isPortrait && screenWidth > 0 && screenWidth < 768;
+  const claimedPercent = Math.min(100, (claimedSlots / founderSpotsTotal) * 100);
 
-  const tierOptions = [
-    {
-      name: "Free",
-      price: "€0",
-      subLabel: "",
-      tagline: "Your stash, your foot profile, and a taste of the matching.",
-      features: [
-        "Top shoe rec for your feet",
-        "Community comfort notes",
-        "Save shoes to your stash",
-      ],
-      highlight: false,
-      cta: "Explore free",
-      href: "/stash",
-    },
-    {
-      name: "Premium",
-      price: "€1/mo",
-      subLabel: "or €10/yr",
-      tagline: "Every shoe rec, Sole Mate matching, and your data stays yours.",
-      features: [
-        "All shoe recommendations",
-        "Full Foot Lab breakdown",
-        "Sole Mate matching",
-        "Sizing heatmaps",
-      ],
-      highlight: true,
-      cta: "Go premium",
-      href: "/auth/signup",
-    },
-  ];
+  // Memoize arrays to prevent recreation on every scroll tick/render
+  const stats = useMemo(() => [
+    ...SOCIAL_STATS,
+    { label: "Active Climbers", value: claimedSlots.toLocaleString() }
+  ], [claimedSlots]);
 
-  const activityFeed = [
-    { user: "Mika", action: "logged a fit note on Solutions", time: "1m ago" },
-    { user: "Sage", action: "matched with Sole Mate duo", time: "3m ago" },
-    { user: "Rhea", action: "shared Foot Lab measurements", time: "5m ago" },
-    { user: "Noor", action: "saved Tenaya Mastia to stash", time: "8m ago" },
-  ];
-
-  const spotlightArticles = [
-    {
-      tag: "Guide",
-      title: "Decoding downturn & tension for steep projects",
-      summary:
-        "How elite setters pick midsoles for toe hooks and paddle dynos.",
-      readingTime: "6 min read",
-      href: "/stories/downturn-guide",
-    },
-    {
-      tag: "Interview",
-      title: "Foot Lab with Lynn: keeping comfort at V12",
-      summary:
-        "A candid chat on balancing aggressive shapes with long sessions.",
-      readingTime: "4 min read",
-      href: "/stories/lynn-foot-lab",
-    },
-    {
-      tag: "Drop",
-      title: "Rubber report: 2026 compounds ranked by grip",
-      summary: "Community wear tests reveal which soles stay sticky indoors.",
-      readingTime: "5 min read",
-      href: "/stories/rubber-report",
-    },
-  ];
+  const activityLoop = useMemo(() => [...ACTIVITY_FEED, ...ACTIVITY_FEED, ...ACTIVITY_FEED], []);
+  const marqueeItems = useMemo(() => Array(10).fill(null), []);
 
   return (
-    <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      {/* Hero Section - Preserved */}
-      <section
-        className="relative flex items-center justify-center"
-        style={{ minHeight: "calc(100svh - 4rem)" }}
-      >
-        <div className="absolute inset-0">
+    <main className="min-h-screen bg-black text-white selection:bg-orange-500 selection:text-black antialiased relative">
+      {/* Noise Overlay - Use contain-strict to prevent layout thrashing */}
+      <div className="fixed inset-0 pointer-events-none z-50 opacity-[0.03] mix-blend-overlay bg-[url('/imgs/noise.png')] contain-strict" />
+
+      {/* Hero: Immersive 3D Hook */}
+      <section className="relative flex items-center justify-center h-svh overflow-hidden">
+        <motion.div 
+          style={{ opacity: heroOpacity, scale: heroScale }}
+          className="absolute inset-0 z-0 will-change-transform"
+        >
           <Scene />
+        </motion.div>
+
+        <div className="z-10 text-center pointer-events-none px-fluid-md">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <h1 className="font-tanker text-title-xl leading-[0.85] tracking-tight">
+              GRIP<span className="text-orange-500">KICKS</span>
+            </h1>
+            <p className="font-sora text-fluid-lg text-neutral-400 mt-fluid-md max-w-lg mx-auto leading-tight tracking-tight">
+              The technical soul of your climbing gear.
+            </p>
+          </motion.div>
         </div>
 
         <motion.div
-          className="absolute bottom-8 inset-x-0 mx-auto w-fit flex flex-col items-center gap-2"
-          animate={isReducedEffects ? undefined : { y: [0, 8, 0] }}
-          transition={isReducedEffects ? undefined : { duration: 2, repeat: Infinity }}
+          className="absolute bottom-12 inset-x-0 mx-auto w-fit flex flex-col items-center gap-4 opacity-30 will-change-transform"
+          animate={isReducedEffects ? undefined : { y: [0, 10, 0] }}
+          transition={isReducedEffects ? undefined : { duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <span className="text-[10px] tracking-[0.3em] text-orange-500/60 uppercase">
-            Scroll
-          </span>
-          <div className="w-px h-8 bg-gradient-to-b from-orange-500/60 to-transparent" />
+          <span className="text-[9px] font-sora tracking-[0.5em] uppercase">Explore</span>
+          <div className="w-px h-16 bg-gradient-to-b from-white to-transparent" />
         </motion.div>
       </section>
 
-      <section className="bg-black border-y border-neutral-900 py-fluid-sm px-fluid-md md:py-6 md:px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center gap-fluid-sm md:gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
-              <Activity className="w-5 h-5 text-orange-400" />
-            </div>
-            <div>
-              <p className="font-sora text-fluid-xs tracking-[0.35em] uppercase text-neutral-500">
-                Live feed
-              </p>
-              <p className="font-tanker text-fluid-2xl md:text-2xl">
-                Climbers in motion
-              </p>
-            </div>
-          </div>
-          <div className="flex-1 overflow-hidden">
-            <motion.div
-              animate={isReducedEffects ? undefined : { x: [0, -600] }}
-              transition={
-                isReducedEffects ? undefined : { duration: 18, repeat: Infinity, ease: "linear" }
-              }
-              className="flex gap-6 whitespace-nowrap"
-            >
-              {[...activityFeed, ...activityFeed].map((activity, index) => (
-                <div
-                  key={`${activity.user}-${index}`}
-                  className="px-4 py-2 border border-neutral-800 rounded-2xl bg-neutral-900/40"
-                >
-                  <span className="font-tanker text-lg text-white mr-2">
-                    {activity.user}
-                  </span>
-                  <span className="font-sora text-sm text-neutral-400">
-                    {activity.action}
-                  </span>
-                  <span className="font-sora text-xs text-orange-400 ml-3">
-                    {activity.time}
-                  </span>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Creative Bento Grid Section */}
-      <section className="min-h-screen bg-neutral-950 py-fluid-2xl px-fluid-md md:py-24 md:px-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
+      {/* Dynamic Journey */}
+      <section className="bg-neutral-950 py-fluid-3xl px-fluid-md relative contain-content">
+        <div className="max-w-fluid-xl mx-auto space-y-fluid-3xl">
+          
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="mb-fluid-xl md:mb-16"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-fluid-lg border-b border-white/5 pb-fluid-xl"
           >
-            {isAuthenticated && (
-              <p className="text-orange-500 font-sora text-fluid-sm md:text-sm mb-fluid-sm md:mb-4">
-                Hey {userName} 👋
-              </p>
-            )}
-            <h2 className="font-tanker text-title-md md:text-7xl lg:text-8xl leading-tight">
-              {isAuthenticated ? (
-                <>
-                  Ready to
-                  <br />
-                  <span className="text-orange-500">climb?</span>
-                </>
-              ) : (
-                <>
-                  Your perfect
-                  <br />
-                  <span className="text-orange-500">fit awaits</span>
-                </>
+            <div>
+              {isAuthenticated && (
+                <p className="text-orange-500 font-sora text-fluid-base mb-fluid-sm tracking-tight">
+                  Welcome back, {userName}
+                </p>
               )}
-            </h2>
+              <h2 className="font-tanker text-title-lg leading-[0.85] max-w-3xl tracking-tight">
+                Find your <span className="text-orange-500 italic">Sole</span> mate
+              </h2>
+            </div>
+            
+            <button 
+              onClick={() => router.push(isAuthenticated ? "/dashboard" : "/auth/signup")}
+              className="group flex items-center gap-fluid-sm font-tanker text-fluid-3xl text-orange-500 hover:text-orange-400 transition-colors duration-300"
+            >
+              {isAuthenticated ? "Go to Dashboard" : "Join the Labs"}
+              <div className="w-fluid-xl h-fluid-xl rounded-full border border-orange-500/30 flex items-center justify-center group-hover:border-orange-500 transition-colors">
+                <ArrowUpRight className="group-hover:rotate-45 transition-transform duration-500 will-change-transform" />
+              </div>
+            </button>
           </motion.div>
 
-          {/* Bento Grid */}
-          <div
-            className={
-              isPhonePortrait
-                ? "grid grid-cols-1 gap-fluid-sm auto-rows-auto"
-                : "grid grid-cols-12 gap-4 auto-rows-[140px]"
-            }
-          >
-            {/* Large Feature Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              onClick={() =>
-                router.push(isAuthenticated ? "/dashboard" : "/auth/signup")
-              }
-              className={`${isPhonePortrait ? "col-span-1 min-h-[220px] p-fluid-md" : "col-span-12 md:col-span-8 row-span-2 p-8"} bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl flex flex-col justify-between cursor-pointer group hover:scale-[1.02] transition-transform duration-300`}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-black/60 text-sm font-medium mb-2">
-                    {isAuthenticated
-                      ? "Continue your journey"
-                      : "Start your journey"}
-                  </p>
-                  <h3 className="font-tanker text-fluid-4xl md:text-5xl text-black leading-tight">
-                    {isAuthenticated ? "Dashboard" : "Get Started"}
-                  </h3>
-                </div>
-                <div className="w-12 h-12 bg-black/10 rounded-full flex items-center justify-center group-hover:bg-black/20 transition-colors">
-                  <ArrowUpRight className="w-6 h-6 text-black group-hover:rotate-45 transition-transform" />
-                </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-fluid-2xl">
+            
+            <motion.div whileHover={{ y: -5 }} className="space-y-fluid-md group cursor-default will-change-transform">
+              <div className="w-fluid-3xl h-fluid-3xl flex items-center justify-center bg-orange-500/5 rounded-2xl group-hover:bg-orange-500/10 transition-all duration-500">
+                <Footprints className="text-orange-500" size={32} />
               </div>
-              <p className="font-sora text-black/70 max-w-md text-fluid-sm md:text-base">
-                {isAuthenticated
-                  ? "Check your stash, see how your shoes stack up, and find what fits next."
-                  : "Tell us about your feet, add your shoes, and we'll help you find the right pair."}
+              <h3 className="font-tanker text-fluid-4xl leading-none">Foot Lab</h3>
+              <p className="font-sora text-fluid-base text-neutral-500 leading-snug tracking-tight">
+                Precise morphology analysis. Egyptian, Roman, Greek—know your shape, find your shoe.
               </p>
             </motion.div>
 
-            {/* Stats Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-              className={`${isPhonePortrait ? "col-span-1 min-h-[180px]" : "col-span-6 md:col-span-4 row-span-2"} bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between`}
-            >
-              <AnimatedNavIcon
-                icon={<Zap className="w-8 h-8 text-orange-500" />}
-                animation="pop"
-                size={32}
-              />
-              <div>
-                <div className="font-tanker text-fluid-5xl md:text-5xl text-white">
-                  100%
-                </div>
-                <p className="font-sora text-neutral-500 text-sm mt-1">
-                  Community powered
-                </p>
+            <motion.div whileHover={{ y: -5 }} className="space-y-fluid-md group cursor-default will-change-transform">
+              <div className="w-fluid-3xl h-fluid-3xl flex items-center justify-center bg-orange-500/5 rounded-2xl group-hover:bg-orange-500/10 transition-all duration-500">
+                <Target className="text-orange-500" size={32} />
               </div>
-            </motion.div>
-
-            {/* Feature Cards */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
-              className={`${isPhonePortrait ? "col-span-1 min-h-[180px]" : "col-span-6 md:col-span-4 row-span-2"} bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between group hover:border-orange-500/30 transition-colors`}
-            >
-              <AnimatedNavIcon
-                icon={
-                  <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                    <Footprints className="w-6 h-6 text-orange-500" />
-                  </div>
-                }
-                animation="pop"
-                size={48}
-              />
-              <div>
-                <h4 className="font-tanker text-fluid-2xl md:text-xl text-white mb-1">
-                  Foot Lab
-                </h4>
-                <p className="font-sora text-neutral-500 text-xs">
-                  Know your feet, find better shoes
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              viewport={{ once: true }}
-              className={`${isPhonePortrait ? "col-span-1 min-h-[180px]" : "col-span-6 md:col-span-4 row-span-2"} bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between group hover:border-orange-500/30 transition-colors`}
-            >
-              <AnimatedNavIcon
-                icon={
-                  <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                    <Target className="w-6 h-6 text-orange-500" />
-                  </div>
-                }
-                animation="pop"
-                size={48}
-              />
-              <div>
-                <h4 className="font-tanker text-fluid-2xl md:text-xl text-white mb-1">
-                  Smart Match
-                </h4>
-                <p className="font-sora text-neutral-500 text-xs">
-                  Shoes that actually fit your feet
-                </p>
-              </div>
-            </motion.div>
-
-          </div>
-
-          {/* Bottom Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            viewport={{ once: true }}
-            className="mt-fluid-xl md:mt-16 flex flex-wrap justify-center gap-8 md:gap-16"
-          >
-            {[
-              { value: "100%", label: "Your Data, Your Control" },
-              { value: "0%", label: "Data Resold. Ever." },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="font-tanker text-fluid-3xl md:text-3xl text-orange-500">
-                  {stat.value}
-                </div>
-                <div className="font-sora text-xs text-neutral-600 mt-1">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Marquee Section */}
-      <section className="bg-neutral-950 py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-12">
-            <div>
-              <p className="font-sora text-xs uppercase tracking-[0.4em] text-orange-400">
-                Choose your flow
+              <h3 className="font-tanker text-fluid-4xl leading-none">Smart Match</h3>
+              <p className="font-sora text-fluid-base text-neutral-500 leading-snug tracking-tight">
+                Data-driven recommendations. We map your volume to the world's best rubber.
               </p>
-              <h3 className="font-tanker text-4xl md:text-5xl mt-2">
-                Free vs Premium
-              </h3>
-            </div>
-            <div className="flex items-center gap-3 text-sm font-sora text-neutral-400">
-              <Sparkles className="w-4 h-4 text-orange-400" />
-              Data stays yours no matter the tier
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8">
-            {tierOptions.map((tier) => (
-              <div
-                key={tier.name}
-                className={`rounded-3xl border ${tier.highlight ? "border-orange-400 bg-gradient-to-br from-orange-500/10 to-black" : "border-neutral-800 bg-black/40"} p-8 flex flex-col gap-6`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-sora text-xs uppercase tracking-[0.4em] text-neutral-500">
-                      {tier.name}
-                    </p>
-                    <p className="font-tanker text-4xl mt-2">{tier.price}</p>
-                    {tier.subLabel && (
-                      <p className="font-sora text-sm text-neutral-500">
-                        {tier.subLabel}
-                      </p>
-                    )}
-                  </div>
-                  {tier.highlight && (
-                    <span className="flex items-center gap-2 text-xs font-sora uppercase tracking-[0.3em] text-orange-400">
-                      <Flame className="w-4 h-4" />
-                      Most loved
-                    </span>
-                  )}
-                </div>
-                <p className="font-sora text-neutral-400">{tier.tagline}</p>
-                <div className="space-y-3">
-                  {tier.features.map((feature) => (
-                    <div key={feature} className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-orange-400" />
-                      <p className="font-sora text-sm text-neutral-300">
-                        {feature}
-                      </p>
+            </motion.div>
+
+            <div className="space-y-fluid-md">
+              <div className="w-fluid-3xl h-fluid-3xl flex items-center justify-center bg-orange-500/5 rounded-2xl">
+                <Activity className="text-orange-500" size={32} />
+              </div>
+              <h3 className="font-tanker text-fluid-4xl leading-none">Live Sync</h3>
+              <div className="space-y-fluid-sm overflow-hidden h-24 relative mask-fade-vertical">
+                <motion.div
+                  animate={isReducedEffects ? undefined : { y: [0, -120] }}
+                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                  className="space-y-fluid-sm will-change-transform"
+                >
+                  {activityLoop.map((activity, i) => (
+                    <div key={i} className="flex items-center gap-fluid-sm text-fluid-sm font-sora opacity-50 hover:opacity-100 transition-opacity">
+                      <span className="text-orange-500 font-medium">{activity.user}</span>
+                      <span className="text-neutral-500">{activity.action}</span>
+                      <span className="text-white/80">{activity.shoe}</span>
                     </div>
                   ))}
-                </div>
-                <button
-                  onClick={() => router.push(tier.href)}
-                  className={`w-full py-3 rounded-2xl font-tanker text-lg flex items-center justify-center gap-2 ${tier.highlight ? "bg-orange-400 text-black hover:bg-orange-300" : "border border-neutral-800 text-white hover:border-orange-400"}`}
-                >
-                  {tier.cta}
-                  <ArrowUpRight className="w-5 h-5" />
-                </button>
+                </motion.div>
+                <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-transparent to-neutral-950 pointer-events-none" />
+              </div>
+            </div>
+
+          </div>
+
+          <div className="pt-fluid-2xl flex flex-wrap gap-x-fluid-3xl gap-y-fluid-xl justify-center md:justify-start">
+            {stats.map((stat) => (
+              <div key={stat.label} className="flex flex-col gap-1">
+                <span className="font-tanker text-fluid-3xl text-orange-500 leading-none">{stat.value}</span>
+                <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-600 font-medium">{stat.label}</span>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
-      <section className="bg-black py-24 px-6">
-        <div className="max-w-6xl mx-auto space-y-10">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <p className="font-sora text-xs uppercase tracking-[0.4em] text-orange-400">
-                Spotlight
-              </p>
-              <h3 className="font-tanker text-4xl md:text-5xl">
-                Content made for climbers
-              </h3>
-            </div>
-            <button
-              onClick={() => router.push("/stories")}
-              className="font-sora text-sm text-orange-400 flex items-center gap-2"
-            >
-              View archive
-              <ArrowUpRight className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="overflow-x-auto">
-            <div className="flex gap-6 min-w-full">
-              {spotlightArticles.map((article) => (
-                <div
-                  key={article.title}
-                  className="min-w-[280px] md:min-w-[320px] bg-neutral-950 border border-neutral-800 rounded-3xl p-6 flex flex-col gap-4"
-                >
-                  <span className="text-xs font-sora uppercase tracking-[0.4em] text-neutral-500">
-                    {article.tag}
-                  </span>
-                  <h4 className="font-tanker text-2xl text-white">
-                    {article.title}
-                  </h4>
-                  <p className="font-sora text-sm text-neutral-400 flex-1">
-                    {article.summary}
-                  </p>
-                  <div className="flex items-center justify-between text-sm font-sora text-neutral-500">
-                    <span>{article.readingTime}</span>
-                    <button
-                      onClick={() => router.push(article.href)}
-                      className="text-orange-400 flex items-center gap-1"
-                    >
-                      Read
-                      <ArrowUpRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Access */}
+      <section className="bg-black py-fluid-3xl px-fluid-md relative overflow-hidden contain-content">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-fluid-xl h-fluid-xl bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
 
-      <section className="bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-black border-y border-orange-500/30 py-24 px-6">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <p className="font-sora text-xs uppercase tracking-[0.4em] text-orange-500">
-              Founder access
-            </p>
-            <h3 className="font-tanker text-4xl md:text-5xl">
-              {totalUsers !== null
-                ? `${remainingSlots} spots left`
-                : "Loading..."}
-            </h3>
-            <p className="font-sora text-neutral-200 text-lg max-w-lg">
-              First 1,000 climbers get lifetime premium — free. This tracker is
-              real. Once it hits zero, paid plans kick in.
-            </p>
+        <div className="max-w-fluid-lg mx-auto text-center space-y-fluid-xl relative z-10">
+          <div className="inline-flex items-center gap-fluid-sm px-fluid-md py-fluid-xs bg-orange-500/10 rounded-full border border-orange-500/20 backdrop-blur-md">
+            <Sparkles size={14} className="text-orange-500 animate-pulse" />
+            <span className="font-sora text-[9px] font-bold uppercase tracking-[0.4em] text-orange-500">Founders Only</span>
           </div>
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center">
-                <Activity className="w-5 h-5 text-orange-400" />
-              </div>
-              <p className="font-sora text-sm text-neutral-200">
-                {totalUsers !== null
-                  ? `${claimedSlots} climbers signed up`
-                  : "Loading..."}
-              </p>
-            </div>
-            <div className="h-3 rounded-full bg-black/30 overflow-hidden">
-              <motion.div
-                className="h-full bg-orange-400 rounded-full"
+          
+          <h2 className="font-tanker text-title-md leading-[0.85] tracking-tight">
+            {remainingSlots} spots left for <span className="text-orange-500 italic">Life</span>
+          </h2>
+          
+          <p className="font-sora text-fluid-lg text-neutral-400 max-w-xl mx-auto leading-tight tracking-tight">
+            The first 1,000 climbers get lifetime premium. No subscriptions, just better climbing.
+          </p>
+
+          <div className="max-w-md mx-auto space-y-fluid-md">
+            <div className="h-2 bg-neutral-900 rounded-full overflow-hidden p-[1px]">
+              <motion.div 
+                className="h-full bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)] will-change-[width]" 
                 initial={{ width: 0 }}
-                animate={{ width: `${claimedPercent}%` }}
-                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+                whileInView={{ width: `${claimedPercent}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 2.5, ease: [0.22, 1, 0.36, 1] }}
               />
             </div>
-            <div className="flex items-center justify-between text-sm font-sora text-neutral-300">
-              <span>{claimedSlots} signed up</span>
+            <div className="flex justify-between font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-medium">
+              <span>{claimedSlots} claimed</span>
               <span>{founderSpotsTotal} total</span>
             </div>
-            <button
+          </div>
+
+          <div className="pt-fluid-lg">
+            <button 
               onClick={() => router.push("/auth/signup")}
-              className="w-full bg-black text-white font-tanker text-xl py-4 rounded-2xl flex items-center justify-center gap-3 hover:bg-neutral-900"
+              className="group relative inline-flex items-center gap-fluid-md bg-white text-black font-tanker text-fluid-3xl px-fluid-3xl py-fluid-md rounded-full hover:bg-orange-500 hover:text-white transition-all duration-700 ease-[0.22, 1, 0.36, 1] overflow-hidden shadow-2xl will-change-transform"
             >
-              Claim your spot
-              <ArrowUpRight className="w-5 h-5" />
+              <span className="relative z-10 flex items-center gap-fluid-md">
+                Claim my spot
+                <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-500 will-change-transform" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             </button>
           </div>
         </div>
       </section>
 
-      <section className="py-8 bg-orange-500 overflow-hidden">
+      {/* Ticker: Pure Motion */}
+      <div className="py-fluid-md bg-orange-500 overflow-hidden select-none relative z-10 shadow-2xl contain-strict">
         <motion.div
           animate={isReducedEffects ? undefined : { x: [0, -1000] }}
-          transition={
-            isReducedEffects ? undefined : { duration: 20, repeat: Infinity, ease: "linear" }
-          }
-          className="flex gap-8 whitespace-nowrap"
+          transition={isReducedEffects ? undefined : { duration: 40, repeat: Infinity, ease: "linear" }}
+          className="flex gap-fluid-3xl whitespace-nowrap items-center will-change-transform"
         >
-          {Array(10)
-            .fill(null)
-            .map((_, i) => (
-              <span key={i} className="font-tanker text-2xl text-black/80">
-                FIND YOUR GRIP • COMMUNITY DRIVEN • YOUR DATA, YOUR SHOES •
-              </span>
-            ))}
+          {marqueeItems.map((_, i) => (
+            <span key={i} className="font-tanker text-fluid-3xl text-black leading-none py-2">
+              GRIPKICKS • COMMUNITY POWERED • PRECISION FIT • BETTER RUBBER • BETTER CLIMBING •
+            </span>
+          ))}
         </motion.div>
-      </section>
+      </div>
     </main>
   );
 }
