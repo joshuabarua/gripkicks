@@ -96,9 +96,6 @@ export default function HomeCreative() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className="font-tanker text-title-xl leading-[0.85] tracking-tight">
-              GRIP<span className="text-orange-500">KICKS</span>
-            </h1>
             <p className="font-sora text-fluid-lg text-neutral-400 mt-fluid-md max-w-lg mx-auto leading-tight tracking-tight">
               The technical soul of your climbing gear.
             </p>
@@ -148,7 +145,7 @@ export default function HomeCreative() {
             </button>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-fluid-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-fluid-2xl">
             
             <motion.div whileHover={{ y: -5 }} className="space-y-fluid-md group cursor-default will-change-transform">
               <div className="w-fluid-3xl h-fluid-3xl flex items-center justify-center bg-orange-500/5 rounded-2xl group-hover:bg-orange-500/10 transition-all duration-500">
@@ -170,14 +167,14 @@ export default function HomeCreative() {
               </p>
             </motion.div>
 
-            <div className="space-y-fluid-md">
-              <div className="w-fluid-3xl h-fluid-3xl flex items-center justify-center bg-orange-500/5 rounded-2xl">
+            <motion.div whileHover={{ y: -5 }} className="space-y-fluid-md group cursor-default will-change-transform">
+              <div className="w-fluid-3xl h-fluid-3xl flex items-center justify-center bg-orange-500/5 rounded-2xl group-hover:bg-orange-500/10 transition-all duration-500">
                 <Activity className="text-orange-500" size={32} />
               </div>
               <h3 className="font-tanker text-fluid-4xl leading-none">Live Sync</h3>
-              <div className="space-y-fluid-sm overflow-hidden h-24 relative mask-fade-vertical">
+              <div className="space-y-fluid-sm overflow-hidden h-24 mask-fade-vertical">
                 <motion.div
-                  animate={isReducedEffects ? undefined : { y: [0, -120] }}
+                  animate={isReducedEffects ? undefined : { y: ["0%", "-33.33%"] }}
                   transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
                   className="space-y-fluid-sm will-change-transform"
                 >
@@ -189,9 +186,8 @@ export default function HomeCreative() {
                     </div>
                   ))}
                 </motion.div>
-                <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-transparent to-neutral-950 pointer-events-none" />
               </div>
-            </div>
+            </motion.div>
 
           </div>
 
@@ -209,7 +205,7 @@ export default function HomeCreative() {
 
       {/* Access */}
       <section className="bg-black py-fluid-3xl px-fluid-md relative overflow-hidden contain-content">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-fluid-xl h-fluid-xl bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="max-w-fluid-lg mx-auto text-center space-y-fluid-xl relative z-10">
           <div className="inline-flex items-center gap-fluid-sm px-fluid-md py-fluid-xs bg-orange-500/10 rounded-full border border-orange-500/20 backdrop-blur-md">
@@ -244,7 +240,7 @@ export default function HomeCreative() {
           <div className="pt-fluid-lg">
             <button 
               onClick={() => router.push("/auth/signup")}
-              className="group relative inline-flex items-center gap-fluid-md bg-white text-black font-tanker text-fluid-3xl px-fluid-3xl py-fluid-md rounded-full hover:bg-orange-500 hover:text-white transition-all duration-700 ease-[0.22, 1, 0.36, 1] overflow-hidden shadow-2xl will-change-transform"
+              className="group relative inline-flex items-center gap-fluid-md bg-white text-black font-tanker text-fluid-3xl px-fluid-3xl py-fluid-md rounded-full hover:bg-orange-500 hover:text-white transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shadow-2xl will-change-transform"
             >
               <span className="relative z-10 flex items-center gap-fluid-md">
                 Claim my spot
