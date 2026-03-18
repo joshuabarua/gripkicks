@@ -38,6 +38,8 @@ export default defineSchema({
     climbingDiscipline: v.string(),
     volume: v.string(),
     rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
+    brandAggressiveness: v.optional(v.number()),
+    brandStiffness: v.optional(v.number()),
     avgComfortScore: v.optional(v.number()),
     avgPerformanceRating: v.optional(v.number()),
     avgDurabilityRating: v.optional(v.number()),
@@ -162,6 +164,9 @@ export default defineSchema({
     performanceRating: v.optional(v.number()),
     durabilityRating: v.optional(v.number()),
     isFavourite: v.optional(v.boolean()),
+    perceivedAggressiveness: v.optional(v.number()),
+    perceivedStiffness: v.optional(v.number()),
+    perceivedVolumeFit: v.optional(v.string()),
   })
     .index("by_userId", ["userId"])
     .index("by_shoeId", ["shoeId"])
@@ -222,6 +227,15 @@ export default defineSchema({
   })
     .index("by_userId", ["userId"])
     .index("by_overallScore", ["overallScore"]),
+
+  outliers: defineTable({
+    shoeId: v.id("shoes"),
+    footShape: footShapeValidator,
+    footVolume: v.string(),
+    signalType: v.string(),
+    count: v.number(),
+    description: v.string(),
+  }).index("by_shoe_profile", ["shoeId", "footShape", "footVolume"]),
 
   // Shoe Popularity
   popularity: defineTable({
