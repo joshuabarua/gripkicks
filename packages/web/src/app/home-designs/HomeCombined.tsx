@@ -151,11 +151,11 @@ export default function HomeCombined() {
               </h2>
             </div>
             <div className="text-right hidden md:block">
-              <p className="font-mono text-[10px] text-neutral-600">
-                [EST. 2024]
+              <p className="font-sora text-[10px] text-neutral-600">
+                Est. 2024
               </p>
-              <p className="font-mono text-[10px] text-neutral-600 mt-1">
-                [COMMUNITY_BUILT]
+              <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-600 mt-1">
+                Community built
               </p>
               <motion.div
                 className="w-2 h-2 bg-orange-500 rounded-full mt-4 ml-auto"
@@ -407,7 +407,7 @@ export default function HomeCombined() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <p className="font-mono text-xs text-black/60 mb-4">[FINAL_CTA]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-black/60 mb-4">Final CTA</p>
             <h2 className="font-tanker text-6xl md:text-8xl lg:text-9xl text-black mb-8 leading-[0.85]">
               READY TO
               <br />

@@ -18,7 +18,7 @@ export default function Login() {
             transition={{ duration: 0.6 }}
             className="text-center mb-8"
           >
-            <p className="font-mono text-xs text-orange-500 mb-2 tracking-[0.3em]">[AUTHENTICATE]</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">Authenticate</p>
             <h1 className="font-tanker text-5xl md:text-6xl">
               WELCOME<br /><span className="text-orange-500">BACK</span>
             </h1>

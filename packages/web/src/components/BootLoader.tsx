@@ -89,8 +89,8 @@ export default function BootLoader({ visible }: { visible: boolean }) {
           </div>
 
           <div className="absolute top-6 left-1/2 -translate-x-1/2">
-            <span className="font-mono text-[10px] text-orange-500 tracking-[0.3em]">
-              [LOADING]
+            <span className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">
+              Loading
             </span>
           </div>
 

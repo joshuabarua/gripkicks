@@ -254,7 +254,7 @@ export default function OnboardingPage() {
 
                   <div className="space-y-6">
                     <div>
-                      <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[SELECT_SHAPE]</Label>
+                      <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Select shape</Label>
                       <div className="grid grid-cols-2 gap-3 mt-3">
                         {[
                           { value: 'egyptian', label: 'Egyptian', desc: 'Big toe longest' },
@@ -282,7 +282,7 @@ export default function OnboardingPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[FOOT_VOLUME]</Label>
+                      <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Foot volume</Label>
                       <div className="grid grid-cols-3 gap-3 mt-3">
                         {[
                           { value: 'low', label: 'Low', desc: 'Narrow' },
@@ -329,7 +329,7 @@ export default function OnboardingPage() {
 
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[SEARCH_SHOES]</Label>
+                      <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Search shoes</Label>
                       <div className="mt-2">
                         <ShoeSearch 
                           onShoeSelect={setSelectedShoe}
@@ -362,7 +362,7 @@ export default function OnboardingPage() {
                       <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[SIZE]</Label>
+                            <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Size</Label>
                             <Select value={shoeFormData.size} onValueChange={(value) => setShoeFormData({ ...shoeFormData, size: value })}>
                               <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white rounded-xl h-12 focus:border-orange-500">
                                 <SelectValue placeholder="Select size" />
@@ -375,7 +375,7 @@ export default function OnboardingPage() {
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[CONDITION]</Label>
+                            <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Condition</Label>
                             <Select value={shoeFormData.condition} onValueChange={(value: string) => setShoeFormData({ ...shoeFormData, condition: value })}>
                               <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white rounded-xl h-12 focus:border-orange-500">
                                 <SelectValue />
@@ -392,7 +392,7 @@ export default function OnboardingPage() {
 
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[COMFORT]</Label>
+                            <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Comfort</Label>
                             <div className="flex items-center gap-2 mt-2">
                               {[1, 2, 3, 4, 5].map((rating) => (
                                 <motion.button
@@ -412,7 +412,7 @@ export default function OnboardingPage() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[PERFORMANCE]</Label>
+                            <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Performance</Label>
                             <div className="flex items-center gap-2 mt-2">
                               {[1, 2, 3, 4, 5].map((rating) => (
                                 <motion.button
@@ -434,7 +434,7 @@ export default function OnboardingPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="font-mono text-[10px] text-orange-500 tracking-[0.2em]">[NOTES_OPTIONAL]</Label>
+                          <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Notes (optional)</Label>
                           <Textarea
                             id="notes"
                             value={shoeFormData.notes}

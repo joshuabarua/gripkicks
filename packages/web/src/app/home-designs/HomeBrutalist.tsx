@@ -68,9 +68,9 @@ export default function HomeBrutalist() {
               </h2>
             </div>
             <div className="text-right">
-              <p className="font-mono text-xs text-black/60">[EST. 2024]</p>
-              <p className="font-mono text-xs text-black/60 mt-1">
-                [COMMUNITY_BUILT]
+              <p className="font-sora text-xs text-black/60">Est. 2024</p>
+              <p className="font-sora text-xs uppercase tracking-[0.2em] text-black/60 mt-1">
+                Community built
               </p>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function HomeBrutalist() {
 
           {/* Features Grid */}
           <div className="border-t-4 border-black pt-8">
-            <p className="font-mono text-xs text-black/60 mb-8">[FEATURES]</p>
+            <p className="font-sora text-xs uppercase tracking-[0.2em] text-black/60 mb-8">Features</p>
             <div className="grid grid-cols-3 gap-4">
               {[
                 { id: "A1", title: "FOOT LAB", desc: "KNOW YOUR FEET" },
