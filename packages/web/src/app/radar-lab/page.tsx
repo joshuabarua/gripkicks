@@ -78,7 +78,7 @@ export default function RadarLabPage() {
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           />
-          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">Loading</p>
+          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">Loading the field</p>
         </div>
       </div>
     );
@@ -96,12 +96,12 @@ export default function RadarLabPage() {
           className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8"
         >
           <div>
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Community</p>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Community Radar</p>
             <h1 className="font-tanker text-6xl sm:text-7xl lg:text-8xl leading-[0.9] mb-4">
-              CRAG
+              THE<br /><span className="text-orange-500">FIELD</span>
             </h1>
             <p className="font-sora text-neutral-400 max-w-md leading-relaxed">
-              No account needed. Where the community lands — the most-stashed shoes plotted by how they actually climb. Not matched to your feet. Just the data.
+              No account needed. This is where the community lands — the most-stashed shoes plotted by how they actually climb. Not matched to your feet. Just the data.
             </p>
           </div>
 
@@ -142,13 +142,13 @@ export default function RadarLabPage() {
           className="flex flex-wrap gap-6 items-center border-t border-b border-neutral-800/60 py-4"
         >
           <p className="font-sora text-xs text-neutral-500">
-            <span className="text-white">Crag</span> — community popularity, no foot profile
+            <span className="text-white">The Field</span> — community popularity, no foot profile
           </p>
           <span className="text-neutral-800 hidden sm:block">·</span>
           <p className="font-sora text-xs text-neutral-500">
             Want personalised matches?{" "}
             <Link href="/auth/login" className="text-orange-500 hover:text-orange-400 transition-colors">
-              Sign in for your Beta →
+              Sign in for your Radar →
             </Link>
           </p>
         </motion.div>

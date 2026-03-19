@@ -254,7 +254,7 @@ export function ShoeRadarMatcher() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4" />
-          <p className="font-sora text-neutral-500 text-sm">Loading...</p>
+          <p className="font-sora text-neutral-500 text-sm">Loading shoe radar...</p>
         </div>
       </div>
     );
@@ -266,8 +266,8 @@ export function ShoeRadarMatcher() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">Shoe matching</p>
-          <h1 className="font-tanker text-5xl md:text-6xl text-white leading-none">BETA</h1>
+          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">Shoe Matcher</p>
+          <h1 className="font-tanker text-5xl md:text-6xl text-white leading-none">RADAR</h1>
         </div>
         <div className="flex items-center gap-3">
           <Badge className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-4 py-1.5 font-sora">
@@ -277,7 +277,7 @@ export function ShoeRadarMatcher() {
             href="/radar-lab"
             className="font-sora inline-flex items-center rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-orange-500/40 hover:text-white"
           >
-            Crag
+            Public radar
           </Link>
         </div>
       </div>
