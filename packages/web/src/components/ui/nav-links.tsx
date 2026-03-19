@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth';
-import { LayoutDashboard, Footprints, Archive, Heart, Info, Shield, Crown, Target } from 'lucide-react';
+import { LayoutDashboard, Footprints, Archive, Info, Shield, Crown, Target } from 'lucide-react';
 import { AnimatedNavIcon } from '@/components/ui/AnimatedNavIcon';
 import type { LucideIcon } from 'lucide-react';
 
@@ -18,8 +18,7 @@ const mainLinks: NavItem[] = [
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, animation: 'bounce' },
     { title: "Foot Scan", href: "/footscan", icon: Footprints, animation: 'wiggle' },
     { title: "Sanctuary", href: "/stash", icon: Archive, animation: 'pop' },
-    { title: "Matcher", href: "/matcher", icon: Target, animation: 'pulse' },
-    { title: "Sole Mate", href: "/findmyshoe", icon: Heart, animation: 'pulse' },
+    { title: "Sole Seek", href: "/matcher", icon: Target, animation: 'pulse' },
 ]
 
 const secondaryLinks: NavItem[] = [

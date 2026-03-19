@@ -263,23 +263,10 @@ export function ShoeRadarMatcher() {
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 py-8 sm:px-6 lg:px-8">
 
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">Shoe Matcher</p>
-          <h1 className="font-tanker text-5xl md:text-6xl text-white leading-none">RADAR</h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-4 py-1.5 font-sora">
-            Top {recommendationLimit} {recommendationLimit === 1 ? 'match' : 'matches'}
-          </Badge>
-          <Link
-            href="/radar-lab"
-            className="font-sora inline-flex items-center rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-orange-500/40 hover:text-white"
-          >
-            Public radar
-          </Link>
-        </div>
+      <div className="flex items-center justify-end mb-4">
+        <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/20">
+          Top {recommendationLimit} {recommendationLimit === 1 ? 'match' : 'matches'}
+        </span>
       </div>
 
       {/* Glowing Top Match hero */}
