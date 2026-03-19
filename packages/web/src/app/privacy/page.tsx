@@ -180,15 +180,15 @@ export default function PrivacyPage() {
                 className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-4"
               >
                 <div>
-                  <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-1">WHAT</p>
+                  <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 mb-1">What</p>
                   <p className="font-sora text-white font-medium">{row.what}</p>
                 </div>
                 <div>
-                  <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-1">WHY</p>
+                  <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 mb-1">Why</p>
                   <p className="font-sora text-neutral-400 text-sm">{row.why}</p>
                 </div>
                 <div>
-                  <p className="font-mono text-[10px] text-orange-500 tracking-[0.2em] mb-1">HOW LONG</p>
+                  <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 mb-1">How long</p>
                   <p className="font-sora text-neutral-400 text-sm">{row.kept}</p>
                 </div>
               </motion.div>
