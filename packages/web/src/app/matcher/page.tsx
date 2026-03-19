@@ -25,8 +25,8 @@ export default function ShoeMatcherPage() {
             <div className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Target className="w-10 h-10 text-orange-500" />
             </div>
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Shoe Matcher</p>
-            <h1 className="font-tanker text-5xl text-white mb-2">RADAR</h1>
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Shoe matching</p>
+            <h1 className="font-tanker text-5xl text-white mb-2">BETA</h1>
             <p className="font-sora text-neutral-400">
               See where every shoe lands based on how it actually performs
             </p>
