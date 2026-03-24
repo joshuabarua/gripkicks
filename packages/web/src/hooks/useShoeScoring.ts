@@ -4,6 +4,7 @@ import { api } from "convex/_generated/api";
 import type { Doc } from "convex/_generated/dataModel";
 import { useFootProfileStore } from "@/stores/footProfileStore";
 import { useUserPreferenceLearning } from "./useUserPreferenceLearning";
+import { useUserStore } from "@/stores/userStore";
 
 interface SoleMateAggregate {
   shoeId: string;
@@ -60,8 +61,23 @@ export function useShoeScoring(userPreferences?: {
   const { profile: footProfile } = useFootProfileStore();
   const { userPreferenceProfile, isLearningReady } =
     useUserPreferenceLearning();
+  const { user } = useUserStore();
 
-  // Use learned preferences if available, otherwise use manual preferences
+  const convexUser = useQuery(
+    api.users.findByBetterAuthId,
+    user ? { betterAuthId: user.id } : "skip",
+  );
+  const userShoes = useQuery(
+    api.stash.getUserStash,
+    convexUser ? { userId: convexUser._id } : "skip",
+  );
+
+  const stashCount = userShoes?.length ?? 0;
+  const ratedCount =
+    userShoes?.filter(
+      (s) => s.comfortScore !== undefined,
+    ).length ?? 0;
+
   const effectivePreferences = useMemo(() => {
     if (isLearningReady && userPreferenceProfile) {
       return {
@@ -112,7 +128,7 @@ export function useShoeScoring(userPreferences?: {
 
   const isLoading = shoes === undefined || popularityData === undefined;
 
-  return { scoredShoes, isLoading, isLearningReady, userPreferenceProfile };
+  return { scoredShoes, isLoading, isLearningReady, userPreferenceProfile, stashCount, ratedCount };
 }
 
 function calculateShoeScore(

@@ -1,8 +1,8 @@
 # Design Spec: Sole Mate Gear Lab
 
-**Status:** Draft
-**Date:** 2026-03-18
-**Topic:** Improving the "Match" experience through personalized community data and reality-check metrics.
+**Status:** Implemented
+**Date:** 2026-03-24
+**Shipped:** All tasks in sole-mate-gear-lab.md are complete. Schema, scoring algorithm, and all UI components are live.
 
 ## 1. Problem Statement
 Current shoe recommendations rely on static brand data and general ratings. This doesn't account for:

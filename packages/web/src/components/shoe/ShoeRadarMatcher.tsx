@@ -5,13 +5,13 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import ShoeImage from '@/components/ShoeImage';
 import { useShoeScoring } from '@/hooks/useShoeScoring';
-import { useSubscription } from '@/hooks/useSubscription';
 import { useFootProfileStore } from '@/stores/footProfileStore';
 import { Badge } from '@/components/ui/badge';
 import { Heart, Target, User, Zap, Shield } from 'lucide-react';
 import { MatchScoreTooltip } from './MatchScoreTooltip';
 import { RealityCheck } from './RealityCheck';
 import { SoleMateSignals } from './SoleMateSignals';
+import { DataContributionNudge } from './DataContributionNudge';
 
 interface ShoeMetrics {
   comfort: number;
@@ -213,15 +213,12 @@ function getTopTraits(metrics: ShoeMetrics) {
 
 export function ShoeRadarMatcher() {
   const { profile: footProfile } = useFootProfileStore();
-  const { isPremium, isFounder, loading: subscriptionLoading } = useSubscription();
-  const { scoredShoes, isLoading } = useShoeScoring();
-
-  const recommendationLimit = isPremium || isFounder ? 5 : 1;
+  const { scoredShoes, isLoading, stashCount, ratedCount } = useShoeScoring();
 
   const recommendedShoes = useMemo(() => {
     if (!scoredShoes || scoredShoes.length === 0) return [];
     return buildVisibleRadarPositions(
-      scoredShoes.slice(0, recommendationLimit).map((scored) => ({
+      scoredShoes.map((scored) => ({
         shoe: scored.shoe,
         score: scored.totalScore,
         metrics: scored.metrics,
@@ -249,7 +246,7 @@ export function ShoeRadarMatcher() {
     );
   }, [recommendedShoes]);
 
-  if (isLoading || subscriptionLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
@@ -262,12 +259,6 @@ export function ShoeRadarMatcher() {
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 py-8 sm:px-6 lg:px-8">
-
-      <div className="flex items-center justify-end mb-4">
-        <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/20">
-          Top {recommendationLimit} {recommendationLimit === 1 ? 'match' : 'matches'}
-        </span>
-      </div>
 
       {/* Glowing Top Match hero */}
       {leadShoe && leadQuadrant && (
@@ -500,6 +491,8 @@ export function ShoeRadarMatcher() {
           </Link>
         </div>
       )}
+
+      <DataContributionNudge stashCount={stashCount} ratedCount={ratedCount} />
     </div>
   );
 }

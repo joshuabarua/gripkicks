@@ -167,6 +167,9 @@ export default defineSchema({
     perceivedStiffness: v.optional(v.number()),
     perceivedVolumeFit: v.optional(v.string()),
     isFavourite: v.optional(v.boolean()),
+    // B2B signal enrichment
+    fitLongevity: v.optional(v.string()), // e.g. "1-3 months", "3-6 months", "6+ months"
+    sizingDeviation: v.optional(v.number()), // e.g. -1.0 means user sized down 1 from standard
   })
     .index("by_userId", ["userId"])
     .index("by_shoeId", ["shoeId"])
