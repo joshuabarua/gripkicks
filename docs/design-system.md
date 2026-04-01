@@ -88,7 +88,7 @@ Active/selected: `border-orange-500 bg-orange-500/10`
 | Label | Route | Purpose |
 |---|---|---|
 | Dashboard | `/dashboard` | Home base — stats, foot profile, recent shoes |
-| Foot Lab | `/footchecker` | Set up / update foot profile |
+| Foot Lab | `/footscan` | Set up / update foot profile |
 | Sanctuary | `/stash` | Shoe collection |
 | Matcher | `/matcher` | Visual shoe radar |
 | Sole Mate | `/findmyshoe` | Personalised recommendations |

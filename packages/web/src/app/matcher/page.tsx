@@ -32,7 +32,7 @@ export default function SoleSeekPage() {
               <Target className="w-10 h-10 text-orange-500" />
             </div>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Shoe matching</p>
-            <h1 className="font-tanker text-5xl text-white mb-2">SOLE SEEK</h1>
+            <h1 className="font-tanker text-5xl text-white mb-2">MATCHER</h1>
             <p className="font-sora text-neutral-400">
               See where every shoe lands based on how it actually performs
             </p>
@@ -63,7 +63,7 @@ export default function SoleSeekPage() {
           </div>
 
           <div className="mt-8 p-4 bg-neutral-900 rounded-xl border border-neutral-800">
-            <p className="font-sora text-sm text-neutral-400 text-center">Sign in to access Sole Seek</p>
+            <p className="font-sora text-sm text-neutral-400 text-center">Sign in to access Matcher</p>
           </div>
         </motion.div>
       </div>
@@ -76,7 +76,7 @@ export default function SoleSeekPage() {
         <div className="flex items-end justify-between gap-4 mb-8">
           <div>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Shoe matching</p>
-            <h1 className="font-tanker text-6xl md:text-7xl leading-none">SOLE SEEK</h1>
+            <h1 className="font-tanker text-6xl md:text-7xl leading-none">MATCHER</h1>
           </div>
           <Link
             href="/radar-lab"
@@ -97,7 +97,7 @@ export default function SoleSeekPage() {
                   : 'border-transparent text-neutral-500 hover:text-neutral-300'
               }`}
             >
-              {tab === 'seek' ? 'Sole Seek' : 'Sole Mate'}
+              {tab === 'seek' ? 'Matcher' : 'Sole Mate'}
             </button>
           ))}
         </div>
@@ -145,7 +145,7 @@ function SoleMateTab() {
         <p className="font-sora text-neutral-500 mb-6 max-w-sm mx-auto">Your foot profile is needed to find climbers with the same fit</p>
         <Link href="/footscan">
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-orange-500 hover:bg-orange-600 text-black font-tanker px-6 py-2.5 rounded-xl transition-colors">
-            FOOT SCAN
+            FOOT LAB
           </motion.button>
         </Link>
       </div>

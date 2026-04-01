@@ -174,8 +174,8 @@ export default function PricingPage() {
                   />
                 </div>
                 <div className="flex justify-between mt-2">
-                  <span className="font-mono text-[10px] text-black/40">0</span>
-                  <span className="font-mono text-[10px] text-black/40">
+                  <span className="font-sora text-[10px] uppercase tracking-[0.15em] text-black/40">0</span>
+                  <span className="font-sora text-[10px] uppercase tracking-[0.15em] text-black/40">
                     1,000
                   </span>
                 </div>
@@ -208,7 +208,7 @@ export default function PricingPage() {
                 {option.label}
                 {option.savings && (
                   <span
-                    className={`absolute -top-2 -right-2 text-[9px] px-2 py-0.5 rounded-full font-mono ${
+                    className={`absolute -top-2 -right-2 text-[9px] px-2 py-0.5 rounded-full font-sora uppercase tracking-[0.1em] ${
                       selectedPlan === option.id
                         ? "bg-black text-orange-500"
                         : "bg-orange-500 text-black"
@@ -295,7 +295,7 @@ export default function PricingPage() {
               className="bg-neutral-900 border border-orange-500/30 rounded-3xl p-8 flex flex-col relative overflow-hidden"
             >
               <div className="absolute top-4 right-4">
-                <span className="font-mono text-[9px] bg-orange-500 text-black px-3 py-1 rounded-full tracking-[0.1em]">
+                <span className="font-sora text-[9px] uppercase tracking-[0.1em] bg-orange-500 text-black px-3 py-1 rounded-full">
                   RECOMMENDED
                 </span>
               </div>
@@ -376,7 +376,7 @@ export default function PricingPage() {
                     setFounderChecking(true);
                     try {
                       const apiUrl =
-                        process.env.NEXT_PUBLIC_API_URL ||
+                        process.env["NEXT_PUBLIC_API_URL"] ||
                         "http://localhost:3001";
                       const founderRes = await fetch(
                         `${apiUrl}/api/v1/polar/check-founder`,
@@ -408,11 +408,10 @@ export default function PricingPage() {
                           body: JSON.stringify({
                             productId:
                               selectedPlan === "monthly"
-                                ? process.env.NEXT_PUBLIC_POLAR_PRODUCT_MONTHLY
+                                ? process.env["NEXT_PUBLIC_POLAR_PRODUCT_MONTHLY"]
                                 : selectedPlan === "yearly"
-                                  ? process.env.NEXT_PUBLIC_POLAR_PRODUCT_YEARLY
-                                  : process.env
-                                      .NEXT_PUBLIC_POLAR_PRODUCT_LIFETIME,
+                                  ? process.env["NEXT_PUBLIC_POLAR_PRODUCT_YEARLY"]
+                                  : process.env["NEXT_PUBLIC_POLAR_PRODUCT_LIFETIME"],
                             email: session.user.email,
                             name: session.user.name || session.user.email,
                           }),

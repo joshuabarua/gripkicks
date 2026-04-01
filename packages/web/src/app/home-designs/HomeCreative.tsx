@@ -93,8 +93,12 @@ export default function HomeCreative() {
 
         <motion.div
           className="absolute bottom-12 inset-x-0 mx-auto w-fit flex flex-col items-center gap-4 opacity-30 will-change-transform"
-          animate={isReducedEffects ? undefined : { y: [0, 10, 0] }}
-          transition={isReducedEffects ? undefined : { duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          {...(!isReducedEffects
+            ? {
+                animate: { y: [0, 10, 0] },
+                transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+              }
+            : {})}
         >
           <span className="text-[9px] font-sora tracking-[0.5em] uppercase">Explore</span>
           <div className="w-px h-16 bg-gradient-to-b from-white to-transparent" />
@@ -140,7 +144,7 @@ export default function HomeCreative() {
               <div className="w-fluid-3xl h-fluid-3xl flex items-center justify-center bg-orange-500/5 rounded-2xl group-hover:bg-orange-500/10 transition-all duration-500">
                 <Footprints className="text-orange-500" size={32} />
               </div>
-              <h3 className="font-tanker text-fluid-4xl leading-none">Foot Scan</h3>
+              <h3 className="font-tanker text-fluid-4xl leading-none">Foot Lab</h3>
               <p className="font-sora text-fluid-base text-neutral-500 leading-snug tracking-tight">
                 Precise morphology analysis. Egyptian, Roman, Greek—know your shape, find your shoe.
               </p>
@@ -163,7 +167,7 @@ export default function HomeCreative() {
               <h3 className="font-tanker text-fluid-4xl leading-none">Live Sync</h3>
               <div className="space-y-fluid-sm overflow-hidden h-24 mask-fade-vertical">
                 <motion.div
-                  animate={isReducedEffects ? undefined : { y: ["0%", "-33.33%"] }}
+                  {...(!isReducedEffects ? { animate: { y: ["0%", "-33.33%"] } } : {})}
                   transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
                   className="space-y-fluid-sm will-change-transform"
                 >
@@ -243,8 +247,12 @@ export default function HomeCreative() {
       {/* Ticker: Pure Motion */}
       <div className="py-fluid-md bg-orange-500 overflow-hidden select-none relative z-10 shadow-2xl">
         <motion.div
-          animate={isReducedEffects ? undefined : { x: [0, -1000] }}
-          transition={isReducedEffects ? undefined : { duration: 40, repeat: Infinity, ease: "linear" }}
+          {...(!isReducedEffects
+            ? {
+                animate: { x: [0, -1000] },
+                transition: { duration: 40, repeat: Infinity, ease: "linear" },
+              }
+            : {})}
           className="flex gap-fluid-3xl whitespace-nowrap items-center will-change-transform"
         >
           {marqueeItems.map((_, i) => (

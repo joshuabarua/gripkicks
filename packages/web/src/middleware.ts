@@ -7,7 +7,6 @@ const protectedRoutes = [
   '/profile',
   '/settings',
   '/stash',
-  '/footchecker',
 ];
 
 // Routes that should redirect to home if already authenticated

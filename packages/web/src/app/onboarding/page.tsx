@@ -128,8 +128,9 @@ export default function OnboardingPage() {
 
     // Move to next step
     const currentIndex = steps.findIndex(s => s.key === currentStep)
-    if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1].key)
+    const nextStep = steps[currentIndex + 1]
+    if (nextStep) {
+      setCurrentStep(nextStep.key)
     }
   }
 
@@ -173,8 +174,8 @@ export default function OnboardingPage() {
           {/* Progress */}
           <div className="mb-12">
             <div className="flex justify-between items-center mb-4">
-              <p className="font-mono text-xs text-orange-500 tracking-[0.3em]">
-                [STEP_{stepIndex + 1}_OF_{steps.length}]
+              <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">
+                Step {stepIndex + 1} of {steps.length}
               </p>
               <button 
                 onClick={handleSkipOnboarding}
@@ -345,14 +346,14 @@ export default function OnboardingPage() {
                             <ShoeImage
                               brand={selectedShoe.brand}
                               shoeName={selectedShoe.name}
-                              imageUrl={selectedShoe.imageUrl}
-                              slug={selectedShoe.slug}
                               className="w-full h-full object-contain p-2"
+                              {...(selectedShoe.imageUrl ? { imageUrl: selectedShoe.imageUrl } : {})}
+                              {...(selectedShoe.slug ? { slug: selectedShoe.slug } : {})}
                             />
                           </div>
                           <div>
                             <h3 className="font-sora font-semibold text-white">{selectedShoe.name}</h3>
-                            <p className="font-mono text-[10px] text-neutral-500">{selectedShoe.brand}</p>
+                            <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-500">{selectedShoe.brand}</p>
                           </div>
                         </div>
                       </div>
@@ -476,7 +477,7 @@ export default function OnboardingPage() {
 
                   <div className="grid md:grid-cols-3 gap-4 mb-10">
                     {[
-                      { href: '/footchecker', icon: Footprints, label: 'Foot Lab' },
+                      { href: '/footscan', icon: Footprints, label: 'Foot Lab' },
                       { href: '/stash', icon: Plus, label: 'My Shoes' },
                       { href: '/findmyshoe', icon: Star, label: 'Find Shoes' },
                     ].map((item) => (

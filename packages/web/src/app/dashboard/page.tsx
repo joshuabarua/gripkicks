@@ -260,7 +260,7 @@ export default function Dashboard() {
                 <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
               </div>
               <div>
-                <h4 className="font-tanker text-xl text-white mb-1">Foot Scan</h4>
+                <h4 className="font-tanker text-xl text-white mb-1">Foot Lab</h4>
                 <p className="font-sora text-neutral-500 text-xs">Update your foot profile</p>
               </div>
             </motion.div>
@@ -278,7 +278,7 @@ export default function Dashboard() {
                 <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
               </div>
               <div>
-                <h4 className="font-tanker text-xl text-white mb-1">Radar</h4>
+                <h4 className="font-tanker text-xl text-white mb-1">Matcher</h4>
                 <p className="font-sora text-neutral-500 text-xs">Visual shoe matcher</p>
               </div>
             </motion.div>
@@ -329,11 +329,11 @@ export default function Dashboard() {
                           <ShoeImage
                             brand={brand}
                             shoeName={name}
-                            imageUrl={imageUrl}
-                            slug={slug}
                             className="p-2"
                             transformation={[{ height: 56, width: 56, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 75 }]}
-                            gender={gender}
+                            {...(imageUrl ? { imageUrl } : {})}
+                            {...(slug ? { slug } : {})}
+                            {...(gender ? { gender } : {})}
                           />
                         </div>
                         <div>

@@ -37,12 +37,12 @@ export function DataContributionNudge({
       {
         label: "Add a shoe to your Sanctuary",
         done: stashCount > 0,
-        href: "/sanctuary",
+        href: "/stash",
       },
       {
         label: "Rate a shoe you own",
         done: ratedCount > 0,
-        href: "/sanctuary",
+        href: "/stash",
       },
     ],
     [footProfile, stashCount, ratedCount],

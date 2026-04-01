@@ -51,7 +51,7 @@ export default function ProfilePage() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const displayName = profile?.name || session?.user?.name || "User";
   const displayEmail = profile?.email || session?.user?.email || "";
-  const displayUserId = profile?.id || session?.user?.id;
+  const displayUserId = profile?.id ?? session?.user?.id ?? null;
 
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? null : section);
@@ -177,7 +177,7 @@ export default function ProfilePage() {
                     <Footprints className="w-5 h-5 text-orange-500" />
                   </div>
                   {!profile?.footShape && (
-                    <Link href="/footchecker">
+                    <Link href="/footscan">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
                         className="font-sora text-[10px] text-orange-500 cursor-pointer uppercase tracking-wide"
@@ -241,7 +241,7 @@ export default function ProfilePage() {
                     <li>2. Add your first shoe with comfort ratings</li>
                     <li>3. Find your perfect match</li>
                   </ol>
-                  <Link href="/footchecker">
+                  <Link href="/footscan">
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
@@ -293,9 +293,9 @@ export default function ProfilePage() {
                         <ProfileForm
                           initialProfile={{ name: displayName }}
                           email={displayEmail}
-                          userId={displayUserId}
                           onProfileUpdated={handleProfileUpdated}
                           onSuccess={handleProfileSaved}
+                          {...(displayUserId ? { userId: displayUserId } : {})}
                         />
                       </div>
                     </motion.div>

@@ -143,7 +143,7 @@ export default function SoleMatePage() {
           <p className="font-sora text-neutral-500 mb-8">
             Set up your foot profile so we can find what fits you best
           </p>
-          <Link href="/footchecker">
+          <Link href="/footscan">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -295,7 +295,7 @@ export default function SoleMatePage() {
                 <h2 className="font-tanker text-2xl text-white">
                   ALL RECOMMENDATIONS
                   {pagination.totalCount > 0 && (
-                    <span className="font-mono text-sm text-neutral-500 ml-2">
+                    <span className="font-sora text-sm text-neutral-500 ml-2">
                       ({pagination.totalCount})
                     </span>
                   )}
@@ -358,7 +358,7 @@ export default function SoleMatePage() {
                     </Button>
 
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-sm text-neutral-500">
+                      <span className="font-sora text-sm text-neutral-500">
                         Page {pagination.currentPage} of {pagination.totalPages}
                       </span>
                     </div>
@@ -408,7 +408,7 @@ function SoleMateMatchCard({
           <h3 className="font-sora font-semibold text-white">
             {match.user.name || "Climber"}
           </h3>
-          <p className="font-mono text-[10px] text-neutral-500">
+          <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-500">
             {match.shoes.length} shoes above 8.5
           </p>
         </div>
@@ -471,12 +471,12 @@ function ShoeCard({
           >
             {rating.shoe.name}
           </h3>
-          <p className="font-mono text-[10px] text-neutral-500">
+          <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-500">
             {rating.shoe.brand}
           </p>
           <div className="flex items-center gap-2 mt-1">
             <span
-              className={`font-mono text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${isSpotlight
+              className={`font-sora text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${isSpotlight
                 ? "bg-orange-500/20 text-orange-500"
                 : "bg-neutral-800 text-neutral-400"
                 }`}
@@ -486,14 +486,14 @@ function ShoeCard({
               />
               {rating.matchScore}% MATCH
             </span>
-            <span className="font-mono text-[10px] text-neutral-600">
+            <span className="font-sora text-[10px] uppercase tracking-[0.1em] text-neutral-600">
               {rating.totalRatings} reviews
             </span>
           </div>
         </div>
       </div>
       <div className="text-right hidden md:block">
-        <p className="font-mono text-[10px] text-neutral-600 mb-1">
+        <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">
           AVG RATINGS
         </p>
         <div className="flex gap-3">
@@ -501,7 +501,7 @@ function ShoeCard({
             <span className="font-tanker text-lg text-white">
               {rating.avgComfortScore.toFixed(1)}
             </span>
-            <span className="font-mono text-[10px] text-neutral-600 ml-1">
+            <span className="font-sora text-[10px] uppercase tracking-[0.1em] text-neutral-600 ml-1">
               C
             </span>
           </div>
@@ -509,7 +509,7 @@ function ShoeCard({
             <span className="font-tanker text-lg text-white">
               {rating.avgPerformanceRating.toFixed(1)}
             </span>
-            <span className="font-mono text-[10px] text-neutral-600 ml-1">
+            <span className="font-sora text-[10px] uppercase tracking-[0.1em] text-neutral-600 ml-1">
               P
             </span>
           </div>
@@ -517,7 +517,7 @@ function ShoeCard({
             <span className="font-tanker text-lg text-white">
               {rating.avgDurabilityRating.toFixed(1)}
             </span>
-            <span className="font-mono text-[10px] text-neutral-600 ml-1">
+            <span className="font-sora text-[10px] uppercase tracking-[0.1em] text-neutral-600 ml-1">
               D
             </span>
           </div>

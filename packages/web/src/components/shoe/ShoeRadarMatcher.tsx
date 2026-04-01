@@ -133,17 +133,18 @@ function buildVisibleRadarPositions(
   return Array.from(groupedEntries.values()).flatMap((group) => {
     if (group.length === 1) {
       const onlyEntry = group[0];
+      if (!onlyEntry) return [];
       const quadrantKey = getQuadrantKeyFromPosition(onlyEntry.baseX, onlyEntry.baseY);
       const descriptors = getAxisDescriptor(onlyEntry.metrics);
 
-      return {
+      return [{
         ...onlyEntry,
         x: onlyEntry.baseX,
         y: onlyEntry.baseY,
         quadrantKey,
         descriptors,
         topTraits: getTopTraits(onlyEntry.metrics),
-      };
+      }];
     }
 
     return group.map((entry, index) => {
@@ -226,7 +227,7 @@ export function ShoeRadarMatcher() {
         breakdown: scored.breakdown,
       })),
     );
-  }, [recommendationLimit, scoredShoes]);
+  }, [scoredShoes]);
 
   const leadShoe = recommendedShoes[0];
   const leadQuadrant = leadShoe ? quadrants[leadShoe.quadrantKey] : null;
@@ -274,9 +275,9 @@ export function ShoeRadarMatcher() {
                 <ShoeImage
                   brand={leadShoe.shoe.brand}
                   shoeName={leadShoe.shoe.name}
-                  imageUrl={leadShoe.shoe.imageUrl ?? undefined}
                   className="p-1"
                   transformation={[{ height: 96, width: 96, crop: 'at_max', format: 'png' }]}
+                  {...(leadShoe.shoe.imageUrl ? { imageUrl: leadShoe.shoe.imageUrl } : {})}
                 />
               </div>
               <div className="min-w-0 flex-1">
@@ -318,15 +319,19 @@ export function ShoeRadarMatcher() {
           <div className="mt-6 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-4">
             <RealityCheck
               label="Aggressiveness"
-              brandClaim={leadShoe.shoe.brandAggressiveness}
               communityReality={leadShoe.metrics.aggressiveness}
               description="How aggressive the shoe feels compared to official marketing specs."
+              {...(leadShoe.shoe.brandAggressiveness !== undefined
+                ? { brandClaim: leadShoe.shoe.brandAggressiveness }
+                : {})}
             />
             <RealityCheck
               label="Stiffness"
-              brandClaim={leadShoe.shoe.brandStiffness}
               communityReality={leadShoe.metrics.stability}
               description="Community consensus on support and stiffness compared to the brand's technical claims."
+              {...(leadShoe.shoe.brandStiffness !== undefined
+                ? { brandClaim: leadShoe.shoe.brandStiffness }
+                : {})}
             />
           </div>
           <SoleMateSignals shoeId={leadShoe.shoe._id} soleMateCount={leadShoe.breakdown.soleMateMatch} />
@@ -384,9 +389,9 @@ export function ShoeRadarMatcher() {
                 <ShoeImage
                   brand={pos.shoe.brand}
                   shoeName={pos.shoe.name}
-                  imageUrl={pos.shoe.imageUrl ?? undefined}
                   className="p-0.5"
                   transformation={[{ height: 56, width: 56, crop: 'at_max', format: 'png' }]}
+                  {...(pos.shoe.imageUrl ? { imageUrl: pos.shoe.imageUrl } : {})}
                 />
               </div>
               <div className={`absolute -top-1 -left-1 min-w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center px-1.5 ${index === 0 ? 'bg-orange-500 text-black' : 'bg-neutral-700 text-white'}`}>
@@ -425,9 +430,9 @@ export function ShoeRadarMatcher() {
                         <ShoeImage
                           brand={shoe.shoe.brand}
                           shoeName={shoe.shoe.name}
-                          imageUrl={shoe.shoe.imageUrl ?? undefined}
                           className="p-1"
                           transformation={[{ height: 64, width: 64, crop: 'at_max', format: 'png' }]}
+                          {...(shoe.shoe.imageUrl ? { imageUrl: shoe.shoe.imageUrl } : {})}
                         />
                       </div>
                     </div>
@@ -453,15 +458,19 @@ export function ShoeRadarMatcher() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <RealityCheck
                           label="Aggressiveness"
-                          brandClaim={shoe.shoe.brandAggressiveness}
                           communityReality={shoe.metrics.aggressiveness}
                           description="How aggressive the shoe feels compared to official marketing specs."
+                          {...(shoe.shoe.brandAggressiveness !== undefined
+                            ? { brandClaim: shoe.shoe.brandAggressiveness }
+                            : {})}
                         />
                         <RealityCheck
                           label="Stiffness"
-                          brandClaim={shoe.shoe.brandStiffness}
                           communityReality={shoe.metrics.stability}
                           description="Community consensus on support and stiffness compared to the brand's technical claims."
+                          {...(shoe.shoe.brandStiffness !== undefined
+                            ? { brandClaim: shoe.shoe.brandStiffness }
+                            : {})}
                         />
                       </div>
                       <SoleMateSignals shoeId={shoe.shoe._id} soleMateCount={shoe.breakdown.soleMateMatch} />
