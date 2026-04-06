@@ -5,9 +5,9 @@ import { Trophy, Zap, Shield } from 'lucide-react';
 import type { DefaultStats } from './utils';
 
 interface PersonalStatsSectionProps {
-  comfortScore?: number;
-  performanceRating?: number;
-  durabilityRating?: number;
+  comfortScore?: number | undefined;
+  performanceRating?: number | undefined;
+  durabilityRating?: number | undefined;
   defaultStats: DefaultStats;
 }
 

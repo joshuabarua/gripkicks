@@ -205,14 +205,27 @@ export default function AdminDashboard() {
     }
 
     const rubberTechnologyId = newShoe.rubberTechnologyId;
+    const imageUrl = newShoe.imageUrl.trim();
+    const slug = newShoe.slug.trim();
+    const modelName = newShoe.modelName.trim();
+    const variantLabel = newShoe.variantLabel.trim();
 
-    await createShoe({
-      ...newShoe,
+    const createPayload = {
+      name: newShoe.name.trim(),
+      brand: newShoe.brand.trim(),
+      aggressiveness: newShoe.aggressiveness,
+      stiffness: newShoe.stiffness,
+      climbingDiscipline: newShoe.climbingDiscipline,
+      volume: newShoe.volume,
       rubberTechnologyId,
-      modelName: newShoe.modelName.trim() || undefined,
-      variantLabel: newShoe.variantLabel.trim() || undefined,
-      slug: newShoe.slug.trim() || undefined,
-    });
+      gender: newShoe.gender,
+      ...(imageUrl ? { imageUrl } : {}),
+      ...(slug ? { slug } : {}),
+      ...(modelName ? { modelName } : {}),
+      ...(variantLabel ? { variantLabel } : {}),
+    };
+
+    await createShoe(createPayload);
     setShowAddForm(false);
     setNewShoe({
       name: "",
@@ -882,8 +895,6 @@ export default function AdminDashboard() {
                           <ShoeImage
                             brand={shoe.brand}
                             shoeName={shoe.name}
-                            imageUrl={shoe.imageUrl ?? undefined}
-                            slug={shoe.slug ?? undefined}
                             className="w-20 h-20"
                             transformation={[
                               {
@@ -895,17 +906,21 @@ export default function AdminDashboard() {
                                 quality: 80,
                               },
                             ]}
-                            gender={
+                            {...(shoe.imageUrl ? { imageUrl: shoe.imageUrl } : {})}
+                            {...(shoe.slug ? { slug: shoe.slug } : {})}
+                            {...(
                               ["men", "women", "kids", "unisex"].includes(
                                 (shoe.gender ?? "").toLowerCase(),
                               )
-                                ? (shoe.gender?.toLowerCase() as
-                                  | "men"
-                                  | "women"
-                                  | "kids"
-                                  | "unisex")
-                                : undefined
-                            }
+                                ? {
+                                  gender: shoe.gender?.toLowerCase() as
+                                    | "men"
+                                    | "women"
+                                    | "kids"
+                                    | "unisex",
+                                }
+                                : {}
+                            )}
                           />
                         </div>
 
@@ -1033,15 +1048,18 @@ export default function AdminDashboard() {
                               <select
                                 value={currentEditForm.gender || ""}
                                 onChange={(e) =>
-                                  setEditForm((prev) =>
-                                    prev
-                                      ? {
-                                        ...prev,
-                                        gender: e.target
-                                          .value as typeof prev.gender,
-                                      }
-                                      : prev,
-                                  )
+                                  setEditForm((prev) => {
+                                    if (!prev) return prev;
+
+                                    const nextGender = e.target.value
+                                      ? (e.target.value as NonNullable<Shoe["gender"]>)
+                                      : undefined;
+
+                                    return {
+                                      ...prev,
+                                      ...(nextGender ? { gender: nextGender } : {}),
+                                    };
+                                  })
                                 }
                                 className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
                               >
@@ -1164,16 +1182,20 @@ export default function AdminDashboard() {
                               <select
                                 value={currentEditForm.rubberTechnologyId || ""}
                                 onChange={(e) =>
-                                  setEditForm((prev) =>
-                                    prev
-                                      ? {
-                                          ...prev,
-                                          rubberTechnologyId:
-                                            (e.target.value as Id<"rubberTechnologies">) ||
-                                            undefined,
-                                        }
-                                      : prev,
-                                  )
+                                  setEditForm((prev) => {
+                                    if (!prev) return prev;
+
+                                    const nextRubberTechnologyId = e.target.value
+                                      ? (e.target.value as Id<"rubberTechnologies">)
+                                      : undefined;
+
+                                    return {
+                                      ...prev,
+                                      ...(nextRubberTechnologyId
+                                        ? { rubberTechnologyId: nextRubberTechnologyId }
+                                        : {}),
+                                    };
+                                  })
                                 }
                                 className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
                               >
@@ -1320,7 +1342,7 @@ export default function AdminDashboard() {
                       <td className="py-2 pr-3">
                         <UserAvatar
                           userId={user._id}
-                          name={user.name}
+                          name={user.name ?? null}
                           email={user.email}
                           className="w-8 h-8 rounded-full"
                           size={64}

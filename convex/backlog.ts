@@ -11,10 +11,10 @@ export const createBacklogItem = mutation({
   handler: async (ctx, args) => {
     const backlogItem = await ctx.db.insert("backlogItems", {
       title: args.title,
-      notes: args.notes,
       status: args.status,
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      ...(args.notes !== undefined ? { notes: args.notes } : {}),
     });
 
     return backlogItem;
@@ -36,8 +36,12 @@ export const updateBacklogItem = mutation({
       throw new Error("Backlog item not found");
     }
 
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(updateData).filter(([, value]) => value !== undefined),
+    );
+
     await ctx.db.patch(id, {
-      ...updateData,
+      ...filteredUpdates,
       updatedAt: Date.now(),
     });
 

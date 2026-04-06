@@ -102,8 +102,8 @@ export function ProfileForm({
 
     const validationResult = profileSchema.safeParse(formData);
     if (!validationResult.success) {
-      const firstError = validationResult.error.issues[0];
-      setValidationError(firstError.message);
+      const firstError = validationResult.error.issues.at(0);
+      setValidationError(firstError?.message ?? "Invalid profile form");
       return;
     }
 
@@ -171,13 +171,12 @@ export function ProfileForm({
 
             {isError && error && (
               <div
-                className={`flex items-center gap-2 rounded-md p-3 text-sm ${
-                  getErrorSeverity(error) === "error"
+                className={`flex items-center gap-2 rounded-md p-3 text-sm ${getErrorSeverity(error) === "error"
                     ? "bg-destructive/10 text-destructive"
                     : getErrorSeverity(error) === "warning"
                       ? "bg-yellow-50 text-yellow-800"
                       : "bg-blue-50 text-blue-800"
-                }`}
+                  }`}
               >
                 <AlertCircle className="h-4 w-4" />
                 <div>

@@ -266,8 +266,12 @@ function calculateTrend(
   const recent = history.slice(-5);
   if (recent.length < 2) return 'stable';
 
-  const firstScore = recent[0].newScore;
-  const lastScore = recent[recent.length - 1].newScore;
+  const firstEntry = recent[0];
+  const lastEntry = recent[recent.length - 1];
+  if (!firstEntry || !lastEntry) return 'stable';
+
+  const firstScore = firstEntry.newScore;
+  const lastScore = lastEntry.newScore;
   const change = lastScore - firstScore;
 
   if (change > 2) return 'improving';

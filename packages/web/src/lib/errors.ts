@@ -32,8 +32,8 @@ export class AppError extends Error {
   public readonly severity: ErrorSeverity;
   public readonly category: ErrorCategory;
   public readonly retryable: boolean;
-  public readonly action?: ErrorDetails["action"];
-  public readonly context?: Record<string, unknown>;
+  public readonly action: ErrorDetails["action"] | undefined = undefined;
+  public readonly context: Record<string, unknown> | undefined = undefined;
 
   constructor(details: ErrorDetails) {
     super(details.message);
@@ -44,8 +44,12 @@ export class AppError extends Error {
     this.severity = details.severity;
     this.category = details.category;
     this.retryable = details.retryable;
-    this.action = details.action;
-    this.context = details.context;
+    if (details.action !== undefined) {
+      this.action = details.action;
+    }
+    if (details.context !== undefined) {
+      this.context = details.context;
+    }
   }
 
   private categoryToType(category: ErrorCategory): ApiErrorType {
@@ -69,8 +73,8 @@ export class AppError extends Error {
       severity: this.severity,
       category: this.category,
       retryable: this.retryable,
-      action: this.action,
-      context: this.context,
+      ...(this.action !== undefined ? { action: this.action } : {}),
+      ...(this.context !== undefined ? { context: this.context } : {}),
     };
   }
 }
@@ -88,7 +92,7 @@ export class NetworkError extends AppError {
       severity: "medium",
       category: "network",
       retryable: true,
-      context,
+      ...(context !== undefined ? { context } : {}),
     });
   }
 }
@@ -128,7 +132,7 @@ export class ValidationError extends AppError {
       severity: "low",
       category: "validation",
       retryable: false,
-      context: fields ? { fields } : undefined,
+      ...(fields ? { context: { fields } } : {}),
     });
   }
 }
@@ -158,7 +162,7 @@ export class ServerError extends AppError {
       severity: "high",
       category: "server",
       retryable: true,
-      context,
+      ...(context !== undefined ? { context } : {}),
     });
   }
 }

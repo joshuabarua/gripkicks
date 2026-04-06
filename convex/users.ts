@@ -103,7 +103,6 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    const user = await ctx.db.get(id);
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, v]) => v !== undefined)
     );
@@ -253,11 +252,13 @@ export const syncUserDeduplicated = mutation({
 
         // Create new user
         console.log(`Creating new user: ${args.email}`);
+        const emailPrefix = args.email.split("@")[0] ?? args.email;
+        const name = args.name?.trim() || emailPrefix;
         const userId = await ctx.db.insert("users", {
           betterAuthId: args.betterAuthId,
           email: args.email,
-          name: args.name || args.email.split("@")[0], // Use email prefix as default name
-          image: args.image,
+          name,
+          ...(args.image !== undefined ? { image: args.image } : {}),
           emailVerified: args.emailVerified,
           onboardingComplete: false,
         });

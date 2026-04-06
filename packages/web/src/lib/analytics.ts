@@ -4,7 +4,7 @@ type AnalyticsValue = string | number | boolean | null | undefined;
 type AnalyticsProperties = Record<string, AnalyticsValue>;
 
 const canTrack = (): boolean => {
-  return typeof window !== "undefined" && !!process.env.NEXT_PUBLIC_POSTHOG_KEY;
+  return typeof window !== "undefined" && !!process.env["NEXT_PUBLIC_POSTHOG_KEY"];
 };
 
 export const analyticsEvents = {

@@ -34,6 +34,14 @@ export default function ShoeModel({ isLowPerformance = false }: ShoeModelProps) 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mesh = useRef<any>({});
+  const lowPerformanceGroupProps = isLowPerformance
+    ? {
+      position: [0, 0.02, 0] as [number, number, number],
+      rotation: [0, 0.6, 0.26] as [number, number, number],
+    }
+    : {};
+
+  const shoeNode = nodes["CimbingShoe"] as Mesh | undefined;
 
   // Reduce or disable animations based on settings
   const animateFrame = useCallback((t: number) => {
@@ -78,16 +86,17 @@ export default function ShoeModel({ isLowPerformance = false }: ShoeModelProps) 
 
         <group
           ref={mesh}
-          position={isLowPerformance ? [0, 0.02, 0] : undefined}
-          rotation={isLowPerformance ? [0, 0.6, 0.26] : undefined}
+          {...lowPerformanceGroupProps}
         >
-          <mesh
-            {...nodes.CimbingShoe}
-            position={[0, -0.4, 0]}
-            geometry={(nodes.CimbingShoe as Mesh).geometry}
-          >
-            <MeshTransmissionMaterial {...materialSettings} />
-          </mesh>
+          {!shoeNode ? null : (
+            <mesh
+              {...shoeNode}
+              position={[0, -0.4, 0]}
+              geometry={shoeNode.geometry}
+            >
+              <MeshTransmissionMaterial {...materialSettings} />
+            </mesh>
+          )}
         </group>
       </group >
     </Suspense>

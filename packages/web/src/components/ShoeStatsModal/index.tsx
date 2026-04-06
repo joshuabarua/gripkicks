@@ -44,7 +44,7 @@ interface ShoeStatsModalProps {
     volume?: string;
     rubberTechnology?: {
       compound: string;
-    } | null;
+    } | null | undefined;
     name?: string;
     brand?: string;
     avgComfortScore?: number;
@@ -53,13 +53,13 @@ interface ShoeStatsModalProps {
     totalRatings?: number;
     popularityCount?: number;
     totalShoesInDatabase?: number;
-  } | null;
+  } | null | undefined;
   isOpen: boolean;
   onClose: () => void;
-  rank?: number;
-  onToggleFavourite?: () => void;
-  onEditShoe?: () => void;
-  onRemoveShoe?: () => void;
+  rank?: number | undefined;
+  onToggleFavourite?: (() => void) | undefined;
+  onEditShoe?: (() => void) | undefined;
+  onRemoveShoe?: (() => void) | undefined;
   userShoes?: UserShoe[];
 }
 

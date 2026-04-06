@@ -43,18 +43,18 @@ export function AccountDeletion() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError(null);
-    
+
     const validationResult = deletionSchema.safeParse(formData);
     if (!validationResult.success) {
-      const firstError = validationResult.error.issues[0];
-      setValidationError(firstError.message);
+      const firstError = validationResult.error.issues.at(0);
+      setValidationError(firstError?.message ?? 'Invalid account deletion form');
       return;
     }
-    
+
     const result = await mutate({
       password: validationResult.data.password,
     });
-    
+
     if (result.isOk()) {
       // Account deleted successfully, redirect to login or home
       setTimeout(() => {
@@ -117,7 +117,7 @@ export function AccountDeletion() {
                   This is the final step. Once you delete your account, there is no going back.
                 </DialogDescription>
               </DialogHeader>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid gap-2">
                   <Label htmlFor="password">Enter your password</Label>

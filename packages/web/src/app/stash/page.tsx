@@ -90,28 +90,31 @@ export default function ShoeSanctuaryPage() {
 
   const shoeRankings = useMemo(() => {
     const ranked = [...userShoes].sort((a, b) => {
+      const aCharacteristics = {
+        ...(a.shoe?.aggressiveness ? { aggressiveness: a.shoe.aggressiveness } : {}),
+        ...(a.shoe?.climbingDiscipline ? { climbingDiscipline: a.shoe.climbingDiscipline } : {}),
+        ...(a.shoe?.stiffness ? { stiffness: a.shoe.stiffness } : {}),
+      };
+      const bCharacteristics = {
+        ...(b.shoe?.aggressiveness ? { aggressiveness: b.shoe.aggressiveness } : {}),
+        ...(b.shoe?.climbingDiscipline ? { climbingDiscipline: b.shoe.climbingDiscipline } : {}),
+        ...(b.shoe?.stiffness ? { stiffness: b.shoe.stiffness } : {}),
+      };
+
       const aStats = getEffectiveShoeStats(
+        aCharacteristics,
         {
-          aggressiveness: a.shoe?.aggressiveness,
-          climbingDiscipline: a.shoe?.climbingDiscipline,
-          stiffness: a.shoe?.stiffness,
-        },
-        {
-          comfortScore: a.comfortScore,
-          performanceRating: a.performanceRating,
-          durabilityRating: a.durabilityRating,
+          ...(a.comfortScore !== undefined ? { comfortScore: a.comfortScore } : {}),
+          ...(a.performanceRating !== undefined ? { performanceRating: a.performanceRating } : {}),
+          ...(a.durabilityRating !== undefined ? { durabilityRating: a.durabilityRating } : {}),
         },
       );
       const bStats = getEffectiveShoeStats(
+        bCharacteristics,
         {
-          aggressiveness: b.shoe?.aggressiveness,
-          climbingDiscipline: b.shoe?.climbingDiscipline,
-          stiffness: b.shoe?.stiffness,
-        },
-        {
-          comfortScore: b.comfortScore,
-          performanceRating: b.performanceRating,
-          durabilityRating: b.durabilityRating,
+          ...(b.comfortScore !== undefined ? { comfortScore: b.comfortScore } : {}),
+          ...(b.performanceRating !== undefined ? { performanceRating: b.performanceRating } : {}),
+          ...(b.durabilityRating !== undefined ? { durabilityRating: b.durabilityRating } : {}),
         },
       );
 
@@ -280,9 +283,10 @@ export default function ShoeSanctuaryPage() {
     if (!selectedShoe) return undefined;
     const baseShoe = allShoes.find((s) => s._id === selectedShoe.shoeId);
     if (!baseShoe) return undefined;
+    const popularityCount = popularityMap.get(selectedShoe.shoeId);
     return {
       ...baseShoe,
-      popularityCount: popularityMap.get(selectedShoe.shoeId),
+      ...(popularityCount !== undefined ? { popularityCount } : {}),
       totalShoesInDatabase,
     };
   }, [selectedShoe, allShoes, popularityMap, totalShoesInDatabase]);
@@ -510,16 +514,18 @@ export default function ShoeSanctuaryPage() {
         onEditShoe={
           selectedShoe
             ? () => {
+              const defaultCharacteristics = {
+                ...(selectedShoe.shoe?.aggressiveness ? { aggressiveness: selectedShoe.shoe.aggressiveness } : {}),
+                ...(selectedShoe.shoe?.climbingDiscipline ? { climbingDiscipline: selectedShoe.shoe.climbingDiscipline } : {}),
+                ...(selectedShoe.shoe?.stiffness ? { stiffness: selectedShoe.shoe.stiffness } : {}),
+              };
+
               const defaultStats = getEffectiveShoeStats(
+                defaultCharacteristics,
                 {
-                  aggressiveness: selectedShoe.shoe?.aggressiveness,
-                  climbingDiscipline: selectedShoe.shoe?.climbingDiscipline,
-                  stiffness: selectedShoe.shoe?.stiffness,
-                },
-                {
-                  comfortScore: selectedShoe.comfortScore,
-                  performanceRating: selectedShoe.performanceRating,
-                  durabilityRating: selectedShoe.durabilityRating,
+                  ...(selectedShoe.comfortScore !== undefined ? { comfortScore: selectedShoe.comfortScore } : {}),
+                  ...(selectedShoe.performanceRating !== undefined ? { performanceRating: selectedShoe.performanceRating } : {}),
+                  ...(selectedShoe.durabilityRating !== undefined ? { durabilityRating: selectedShoe.durabilityRating } : {}),
                 },
               );
               setEditingShoe(selectedShoe);

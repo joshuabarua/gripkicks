@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 interface RatingInfoTooltipProps {
   showCommunityAverages: boolean;
-  totalRatings?: number;
+  totalRatings?: number | undefined;
   hasUserRatings: boolean;
 }
 

@@ -15,7 +15,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+const convexUrl = process.env["NEXT_PUBLIC_CONVEX_URL"];
 
 if (!convexUrl) {
   throw new Error("NEXT_PUBLIC_CONVEX_URL is required");
@@ -25,12 +25,12 @@ const convex = new ConvexReactClient(convexUrl);
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+    const key = process.env["NEXT_PUBLIC_POSTHOG_KEY"];
     if (!key) return;
 
     posthog.init(key, {
       api_host:
-        process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://eu.i.posthog.com",
+        process.env["NEXT_PUBLIC_POSTHOG_HOST"] || "https://eu.i.posthog.com",
       person_profiles: "identified_only",
       capture_pageview: true,
       capture_pageleave: true,

@@ -134,6 +134,7 @@ export function LoadingBar({
   };
 
   const isIndeterminate = progress === undefined;
+  const indeterminateStyle = isIndeterminate ? { width: '50%' } : {};
 
   return (
     <div className="flex items-center gap-3">
@@ -154,7 +155,7 @@ export function LoadingBar({
             ? { duration: 1.2, repeat: Infinity, ease: "easeInOut" }
             : { duration: 0.15 }
           }
-          style={isIndeterminate ? { width: '50%' } : undefined}
+          {...(isIndeterminate ? { style: indeterminateStyle } : {})}
         />
       </div>
     </div>

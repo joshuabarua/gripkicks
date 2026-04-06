@@ -157,10 +157,12 @@ export function SignupForm() {
             };
             const validationResult = signupSchema.safeParse(formData);
             if (!validationResult.success) {
-              setError(validationResult.error.issues[0].message);
+              const firstIssue = validationResult.error.issues.at(0);
+              const message = firstIssue?.message ?? "Invalid signup form";
+              setError(message);
               track(analyticsEvents.signupFailed, {
                 method: "email",
-                reason: validationResult.error.issues[0].message,
+                reason: message,
               });
               return;
             }

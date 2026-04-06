@@ -48,8 +48,8 @@ export function PasswordChangeForm() {
 
     const validationResult = passwordSchema.safeParse(formData);
     if (!validationResult.success) {
-      const firstError = validationResult.error.issues[0];
-      setValidationError(firstError.message);
+      const firstError = validationResult.error.issues.at(0);
+      setValidationError(firstError?.message ?? 'Invalid password form');
       return;
     }
 

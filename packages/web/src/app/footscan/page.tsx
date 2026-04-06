@@ -93,9 +93,8 @@ function ToeProfile({ shape, active }: { shape: FootShape; active: boolean }) {
             width={14}
             height={barH}
             rx={7}
-            className={`transition-colors duration-300 ${
-              active ? 'fill-orange-500' : 'fill-neutral-700'
-            }`}
+            className={`transition-colors duration-300 ${active ? 'fill-orange-500' : 'fill-neutral-700'
+              }`}
           />
         );
       })}
@@ -116,9 +115,8 @@ function VolumeArch({ volume, active }: { volume: FootVolume; active: boolean })
         fill="none"
         strokeWidth="3"
         strokeLinecap="round"
-        className={`transition-colors duration-300 ${
-          active ? 'stroke-orange-500' : 'stroke-neutral-600'
-        }`}
+        className={`transition-colors duration-300 ${active ? 'stroke-orange-500' : 'stroke-neutral-600'
+          }`}
       />
     </svg>
   );
@@ -179,7 +177,8 @@ export default function FootLabPage() {
     });
 
     if (!validationResult.success) {
-      setError(validationResult.error.issues[0].message);
+      const firstIssue = validationResult.error.issues[0];
+      setError(firstIssue?.message || "Invalid foot profile");
       return;
     }
 
@@ -288,11 +287,10 @@ export default function FootLabPage() {
                   whileHover={{ y: -4 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setSelectedFootShape(shape)}
-                  className={`rounded-3xl p-4 text-left transition-all duration-300 border ${
-                    isSelected
+                  className={`rounded-3xl p-4 text-left transition-all duration-300 border ${isSelected
                       ? 'border-orange-500 bg-orange-500/10'
                       : 'border-neutral-800 bg-neutral-900 hover:border-neutral-700'
-                  }`}
+                    }`}
                 >
                   <div className="mb-4 pt-2">
                     <ToeProfile shape={shape} active={isSelected} />
@@ -344,11 +342,10 @@ export default function FootLabPage() {
                   whileHover={{ y: -4 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setSelectedFootVolume(volume)}
-                  className={`rounded-3xl p-6 text-left transition-all duration-300 border ${
-                    isSelected
+                  className={`rounded-3xl p-6 text-left transition-all duration-300 border ${isSelected
                       ? 'border-orange-500 bg-orange-500/10'
                       : 'border-neutral-800 bg-neutral-900 hover:border-neutral-700'
-                  }`}
+                    }`}
                 >
                   <div className="mb-5">
                     <VolumeArch volume={volume} active={isSelected} />
@@ -425,11 +422,10 @@ export default function FootLabPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={saveFootProfile}
                 disabled={saving || isAlreadySaved}
-                className={`font-tanker text-lg px-8 py-3 rounded-2xl transition-all flex items-center gap-2 disabled:opacity-60 ${
-                  saved || isAlreadySaved
+                className={`font-tanker text-lg px-8 py-3 rounded-2xl transition-all flex items-center gap-2 disabled:opacity-60 ${saved || isAlreadySaved
                     ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                     : 'bg-orange-500 hover:bg-orange-400 text-black'
-                }`}
+                  }`}
               >
                 {saving ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

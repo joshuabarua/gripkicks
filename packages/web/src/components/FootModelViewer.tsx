@@ -31,18 +31,18 @@ const MORPH_CONFIG = {
   greek: { bigToe: 0.3, otherToes: 1.0 },
   germanic: { bigToe: 0.7, otherToes: 0.7 },
   celtic: { bigToe: 0.6, otherToes: 0.8 },
-  
+
   // Volume morphs (0-1 range)
   low: { width: 0.3, height: 0.3, instep: 0.2 },
   medium: { width: 0.6, height: 0.6, instep: 0.5 },
   high: { width: 1.0, height: 1.0, instep: 0.8 },
 };
 
-function FootModel({ 
-  modelPath = "/glb/foot.glb", 
-  shape = "medium", 
+function FootModel({
+  modelPath = "/glb/foot.glb",
+  shape = "medium",
   volume = "medium",
-  scale = 1 
+  scale = 1
 }: {
   modelPath?: string;
   shape?: string;
@@ -53,7 +53,7 @@ function FootModel({
   const gltf = useGLTF(modelPath);
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const meshRef = useRef<THREE.Mesh>(null);
-  
+
   // Throttled values for performance
   const throttledShape = useThrottle(shape, 100);
   const throttledVolume = useThrottle(volume, 100);
@@ -93,42 +93,44 @@ function FootModel({
     gltf.scene.traverse((child) => {
       if (child instanceof THREE.Mesh && child.morphTargetInfluences) {
         meshRef.current = child;
-        
+
         // Log available morph targets for debugging
         console.log('Available morph targets:', child.morphTargetDictionary ? Object.keys(child.morphTargetDictionary) : 'None');
         console.log('Number of morph targets:', child.morphTargetInfluences.length);
-        
+
         // Reset all morphs
         child.morphTargetInfluences.fill(0);
-        
+
         // Apply shape morphs based on available morph targets
         if (child.morphTargetDictionary) {
           const morphNames = Object.keys(child.morphTargetDictionary);
-          
+
           // Try to find and apply shape morphs
           if (throttledShape !== 'medium') {
             const shapeMorph = morphNames.find(name => name.toLowerCase().includes(throttledShape.toLowerCase()));
             if (shapeMorph) {
               const index = child.morphTargetDictionary[shapeMorph];
+              if (index === undefined) return;
               child.morphTargetInfluences[index] = 1.0;
               console.log(`Applied shape morph: ${shapeMorph} at index ${index}`);
             }
           }
-          
+
           // Try to find and apply volume morphs
           if (throttledVolume !== 'medium') {
-            const volumeMorph = morphNames.find(name => 
+            const volumeMorph = morphNames.find(name =>
               name.toLowerCase().includes(throttledVolume.toLowerCase()) ||
               name.toLowerCase().includes('volume')
             );
             if (volumeMorph) {
               const index = child.morphTargetDictionary[volumeMorph];
+              if (index === undefined) return;
               child.morphTargetInfluences[index] = 1.0;
               console.log(`Applied volume morph: ${volumeMorph} at index ${index}`);
             }
           }
         }
-        
+
         // Fallback to hardcoded indices if no dictionary exists
         if (!child.morphTargetDictionary && child.morphTargetInfluences.length > 0) {
           console.log('Using fallback morph indices');
@@ -158,7 +160,7 @@ function FootModel({
   return (
     <>
       <primitive object={gltf.scene} scale={scale} />
-      <OrbitControls 
+      <OrbitControls
         ref={controlsRef}
         enablePan={true}
         enableZoom={true}
@@ -183,7 +185,7 @@ function LODFootModel(props: {
   // Use the same model for all devices for now
   // You can create a foot_mobile.glb later if needed
   const modelPath = "/glb/foot.glb";
-  
+
   return <FootModel {...props} modelPath={modelPath} />;
 }
 
@@ -194,11 +196,11 @@ interface FootModelViewerProps {
   onVolumeChange?: (volume: string) => void;
 }
 
-export default function FootModelViewer({ 
-  shape = "medium", 
+export default function FootModelViewer({
+  shape = "medium",
   volume = "medium",
   onShapeChange,
-  onVolumeChange 
+  onVolumeChange
 }: FootModelViewerProps) {
   const [currentShape, setCurrentShape] = useState(shape);
   const [currentVolume, setCurrentVolume] = useState(volume);
@@ -221,7 +223,7 @@ export default function FootModelViewer({
           <span className="text-3xl">🦶</span>
           3D Foot Model
         </h2>
-        
+
         {/* Shape Selector */}
         <div className="space-y-3 mb-6">
           <label className="text-sm font-medium text-gray-300">Foot Shape</label>
@@ -233,18 +235,17 @@ export default function FootModelViewer({
                   e.stopPropagation();
                   handleShapeChange(shapeName);
                 }}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${
-                  currentShape === shapeName
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${currentShape === shapeName
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400"
                     : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                }`}
+                  }`}
               >
                 {shapeName.charAt(0).toUpperCase() + shapeName.slice(1)}
               </button>
             ))}
           </div>
         </div>
-        
+
         {/* Volume Selector */}
         <div className="space-y-3 mb-6">
           <label className="text-sm font-medium text-gray-300">Foot Volume</label>
@@ -256,18 +257,17 @@ export default function FootModelViewer({
                   e.stopPropagation();
                   handleVolumeChange(volumeName);
                 }}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${
-                  currentVolume === volumeName
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${currentVolume === volumeName
                     ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 ring-2 ring-purple-400"
                     : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                }`}
+                  }`}
               >
                 {volumeName.charAt(0).toUpperCase() + volumeName.slice(1)}
               </button>
             ))}
           </div>
         </div>
-        
+
         {/* Info */}
         <div className="text-xs text-gray-400 space-y-1 border-t border-gray-700 pt-4">
           <p>🖱️ Drag to rotate</p>
@@ -276,11 +276,11 @@ export default function FootModelViewer({
           <p className="text-green-400">✨ Real-time morphing</p>
         </div>
       </div>
-      
+
       {/* 3D Canvas with performance optimizations */}
-      <Canvas 
+      <Canvas
         camera={{ position: [0, 0, 5], fov: 50 }}
-        gl={{ 
+        gl={{
           antialias: true,
           alpha: false,
           powerPreference: "high-performance"
@@ -293,8 +293,8 @@ export default function FootModelViewer({
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
           <directionalLight position={[-10, -10, -5]} intensity={0.5} />
-          <LODFootModel 
-            shape={currentShape} 
+          <LODFootModel
+            shape={currentShape}
             volume={currentVolume}
             scale={1.5}
           />

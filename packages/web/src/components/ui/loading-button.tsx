@@ -47,20 +47,24 @@ export function LoadingButton({
 }
 
 // Specialized loading buttons for common actions
-export function AddToStashButton({ 
-  isLoading, 
-  isInStash, 
-  onClick 
-}: { 
-  isLoading?: boolean; 
-  isInStash?: boolean; 
-  onClick?: () => void; 
+export function AddToStashButton({
+  isLoading,
+  isInStash,
+  onClick
+}: {
+  isLoading?: boolean;
+  isInStash?: boolean;
+  onClick?: () => void;
 }) {
+  const loadingProps = {
+    ...(isLoading !== undefined ? { isLoading } : {}),
+    ...(onClick ? { onClick } : {}),
+  };
+
   return (
     <LoadingButton
-      isLoading={isLoading}
+      {...loadingProps}
       loadingText={isInStash ? 'Removing...' : 'Adding...'}
-      onClick={onClick}
       variant={isInStash ? 'destructive' : 'default'}
       size="sm"
       className="w-full"
@@ -70,21 +74,25 @@ export function AddToStashButton({
   );
 }
 
-export function SaveButton({ 
-  isLoading, 
-  onClick, 
-  disabled 
-}: { 
-  isLoading?: boolean; 
-  onClick?: () => void; 
-  disabled?: boolean; 
+export function SaveButton({
+  isLoading,
+  onClick,
+  disabled
+}: {
+  isLoading?: boolean;
+  onClick?: () => void;
+  disabled?: boolean;
 }) {
+  const loadingProps = {
+    ...(isLoading !== undefined ? { isLoading } : {}),
+    ...(onClick ? { onClick } : {}),
+    ...(disabled !== undefined ? { disabled } : {}),
+  };
+
   return (
     <LoadingButton
-      isLoading={isLoading}
+      {...loadingProps}
       loadingText="Saving..."
-      onClick={onClick}
-      disabled={disabled}
       variant="default"
       size="sm"
     >
@@ -93,20 +101,24 @@ export function SaveButton({
   );
 }
 
-export function DeleteButton({ 
-  isLoading, 
-  onClick, 
-  confirmMode = false 
-}: { 
-  isLoading?: boolean; 
-  onClick?: () => void; 
-  confirmMode?: boolean; 
+export function DeleteButton({
+  isLoading,
+  onClick,
+  confirmMode = false
+}: {
+  isLoading?: boolean;
+  onClick?: () => void;
+  confirmMode?: boolean;
 }) {
+  const loadingProps = {
+    ...(isLoading !== undefined ? { isLoading } : {}),
+    ...(onClick ? { onClick } : {}),
+  };
+
   return (
     <LoadingButton
-      isLoading={isLoading}
+      {...loadingProps}
       loadingText="Deleting..."
-      onClick={onClick}
       variant={confirmMode ? 'destructive' : 'ghost'}
       size="sm"
     >
@@ -115,21 +127,25 @@ export function DeleteButton({
   );
 }
 
-export function UploadButton({ 
-  isLoading, 
-  onClick, 
-  disabled 
-}: { 
-  isLoading?: boolean; 
-  onClick?: () => void; 
-  disabled?: boolean; 
+export function UploadButton({
+  isLoading,
+  onClick,
+  disabled
+}: {
+  isLoading?: boolean;
+  onClick?: () => void;
+  disabled?: boolean;
 }) {
+  const loadingProps = {
+    ...(isLoading !== undefined ? { isLoading } : {}),
+    ...(onClick ? { onClick } : {}),
+    ...(disabled !== undefined ? { disabled } : {}),
+  };
+
   return (
     <LoadingButton
-      isLoading={isLoading}
+      {...loadingProps}
       loadingText="Uploading..."
-      onClick={onClick}
-      disabled={disabled}
       variant="outline"
       size="sm"
     >

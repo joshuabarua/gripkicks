@@ -12,7 +12,7 @@ interface CloudShoeProps {
   shoe: UserShoe;
   onClick: () => void;
   index: number;
-  specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode };
+  specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode } | undefined;
 }
 
 const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) => {
@@ -45,6 +45,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        if (!entry) return;
+
         if (entry.isIntersecting && !isInView) {
           setIsInView(true);
           observer.disconnect();

@@ -6,9 +6,9 @@ export const validateSession = action({
   args: {
     token: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     // Get Better Auth URL from environment
-    const authUrl = process.env.BETTER_AUTH_URL || 'http://localhost:3001';
+    const authUrl = process.env["BETTER_AUTH_URL"] || 'http://localhost:3001';
 
     try {
       // Make HTTP request to Better Auth's session endpoint

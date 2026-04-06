@@ -209,9 +209,9 @@ export default function RadarLabPage() {
                   <ShoeImage
                     brand={entry.shoe.brand}
                     shoeName={entry.shoe.name}
-                    imageUrl={entry.shoe.imageUrl ?? undefined}
                     className="p-0.5"
                     transformation={[{ height: 52, width: 52, crop: "at_max", format: "png" }]}
+                    {...(entry.shoe.imageUrl ? { imageUrl: entry.shoe.imageUrl } : {})}
                   />
                 </div>
                 <div className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-orange-500 text-black text-[9px] font-bold flex items-center justify-center">
@@ -246,11 +246,10 @@ export default function RadarLabPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: Math.min(index * 0.04, 1) }}
-                  className={`flex items-center gap-4 p-4 rounded-2xl border transition-colors ${
-                    isTop
-                      ? "bg-orange-500/5 border-orange-500/20"
-                      : "bg-neutral-950 border-neutral-800 hover:border-neutral-700"
-                  }`}
+                  className={`flex items-center gap-4 p-4 rounded-2xl border transition-colors ${isTop
+                    ? "bg-orange-500/5 border-orange-500/20"
+                    : "bg-neutral-950 border-neutral-800 hover:border-neutral-700"
+                    }`}
                 >
                   <span className={`font-tanker text-xl w-8 flex-shrink-0 ${isTop ? "text-orange-500" : "text-white/20"}`}>
                     {index + 1}
@@ -260,9 +259,9 @@ export default function RadarLabPage() {
                     <ShoeImage
                       brand={entry.shoe.brand}
                       shoeName={entry.shoe.name}
-                      imageUrl={entry.shoe.imageUrl ?? undefined}
                       className="p-0.5"
                       transformation={[{ height: 48, width: 48, crop: "at_max", format: "png" }]}
+                      {...(entry.shoe.imageUrl ? { imageUrl: entry.shoe.imageUrl } : {})}
                     />
                   </div>
 

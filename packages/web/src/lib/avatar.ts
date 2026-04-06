@@ -1,7 +1,7 @@
 type AvatarIdentity = {
-  userId?: string | null;
-  email?: string | null;
-  name?: string | null;
+  userId?: string | null | undefined;
+  email?: string | null | undefined;
+  name?: string | null | undefined;
 };
 
 const BRAND_BACKGROUNDS = ["f97316", "ea580c", "f8433a"];
@@ -21,7 +21,7 @@ export const getAvatarSeed = ({ userId, email }: AvatarIdentity) => {
 
 export const getAvatarBackground = (seed: string) => {
   const index = hashString(seed) % BRAND_BACKGROUNDS.length;
-  return BRAND_BACKGROUNDS[index];
+  return BRAND_BACKGROUNDS[index] || BRAND_BACKGROUNDS[0] || "f97316";
 };
 
 export const getDicebearAvatarUrl = (identity: AvatarIdentity, size = 128) => {
@@ -41,7 +41,9 @@ export const getInitials = ({ name, email }: AvatarIdentity) => {
   const source = name?.trim() || email?.trim() || "GK";
   const parts = source.split(/\s+/).filter(Boolean);
   if (parts.length >= 2) {
-    return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+    const first = parts[0]?.[0] || "";
+    const second = parts[1]?.[0] || "";
+    return `${first}${second}`.toUpperCase();
   }
   return source.slice(0, 2).toUpperCase();
 };

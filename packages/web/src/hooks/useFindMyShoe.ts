@@ -8,9 +8,9 @@ export interface AggregatedRating {
     _id: string;
     name: string;
     brand: string;
-    imageUrl?: string;
-    slug?: string;
-    gender?: string;
+    imageUrl?: string | undefined;
+    slug?: string | undefined;
+    gender?: string | undefined;
     aggressiveness: string;
     stiffness: string;
     climbingDiscipline: string;
@@ -24,16 +24,16 @@ export interface AggregatedRating {
   isSoleMateMatch: boolean;
   soleMateUsers: {
     _id: string;
-    name?: string;
-    image?: string;
+    name?: string | undefined;
+    image?: string | undefined;
   }[];
 }
 
 export interface SoleMateClimberMatch {
   user: {
     _id: string;
-    name?: string;
-    image?: string;
+    name?: string | undefined;
+    image?: string | undefined;
   };
   shoes: AggregatedRating[];
 }
@@ -42,9 +42,9 @@ interface ShoeRecommendation {
   _id: string;
   name: string;
   brand: string;
-  imageUrl?: string;
-  slug?: string;
-  gender?: string;
+  imageUrl?: string | undefined;
+  slug?: string | undefined;
+  gender?: string | undefined;
   aggressiveness: string;
   stiffness: string;
   climbingDiscipline: string;
@@ -57,8 +57,8 @@ interface ShoeRecommendation {
   isSoleMateMatch: boolean;
   soleMateUsers?: {
     _id: string;
-    name?: string;
-    image?: string;
+    name?: string | undefined;
+    image?: string | undefined;
   }[];
 }
 

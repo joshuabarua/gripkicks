@@ -5,12 +5,12 @@ import { getStatBarColor } from './utils';
 
 interface CommunityStatsSectionProps {
   showCommunityAverages: boolean;
-  totalRatings?: number;
+  totalRatings?: number | undefined;
   comfortScore: number;
   performanceRating: number;
   durabilityRating: number;
-  popularityCount?: number;
-  totalShoesInDatabase?: number;
+  popularityCount?: number | undefined;
+  totalShoesInDatabase?: number | undefined;
 }
 
 export default function CommunityStatsSection({

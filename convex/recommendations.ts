@@ -175,29 +175,44 @@ export const getShoeRecommendations = query({
         .filter((user) => ratings.soleMateUsers.has(user._id))
         .map((user) => ({
           _id: user._id,
-          name: user.name,
-          image: user.image,
+          ...(user.name !== undefined ? { name: user.name } : {}),
+          ...(user.image !== undefined ? { image: user.image } : {}),
         }));
 
-      recommendations.push({
+      const recommendation: AggregatedShoeRating = {
         _id: shoe._id,
         name: shoe.name,
         brand: shoe.brand,
-        imageUrl: shoe.imageUrl,
-        slug: shoe.slug,
-        gender: shoe.gender,
         aggressiveness: shoe.aggressiveness,
         stiffness: shoe.stiffness,
         climbingDiscipline: shoe.climbingDiscipline,
         volume: shoe.volume,
-        avgComfortScore: avgComfort,
-        avgPerformanceRating: avgPerformance,
-        avgDurabilityRating: avgDurability,
         totalRatings: ratings.comfortScores.length,
         matchScore,
         isSoleMateMatch,
-        soleMateUsers,
-      });
+      };
+
+      if (shoe.imageUrl !== undefined) {
+        recommendation.imageUrl = shoe.imageUrl;
+      }
+
+      if (shoe.slug !== undefined) {
+        recommendation.slug = shoe.slug;
+      }
+
+      if (shoe.gender !== undefined) {
+        recommendation.gender = shoe.gender;
+      }
+
+      recommendation.avgComfortScore = avgComfort;
+      recommendation.avgPerformanceRating = avgPerformance;
+      recommendation.avgDurabilityRating = avgDurability;
+
+      if (soleMateUsers.length > 0) {
+        recommendation.soleMateUsers = soleMateUsers;
+      }
+
+      recommendations.push(recommendation);
     }
 
     recommendations.sort((a, b) => b.matchScore - a.matchScore);
@@ -273,7 +288,7 @@ export const getRecommendationCount = query({
     footShape: footShapeValidator,
     footVolume: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, _args) => {
     const allShoes = await ctx.db.query("shoes").collect();
     const allUserShoes = await ctx.db.query("userShoes").collect();
 

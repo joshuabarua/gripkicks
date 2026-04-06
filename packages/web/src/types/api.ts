@@ -20,18 +20,18 @@ export interface Shoe {
   _id: string;
   name: string;
   brand: string;
-  modelName?: string;
-  variantLabel?: string;
-  parentModelId?: string;
-  imageUrl?: string;
-  slug?: string;
-  gender?: 'men' | 'women' | 'kids' | 'unisex';
+  modelName?: string | undefined;
+  variantLabel?: string | undefined;
+  parentModelId?: string | undefined;
+  imageUrl?: string | undefined;
+  slug?: string | undefined;
+  gender?: 'men' | 'women' | 'kids' | 'unisex' | undefined;
   aggressiveness: string;
   stiffness: string;
   climbingDiscipline: string;
   volume: string;
-  rubberTechnologyId?: string;
-  rubberTechnology?: RubberTechnology | null;
+  rubberTechnologyId?: string | undefined;
+  rubberTechnology?: RubberTechnology | null | undefined;
 }
 
 export interface RubberTechnology {
@@ -52,55 +52,55 @@ export interface FootShapeCompat {
 export interface UserShoe {
   _id: string;
   shoeId: string;
-  shoe?: Shoe;
+  shoe?: Shoe | undefined;
   shoeDetails?: {
     _id: string;
     name: string;
     brand: string;
     modelName: string;
-    variantLabel?: string;
-    parentModelId?: string;
-    imageUrl?: string;
-    slug?: string;
-    gender?: "men" | "women" | "kids" | "unisex";
+    variantLabel?: string | undefined;
+    parentModelId?: string | undefined;
+    imageUrl?: string | undefined;
+    slug?: string | undefined;
+    gender?: "men" | "women" | "kids" | "unisex" | undefined;
   };
-  size?: string;
-  purchaseDate?: string;
-  condition?: string;
-  notes?: string;
-  comfortScore?: number;
-  performanceRating?: number;
-  durabilityRating?: number;
-  isFavourite?: boolean;
+  size?: string | undefined;
+  purchaseDate?: string | undefined;
+  condition?: string | undefined;
+  notes?: string | undefined;
+  comfortScore?: number | undefined;
+  performanceRating?: number | undefined;
+  durabilityRating?: number | undefined;
+  isFavourite?: boolean | undefined;
 }
 
 export interface CreateUserShoeRequest {
   shoeId: string;
-  size?: string;
-  purchaseDate?: string;
-  condition?: string;
-  notes?: string;
-  comfortScore?: number;
-  performanceRating?: number;
-  durabilityRating?: number;
+  size?: string | undefined;
+  purchaseDate?: string | undefined;
+  condition?: string | undefined;
+  notes?: string | undefined;
+  comfortScore?: number | undefined;
+  performanceRating?: number | undefined;
+  durabilityRating?: number | undefined;
 }
 
 export interface UpdateUserShoeRequest {
-  size?: string;
-  purchaseDate?: string;
-  condition?: string;
-  notes?: string;
-  comfortScore?: number;
-  performanceRating?: number;
-  durabilityRating?: number;
+  size?: string | undefined;
+  purchaseDate?: string | undefined;
+  condition?: string | undefined;
+  notes?: string | undefined;
+  comfortScore?: number | undefined;
+  performanceRating?: number | undefined;
+  durabilityRating?: number | undefined;
 }
 
 // User types
 export interface User {
   id: string;
   email: string;
-  name?: string;
-  isAdmin?: boolean;
+  name?: string | undefined;
+  isAdmin?: boolean | undefined;
   createdAt: string;
 }
 

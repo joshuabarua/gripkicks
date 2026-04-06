@@ -18,7 +18,7 @@ interface EditShoeDialogProps {
   setEditForm: (form: EditFormData) => void;
   setEditingShoe: (shoe: UserShoe | null) => void;
   updateShoeStats: () => void;
-  removeShoe?: () => void;
+  removeShoe?: (() => void) | undefined;
 }
 
 export default function EditShoeDialog({
@@ -226,7 +226,7 @@ function RatingSlider({
   onChange,
 }: {
   id: string;
-  value?: number;
+  value?: number | undefined;
   onChange: (value: number | undefined) => void;
 }) {
   const [draftValue, setDraftValue] = useState(5);

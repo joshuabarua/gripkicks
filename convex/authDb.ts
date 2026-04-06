@@ -21,7 +21,7 @@ export const createUser = mutation({
       .query("users")
       .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
       .first();
-    
+
     // 2. Fall back to checking by email if no betterAuthId match
     if (!existing) {
       existing = await ctx.db
@@ -35,7 +35,7 @@ export const createUser = mutation({
         existing = { ...existing, betterAuthId: args.betterAuthId };
       }
     }
-    
+
     if (existing) {
       // Return existing user in Better Auth format
       return {
@@ -47,20 +47,20 @@ export const createUser = mutation({
         createdAt: new Date(existing._creationTime).toISOString(),
       };
     }
-    
+
     const userId = await ctx.db.insert("users", {
       betterAuthId: args.betterAuthId,
       name: args.name,
       email: args.email,
       emailVerified: args.emailVerified,
-      image: args.image,
+      ...(args.image !== undefined ? { image: args.image } : {}),
       isAdmin: false,
       onboardingComplete: false,
     });
-    
+
     const user = await ctx.db.get(userId);
     const now = new Date().toISOString();
-    
+
     // Return in Better Auth expected format
     return {
       id: userId,
@@ -180,18 +180,18 @@ export const createSession = mutation({
     } else {
       expiresAtTimestamp = Date.now() + 7 * 24 * 60 * 60 * 1000; // Default 7 days
     }
-    
+
     const sessionId = await ctx.db.insert("sessions", {
       token: args.token,
       userId: args.userId as Id<"users">,
       expiresAt: expiresAtTimestamp,
-      ipAddress: args.ipAddress,
-      userAgent: args.userAgent,
+      ...(args.ipAddress !== undefined ? { ipAddress: args.ipAddress } : {}),
+      ...(args.userAgent !== undefined ? { userAgent: args.userAgent } : {}),
     });
-    
+
     const session = await ctx.db.get(sessionId);
     const now = new Date().toISOString();
-    
+
     return {
       id: sessionId,
       token: session?.token || args.token,
@@ -214,17 +214,17 @@ export const updateSession = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     // Convert expiresAt to number if it's a string
     if (updates.expiresAt && typeof updates.expiresAt === 'string') {
       updates.expiresAt = new Date(updates.expiresAt).getTime();
     }
-    
+
     // Filter out undefined values
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, val]) => val !== undefined)
     );
-    
+
     await ctx.db.patch(id, filteredUpdates);
     const session = await ctx.db.get(id);
     return session ? {
@@ -331,20 +331,55 @@ export const createAccount = mutation({
   },
   handler: async (ctx, args) => {
     const { id, createdAt, ...rest } = args;
-    
-    // Convert any date fields to numbers
-    const data = {
-      ...rest,
+
+    const data: any = {
+      accountId: rest.accountId,
+      providerId: rest.providerId,
       userId: rest.userId as Id<"users">,
-      expiresAt: rest.expiresAt ? (typeof rest.expiresAt === 'string' ? new Date(rest.expiresAt).getTime() : rest.expiresAt) : undefined,
-      accessTokenExpiresAt: rest.accessTokenExpiresAt ? (typeof rest.accessTokenExpiresAt === 'string' ? new Date(rest.accessTokenExpiresAt).getTime() : rest.accessTokenExpiresAt) : undefined,
-      refreshTokenExpiresAt: rest.refreshTokenExpiresAt ? (typeof rest.refreshTokenExpiresAt === 'string' ? new Date(rest.refreshTokenExpiresAt).getTime() : rest.refreshTokenExpiresAt) : undefined,
     };
-    
+
+    if (rest.accessToken !== undefined) {
+      data.accessToken = rest.accessToken;
+    }
+
+    if (rest.refreshToken !== undefined) {
+      data.refreshToken = rest.refreshToken;
+    }
+
+    if (rest.idToken !== undefined) {
+      data.idToken = rest.idToken;
+    }
+
+    if (rest.expiresAt !== undefined) {
+      data.expiresAt = typeof rest.expiresAt === 'string'
+        ? new Date(rest.expiresAt).getTime()
+        : rest.expiresAt;
+    }
+
+    if (rest.password !== undefined) {
+      data.password = rest.password;
+    }
+
+    if (rest.accessTokenExpiresAt !== undefined) {
+      data.accessTokenExpiresAt = typeof rest.accessTokenExpiresAt === 'string'
+        ? new Date(rest.accessTokenExpiresAt).getTime()
+        : rest.accessTokenExpiresAt;
+    }
+
+    if (rest.refreshTokenExpiresAt !== undefined) {
+      data.refreshTokenExpiresAt = typeof rest.refreshTokenExpiresAt === 'string'
+        ? new Date(rest.refreshTokenExpiresAt).getTime()
+        : rest.refreshTokenExpiresAt;
+    }
+
+    if (rest.scope !== undefined) {
+      data.scope = rest.scope;
+    }
+
     const accountId = await ctx.db.insert("accounts", data);
     const account = await ctx.db.get(accountId);
     const now = new Date().toISOString();
-    
+
     return {
       id: accountId,
       accountId: account?.accountId || args.accountId,
@@ -429,7 +464,7 @@ export const findAccountByProviderAndAccountId = query({
   handler: async (ctx, args) => {
     const accounts = await ctx.db
       .query("accounts")
-      .withIndex("by_provider_accountId", (q) => 
+      .withIndex("by_provider_accountId", (q) =>
         q.eq("providerId", args.providerId).eq("accountId", args.accountId)
       )
       .first();
@@ -453,7 +488,7 @@ export const createVerification = mutation({
   handler: async (ctx, args) => {
     const { id, ...data } = args;
     const verificationId = await ctx.db.insert("verifications", data);
-    
+
     const verification = await ctx.db.get(verificationId);
     return verification ? {
       ...verification,
@@ -492,23 +527,23 @@ export const deleteExpired = mutation({
   handler: async (ctx, args) => {
     const { expiresBefore } = args;
     const now = Date.now();
-    
+
     console.log('[deleteExpired] Called with expiresBefore:', new Date(expiresBefore), 'current time:', new Date(now));
-    
+
     // Find all expired verifications (only those actually expired)
     const expiredVerifications = await ctx.db
       .query("verifications")
       .withIndex("by_expiresAt", (q) => q.lt("expiresAt", expiresBefore))
       .collect();
-    
+
     console.log('[deleteExpired] Found', expiredVerifications.length, 'potentially expired verifications');
-    
+
     // Only delete verifications that are actually expired (add a larger safety buffer)
     let deletedCount = 0;
     for (const verification of expiredVerifications) {
       const timeDiff = now - verification.expiresAt;
       console.log('[deleteExpired] Verification expiresAt:', new Date(verification.expiresAt), 'timeDiff:', timeDiff + 'ms');
-      
+
       // Double-check that this verification is actually expired with a 30-second buffer
       if (verification.expiresAt < now - 30000) { // 30 second buffer
         console.log('[deleteExpired] Deleting verification:', verification.identifier);
@@ -518,7 +553,7 @@ export const deleteExpired = mutation({
         console.log('[deleteExpired] Skipping verification (within buffer):', verification.identifier);
       }
     }
-    
+
     console.log('[deleteExpired] Deleted', deletedCount, 'verifications');
     return { count: deletedCount };
   },

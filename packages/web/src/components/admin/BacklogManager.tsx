@@ -51,9 +51,11 @@ export function BacklogManager() {
   const handleCreate = async () => {
     if (!newItem.title.trim()) return;
 
+    const notes = newItem.notes.trim();
+
     await createBacklogItem({
       title: newItem.title.trim(),
-      notes: newItem.notes.trim() || undefined,
+      ...(notes ? { notes } : {}),
       status: newItem.status,
     });
 
@@ -69,11 +71,14 @@ export function BacklogManager() {
   const handleSave = async () => {
     if (!editForm || !editForm._id || !editForm.title?.trim()) return;
 
+    const notes = editForm.notes?.trim();
+    const status = editForm.status;
+
     await updateBacklogItem({
       id: editForm._id,
       title: editForm.title.trim(),
-      notes: editForm.notes?.trim() || undefined,
-      status: editForm.status,
+      ...(notes ? { notes } : {}),
+      ...(status !== undefined ? { status } : {}),
     });
 
     setEditingId(null);
@@ -132,11 +137,10 @@ export function BacklogManager() {
           <button
             key={filter.value}
             onClick={() => setStatusFilter(filter.value)}
-            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-              statusFilter === filter.value
-                ? "bg-orange-600 text-white"
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            }`}
+            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${statusFilter === filter.value
+              ? "bg-orange-600 text-white"
+              : "bg-white/10 text-white/70 hover:bg-white/20"
+              }`}
           >
             {filter.label}
           </button>
@@ -268,9 +272,9 @@ export function BacklogManager() {
                       setEditForm(
                         editForm
                           ? {
-                              ...editForm,
-                              status: e.target.value as BacklogStatus,
-                            }
+                            ...editForm,
+                            status: e.target.value as BacklogStatus,
+                          }
                           : null,
                       )
                     }

@@ -37,7 +37,7 @@ export function useUserSync() {
 
             // Call backend which will sync to Convex
             const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/v1/sync-user`,
+              `${process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:3001"}/api/v1/sync-user`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

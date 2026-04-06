@@ -301,15 +301,18 @@ app.post("/api/users/update", async (c) => {
       return c.json({ success: false, message: "User not found" }, 404);
     }
 
-    const updated = await c.env.runMutation(api.users.update, {
-      id: user._id,
-      name,
-      image,
-      emailVerified,
-      footShape,
-      footVolume,
-      favoriteShoeId: favoriteShoeId === null ? null : favoriteShoeId as Id<"shoes"> | undefined,
-    });
+    const updatePayload: any = { id: user._id };
+
+    if (name !== undefined) updatePayload.name = name;
+    if (image !== undefined) updatePayload.image = image;
+    if (emailVerified !== undefined) updatePayload.emailVerified = emailVerified;
+    if (footShape !== undefined) updatePayload.footShape = footShape;
+    if (footVolume !== undefined) updatePayload.footVolume = footVolume;
+    if (favoriteShoeId !== undefined) {
+      updatePayload.favoriteShoeId = favoriteShoeId === null ? null : (favoriteShoeId as Id<"shoes">);
+    }
+
+    const updated = await c.env.runMutation(api.users.update, updatePayload);
 
     return c.json({ success: true, data: updated });
   } catch (error) {
@@ -335,11 +338,14 @@ app.post("/api/users/completeOnboarding", async (c) => {
       return c.json({ success: false, message: "User not found" }, 404);
     }
 
-    const updated = await c.env.runMutation(api.users.completeOnboarding, {
-      userId: user._id,
-      footShape,
-      favoriteShoeId: favoriteShoeId as Id<"shoes"> | undefined,
-    });
+    const onboardingPayload: any = { userId: user._id };
+
+    if (footShape !== undefined) onboardingPayload.footShape = footShape;
+    if (favoriteShoeId !== undefined) {
+      onboardingPayload.favoriteShoeId = favoriteShoeId as Id<"shoes">;
+    }
+
+    const updated = await c.env.runMutation(api.users.completeOnboarding, onboardingPayload);
 
     return c.json({ success: true, data: updated });
   } catch (error) {

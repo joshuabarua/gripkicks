@@ -213,6 +213,10 @@ export function ShoeMatcherChart() {
       );
       const quadrant = quadrants[quadrantKey];
 
+      if (!quadrant) {
+        return null;
+      }
+
       return {
         label: quadrant.name,
         data: quadrantData.map((item) => ({
@@ -228,7 +232,7 @@ export function ShoeMatcherChart() {
         pointHoverRadius: 12,
         pointStyle: "circle",
       };
-    });
+    }).filter((dataset): dataset is NonNullable<typeof dataset> => dataset !== null);
 
     return { datasets };
   }, [shoePositions]);
@@ -326,9 +330,11 @@ export function ShoeMatcherChart() {
         const first = elements[0] as ChartElementRef;
         const datasetIndex = first.datasetIndex;
         const index = first.index;
-        const clickedShoe = (
-          chartData.datasets[datasetIndex].data[index] as ChartPointData
-        ).shoe;
+        const dataset = chartData.datasets[datasetIndex];
+        const point = dataset?.data[index] as ChartPointData | undefined;
+        if (!point) return;
+
+        const clickedShoe = point.shoe;
         setSelectedShoe(clickedShoe);
       }
     },

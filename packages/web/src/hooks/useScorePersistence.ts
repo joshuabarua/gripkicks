@@ -164,15 +164,17 @@ export function useScorePersistence() {
         const previousScore = existingScoreProfile?.overallScore || 0;
 
         // Update user score profile
-        await updateUserScore({
+        const scorePayload = {
           userId: convexUser._id,
           overallScore: currentScore.overallScore,
           preferenceProfile: currentScore.preferenceProfile,
           learnedPreferences: currentScore.learnedPreferences,
-          footProfile: currentScore.footProfile ?? undefined,
           lastUpdated: currentScore.lastUpdated,
           version: currentScore.version,
-        });
+          ...(currentScore.footProfile ? { footProfile: currentScore.footProfile } : {}),
+        };
+
+        await updateUserScore(scorePayload);
 
         // Add to history if score changed
         if (Math.abs(currentScore.overallScore - previousScore) > 0.1) {
@@ -431,14 +433,19 @@ function calculateScoreProgression(history: ScoreHistoryPoint[]): {
   const recentWeek = history.filter((h) => h.timestamp >= oneWeekAgo);
   const recentMonth = history.filter((h) => h.timestamp >= oneMonthAgo);
 
+  const firstWeekEntry = recentWeek[0];
+  const lastWeekEntry = recentWeek[recentWeek.length - 1];
+  const firstMonthEntry = recentMonth[0];
+  const lastMonthEntry = recentMonth[recentMonth.length - 1];
+
   const weeklyChange =
-    recentWeek.length >= 2
-      ? recentWeek[recentWeek.length - 1].newScore - recentWeek[0].newScore
+    firstWeekEntry && lastWeekEntry
+      ? lastWeekEntry.newScore - firstWeekEntry.newScore
       : 0;
 
   const monthlyChange =
-    recentMonth.length >= 2
-      ? recentMonth[recentMonth.length - 1].newScore - recentMonth[0].newScore
+    firstMonthEntry && lastMonthEntry
+      ? lastMonthEntry.newScore - firstMonthEntry.newScore
       : 0;
 
   let trend: "improving" | "stable" | "declining" = "stable";

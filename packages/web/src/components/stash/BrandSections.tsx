@@ -88,6 +88,8 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
     const prevGroup = prevProps.groups[i];
     const nextGroup = nextProps.groups[i];
 
+    if (!prevGroup || !nextGroup) return false;
+
     if (prevGroup.brand !== nextGroup.brand) return false;
     if (prevGroup.models.length !== nextGroup.models.length) return false;
 

@@ -85,16 +85,19 @@ export function AnimatedIcon({
 
   const shouldAnimate = trigger === 'scroll' || trigger === 'both';
   const shouldHover = trigger === 'hover' || trigger === 'both';
+  const animationProps = {
+    ...(shouldAnimate ? { variants: scrollVariants[animation] } : {}),
+    ...(shouldAnimate ? { initial: 'hidden' as const } : {}),
+    ...(shouldAnimate && isInView ? { animate: 'visible' as const } : {}),
+    ...(shouldHover ? { whileHover: hoverEffects[animation] } : {}),
+  };
 
   return (
     <motion.div
       ref={ref}
       className={`inline-flex items-center justify-center ${className}`}
-      variants={shouldAnimate ? scrollVariants[animation] : undefined}
-      initial={shouldAnimate ? 'hidden' : undefined}
-      animate={shouldAnimate && isInView ? 'visible' : undefined}
       custom={delay}
-      whileHover={shouldHover ? hoverEffects[animation] : undefined}
+      {...animationProps}
     >
       {children}
     </motion.div>

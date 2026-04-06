@@ -120,14 +120,14 @@ export const updateUserShoeStats = mutation({
 
     // Remove undefined fields
     const fieldsToUpdate: Record<string, any> = {};
-    if (updateFields.size !== undefined) fieldsToUpdate.size = updateFields.size;
-    if (updateFields.purchaseDate !== undefined) fieldsToUpdate.purchaseDate = updateFields.purchaseDate;
-    if (updateFields.condition !== undefined) fieldsToUpdate.condition = updateFields.condition;
-    if (updateFields.notes !== undefined) fieldsToUpdate.notes = updateFields.notes;
+    if (updateFields["size"] !== undefined) fieldsToUpdate["size"] = updateFields["size"];
+    if (updateFields["purchaseDate"] !== undefined) fieldsToUpdate["purchaseDate"] = updateFields["purchaseDate"];
+    if (updateFields["condition"] !== undefined) fieldsToUpdate["condition"] = updateFields["condition"];
+    if (updateFields["notes"] !== undefined) fieldsToUpdate["notes"] = updateFields["notes"];
     // Comfort ranking fields
-    if (updateFields.comfortScore !== undefined) fieldsToUpdate.comfortScore = updateFields.comfortScore;
-    if (updateFields.performanceRating !== undefined) fieldsToUpdate.performanceRating = updateFields.performanceRating;
-    if (updateFields.durabilityRating !== undefined) fieldsToUpdate.durabilityRating = updateFields.durabilityRating;
+    if (updateFields["comfortScore"] !== undefined) fieldsToUpdate["comfortScore"] = updateFields["comfortScore"];
+    if (updateFields["performanceRating"] !== undefined) fieldsToUpdate["performanceRating"] = updateFields["performanceRating"];
+    if (updateFields["durabilityRating"] !== undefined) fieldsToUpdate["durabilityRating"] = updateFields["durabilityRating"];
 
     if (Object.keys(fieldsToUpdate).length === 0) {
       return null; // No fields to update

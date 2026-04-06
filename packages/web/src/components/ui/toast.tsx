@@ -21,14 +21,14 @@ export type ToastType = "success" | "error" | "info" | "warning" | "loading";
 export interface Toast {
   id: string;
   message: string;
-  description?: string;
+  description?: string | undefined;
   type: ToastType;
-  duration?: number;
+  duration?: number | undefined;
   action?: {
     label: string;
     onClick: () => void;
-  };
-  onRetry?: () => void;
+  } | undefined;
+  onRetry?: (() => void) | undefined;
 }
 
 interface ToastContextType {

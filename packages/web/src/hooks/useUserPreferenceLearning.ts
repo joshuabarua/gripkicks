@@ -236,7 +236,10 @@ function generateLearningInsights(
 
   let climbingStyle: 'indoor' | 'bouldering' | 'sport' | 'trad' | 'all_around' = 'all_around';
   if (disciplineScores.length > 0) {
-    climbingStyle = disciplineScores[0].discipline as 'indoor' | 'bouldering' | 'sport' | 'trad' | 'all_around';
+    const firstDisciplineScore = disciplineScores[0];
+    if (firstDisciplineScore) {
+      climbingStyle = firstDisciplineScore.discipline as 'indoor' | 'bouldering' | 'sport' | 'trad' | 'all_around';
+    }
   }
 
   // Calculate brand affinity

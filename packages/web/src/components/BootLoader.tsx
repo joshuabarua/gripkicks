@@ -10,12 +10,14 @@ const transitionImages = [
   "/imgs/transition/green_hold.png",
   "/imgs/transition/yellow_hold.png",
 ];
+const DEFAULT_TRANSITION_IMAGE = "/imgs/transition/blue_hold.png";
 
 const IMAGE_CYCLE_DURATION_MS = 520;
 const IMAGE_TRANSITION_DURATION_S = 0.34;
 
 export default function BootLoader({ visible }: { visible: boolean }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const currentImage = transitionImages[currentImageIndex] ?? DEFAULT_TRANSITION_IMAGE;
 
   useEffect(() => {
     if (!visible) return;
@@ -105,7 +107,7 @@ export default function BootLoader({ visible }: { visible: boolean }) {
                   transition={{ duration: IMAGE_TRANSITION_DURATION_S, ease: "easeOut" }}
                 >
                   <Image
-                    src={transitionImages[currentImageIndex]}
+                    src={currentImage}
                     alt="Loading climbing object"
                     width={180}
                     height={180}

@@ -22,17 +22,19 @@ function toErrorMessage(payload: unknown): string | undefined {
   if (!payload || typeof payload !== "object") return undefined;
 
   const obj = payload as Record<string, unknown>;
+  const errorValue = obj["error"];
+  const errorsValue = obj["errors"];
 
   const extractors = [
-    () => typeof obj.message === "string" ? obj.message : undefined,
-    () => typeof obj.error === "string" ? obj.error : undefined,
-    () => typeof obj.error === "object" && obj.error !== null
-      ? (obj.error as Record<string, unknown>).message
+    () => typeof obj["message"] === "string" ? obj["message"] : undefined,
+    () => typeof errorValue === "string" ? errorValue : undefined,
+    () => typeof errorValue === "object" && errorValue !== null
+      ? (errorValue as Record<string, unknown>)["message"]
       : undefined,
-    () => Array.isArray(obj.errors) && obj.errors[0]
-      ? typeof obj.errors[0] === "string"
-        ? obj.errors[0]
-        : (obj.errors[0] as Record<string, unknown>)?.message
+    () => Array.isArray(errorsValue) && errorsValue[0]
+      ? typeof errorsValue[0] === "string"
+        ? errorsValue[0]
+        : (errorsValue[0] as Record<string, unknown>)["message"]
       : undefined,
   ];
 

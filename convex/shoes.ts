@@ -138,14 +138,13 @@ export const list = query({
       return a.name.localeCompare(b.name);
     });
 
+    const lastItem = items[items.length - 1];
+
     return {
       items: sortedItems,
       totalCount,
       hasMore,
-      nextCursor:
-        hasMore && items.length > 0
-          ? JSON.stringify({ id: items[items.length - 1]._id })
-          : null,
+      nextCursor: hasMore && lastItem ? JSON.stringify({ id: lastItem._id }) : null,
     };
   },
 });
@@ -268,8 +267,8 @@ export const create = mutation({
     const shoeId = await ctx.db.insert("shoes", {
       ...shoeData,
       modelName: normalizedModelName,
-      variantLabel: normalizedVariantLabel,
-      parentModelId: normalizedParentModelId,
+      ...(normalizedVariantLabel !== undefined ? { variantLabel: normalizedVariantLabel } : {}),
+      ...(normalizedParentModelId !== undefined ? { parentModelId: normalizedParentModelId } : {}),
     });
 
     // Add foot shape compatibility entries
@@ -325,14 +324,13 @@ export const search = query({
       ? paginatedResults.slice(0, pageSize)
       : paginatedResults;
 
+    const lastItem = items[items.length - 1];
+
     return {
       items,
       totalCount,
       hasMore,
-      nextCursor:
-        hasMore && items.length > 0
-          ? JSON.stringify({ id: items[items.length - 1]._id })
-          : null,
+      nextCursor: hasMore && lastItem ? JSON.stringify({ id: lastItem._id }) : null,
     };
   },
 });
@@ -489,8 +487,12 @@ export const backfillMissingRubberTechnology = mutation({
       );
 
       if (brandMatches.length === 1) {
+        const match = brandMatches[0];
+        if (!match) {
+          continue;
+        }
         await ctx.db.patch(shoe._id, {
-          rubberTechnologyId: brandMatches[0]._id,
+          rubberTechnologyId: match._id,
         });
         updatedCount += 1;
         continue;

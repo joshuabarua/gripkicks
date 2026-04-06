@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { getDicebearAvatarUrl, getInitials } from "@/lib/avatar";
 
 type UserAvatarProps = {
-  userId?: string | null;
-  name?: string | null;
-  email?: string | null;
+  userId?: string | null | undefined;
+  name?: string | null | undefined;
+  email?: string | null | undefined;
   alt?: string;
   className?: string;
   size?: number;
@@ -22,9 +22,26 @@ export function UserAvatar({
 }: UserAvatarProps) {
   const [hasError, setHasError] = useState(false);
 
+  const avatarIdentity = useMemo(
+    () => ({
+      ...(userId !== undefined ? { userId } : {}),
+      ...(name !== undefined ? { name } : {}),
+      ...(email !== undefined ? { email } : {}),
+    }),
+    [userId, name, email],
+  );
+
+  const initialsIdentity = useMemo(
+    () => ({
+      ...(name !== undefined ? { name } : {}),
+      ...(email !== undefined ? { email } : {}),
+    }),
+    [name, email],
+  );
+
   const avatarUrl = useMemo(
-    () => getDicebearAvatarUrl({ userId, name, email }, size),
-    [userId, name, email, size],
+    () => getDicebearAvatarUrl(avatarIdentity, size),
+    [avatarIdentity, size],
   );
 
   if (hasError) {
@@ -33,7 +50,7 @@ export function UserAvatar({
         className={`${className} bg-neutral-900 border border-neutral-800 flex items-center justify-center`}
       >
         <span className="font-sora text-xs text-white/80">
-          {getInitials({ name, email })}
+          {getInitials(initialsIdentity)}
         </span>
       </div>
     );

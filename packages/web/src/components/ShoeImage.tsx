@@ -7,12 +7,12 @@ type ImageContext = 'thumbnail' | 'preview' | 'modal';
 interface ShoeImageProps {
   brand: string;
   shoeName?: string;
-  imageUrl?: string;
+  imageUrl?: string | undefined;
   className?: string;
   transformation?: Transformation[];
   fallbackImage?: string;
-  gender?: "men" | "women" | "kids" | "unisex";
-  slug?: string;
+  gender?: "men" | "women" | "kids" | "unisex" | undefined;
+  slug?: string | undefined;
   context?: ImageContext;
   // Common IKImage props
   alt?: string;
@@ -36,7 +36,7 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
   // Get optimal image dimensions based on context
   const getOptimalTransformation = (context: ImageContext): Transformation[] => {
     if (transformation) return transformation;
-    
+
     switch (context) {
       case 'thumbnail':
         return [

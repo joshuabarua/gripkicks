@@ -3,9 +3,9 @@
 import { motion } from 'framer-motion';
 
 interface AdditionalInfoProps {
-  size?: string;
-  condition?: string;
-  purchaseDate?: string;
+  size?: string | undefined;
+  condition?: string | undefined;
+  purchaseDate?: string | undefined;
 }
 
 export default function AdditionalInfo({ size, condition, purchaseDate }: AdditionalInfoProps) {

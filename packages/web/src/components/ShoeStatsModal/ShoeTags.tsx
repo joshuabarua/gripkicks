@@ -4,11 +4,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Info } from 'lucide-react';
 
 interface ShoeTagsProps {
-  aggressiveness?: string;
-  climbingDiscipline?: string;
-  stiffness?: string;
-  volume?: string;
-  rubberCompound?: string;
+  aggressiveness?: string | undefined;
+  climbingDiscipline?: string | undefined;
+  stiffness?: string | undefined;
+  volume?: string | undefined;
+  rubberCompound?: string | undefined;
 }
 
 interface TagChipProps {

@@ -36,19 +36,20 @@ describe("groupShoesByModel", () => {
     ];
 
     const grouped = groupShoesByModel(shoes);
+    const firstGroup = grouped[0];
 
     expect(grouped).toHaveLength(1);
-    expect(grouped[0]).toMatchObject({
+    expect(firstGroup).toMatchObject({
       brand: "La Sportiva",
       baseName: "Solution Comp",
       groupKey: "la sportiva::solution comp",
     });
-    expect(grouped[0].variants).toHaveLength(2);
-    expect(grouped[0].variants.map((variant) => variant.item._id)).toEqual([
+    expect(firstGroup?.variants).toHaveLength(2);
+    expect(firstGroup?.variants.map((variant) => variant.item._id)).toEqual([
       "2",
       "1",
     ]);
-    expect(grouped[0].variants.map((variant) => variant.variantLabel)).toEqual([
+    expect(firstGroup?.variants.map((variant) => variant.variantLabel)).toEqual([
       "Standard",
       "Women",
     ]);

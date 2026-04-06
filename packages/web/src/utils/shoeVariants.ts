@@ -76,15 +76,19 @@ type ShoeLike = Pick<
   "_id" | "name" | "brand" | "modelName" | "variantLabel" | "gender" | "imageUrl" | "slug"
 >;
 
-function getStoredModelName(details: { name: string; modelName?: string }) {
+type ShoeVariantSource = {
+  name: string;
+  brand: string;
+  modelName?: string | undefined;
+  gender?: string | null | undefined;
+  variantLabel?: string | undefined;
+};
+
+function getStoredModelName(details: Pick<ShoeVariantSource, "name" | "modelName">) {
   return details.modelName?.trim() || getBaseShoeName(details.name);
 }
 
-function getStoredVariantLabel(details: {
-  name: string;
-  gender?: string | null;
-  variantLabel?: string;
-}) {
+function getStoredVariantLabel(details: Pick<ShoeVariantSource, "name" | "gender" | "variantLabel">) {
   return details.variantLabel?.trim() || getVariantLabel(details.name, details.gender);
 }
 
@@ -107,13 +111,15 @@ export function groupUserShoesByModel<T extends UserShoeLike>(userShoes: T[]) {
     const details = item.shoe ?? item.shoeDetails;
     if (!details) continue;
 
-    const modelName = getStoredModelName(details);
-    const brandName = details.brand || "Unknown";
+    const source = details as ShoeVariantSource;
+    const brandName = source.brand || "Unknown";
+
+    const modelName = getStoredModelName(source);
     const groupKey = `${brandName.toLowerCase()}::${modelName.toLowerCase()}`;
     const existing = grouped.get(groupKey);
     const variant = {
       item,
-      variantLabel: getStoredVariantLabel(details),
+      variantLabel: getStoredVariantLabel(source),
     };
 
     if (existing) {
@@ -122,7 +128,7 @@ export function groupUserShoesByModel<T extends UserShoeLike>(userShoes: T[]) {
     }
 
     grouped.set(groupKey, {
-      brand: details.brand,
+      brand: source.brand,
       baseName: modelName,
       groupKey,
       variants: [variant],
@@ -143,13 +149,14 @@ export function groupShoesByModel<T extends ShoeLike>(shoes: T[]) {
   const grouped = new Map<string, ShoeVariantGroup<T>>();
 
   for (const item of shoes) {
-    const modelName = getStoredModelName(item);
-    const brandName = item.brand || "Unknown";
+    const source = item as ShoeVariantSource;
+    const modelName = getStoredModelName(source);
+    const brandName = source.brand || "Unknown";
     const groupKey = `${brandName.toLowerCase()}::${modelName.toLowerCase()}`;
     const existing = grouped.get(groupKey);
     const variant = {
       item,
-      variantLabel: getStoredVariantLabel(item),
+      variantLabel: getStoredVariantLabel(source),
     };
 
     if (existing) {
@@ -158,7 +165,7 @@ export function groupShoesByModel<T extends ShoeLike>(shoes: T[]) {
     }
 
     grouped.set(groupKey, {
-      brand: item.brand,
+      brand: source.brand,
       baseName: modelName,
       groupKey,
       variants: [variant],

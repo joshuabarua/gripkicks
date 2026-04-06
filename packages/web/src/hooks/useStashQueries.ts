@@ -55,7 +55,7 @@ export function usePopularityData() {
 // Mutation for adding shoe to stash with optimistic updates
 export function useAddShoeToStash() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (shoeId: string) => {
       const result = await addShoeToStashService(shoeId);
@@ -67,23 +67,22 @@ export function useAddShoeToStash() {
     onMutate: async (shoeId) => {
       // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: queryKeys.userStash('') });
-      
+
       // Snapshot the previous value
       const previousStash = queryClient.getQueryData(queryKeys.userStash(''));
-      
+
       // Optimistically update to the new value
       queryClient.setQueryData(queryKeys.userStash(''), (old: UserShoe[] = []) => [
         ...old,
         {
           _id: `temp-${Date.now()}`,
           shoeId,
-          shoe: undefined,
         } as UserShoe,
       ]);
-      
+
       return { previousStash };
     },
-    onError: (err, shoeId, context) => {
+    onError: (_err, _shoeId, context) => {
       // Rollback on error
       queryClient.setQueryData(queryKeys.userStash(''), (context as { previousStash: UserShoe[] })?.previousStash);
     },
@@ -97,7 +96,7 @@ export function useAddShoeToStash() {
 // Mutation for removing shoe from stash with optimistic updates
 export function useRemoveShoeFromStash() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (shoeId: string) => {
       const result = await removeShoeFromStashService(shoeId);
@@ -108,17 +107,17 @@ export function useRemoveShoeFromStash() {
     },
     onMutate: async (shoeId) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.userStash('') });
-      
+
       const previousStash = queryClient.getQueryData(queryKeys.userStash(''));
-      
+
       // Optimistically remove the shoe
       queryClient.setQueryData(queryKeys.userStash(''), (old: UserShoe[] = []) =>
         old.filter(shoe => shoe.shoeId !== shoeId)
       );
-      
+
       return { previousStash };
     },
-    onError: (err, shoeId, context) => {
+    onError: (_err, _shoeId, context) => {
       queryClient.setQueryData(queryKeys.userStash(''), (context as { previousStash: UserShoe[] })?.previousStash);
     },
     onSettled: () => {
@@ -130,7 +129,7 @@ export function useRemoveShoeFromStash() {
 // Mutation for updating shoe stats with optimistic updates
 export function useUpdateShoeStats() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ shoeId, updates }: { shoeId: string; updates: Partial<UserShoe> }) => {
       const result = await updateShoeInStash(shoeId, updates);
@@ -141,17 +140,17 @@ export function useUpdateShoeStats() {
     },
     onMutate: async ({ shoeId, updates }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.userStash('') });
-      
+
       const previousStash = queryClient.getQueryData(queryKeys.userStash(''));
-      
+
       // Optimistically update the shoe
       queryClient.setQueryData(queryKeys.userStash(''), (old: UserShoe[] = []) =>
         old.map(shoe => shoe._id === shoeId ? { ...shoe, ...updates } : shoe)
       );
-      
+
       return { previousStash };
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       queryClient.setQueryData(queryKeys.userStash(''), (context as { previousStash: UserShoe[] })?.previousStash);
     },
     onSettled: () => {
@@ -163,7 +162,7 @@ export function useUpdateShoeStats() {
 // Mutation for toggling favorite status with optimistic updates
 export function useToggleFavourite() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (shoeId: string) => {
       const result = await toggleFavouriteInStash(shoeId);
@@ -174,19 +173,19 @@ export function useToggleFavourite() {
     },
     onMutate: async (shoeId) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.userStash('') });
-      
+
       const previousStash = queryClient.getQueryData(queryKeys.userStash(''));
-      
+
       // Optimistically toggle favorite status
       queryClient.setQueryData(queryKeys.userStash(''), (old: UserShoe[] = []) =>
-        old.map(shoe => 
+        old.map(shoe =>
           shoe._id === shoeId ? { ...shoe, isFavourite: !shoe.isFavourite } : shoe
         )
       );
-      
+
       return { previousStash };
     },
-    onError: (err, shoeId, context) => {
+    onError: (_err, _shoeId, context) => {
       queryClient.setQueryData(queryKeys.userStash(''), (context as { previousStash: UserShoe[] })?.previousStash);
     },
     onSettled: () => {
@@ -201,37 +200,37 @@ export function useStashWithCache(userId?: string) {
   const allShoes = useAllShoes();
   const popularityData = usePopularityData();
   const queryClient = useQueryClient();
-  
+
   const addShoeMutation = useAddShoeToStash();
   const removeShoeMutation = useRemoveShoeFromStash();
   const updateStatsMutation = useUpdateShoeStats();
   const toggleFavouriteMutation = useToggleFavourite();
-  
+
   const invalidateStashCache = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: queryKeys.userStash(userId || '') });
   }, [userId, queryClient]);
-  
+
   return {
     // Data
     userShoes: userStash.data || [],
     allShoes: allShoes.data || [],
-    popularityMap: popularityData.data ? 
-      new Map(popularityData.data.map((p: { shoeId: string; count: number }) => [p.shoeId, p.count])) : 
+    popularityMap: popularityData.data ?
+      new Map(popularityData.data.map((p: { shoeId: string; count: number }) => [p.shoeId, p.count])) :
       new Map<string, number>(),
-    
+
     // Loading states
     isLoading: userStash.isLoading || allShoes.isLoading || popularityData.isLoading,
     isError: userStash.isError || allShoes.isError || popularityData.isError,
-    
+
     // Mutations
     addShoe: addShoeMutation.mutate,
     removeShoe: removeShoeMutation.mutate,
     updateStats: updateStatsMutation.mutate,
     toggleFavourite: toggleFavouriteMutation.mutate,
-    
+
     // Cache management
     invalidateCache: invalidateStashCache,
-    
+
     // Mutation states
     isAdding: addShoeMutation.isPending,
     isRemoving: removeShoeMutation.isPending,
