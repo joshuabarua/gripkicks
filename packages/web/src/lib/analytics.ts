@@ -18,7 +18,6 @@ export const analyticsEvents = {
   checkoutRedirected: "checkout_redirected",
   checkoutFailed: "checkout_failed",
   checkoutSucceeded: "checkout_succeeded",
-  founderGranted: "founder_granted",
 } as const;
 
 export function track(event: string, properties?: AnalyticsProperties): void {

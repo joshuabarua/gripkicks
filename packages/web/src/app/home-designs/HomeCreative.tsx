@@ -62,16 +62,13 @@ export default function HomeCreative() {
 
   const isAuthenticated = !!session?.user;
   const userName = session?.user?.name || "Climber";
-  const founderSpotsTotal = 1000;
-  const claimedSlots = totalUsers ?? 0;
-  const remainingSlots = Math.max(0, founderSpotsTotal - claimedSlots);
-  const claimedPercent = Math.min(100, (claimedSlots / founderSpotsTotal) * 100);
+  const memberCount = totalUsers ?? 0;
 
   // Memoize arrays to prevent recreation on every scroll tick/render
   const stats = useMemo(() => [
     ...SOCIAL_STATS,
-    { label: "Active Climbers", value: claimedSlots.toLocaleString() }
-  ], [claimedSlots]);
+    { label: "Active Climbers", value: memberCount.toLocaleString() }
+  ], [memberCount]);
 
   const activityLoop = useMemo(() => [...ACTIVITY_FEED, ...ACTIVITY_FEED, ...ACTIVITY_FEED], []);
   const marqueeItems = useMemo(() => Array(10).fill(null), []);
@@ -203,39 +200,23 @@ export default function HomeCreative() {
         <div className="max-w-fluid-lg mx-auto text-center space-y-fluid-xl relative z-10">
           <div className="inline-flex items-center gap-fluid-sm px-fluid-md py-fluid-xs bg-orange-500/10 rounded-full border border-orange-500/20 backdrop-blur-md">
             <Sparkles size={14} className="text-orange-500 animate-pulse" />
-            <span className="font-sora text-[9px] font-bold uppercase tracking-[0.4em] text-orange-500">Founders Only</span>
+            <span className="font-sora text-[9px] font-bold uppercase tracking-[0.4em] text-orange-500">Community Powered</span>
           </div>
           
           <h2 className="font-tanker text-title-md leading-[0.85] tracking-tight">
-            {remainingSlots} spots left for <span className="text-orange-500 italic">Life</span>
+            Real climbers. <span className="text-orange-500 italic">Real</span> fit data.
           </h2>
           <p className="font-sora text-fluid-lg text-neutral-400 max-w-xl mx-auto leading-tight tracking-tight">
-            The first 1,000 climbers get lifetime premium. No subscriptions, just better climbing.
+            Every stash, rating, and foot profile makes GripKicks smarter. Start free, then upgrade when you want the full toolkit.
           </p>
-
-          <div className="max-w-md mx-auto space-y-fluid-md">
-            <div className="h-2 bg-neutral-900 rounded-full overflow-hidden p-[1px]">
-              <motion.div 
-                className="h-full bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)] will-change-[width]" 
-                initial={{ width: 0 }}
-                whileInView={{ width: `${claimedPercent}%` }}
-                viewport={{ once: true }}
-                transition={{ duration: 2.5, ease: [0.22, 1, 0.36, 1] }}
-              />
-            </div>
-            <div className="flex justify-between font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-medium">
-              <span>{claimedSlots} claimed</span>
-              <span>{founderSpotsTotal} total</span>
-            </div>
-          </div>
 
           <div className="pt-fluid-lg">
             <button 
-              onClick={() => router.push("/auth/signup")}
+              onClick={() => router.push(isAuthenticated ? "/pricing" : "/auth/signup")}
               className="group relative inline-flex items-center gap-fluid-md bg-white text-black font-tanker text-fluid-3xl px-fluid-3xl py-fluid-md rounded-full hover:bg-orange-500 hover:text-white transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shadow-2xl will-change-transform"
             >
               <span className="relative z-10 flex items-center gap-fluid-md">
-                Claim my spot
+                {isAuthenticated ? "See pricing" : "Start free"}
                 <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-500 will-change-transform" />
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />

@@ -17,6 +17,8 @@ const authRoutes = [
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const callbackUrl = request.nextUrl.searchParams.get('callbackUrl');
+  const safeCallbackUrl = callbackUrl?.startsWith('/') ? callbackUrl : '/dashboard';
   
   // Check for session cookie. Better Auth might use prefixes like __Secure-
   const cookies = request.cookies.getAll();
@@ -27,14 +29,15 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
   if (isProtectedRoute && !isAuthenticated) {
     const loginUrl = new URL('/auth/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
+    const nextPath = `${pathname}${request.nextUrl.search}`;
+    loginUrl.searchParams.set('callbackUrl', nextPath);
     return NextResponse.redirect(loginUrl);
   }
 
   // Redirect authenticated users away from auth pages
   const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
   if (isAuthRoute && isAuthenticated) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL(safeCallbackUrl, request.url));
   }
 
   return NextResponse.next();

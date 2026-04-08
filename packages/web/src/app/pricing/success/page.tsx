@@ -10,20 +10,12 @@ import { analyticsEvents, track } from "@/lib/analytics";
 function SuccessContent() {
   const searchParams = useSearchParams();
   const checkoutId = searchParams.get("checkout_id");
-  const isFounder = searchParams.get("founder") === "true";
 
   useEffect(() => {
     track(analyticsEvents.checkoutSucceeded, {
       checkout_id: checkoutId || undefined,
-      founder: isFounder,
     });
-
-    if (isFounder) {
-      track(analyticsEvents.founderGranted, {
-        source: "pricing_success",
-      });
-    }
-  }, [checkoutId, isFounder]);
+  }, [checkoutId]);
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">

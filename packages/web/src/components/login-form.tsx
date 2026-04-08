@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,11 +11,19 @@ import { motion } from "framer-motion";
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestedCallbackUrl = searchParams.get("callbackUrl");
+  const callbackUrl = requestedCallbackUrl?.startsWith("/")
+    ? requestedCallbackUrl
+    : "/dashboard";
+  const signupHref = requestedCallbackUrl
+    ? `/auth/signup?callbackUrl=${encodeURIComponent(requestedCallbackUrl)}`
+    : "/auth/signup";
 
   return (
     <div className="space-y-6">
@@ -92,7 +100,7 @@ export function LoginForm() {
               email,
               password,
               rememberMe,
-              callbackURL: "/",
+              callbackURL: callbackUrl,
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
@@ -104,7 +112,7 @@ export function LoginForm() {
                   setError(ctx.error.message);
                 },
                 onSuccess: () => {
-                  router.push("/");
+                  router.replace(callbackUrl);
                 },
               },
             });
@@ -121,7 +129,7 @@ export function LoginForm() {
             setError(null);
             await signIn.social({
               provider: "google",
-              callbackURL: "/",
+              callbackURL: callbackUrl,
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
@@ -170,7 +178,7 @@ export function LoginForm() {
         <span className="font-sora text-sm text-neutral-500">
           Don&apos;t have an account?{" "}
           <Link
-            href="/auth/signup"
+            href={signupHref}
             className="text-orange-500 hover:text-orange-400 transition-colors"
           >
             Sign up

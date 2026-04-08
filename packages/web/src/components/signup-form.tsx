@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { analyticsEvents, identify, track } from "@/lib/analytics";
@@ -41,6 +41,14 @@ export function SignupForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedCallbackUrl = searchParams.get("callbackUrl");
+  const callbackUrl = requestedCallbackUrl?.startsWith("/")
+    ? requestedCallbackUrl
+    : "/onboarding";
+  const loginHref = requestedCallbackUrl
+    ? `/auth/login?callbackUrl=${encodeURIComponent(requestedCallbackUrl)}`
+    : "/auth/login";
 
   const inputClasses =
     "bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-orange-500 focus:ring-orange-500 rounded-xl h-12";
@@ -173,7 +181,7 @@ export function SignupForm() {
               email,
               password,
               name: `${firstName} ${lastName}`,
-              callbackURL: "/",
+              callbackURL: callbackUrl,
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
@@ -194,7 +202,7 @@ export function SignupForm() {
                     email,
                     signup_method: "email",
                   });
-                  router.push("/onboarding");
+                  router.replace(callbackUrl);
                 },
               },
             });
@@ -216,7 +224,7 @@ export function SignupForm() {
             track(analyticsEvents.signupStarted, { method: "google" });
             await signIn.social({
               provider: "google",
-              callbackURL: "/onboarding",
+              callbackURL: callbackUrl,
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
@@ -269,7 +277,7 @@ export function SignupForm() {
         <span className="font-sora text-sm text-neutral-500">
           Already have an account?{" "}
           <Link
-            href="/auth/login"
+            href={loginHref}
             className="text-orange-500 hover:text-orange-400 transition-colors"
           >
             Log in

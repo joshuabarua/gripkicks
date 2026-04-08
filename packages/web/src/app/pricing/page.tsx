@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Zap, Crown, Users, ArrowUpRight, Sparkles } from "lucide-react";
+import { Check, Zap, Users, ArrowUpRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "@/lib/auth";
 import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
-import { fetchApi } from "@/lib/api-client";
 import { useSubscription } from "@/hooks/useSubscription";
 import { analyticsEvents, captureError, track } from "@/lib/analytics";
 
@@ -68,34 +67,9 @@ const pricingOptions = [
 
 export default function PricingPage() {
   const { data: session } = useSession();
-  const { isPremium, isFounder, subscriptionTier } = useSubscription();
+  const { isPremium, subscriptionTier } = useSubscription();
   const [selectedPlan, setSelectedPlan] = useState("yearly");
-  const [totalUsers, setTotalUsers] = useState<number | null>(null);
-  const [founderChecking, setFounderChecking] = useState(false);
-  const founderSpotsTotal = 1000;
-
-  useEffect(() => {
-    async function loadUserCount() {
-      try {
-        const response = await fetchApi<{ count: number }>(
-          "/api/v1/users/count",
-        );
-        if (response.isOk()) {
-          setTotalUsers(response.value.count);
-        }
-      } catch {
-        setTotalUsers(null);
-      }
-    }
-    loadUserCount();
-  }, []);
-
-  const spotsRemaining =
-    totalUsers !== null ? Math.max(0, founderSpotsTotal - totalUsers) : null;
-  const founderProgress =
-    totalUsers !== null
-      ? Math.min(100, (totalUsers / founderSpotsTotal) * 100)
-      : 0;
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
@@ -124,64 +98,6 @@ export default function PricingPage() {
             Help keep the lights on. Get the full toolkit. Cancel whenever — no
             guilt trips.
           </motion.p>
-        </div>
-      </section>
-
-      {/* Founder Banner */}
-      <section className="px-6 md:px-12 lg:px-16 pb-16">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            {...fadeUp}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 relative overflow-hidden"
-          >
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-black/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
-            </div>
-            <div className="relative">
-              <div className="flex items-center gap-3 mb-4">
-                <AnimatedIcon animation="float" trigger="scroll">
-                  <Crown className="w-6 h-6 text-black" />
-                </AnimatedIcon>
-                <p className="font-tanker text-2xl text-black">
-                  FOUNDER MEMBERS
-                </p>
-              </div>
-              <p className="font-sora text-black/80 mb-6">
-                The first{" "}
-                <span className="font-bold text-black">1,000 climbers</span> to
-                sign up get lifetime premium — free. No catch. You showed up
-                early, so everything stays unlocked for you. Forever.
-              </p>
-              <div className="bg-black/10 rounded-2xl p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-black/60">
-                    Founder spots
-                  </span>
-                  <span className="font-sora text-sm text-black font-medium">
-                    {spotsRemaining !== null
-                      ? `${spotsRemaining} remaining`
-                      : "Loading..."}
-                  </span>
-                </div>
-                <div className="w-full h-2 bg-black/10 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-black rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${founderProgress}%` }}
-                    transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                  />
-                </div>
-                <div className="flex justify-between mt-2">
-                  <span className="font-sora text-[10px] uppercase tracking-[0.15em] text-black/40">0</span>
-                  <span className="font-sora text-[10px] uppercase tracking-[0.15em] text-black/40">
-                    1,000
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
@@ -343,11 +259,7 @@ export default function PricingPage() {
 
               {isPremium ? (
                 <div className="w-full bg-neutral-800 border border-orange-500/30 text-center font-tanker text-xl py-4 rounded-2xl">
-                  <span className="text-orange-500">
-                    {isFounder
-                      ? "FOUNDER MEMBER"
-                      : `PREMIUM — ${subscriptionTier?.toUpperCase()}`}
-                  </span>
+                  <span className="text-orange-500">{`PREMIUM — ${subscriptionTier?.toUpperCase()}`}</span>
                   <p className="font-sora text-xs text-neutral-500 mt-1">
                     You have full access
                   </p>
@@ -356,7 +268,7 @@ export default function PricingPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  disabled={founderChecking}
+                  disabled={checkoutLoading}
                   onClick={async () => {
                     if (!session?.user) {
                       track(analyticsEvents.checkoutStarted, {
@@ -372,31 +284,11 @@ export default function PricingPage() {
                       authenticated: true,
                     });
 
-                    // Check founder eligibility first
-                    setFounderChecking(true);
+                    setCheckoutLoading(true);
                     try {
                       const apiUrl =
                         process.env["NEXT_PUBLIC_API_URL"] ||
                         "http://localhost:3001";
-                      const founderRes = await fetch(
-                        `${apiUrl}/api/v1/polar/check-founder`,
-                        {
-                          credentials: "include",
-                        },
-                      );
-                      const founderData = await founderRes.json();
-
-                      if (founderData.success && founderData.data?.isFounder) {
-                        track(analyticsEvents.founderGranted, {
-                          plan: selectedPlan,
-                          source: "pricing",
-                        });
-                        // User just became a founder — redirect to success
-                        window.location.href = "/pricing/success?founder=true";
-                        return;
-                      }
-
-                      // Not a founder, proceed to Polar checkout
                       const res = await fetch(
                         `${apiUrl}/api/v1/polar/checkout`,
                         {
@@ -434,13 +326,13 @@ export default function PricingPage() {
                         plan: selectedPlan,
                       });
                     } finally {
-                      setFounderChecking(false);
+                      setCheckoutLoading(false);
                     }
                   }}
                   className="relative w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  {founderChecking
-                    ? "CHECKING..."
+                  {checkoutLoading
+                    ? "LOADING..."
                     : session?.user
                       ? "UPGRADE NOW"
                       : "GET STARTED"}

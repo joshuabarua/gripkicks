@@ -9,12 +9,10 @@ interface SubscriptionData {
   polarSubscriptionId: string | null;
   subscriptionExpiresAt: number | null;
   isPremium: boolean;
-  isFounder: boolean;
 }
 
 interface UseSubscriptionReturn {
   isPremium: boolean;
-  isFounder: boolean;
   subscriptionStatus: string | null;
   subscriptionTier: string | null;
   loading: boolean;
@@ -58,7 +56,6 @@ export function useSubscription(): UseSubscriptionReturn {
 
   return {
     isPremium: data?.isPremium ?? false,
-    isFounder: data?.isFounder ?? false,
     subscriptionStatus: data?.subscriptionStatus ?? null,
     subscriptionTier: data?.subscriptionTier ?? null,
     loading,

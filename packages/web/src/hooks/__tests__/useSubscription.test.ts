@@ -35,7 +35,6 @@ describe("useSubscription", () => {
     const { result } = renderHook(() => useSubscription());
 
     expect(result.current.isPremium).toBe(false);
-    expect(result.current.isFounder).toBe(false);
     expect(result.current.loading).toBe(false);
   });
 
@@ -70,7 +69,6 @@ describe("useSubscription", () => {
           subscriptionStatus: "active",
           subscriptionTier: "monthly",
           isPremium: true,
-          isFounder: false,
         }),
       ),
     );
@@ -83,51 +81,6 @@ describe("useSubscription", () => {
     });
 
     expect(result.current.subscriptionTier).toBe("monthly");
-    expect(result.current.isFounder).toBe(false);
-  });
-
-  it("identifies founder status correctly", async () => {
-    const { useSession } = await import("@/lib/auth");
-    (useSession as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: {
-        user: {
-          id: "test-id",
-          email: "test@example.com",
-          name: "Test",
-          emailVerified: true,
-          createdAt: new Date(),
-        },
-        session: {
-          id: "session-id",
-          createdAt: new Date(),
-          userId: "test-id",
-          expiresAt: new Date(Date.now() + 86400000),
-        },
-      },
-      isPending: false,
-      error: null,
-      isRefetching: false,
-      refetch: vi.fn(),
-    });
-
-    const { fetchApi } = await import("@/lib/api-client");
-    (fetchApi as ReturnType<typeof vi.fn>).mockReturnValue(
-      ok({
-        subscriptionStatus: "founder",
-        subscriptionTier: "founder",
-        isPremium: true,
-        isFounder: true,
-      }),
-    );
-
-    const { useSubscription } = await import("@/hooks/useSubscription");
-    const { result } = renderHook(() => useSubscription());
-
-    await waitFor(() => {
-      expect(result.current.isFounder).toBe(true);
-    });
-
-    expect(result.current.isPremium).toBe(true);
   });
 
   it("provides refresh function", async () => {
@@ -160,7 +113,6 @@ describe("useSubscription", () => {
         subscriptionStatus: null,
         subscriptionTier: null,
         isPremium: false,
-        isFounder: false,
       }),
     );
 
