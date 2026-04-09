@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
@@ -42,7 +42,7 @@ function FootModel({
   modelPath = "/glb/foot.glb",
   shape = "medium",
   volume = "medium",
-  scale = 1
+  scale = 1,
 }: {
   modelPath?: string;
   shape?: string;
@@ -95,8 +95,16 @@ function FootModel({
         meshRef.current = child;
 
         // Log available morph targets for debugging
-        console.log('Available morph targets:', child.morphTargetDictionary ? Object.keys(child.morphTargetDictionary) : 'None');
-        console.log('Number of morph targets:', child.morphTargetInfluences.length);
+        console.log(
+          "Available morph targets:",
+          child.morphTargetDictionary
+            ? Object.keys(child.morphTargetDictionary)
+            : "None",
+        );
+        console.log(
+          "Number of morph targets:",
+          child.morphTargetInfluences.length,
+        );
 
         // Reset all morphs
         child.morphTargetInfluences.fill(0);
@@ -106,40 +114,51 @@ function FootModel({
           const morphNames = Object.keys(child.morphTargetDictionary);
 
           // Try to find and apply shape morphs
-          if (throttledShape !== 'medium') {
-            const shapeMorph = morphNames.find(name => name.toLowerCase().includes(throttledShape.toLowerCase()));
+          if (throttledShape !== "medium") {
+            const shapeMorph = morphNames.find((name) =>
+              name.toLowerCase().includes(throttledShape.toLowerCase()),
+            );
             if (shapeMorph) {
               const index = child.morphTargetDictionary[shapeMorph];
               if (index === undefined) return;
               child.morphTargetInfluences[index] = 1.0;
-              console.log(`Applied shape morph: ${shapeMorph} at index ${index}`);
+              console.log(
+                `Applied shape morph: ${shapeMorph} at index ${index}`,
+              );
             }
           }
 
           // Try to find and apply volume morphs
-          if (throttledVolume !== 'medium') {
-            const volumeMorph = morphNames.find(name =>
-              name.toLowerCase().includes(throttledVolume.toLowerCase()) ||
-              name.toLowerCase().includes('volume')
+          if (throttledVolume !== "medium") {
+            const volumeMorph = morphNames.find(
+              (name) =>
+                name.toLowerCase().includes(throttledVolume.toLowerCase()) ||
+                name.toLowerCase().includes("volume"),
             );
             if (volumeMorph) {
               const index = child.morphTargetDictionary[volumeMorph];
               if (index === undefined) return;
               child.morphTargetInfluences[index] = 1.0;
-              console.log(`Applied volume morph: ${volumeMorph} at index ${index}`);
+              console.log(
+                `Applied volume morph: ${volumeMorph} at index ${index}`,
+              );
             }
           }
         }
 
         // Fallback to hardcoded indices if no dictionary exists
-        if (!child.morphTargetDictionary && child.morphTargetInfluences.length > 0) {
-          console.log('Using fallback morph indices');
+        if (
+          !child.morphTargetDictionary &&
+          child.morphTargetInfluences.length > 0
+        ) {
+          console.log("Using fallback morph indices");
           // You'll need to adjust these based on your actual GLB morph target order
           if (child.morphTargetInfluences[0] !== undefined) {
-            child.morphTargetInfluences[0] = throttledShape === 'egyptian' ? 1 : 0;
+            child.morphTargetInfluences[0] =
+              throttledShape === "egyptian" ? 1 : 0;
           }
           if (child.morphTargetInfluences[1] !== undefined) {
-            child.morphTargetInfluences[1] = throttledVolume === 'high' ? 1 : 0;
+            child.morphTargetInfluences[1] = throttledVolume === "high" ? 1 : 0;
           }
         }
       }
@@ -153,8 +172,8 @@ function FootModel({
       setAutoRotate(window.innerWidth > 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   return (
@@ -182,9 +201,7 @@ function LODFootModel(props: {
   volume?: string;
   scale?: number;
 }) {
-  // Use the same model for all devices for now
-  // You can create a foot_mobile.glb later if needed
-  const modelPath = "/glb/foot.glb";
+  const modelPath = props.modelPath ?? "/glb/foot.optimized.glb";
 
   return <FootModel {...props} modelPath={modelPath} />;
 }
@@ -197,13 +214,16 @@ interface FootModelViewerProps {
 }
 
 export default function FootModelViewer({
-  shape = "medium",
+  shape = "roman",
   volume = "medium",
   onShapeChange,
-  onVolumeChange
+  onVolumeChange,
 }: FootModelViewerProps) {
   const [currentShape, setCurrentShape] = useState(shape);
   const [currentVolume, setCurrentVolume] = useState(volume);
+  const [resolvedModelPath, setResolvedModelPath] = useState(
+    "/glb/foot.optimized.glb",
+  );
 
   const handleShapeChange = (newShape: string) => {
     setCurrentShape(newShape);
@@ -214,6 +234,32 @@ export default function FootModelViewer({
     setCurrentVolume(newVolume);
     onVolumeChange?.(newVolume);
   };
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function resolveModelPath() {
+      try {
+        const response = await fetch(
+          `/api/foot-model?shape=${currentShape}&volume=${currentVolume}`,
+          {
+            signal: controller.signal,
+          },
+        );
+        if (!response.ok) return;
+
+        const data = (await response.json()) as { modelPath?: string };
+        if (data.modelPath) {
+          setResolvedModelPath(data.modelPath);
+        }
+      } catch {
+        // Keep the last known model path on transient errors.
+      }
+    }
+
+    resolveModelPath();
+    return () => controller.abort();
+  }, [currentShape, currentVolume]);
 
   return (
     <div className="w-full h-screen bg-slate-950 relative">
@@ -226,41 +272,49 @@ export default function FootModelViewer({
 
         {/* Shape Selector */}
         <div className="space-y-3 mb-6">
-          <label className="text-sm font-medium text-gray-300">Foot Shape</label>
+          <label className="text-sm font-medium text-gray-300">
+            Foot Shape
+          </label>
           <div className="grid grid-cols-2 gap-2">
-            {Object.keys(MORPH_CONFIG).filter(key => !['low', 'medium', 'high'].includes(key)).map(shapeName => (
-              <button
-                key={shapeName}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleShapeChange(shapeName);
-                }}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${currentShape === shapeName
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            {Object.keys(MORPH_CONFIG)
+              .filter((key) => !["low", "medium", "high"].includes(key))
+              .map((shapeName) => (
+                <button
+                  key={shapeName}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShapeChange(shapeName);
+                  }}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${
+                    currentShape === shapeName
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400"
+                      : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                   }`}
-              >
-                {shapeName.charAt(0).toUpperCase() + shapeName.slice(1)}
-              </button>
-            ))}
+                >
+                  {shapeName.charAt(0).toUpperCase() + shapeName.slice(1)}
+                </button>
+              ))}
           </div>
         </div>
 
         {/* Volume Selector */}
         <div className="space-y-3 mb-6">
-          <label className="text-sm font-medium text-gray-300">Foot Volume</label>
+          <label className="text-sm font-medium text-gray-300">
+            Foot Volume
+          </label>
           <div className="grid grid-cols-3 gap-2">
-            {['low', 'medium', 'high'].map(volumeName => (
+            {["low", "medium", "high"].map((volumeName) => (
               <button
                 key={volumeName}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleVolumeChange(volumeName);
                 }}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${currentVolume === volumeName
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${
+                  currentVolume === volumeName
                     ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 ring-2 ring-purple-400"
                     : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                  }`}
+                }`}
               >
                 {volumeName.charAt(0).toUpperCase() + volumeName.slice(1)}
               </button>
@@ -283,10 +337,10 @@ export default function FootModelViewer({
         gl={{
           antialias: true,
           alpha: false,
-          powerPreference: "high-performance"
+          powerPreference: "high-performance",
         }}
         dpr={window.devicePixelRatio > 2 ? 2 : window.devicePixelRatio}
-        style={{ background: 'rgb(15 23 42)' }} // slate-950
+        style={{ background: "rgb(15 23 42)" }} // slate-950
         className="absolute inset-0"
       >
         <Suspense fallback={null}>
@@ -294,6 +348,7 @@ export default function FootModelViewer({
           <directionalLight position={[10, 10, 5]} intensity={1} />
           <directionalLight position={[-10, -10, -5]} intensity={0.5} />
           <LODFootModel
+            modelPath={resolvedModelPath}
             shape={currentShape}
             volume={currentVolume}
             scale={1.5}
