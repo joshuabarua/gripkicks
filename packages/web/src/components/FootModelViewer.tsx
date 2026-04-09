@@ -189,6 +189,10 @@ interface FootModelViewerProps {
   volume?: string;
   onShapeChange?: (shape: string) => void;
   onVolumeChange?: (volume: string) => void;
+  modelPath?: string;
+  showControls?: boolean;
+  containerClassName?: string;
+  scale?: number;
 }
 
 export default function FootModelViewer({
@@ -196,11 +200,15 @@ export default function FootModelViewer({
   volume = "medium",
   onShapeChange,
   onVolumeChange,
+  modelPath,
+  showControls = true,
+  containerClassName,
+  scale = 1.5,
 }: FootModelViewerProps) {
   const [currentShape, setCurrentShape] = useState(shape);
   const [currentVolume, setCurrentVolume] = useState(volume);
   const [resolvedModelPath, setResolvedModelPath] = useState(
-    "/glb/foot.optimized.glb",
+    modelPath ?? "/glb/foot.optimized.glb",
   );
 
   const handleShapeChange = (newShape: string) => {
@@ -214,6 +222,11 @@ export default function FootModelViewer({
   };
 
   useEffect(() => {
+    if (modelPath) {
+      setResolvedModelPath(modelPath);
+      return;
+    }
+
     const controller = new AbortController();
 
     async function resolveModelPath() {
@@ -237,77 +250,79 @@ export default function FootModelViewer({
 
     resolveModelPath();
     return () => controller.abort();
-  }, [currentShape, currentVolume]);
+  }, [currentShape, currentVolume, modelPath]);
 
   return (
-    <div className="w-full h-screen bg-slate-950 relative">
+    <div className={containerClassName ?? "w-full h-screen bg-slate-950 relative"}>
       {/* Controls Panel */}
-      <div className="absolute top-4 left-4 z-[100] bg-black/90 backdrop-blur-md rounded-xl p-6 text-white w-80 border border-white/30 shadow-2xl">
-        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-          <span className="text-3xl">🦶</span>
-          3D Foot Model
-        </h2>
+      {showControls && (
+        <div className="absolute top-4 left-4 z-[100] bg-black/90 backdrop-blur-md rounded-xl p-6 text-white w-80 border border-white/30 shadow-2xl">
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <span className="text-3xl">🦶</span>
+            3D Foot Model
+          </h2>
 
-        {/* Shape Selector */}
-        <div className="space-y-3 mb-6">
-          <label className="text-sm font-medium text-gray-300">
-            Foot Shape
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            {Object.keys(MORPH_CONFIG)
-              .filter((key) => !["low", "medium", "high"].includes(key))
-              .map((shapeName) => (
+          {/* Shape Selector */}
+          <div className="space-y-3 mb-6">
+            <label className="text-sm font-medium text-gray-300">
+              Foot Shape
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.keys(MORPH_CONFIG)
+                .filter((key) => !["low", "medium", "high"].includes(key))
+                .map((shapeName) => (
+                  <button
+                    key={shapeName}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleShapeChange(shapeName);
+                    }}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${
+                      currentShape === shapeName
+                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400"
+                        : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    }`}
+                  >
+                    {shapeName.charAt(0).toUpperCase() + shapeName.slice(1)}
+                  </button>
+                ))}
+            </div>
+          </div>
+
+          {/* Volume Selector */}
+          <div className="space-y-3 mb-6">
+            <label className="text-sm font-medium text-gray-300">
+              Foot Volume
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {["low", "medium", "high"].map((volumeName) => (
                 <button
-                  key={shapeName}
+                  key={volumeName}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleShapeChange(shapeName);
+                    handleVolumeChange(volumeName);
                   }}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${
-                    currentShape === shapeName
-                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400"
+                    currentVolume === volumeName
+                      ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 ring-2 ring-purple-400"
                       : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                   }`}
                 >
-                  {shapeName.charAt(0).toUpperCase() + shapeName.slice(1)}
+                  {volumeName.charAt(0).toUpperCase() + volumeName.slice(1)}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Info */}
+          <div className="text-xs text-gray-400 space-y-1 border-t border-gray-700 pt-4">
+            <p>🖱️ Drag to rotate</p>
+            <p>📚 Scroll to zoom</p>
+            <p>📱 Touch enabled</p>
+            <p className="text-green-400">✨ Real-time morphing</p>
           </div>
         </div>
-
-        {/* Volume Selector */}
-        <div className="space-y-3 mb-6">
-          <label className="text-sm font-medium text-gray-300">
-            Foot Volume
-          </label>
-          <div className="grid grid-cols-3 gap-2">
-            {["low", "medium", "high"].map((volumeName) => (
-              <button
-                key={volumeName}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleVolumeChange(volumeName);
-                }}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${
-                  currentVolume === volumeName
-                    ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 ring-2 ring-purple-400"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                }`}
-              >
-                {volumeName.charAt(0).toUpperCase() + volumeName.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="text-xs text-gray-400 space-y-1 border-t border-gray-700 pt-4">
-          <p>🖱️ Drag to rotate</p>
-          <p>📚 Scroll to zoom</p>
-          <p>📱 Touch enabled</p>
-          <p className="text-green-400">✨ Real-time morphing</p>
-        </div>
-      </div>
+      )}
 
       {/* 3D Canvas with performance optimizations */}
       <Canvas
@@ -329,7 +344,7 @@ export default function FootModelViewer({
             modelPath={resolvedModelPath}
             shape={currentShape}
             volume={currentVolume}
-            scale={1.5}
+            scale={scale}
           />
         </Suspense>
       </Canvas>
