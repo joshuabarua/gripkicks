@@ -19,8 +19,8 @@ export function GET(request: Request) {
   const shape = (url.searchParams.get("shape") || "roman").toLowerCase();
   const volume = (url.searchParams.get("volume") || "medium").toLowerCase();
 
-  const shapeModelPath = SHAPE_MODELS[shape] ?? SHAPE_MODELS.roman;
-  const volumeModelPath = VOLUME_MODELS[volume] ?? VOLUME_MODELS.medium;
+  const shapeModelPath = SHAPE_MODELS[shape] ?? SHAPE_MODELS["roman"];
+  const volumeModelPath = VOLUME_MODELS[volume] ?? VOLUME_MODELS["medium"];
   const modelPath = shape !== "roman" ? shapeModelPath : volumeModelPath;
 
   return NextResponse.json({
