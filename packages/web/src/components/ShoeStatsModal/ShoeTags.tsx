@@ -23,7 +23,7 @@ function TagChip({ label, value, tooltip }: TagChipProps) {
       <Tooltip>
         <TooltipTrigger asChild>
           <button type="button" className="flex items-center gap-1.5 cursor-help">
-            <span className="text-[10px] text-neutral-500 flex items-center gap-1 font-mono">
+            <span className="text-[10px] text-neutral-500 flex items-center gap-1 font-sora">
               {label}
               <Info className="w-3 h-3 text-neutral-600" />
             </span>

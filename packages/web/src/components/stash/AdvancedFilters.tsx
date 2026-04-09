@@ -128,7 +128,7 @@ export function AdvancedFilters({
           key={option.value}
           type="button"
           onClick={() => onChange(option.value)}
-          className={`px-3 py-1.5 rounded-full text-xs font-mono transition-all border ${
+          className={`px-3 py-1.5 rounded-full text-xs font-sora transition-all border ${
             selectedValue === option.value
               ? 'bg-orange-500 text-black border-orange-500 shadow-lg shadow-orange-500/20'
               : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-orange-500/40 hover:text-white'

@@ -23,19 +23,19 @@ export default function AdditionalInfo({ size, condition, purchaseDate }: Additi
       {size && (
         <div className="flex justify-between">
           <span className="text-neutral-400 font-sora text-sm">Size</span>
-          <span className="font-medium text-white font-mono text-sm">{size}</span>
+          <span className="font-medium text-white font-sora text-sm">{size}</span>
         </div>
       )}
       {condition && (
         <div className="flex justify-between">
           <span className="text-neutral-400 font-sora text-sm">Condition</span>
-          <span className="font-medium capitalize text-white font-mono text-sm">{condition}</span>
+          <span className="font-medium capitalize text-white font-sora text-sm">{condition}</span>
         </div>
       )}
       {purchaseDate && (
         <div className="flex justify-between">
           <span className="text-neutral-400 font-sora text-sm">Purchase Date</span>
-          <span className="font-medium text-white font-mono text-sm">{new Date(purchaseDate).toLocaleDateString()}</span>
+          <span className="font-medium text-white font-sora text-sm">{new Date(purchaseDate).toLocaleDateString()}</span>
         </div>
       )}
     </motion.div>

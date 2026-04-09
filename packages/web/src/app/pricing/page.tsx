@@ -1,13 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Zap, Users, ArrowUpRight, Sparkles } from "lucide-react";
+import { Check, ArrowUpRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "@/lib/auth";
 import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
-import { useSubscription } from "@/hooks/useSubscription";
-import { analyticsEvents, captureError, track } from "@/lib/analytics";
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
@@ -15,65 +12,22 @@ const fadeUp = {
   viewport: { once: true },
 };
 
-interface PlanFeature {
-  text: string;
-  included: boolean;
-}
-
-const freePlan: PlanFeature[] = [
-  { text: "Shoe Sanctuary — manage your collection", included: true },
-  { text: "Foot Lab — profile your feet", included: true },
-  { text: "Find My Shoe — top 1 recommendation", included: true },
-  { text: "Rate shoes on comfort & performance", included: true },
-  { text: "Full recommendation list", included: false },
-  { text: "Sole Mate matching", included: false },
-];
-
-const premiumPlan: PlanFeature[] = [
-  { text: "Everything in Free", included: true },
-  { text: "Full recs list — every shoe that fits your feet", included: true },
-  {
-    text: "Sole Mate — find someone with the same feet as you",
-    included: true,
-  },
-  { text: "Priority support from the team", included: true },
-  { text: "First to try new features", included: true },
-  { text: "Cancel anytime, no questions asked", included: true },
-];
-
-const pricingOptions = [
-  {
-    id: "monthly",
-    label: "Monthly",
-    price: "1.99",
-    period: "/mo",
-    savings: "",
-  },
-  {
-    id: "yearly",
-    label: "Yearly",
-    price: "9.99",
-    period: "/yr",
-    savings: "Save 58%",
-  },
-  {
-    id: "lifetime",
-    label: "Lifetime",
-    price: "49.99",
-    period: "once",
-    savings: "Best value",
-  },
+const features = [
+  "Shoe Sanctuary \u2014 manage your full climbing shoe collection",
+  "Foot Lab \u2014 profile your foot shape and volume",
+  "Smart Match \u2014 data-driven shoe recommendations",
+  "Sole Mate \u2014 find climbers with the same feet as you",
+  "Reality Check \u2014 brand claims vs. community truth",
+  "Rate shoes on comfort, performance, and fit",
+  "Full recommendation list \u2014 every shoe that fits your feet",
 ];
 
 export default function PricingPage() {
   const { data: session } = useSession();
-  const { isPremium, subscriptionTier } = useSubscription();
-  const [selectedPlan, setSelectedPlan] = useState("yearly");
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const isAuthenticated = !!session?.user;
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      {/* Hero */}
       <section className="relative px-6 md:px-12 lg:px-16 pt-32 pb-16">
         <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-orange-500/10" />
         <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-orange-500/10" />
@@ -84,9 +38,9 @@ export default function PricingPage() {
               Pricing
             </p>
             <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
-              SIMPLE
+              EVERYTHING
               <br />
-              <span className="text-orange-500">PRICING</span>
+              <span className="text-orange-500">FREE</span>
             </h1>
           </motion.div>
 
@@ -95,261 +49,70 @@ export default function PricingPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-sora text-xl text-neutral-400 max-w-xl mx-auto leading-relaxed"
           >
-            Help keep the lights on. Get the full toolkit. Cancel whenever — no
-            guilt trips.
+            Every feature. Every tool. No paywalls, no tiers, no credit card.
+            Built by climbers, for climbers.
           </motion.p>
         </div>
       </section>
 
-      {/* Pricing Toggle */}
-      <section className="px-6 md:px-12 lg:px-16 pb-8">
-        <div className="max-w-5xl mx-auto">
+      <section className="px-6 md:px-12 lg:px-16 pb-24">
+        <div className="max-w-3xl mx-auto">
           <motion.div
-            {...fadeUp}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex justify-center gap-2 mb-12"
+            viewport={{ once: true }}
+            className="bg-neutral-900 border border-orange-500/30 rounded-3xl p-8 md:p-10 relative overflow-hidden"
           >
-            {pricingOptions.map((option) => (
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+            </div>
+
+            <div className="relative mb-8">
+              <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-orange-500 mb-2">
+                Full access
+              </p>
+              <div className="flex items-baseline gap-3 mb-1">
+                <h3 className="font-tanker text-6xl">$0</h3>
+                <span className="font-sora text-neutral-500 text-sm">forever</span>
+              </div>
+              <p className="font-sora text-neutral-500 text-sm">
+                No catch. Your data powers better recommendations for everyone.
+              </p>
+            </div>
+
+            <ul className="space-y-3 mb-10 relative">
+              {features.map((feature) => (
+                <li key={feature} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Check className="w-3 h-3 text-orange-500" />
+                  </div>
+                  <span className="font-sora text-sm text-neutral-300">
+                    {feature}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <Link href={isAuthenticated ? "/dashboard" : "/auth/signup"}>
               <motion.button
-                key={option.id}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => setSelectedPlan(option.id)}
-                className={`relative px-6 py-3 rounded-2xl font-sora text-sm transition-all ${
-                  selectedPlan === option.id
-                    ? "bg-orange-500 text-black font-medium"
-                    : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:border-orange-500/30"
-                }`}
+                className="relative w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
               >
-                {option.label}
-                {option.savings && (
-                  <span
-                    className={`absolute -top-2 -right-2 text-[9px] px-2 py-0.5 rounded-full font-sora uppercase tracking-[0.1em] ${
-                      selectedPlan === option.id
-                        ? "bg-black text-orange-500"
-                        : "bg-orange-500 text-black"
-                    }`}
-                  >
-                    {option.savings}
-                  </span>
-                )}
+                {isAuthenticated ? "GO TO DASHBOARD" : "JOIN FOR FREE"}
+                <ArrowUpRight className="w-5 h-5" />
               </motion.button>
-            ))}
+            </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* Plans Grid */}
-      <section className="px-6 md:px-12 lg:px-16 pb-24">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Free Plan */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 flex flex-col"
-            >
-              <div className="mb-8">
-                <AnimatedIcon animation="pop" trigger="scroll" delay={0.1}>
-                  <div className="w-12 h-12 bg-neutral-800 rounded-2xl flex items-center justify-center mb-4">
-                    <Users className="w-6 h-6 text-neutral-400" />
-                  </div>
-                </AnimatedIcon>
-                <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-2">
-                  Free tier
-                </p>
-                <h3 className="font-tanker text-4xl mb-1">FREE</h3>
-                <p className="font-sora text-neutral-500 text-sm">
-                  Forever. No credit card needed.
-                </p>
-              </div>
-
-              <ul className="space-y-3 mb-8 flex-1">
-                {freePlan.map((feature) => (
-                  <li key={feature.text} className="flex items-start gap-3">
-                    <div
-                      className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                        feature.included
-                          ? "bg-neutral-800"
-                          : "bg-neutral-800/50"
-                      }`}
-                    >
-                      {feature.included ? (
-                        <Check className="w-3 h-3 text-neutral-400" />
-                      ) : (
-                        <span className="w-2 h-px bg-neutral-600" />
-                      )}
-                    </div>
-                    <span
-                      className={`font-sora text-sm ${feature.included ? "text-neutral-300" : "text-neutral-600"}`}
-                    >
-                      {feature.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link href="/auth/signup">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full border border-neutral-700 hover:border-orange-500/30 text-neutral-400 hover:text-white font-sora py-4 rounded-2xl transition-all"
-                >
-                  Get Started Free
-                </motion.button>
-              </Link>
-            </motion.div>
-
-            {/* Premium Plan */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="bg-neutral-900 border border-orange-500/30 rounded-3xl p-8 flex flex-col relative overflow-hidden"
-            >
-              <div className="absolute top-4 right-4">
-                <span className="font-sora text-[9px] uppercase tracking-[0.1em] bg-orange-500 text-black px-3 py-1 rounded-full">
-                  RECOMMENDED
-                </span>
-              </div>
-
-              <div className="absolute inset-0 opacity-5">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-              </div>
-
-              <div className="relative mb-8">
-                <AnimatedIcon animation="pop" trigger="scroll" delay={0.2}>
-                  <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-4">
-                    <Zap className="w-6 h-6 text-orange-500" />
-                  </div>
-                </AnimatedIcon>
-                <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-orange-500 mb-2">
-                  Premium
-                </p>
-                <div className="flex items-baseline gap-2 mb-1">
-                  <h3 className="font-tanker text-5xl">
-                    ${pricingOptions.find((p) => p.id === selectedPlan)?.price}
-                  </h3>
-                  <span className="font-sora text-neutral-500 text-sm">
-                    {pricingOptions.find((p) => p.id === selectedPlan)?.period}
-                  </span>
-                </div>
-                <p className="font-sora text-neutral-500 text-sm">
-                  {selectedPlan === "lifetime"
-                    ? "One payment. Yours forever."
-                    : "Cancel anytime. We mean it."}
-                </p>
-              </div>
-
-              <ul className="space-y-3 mb-8 flex-1 relative">
-                {premiumPlan.map((feature) => (
-                  <li key={feature.text} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-orange-500" />
-                    </div>
-                    <span className="font-sora text-sm text-neutral-300">
-                      {feature.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {isPremium ? (
-                <div className="w-full bg-neutral-800 border border-orange-500/30 text-center font-tanker text-xl py-4 rounded-2xl">
-                  <span className="text-orange-500">{`PREMIUM — ${subscriptionTier?.toUpperCase()}`}</span>
-                  <p className="font-sora text-xs text-neutral-500 mt-1">
-                    You have full access
-                  </p>
-                </div>
-              ) : (
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  disabled={checkoutLoading}
-                  onClick={async () => {
-                    if (!session?.user) {
-                      track(analyticsEvents.checkoutStarted, {
-                        plan: selectedPlan,
-                        authenticated: false,
-                      });
-                      window.location.href = "/auth/signup";
-                      return;
-                    }
-
-                    track(analyticsEvents.checkoutStarted, {
-                      plan: selectedPlan,
-                      authenticated: true,
-                    });
-
-                    setCheckoutLoading(true);
-                    try {
-                      const apiUrl =
-                        process.env["NEXT_PUBLIC_API_URL"] ||
-                        "http://localhost:3001";
-                      const res = await fetch(
-                        `${apiUrl}/api/v1/polar/checkout`,
-                        {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          credentials: "include",
-                          body: JSON.stringify({
-                            productId:
-                              selectedPlan === "monthly"
-                                ? process.env["NEXT_PUBLIC_POLAR_PRODUCT_MONTHLY"]
-                                : selectedPlan === "yearly"
-                                  ? process.env["NEXT_PUBLIC_POLAR_PRODUCT_YEARLY"]
-                                  : process.env["NEXT_PUBLIC_POLAR_PRODUCT_LIFETIME"],
-                            email: session.user.email,
-                            name: session.user.name || session.user.email,
-                          }),
-                        },
-                      );
-                      const data = await res.json();
-                      if (data.checkoutUrl) {
-                        track(analyticsEvents.checkoutRedirected, {
-                          plan: selectedPlan,
-                        });
-                        window.location.href = data.checkoutUrl;
-                      }
-                    } catch (error) {
-                      console.error("Failed to process upgrade");
-                      captureError(error, {
-                        source: "pricing_upgrade",
-                        plan: selectedPlan,
-                      });
-                      track(analyticsEvents.checkoutFailed, {
-                        plan: selectedPlan,
-                      });
-                    } finally {
-                      setCheckoutLoading(false);
-                    }
-                  }}
-                  className="relative w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  {checkoutLoading
-                    ? "LOADING..."
-                    : session?.user
-                      ? "UPGRADE NOW"
-                      : "GET STARTED"}
-                  <ArrowUpRight className="w-5 h-5" />
-                </motion.button>
-              )}
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sole Mate Feature Highlight */}
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">
-              Premium feature
+              How it works
             </p>
             <h2 className="font-tanker text-4xl md:text-6xl mb-6">
               MEET YOUR
@@ -374,11 +137,11 @@ export default function PricingPage() {
               <span className="text-orange-500 font-medium">Sole Mate</span>, we
               match you with your foot twin. When someone with your exact foot
               profile shares a shoe in common with you and has rated other shoes
-              — you get notified. Their experience becomes your shortcut.
+              \u2014 you get notified. Their experience becomes your shortcut.
             </p>
             <p className="text-neutral-500">
               No more guessing. No more expensive trial and error. Just real
-              data from someone who walks in your shoes — literally.
+              data from someone who walks in your shoes \u2014 literally.
             </p>
           </motion.div>
 
@@ -401,7 +164,7 @@ export default function PricingPage() {
               {
                 step: "03",
                 title: "SHORTCUT",
-                desc: "See what else they rate highly — skip the trial and error",
+                desc: "See what else they rate highly \u2014 skip the trial and error",
               },
             ].map((item) => (
               <div
@@ -421,7 +184,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* FAQ / Transparency */}
       <section className="px-6 md:px-12 lg:px-16 py-24">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
@@ -438,20 +200,20 @@ export default function PricingPage() {
           <div className="space-y-6">
             {[
               {
-                q: "Can I cancel immediately after one month?",
-                a: "Absolutely. Pay for one month, use it, cancel. No hard feelings, no retention tricks. We'd rather you come back because you want to.",
+                q: "Why is it free?",
+                a: "Because we believe every climber deserves better-fitting shoes. The platform is community-powered \u2014 your anonymous, aggregated data helps everyone find their perfect fit.",
               },
               {
-                q: "What happens to my data if I downgrade?",
-                a: "Your data stays yours. You keep your shoe collection, ratings, and foot profile. You just lose access to the full recommendation list and Sole Mate matching.",
+                q: "Will it stay free?",
+                a: "Yes. Every consumer feature will remain free forever. Our business model is B2B \u2014 shoe brands pay for anonymised community insights, not climbers.",
               },
               {
-                q: "Why is it so cheap?",
-                a: "Because I'm a climber building this for climbers, not a startup trying to squeeze you. The price covers servers and keeps the project going. That's it.",
+                q: "What happens to my data?",
+                a: "Your data stays yours. We only share anonymised, aggregated insights with brands. Individual reviews are never attributable to a specific user.",
               },
               {
-                q: "What about the first 1,000 users?",
-                a: "If you're one of the first 1,000 to sign up, premium is yours for life. Free. Even if you disappear for a year and come back. You helped get this off the ground — that counts.",
+                q: "How do you keep the lights on?",
+                a: "Shoe brands pay for access to community perception data \u2014 things like how their shoes really fit versus what they claim. Climbers never pay.",
               },
             ].map((item, i) => (
               <motion.div
@@ -474,7 +236,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
@@ -491,16 +252,15 @@ export default function PricingPage() {
               <span className="text-orange-500">PERFECT FIT</span>
             </h2>
             <p className="font-sora text-neutral-500 text-lg mb-10 max-w-xl mx-auto">
-              Jump in. It&apos;s free to start. Upgrade if you want the full
-              toolkit — or don&apos;t. Either way, welcome to the crew.
+              Every tool, every feature, completely free. Jump in and find the shoes that fit your feet.
             </p>
-            <Link href="/auth/signup">
+            <Link href={isAuthenticated ? "/dashboard" : "/auth/signup"}>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
               >
-                GET STARTED FREE
+                {isAuthenticated ? "GO TO DASHBOARD" : "JOIN FOR FREE"}
                 <ArrowUpRight className="w-5 h-5" />
               </motion.button>
             </Link>

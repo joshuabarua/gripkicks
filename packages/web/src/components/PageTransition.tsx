@@ -202,9 +202,9 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <span className="font-mono text-[10px] text-neutral-600">
-                  [{String(imageCounter).padStart(2, "0")}/
-                  {String(transitionImages.length).padStart(2, "0")}]
+                <span className="font-sora text-[10px] text-neutral-600">
+                  {String(imageCounter).padStart(2, "0")}
+                  /{String(transitionImages.length).padStart(2, "0")}
                 </span>
                 <div className="w-24 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
                   <motion.div
@@ -229,7 +229,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
               <div className="font-tanker text-2xl text-white mb-1">
                 GRIP <span className="text-orange-500">KICKS</span>
               </div>
-              <div className="font-mono text-[9px] text-neutral-600 tracking-wider">
+              <div className="font-sora text-[9px] text-neutral-600 tracking-wider">
                 V.2024
               </div>
             </motion.div>

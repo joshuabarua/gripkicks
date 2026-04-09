@@ -119,9 +119,9 @@ export default function BootLoader({ visible }: { visible: boolean }) {
             </div>
 
             <div className="mt-6 flex items-center gap-3">
-              <span className="font-mono text-[10px] text-neutral-600">
-                [{String(currentImageIndex + 1).padStart(2, "0")}/
-                {String(transitionImages.length).padStart(2, "0")}]
+              <span className="font-sora text-[10px] text-neutral-600">
+                {String(currentImageIndex + 1).padStart(2, "0")}
+                /{String(transitionImages.length).padStart(2, "0")}
               </span>
               <div className="w-24 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
                 <motion.div

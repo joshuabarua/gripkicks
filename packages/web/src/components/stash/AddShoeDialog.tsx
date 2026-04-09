@@ -121,7 +121,7 @@ export function AddShoeDialog({
           </div>
 
           <div className="flex items-center gap-fluid-sm">
-            <Label className="text-xs text-neutral-500 font-mono">Brand:</Label>
+            <Label className="text-xs text-neutral-500 font-sora">Brand:</Label>
             <select
               value={selectedBrand}
               onChange={(e) => onBrandChange(e.target.value)}
@@ -137,14 +137,14 @@ export function AddShoeDialog({
           </div>
 
           <div className="flex items-center gap-fluid-sm">
-            <Label className="text-xs text-neutral-500 font-mono">Gender:</Label>
+            <Label className="text-xs text-neutral-500 font-sora">Gender:</Label>
             <div className="flex flex-wrap gap-2">
               {genderOptions.map((option) => (
                 <button
                   key={option.value}
                   type="button"
                   onClick={() => onGenderChange(option.value)}
-                  className={`px-3 py-1 rounded-full text-xs font-mono transition-colors border ${selectedGender === option.value
+                  className={`px-3 py-1 rounded-full text-xs font-sora transition-colors border ${selectedGender === option.value
                       ? 'bg-orange-500 text-black border-orange-500'
                       : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-orange-500/40'
                     }`}
@@ -180,7 +180,7 @@ export function AddShoeDialog({
                     <p className="font-sora font-medium text-white">
                       {group.baseName}
                     </p>
-                    <p className="text-xs text-neutral-500 font-mono">{group.brand}</p>
+                    <p className="text-xs text-neutral-500 font-sora">{group.brand}</p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -192,7 +192,7 @@ export function AddShoeDialog({
                       className="group flex w-full items-center justify-between rounded-xl border border-neutral-800 bg-neutral-950/70 px-3 py-2 text-left transition-all duration-300 hover:border-orange-500/30 hover:bg-neutral-800"
                     >
                       <div>
-                        <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
+                        <p className="font-sora text-[10px] uppercase tracking-wider text-neutral-500">
                           {group.variants.length > 1 ? variantLabel || "Standard" : "Add shoe"}
                         </p>
                         <p className="font-sora text-sm text-white transition-colors group-hover:text-orange-500">

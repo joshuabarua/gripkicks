@@ -87,9 +87,25 @@ export default function HomeCreative() {
           <Scene />
         </motion.div>
 
+        <div className="absolute inset-0 z-10 flex items-end pointer-events-none">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.6 }}
+            className="px-6 md:px-12 lg:px-16 pb-28 md:pb-20 max-w-3xl pointer-events-auto"
+          >
+            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Precision fit system</p>
+            <h1 className="font-tanker text-4xl md:text-6xl lg:text-7xl leading-[0.85] tracking-tight mb-4">
+              Find the shoe that fits <span className="text-orange-500 italic">your</span> foot.
+            </h1>
+            <p className="font-sora text-neutral-400 text-base md:text-lg max-w-md leading-snug tracking-tight">
+              A precise fit system for climbers who care about detail. Free for everyone.
+            </p>
+          </motion.div>
+        </div>
 
         <motion.div
-          className="absolute bottom-12 inset-x-0 mx-auto w-fit flex flex-col items-center gap-4 opacity-30 will-change-transform"
+          className="absolute bottom-12 right-8 md:right-16 z-10 flex flex-col items-center gap-4 opacity-30 will-change-transform"
           {...(!isReducedEffects
             ? {
                 animate: { y: [0, 10, 0] },
@@ -193,7 +209,7 @@ export default function HomeCreative() {
         </div>
       </section>
 
-      {/* Access */}
+      {/* Community */}
       <section className="bg-black py-fluid-3xl px-fluid-md relative overflow-hidden contain-content">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -207,16 +223,16 @@ export default function HomeCreative() {
             Real climbers. <span className="text-orange-500 italic">Real</span> fit data.
           </h2>
           <p className="font-sora text-fluid-lg text-neutral-400 max-w-xl mx-auto leading-tight tracking-tight">
-            Every stash, rating, and foot profile makes GripKicks smarter. Start free, then upgrade when you want the full toolkit.
+            Every stash, rating, and foot profile makes GripKicks smarter. Every feature is free — forever.
           </p>
 
           <div className="pt-fluid-lg">
             <button 
-              onClick={() => router.push(isAuthenticated ? "/pricing" : "/auth/signup")}
+              onClick={() => router.push(isAuthenticated ? "/dashboard" : "/auth/signup")}
               className="group relative inline-flex items-center gap-fluid-md bg-white text-black font-tanker text-fluid-3xl px-fluid-3xl py-fluid-md rounded-full hover:bg-orange-500 hover:text-white transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden shadow-2xl will-change-transform"
             >
               <span className="relative z-10 flex items-center gap-fluid-md">
-                {isAuthenticated ? "See pricing" : "Start free"}
+                {isAuthenticated ? "Go to dashboard" : "Join the crew"}
                 <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-500 will-change-transform" />
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />

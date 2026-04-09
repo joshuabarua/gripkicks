@@ -94,7 +94,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
 
         <div className="absolute top-fluid-sm right-fluid-sm z-20">
           <div className="bg-black/20 backdrop-blur-sm rounded-full px-fluid-sm py-[2px] border border-white/10">
-            <span className="font-mono text-fluid-xs text-orange-400 font-bold">{avgScore}</span>
+            <span className="font-sora text-fluid-xs text-orange-400 font-bold">{avgScore}</span>
           </div>
         </div>
 

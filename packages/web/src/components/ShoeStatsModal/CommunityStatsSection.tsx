@@ -27,7 +27,7 @@ export default function CommunityStatsSection({
       <h3 className="font-tanker text-lg text-white mb-3">Community Rank</h3>
       {showCommunityAverages ? (
         <>
-          <p className="text-xs text-orange-500 font-mono tracking-wider mb-3">Based on {totalRatings} user ratings</p>
+          <p className="text-xs text-orange-500 font-sora tracking-wider mb-3">Based on {totalRatings} user ratings</p>
           {popularityCount && popularityCount > 100 && (
             <div className="mb-3 p-3 bg-neutral-900 rounded-2xl border border-neutral-800">
               <div className="flex items-center justify-between">
@@ -36,7 +36,7 @@ export default function CommunityStatsSection({
                   <span className="text-sm font-bold text-white font-tanker">
                     {popularityCount} climbers
                   </span>
-                  <span className="text-xs text-neutral-500 font-mono">
+                  <span className="text-xs text-neutral-500 font-sora">
                     ({totalShoesInDatabase ? ((popularityCount / totalShoesInDatabase) * 100).toFixed(1) : '0'}%)
                   </span>
                 </div>
@@ -107,7 +107,7 @@ export default function CommunityStatsSection({
           <div className="absolute inset-0 flex items-center justify-center z-10">
             <div className="bg-neutral-900/90 backdrop-blur-sm rounded-2xl px-5 py-3 text-center border border-neutral-800">
               <p className="text-white text-sm font-sora">{3 - (totalRatings || 0)} more member rankings required</p>
-              <p className="text-neutral-500 text-xs font-mono mt-1">for average shoe score</p>
+              <p className="text-neutral-500 text-xs font-sora mt-1">for average shoe score</p>
             </div>
           </div>
           <div className="blur-sm opacity-30 space-y-4">

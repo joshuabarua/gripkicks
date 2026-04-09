@@ -35,22 +35,22 @@ function SuccessContent() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">
-            Welcome to premium
+            Welcome to GripKicks
           </p>
           <h1 className="font-tanker text-5xl md:text-6xl mb-4">
             YOU&apos;RE <span className="text-orange-500">IN</span>
           </h1>
           <p className="font-sora text-neutral-400 text-lg mb-2">
-            Premium features are now unlocked.
+            Your account is all set.
           </p>
           <p className="font-sora text-neutral-600 text-sm mb-10">
-            Full recommendations, Sole Mate matching, and early access to new
-            features are all yours.
+            Every feature is unlocked and free. Start building your shoe
+            collection and finding your perfect fit.
           </p>
 
           {checkoutId && (
-            <p className="font-mono text-[10px] text-neutral-700 mb-8">
-              Checkout ID: {checkoutId}
+            <p className="font-sora text-[10px] text-neutral-700 mb-8">
+              Ref: {checkoutId}
             </p>
           )}
 
@@ -86,7 +86,7 @@ export default function PricingSuccessPage() {
     <Suspense
       fallback={
         <main className="min-h-screen bg-black text-white flex items-center justify-center">
-          <div className="font-mono text-neutral-500 text-sm">[LOADING...]</div>
+          <div className="font-sora text-neutral-500 text-sm">Loading…</div>
         </main>
       }
     >

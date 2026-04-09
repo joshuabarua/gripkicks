@@ -29,7 +29,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
           <div className="flex items-center gap-fluid-sm mb-fluid-lg">
             <h2 className="font-so-cloudy uppercase text-fluid-3xl md:text-fluid-4xl text-white">{brand}</h2>
             <div className="flex-1 h-px bg-neutral-800" />
-            <span className="font-mono text-[10px] text-neutral-600 tracking-wider">{models.length} {models.length === 1 ? "MODEL" : "MODELS"}</span>
+            <span className="font-sora text-[10px] text-neutral-600 tracking-wider">{models.length} {models.length === 1 ? "MODEL" : "MODELS"}</span>
           </div>
           <div className="space-y-fluid-lg">
             {models.map((model, modelIndex) => (
@@ -43,7 +43,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
                       {model.baseName}
                     </h3>
                     {model.variants.length > 1 && (
-                      <p className="font-mono text-[10px] tracking-wider text-neutral-500">
+                      <p className="font-sora text-[10px] tracking-wider text-neutral-500">
                         {model.variants.length} VARIANTS
                       </p>
                     )}
@@ -53,7 +53,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
                   {model.variants.map(({ item: shoe, variantLabel }, variantIndex) => (
                     <div key={shoe._id} className="space-y-2">
                       {model.variants.length > 1 && (
-                        <p className="pl-1 font-mono text-[10px] uppercase tracking-wider text-neutral-500">
+                        <p className="pl-1 font-sora text-[10px] uppercase tracking-wider text-neutral-500">
                           {variantLabel || "Standard"}
                         </p>
                       )}

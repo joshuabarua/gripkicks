@@ -184,7 +184,7 @@ function ErrorFallback({
             <div className="border-t border-neutral-800 pt-4">
               <button
                 onClick={() => setShowDetails(!showDetails)}
-                className="flex items-center gap-2 text-neutral-500 hover:text-neutral-300 transition-colors text-sm font-mono"
+                className="flex items-center gap-2 text-neutral-500 hover:text-neutral-300 transition-colors text-sm font-sora"
               >
                 <Bug className="w-4 h-4" />
                 {showDetails ? "Hide" : "Show"} technical details
