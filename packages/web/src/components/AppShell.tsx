@@ -82,8 +82,8 @@ export default function AppShell({ children }: AppShellProps) {
         <ToastProvider>
           <ImageKitProvider>
             <PageTransition>
+              <Navigation />
               <OnboardingGuard>
-                <Navigation />
                 <div className="mt-16">{children}</div>
                 <Footer />
                 <KonamiGrippy />

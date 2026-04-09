@@ -16,12 +16,7 @@ const queryClient = new QueryClient({
 });
 
 const convexUrl = process.env["NEXT_PUBLIC_CONVEX_URL"];
-
-if (!convexUrl) {
-  throw new Error("NEXT_PUBLIC_CONVEX_URL is required");
-}
-
-const convex = new ConvexReactClient(convexUrl);
+const convex = convexUrl ? new ConvexReactClient(convexUrl) : null;
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -39,11 +34,17 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <PostHogProvider client={posthog}>
-      <ConvexProvider client={convex}>
+      {convex ? (
+        <ConvexProvider client={convex}>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </ConvexProvider>
+      ) : (
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
-      </ConvexProvider>
+      )}
     </PostHogProvider>
   );
 }
