@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth";
@@ -50,10 +50,8 @@ const menu = {
 
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
   const { orientation, screenWidth } = useOrientation();
 
@@ -84,39 +82,6 @@ const Navigation: React.FC = () => {
   const closeMenu = () => setIsActive(false);
   const closeProfileMenu = () => setIsProfileMenuOpen(false);
 
-  // Handle mouse movement and scroll to show navigation
-  const handleUserActivity = useCallback(() => {
-    setIsVisible(true);
-
-    // Clear existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    // Set new timeout to hide navigation after 3 seconds of inactivity
-    // Only hide if the menu is NOT active
-    if (!isActive) {
-      timeoutRef.current = setTimeout(() => {
-        setIsVisible(false);
-      }, 3000);
-    }
-  }, [isActive]);
-
-  // Set up mouse movement and scroll listeners
-  useEffect(() => {
-    setIsVisible(true);
-    document.addEventListener("mousemove", handleUserActivity);
-    window.addEventListener("scroll", handleUserActivity, { passive: true });
-
-    return () => {
-      document.removeEventListener("mousemove", handleUserActivity);
-      window.removeEventListener("scroll", handleUserActivity);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [handleUserActivity]);
-
   // Close menu when route changes
   useEffect(() => {
     setIsActive(false);
@@ -145,9 +110,9 @@ const Navigation: React.FC = () => {
     <motion.nav
       ref={navRef}
       className="fixed top-0 left-0 right-0 z-50 px-6 py-3 bg-black/90 backdrop-blur-md border-b border-white/[0.06]"
-      initial={{ y: -100 }}
-      animate={{ y: isVisible ? 0 : -100 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      initial={{ y: 0 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.15, ease: "easeOut" }}
     >
       <ul className="flex justify-between items-center text-foreground w-full">
         <li className="flex-1">

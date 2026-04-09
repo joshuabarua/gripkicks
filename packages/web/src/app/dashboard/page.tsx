@@ -88,10 +88,12 @@ export default function Dashboard() {
 
   const loadUserData = async () => {
     try {
-      const profileResult = await fetchApi<Profile>("/api/v1/profile");
-      if (profileResult.isOk()) setProfile(profileResult.value);
+      const [profileResult, shoesResult] = await Promise.all([
+        fetchApi<Profile>("/api/v1/profile"),
+        fetchApi<UserShoe[]>("/api/v1/stash"),
+      ]);
 
-      const shoesResult = await fetchApi<UserShoe[]>("/api/v1/stash");
+      if (profileResult.isOk()) setProfile(profileResult.value);
       if (shoesResult.isOk()) {
         setUserShoes(Array.isArray(shoesResult.value) ? shoesResult.value : []);
       }
