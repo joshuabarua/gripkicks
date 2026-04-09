@@ -94,10 +94,6 @@ function FootModel({
       if (child instanceof THREE.Mesh && child.morphTargetInfluences) {
         meshRef.current = child;
 
-        // Log available morph targets for debugging
-        console.log('Available morph targets:', child.morphTargetDictionary ? Object.keys(child.morphTargetDictionary) : 'None');
-        console.log('Number of morph targets:', child.morphTargetInfluences.length);
-
         // Reset all morphs
         child.morphTargetInfluences.fill(0);
 
@@ -112,7 +108,6 @@ function FootModel({
               const index = child.morphTargetDictionary[shapeMorph];
               if (index === undefined) return;
               child.morphTargetInfluences[index] = 1.0;
-              console.log(`Applied shape morph: ${shapeMorph} at index ${index}`);
             }
           }
 
@@ -126,14 +121,12 @@ function FootModel({
               const index = child.morphTargetDictionary[volumeMorph];
               if (index === undefined) return;
               child.morphTargetInfluences[index] = 1.0;
-              console.log(`Applied volume morph: ${volumeMorph} at index ${index}`);
             }
           }
         }
 
         // Fallback to hardcoded indices if no dictionary exists
         if (!child.morphTargetDictionary && child.morphTargetInfluences.length > 0) {
-          console.log('Using fallback morph indices');
           // You'll need to adjust these based on your actual GLB morph target order
           if (child.morphTargetInfluences[0] !== undefined) {
             child.morphTargetInfluences[0] = throttledShape === 'egyptian' ? 1 : 0;
@@ -236,8 +229,8 @@ export default function FootModelViewer({
                   handleShapeChange(shapeName);
                 }}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${currentShape === shapeName
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                  ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400"
+                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                   }`}
               >
                 {shapeName.charAt(0).toUpperCase() + shapeName.slice(1)}
@@ -258,8 +251,8 @@ export default function FootModelViewer({
                   handleVolumeChange(volumeName);
                 }}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${currentVolume === volumeName
-                    ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 ring-2 ring-purple-400"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                  ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 ring-2 ring-purple-400"
+                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                   }`}
               >
                 {volumeName.charAt(0).toUpperCase() + volumeName.slice(1)}

@@ -44,7 +44,6 @@ const Scene = () => {
   }, []);
 
   const handleContextRestored = useCallback(() => {
-    console.log("WebGL context restored");
     setContextLost(false);
     setCanvasKey((prev) => prev + 1);
   }, []);
