@@ -230,7 +230,7 @@ export default function Dashboard() {
             <motion.div
               whileHover={{ backgroundColor: 'rgba(26,26,26,1)' }}
               onClick={() => router.push('/findmyshoe')}
-              className="col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
+              className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
             >
               <div className="flex justify-between items-start">
                 <TrendingUp className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
@@ -245,7 +245,7 @@ export default function Dashboard() {
             <motion.div
               whileHover={{ backgroundColor: 'rgba(26,26,26,1)' }}
               onClick={() => router.push('/footscan')}
-              className="col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
+              className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
             >
               <div className="flex justify-between items-start">
                 <Footprints className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
@@ -260,7 +260,7 @@ export default function Dashboard() {
             <motion.div
               whileHover={{ backgroundColor: 'rgba(26,26,26,1)' }}
               onClick={() => router.push('/matcher')}
-              className="col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
+              className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
             >
               <div className="flex justify-between items-start">
                 <Target className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
@@ -311,7 +311,7 @@ export default function Dashboard() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.08 }}
                       onClick={() => router.push('/stash')}
-                      className="flex items-center justify-between p-5 hover:bg-brand-surface cursor-pointer transition-colors duration-500 group"
+                      className="redline-accent flex items-center justify-between p-5 hover:bg-brand-surface cursor-pointer transition-colors duration-500 group"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-14 h-14 bg-brand-surface overflow-hidden flex-shrink-0">

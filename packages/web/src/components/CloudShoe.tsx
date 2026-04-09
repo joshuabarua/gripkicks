@@ -73,12 +73,12 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="relative flex flex-col justify-center items-center gap-fluid-sm p-fluid-md rounded-2xl border border-[#252525] bg-[#252525] shadow-[0_0_40px_0_rgba(87,89,88,0.10)] transition-all duration-300 group-hover:shadow-[0_0_60px_0_rgba(244,91,91,0.20)] group-hover:border-brand-red/50">
+      <div className="monolith-card relative flex flex-col justify-center items-center gap-fluid-sm p-fluid-md rounded-lg border border-white/[0.06] bg-brand-charcoal hal-glow-hover transition-all duration-500 group-hover:border-brand-red/20">
         {(shoe.isFavourite || specialLabel) && (
           <div className="absolute top-fluid-sm left-fluid-sm z-20 flex gap-fluid-xs">
             {shoe.isFavourite && (
-              <div className="bg-brand-red/90 text-white rounded-full w-7 h-7 flex items-center justify-center">
-                <Star className="w-3.5 h-3.5 fill-current" />
+              <div className="bg-brand-red text-black rounded-sm w-6 h-6 flex items-center justify-center">
+                <Star className="w-3 h-3 fill-current" />
               </div>
             )}
             {specialLabel && (
@@ -93,8 +93,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
         )}
 
         <div className="absolute top-fluid-sm right-fluid-sm z-20">
-          <div className="bg-black/20 backdrop-blur-sm rounded-full px-fluid-sm py-[2px] border border-white/10">
-            <span className="font-sora text-fluid-xs text-brand-red font-bold">{avgScore}</span>
+          <div className="bg-black/40 backdrop-blur-sm rounded-sm px-2 py-0.5 border border-white/[0.06]">
+            <span className="font-sora text-[10px] text-brand-red font-bold tracking-wider">{avgScore}</span>
           </div>
         </div>
 
@@ -121,9 +121,12 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
           )}
         </div>
 
-        <div className="w-full text-center">
-          <p className="font-sora uppercase text-white text-sm font-medium leading-tight truncate group-hover:text-brand-red transition-colors">
+        <div className="w-full text-center space-y-0.5">
+          <p className="font-sora uppercase text-brand-chalk text-sm font-medium leading-tight truncate group-hover:text-brand-red transition-colors duration-500">
             {name}
+          </p>
+          <p className="font-sora text-[10px] text-brand-putty/30 truncate">
+            {brand}
           </p>
         </div>
       </div>

@@ -458,3 +458,97 @@ a {
 	background-size: 200px 200px;
 	animation: grain-shift 0.5s steps(4) infinite;
 }
+
+.crt-vignette {
+	pointer-events: none;
+	position: fixed;
+	inset: 0;
+	z-index: 9997;
+	background: radial-gradient(
+		ellipse at center,
+		transparent 60%,
+		rgba(0, 0, 0, 0.35) 100%
+	);
+}
+
+@keyframes hal-glow-pulse {
+	0%, 100% {
+		box-shadow: 0 0 8px rgba(244, 91, 91, 0.15), 0 0 24px rgba(244, 91, 91, 0.05);
+	}
+	50% {
+		box-shadow: 0 0 16px rgba(244, 91, 91, 0.3), 0 0 48px rgba(244, 91, 91, 0.1);
+	}
+}
+
+.hal-glow {
+	box-shadow: 0 0 8px rgba(244, 91, 91, 0.15), 0 0 24px rgba(244, 91, 91, 0.05);
+}
+
+.hal-glow-animate {
+	animation: hal-glow-pulse 4s ease-in-out infinite;
+}
+
+.hal-glow-hover {
+	transition: box-shadow 0.5s ease;
+}
+.hal-glow-hover:hover {
+	box-shadow: 0 0 12px rgba(244, 91, 91, 0.25), 0 0 40px rgba(244, 91, 91, 0.08);
+}
+
+.monolith-card {
+	position: relative;
+	overflow: hidden;
+}
+.monolith-card::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 2px;
+	height: 100%;
+	background: #f45b5b;
+	transform: scaleY(0);
+	transform-origin: top;
+	transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+	z-index: 10;
+}
+.monolith-card:hover::before {
+	transform: scaleY(1);
+}
+
+.monolith-border {
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	transition: border-color 0.5s ease;
+}
+.monolith-border:hover {
+	border-color: rgba(244, 91, 91, 0.2);
+}
+
+@keyframes redline-in {
+	from { transform: scaleX(0); }
+	to { transform: scaleX(1); }
+}
+
+.redline-accent {
+	position: relative;
+}
+.redline-accent::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 1px;
+	background: linear-gradient(90deg, #f45b5b, transparent);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.redline-accent:hover::after {
+	transform: scaleX(1);
+}
+
+*:focus-visible {
+	outline: 1px solid rgba(244, 91, 91, 0.5);
+	outline-offset: 2px;
+}

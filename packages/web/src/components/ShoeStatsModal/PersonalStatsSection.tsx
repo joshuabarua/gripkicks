@@ -34,7 +34,7 @@ export default function PersonalStatsSection({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-neutral-900 rounded-2xl p-4 border border-neutral-800"
+          className="bg-brand-charcoal rounded-lg p-4 border border-white/[0.06] monolith-card"
         >
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="w-4 h-4 text-brand-red" />
@@ -49,7 +49,7 @@ export default function PersonalStatsSection({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-neutral-900 rounded-2xl p-4 border border-neutral-800"
+          className="bg-brand-charcoal rounded-lg p-4 border border-white/[0.06] monolith-card"
         >
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-4 h-4 text-brand-red" />
@@ -64,7 +64,7 @@ export default function PersonalStatsSection({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-neutral-900 rounded-2xl p-4 border border-neutral-800"
+          className="bg-brand-charcoal rounded-lg p-4 border border-white/[0.06] monolith-card"
         >
           <div className="flex items-center gap-2 mb-2">
             <Shield className="w-4 h-4 text-brand-red" />

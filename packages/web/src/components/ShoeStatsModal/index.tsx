@@ -119,7 +119,7 @@ export default function ShoeStatsModal({
   return (
     <TooltipProvider>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-2xl p-0 overflow-hidden rounded-3xl shadow-2xl shadow-brand-red/5">
+        <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] max-w-2xl p-0 overflow-hidden rounded-lg hal-glow shadow-2xl">
           <DialogTitle className="sr-only">
             Shoe Rank - {shoeName}
           </DialogTitle>
@@ -127,47 +127,47 @@ export default function ShoeStatsModal({
             View detailed rank and ratings for the {shoeName} climbing shoe including comfort, performance, and durability ratings.
           </DialogDescription>
 
-          <div className="relative p-fluid-lg border-b border-neutral-800">
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-brand-red rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+          <div className="relative p-fluid-lg border-b border-white/[0.06]">
+            <div className="absolute inset-0 opacity-[0.07]">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />
             </div>
 
             <div className="absolute top-fluid-sm right-fluid-sm flex items-center gap-fluid-xs z-10">
               {onToggleFavourite && (
                 <button
                   onClick={onToggleFavourite}
-                  className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
                 >
-                  <Star className={`w-4 h-4 ${shoe.isFavourite ? 'fill-brand-red text-brand-red' : 'text-neutral-500'}`} />
+                  <Star className={`w-3.5 h-3.5 ${shoe.isFavourite ? 'fill-brand-red text-brand-red' : 'text-neutral-600'}`} />
                 </button>
               )}
               {onEditShoe && (
                 <button
                   onClick={onEditShoe}
-                  className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
                 >
-                  <Edit className="w-4 h-4 text-neutral-400" />
+                  <Edit className="w-3.5 h-3.5 text-neutral-600" />
                 </button>
               )}
               {onRemoveShoe && (
                 <button
                   onClick={onRemoveShoe}
-                  className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-red-900/50 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-red-950/50 flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
                 >
-                  <Trash2 className="w-4 h-4 text-neutral-400 hover:text-red-400" />
+                  <Trash2 className="w-3.5 h-3.5 text-neutral-600 hover:text-red-400" />
                 </button>
               )}
               <button
                 onClick={onClose}
-                className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
               >
-                <X className="w-4 h-4 text-neutral-400" />
+                <X className="w-3.5 h-3.5 text-neutral-600" />
               </button>
             </div>
 
             <div className="relative flex items-center gap-5">
-              <div className="w-28 h-28 flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 p-1">
-                <div className="w-full h-full rounded-xl overflow-hidden bg-slate-700">
+              <div className="w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-brand-charcoal border border-white/[0.06] p-1">
+                <div className="w-full h-full rounded-md overflow-hidden bg-neutral-800">
                   <ShoeImage
                     brand={shoeBrand}
                     shoeName={shoeName}
@@ -180,20 +180,20 @@ export default function ShoeStatsModal({
               </div>
 
               <div>
-                <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 mb-fluid-xs">Shoe Stats</p>
+                <p className="font-sora text-[9px] uppercase tracking-[0.35em] text-brand-putty/40 mb-fluid-xs">Shoe Stats</p>
                 <div className="flex items-center gap-fluid-sm flex-wrap">
                   <h2 className="text-fluid-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
                   <div className="flex items-center gap-1.5">
                     {rank && (
                       <BadgeTooltip text={`Rank #${rank} in your collection`}>
-                        <div className="bg-brand-red text-black text-[10px] font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                        <div className="bg-brand-red text-black text-[10px] font-bold rounded-sm w-6 h-6 flex items-center justify-center">
                           #{rank}
                         </div>
                       </BadgeTooltip>
                     )}
                     {shoe.isFavourite && (
                       <BadgeTooltip text="Favorite shoe">
-                        <div className="bg-brand-red/20 text-brand-red rounded-full w-6 h-6 flex items-center justify-center border border-brand-red/30">
+                        <div className="bg-brand-red/20 text-brand-red rounded-sm w-6 h-6 flex items-center justify-center border border-brand-red/30">
                           <Star className="w-3 h-3 fill-current" />
                         </div>
                       </BadgeTooltip>
@@ -230,7 +230,7 @@ export default function ShoeStatsModal({
                       )}
                   </div>
                 </div>
-                <p className="text-neutral-500 font-sora text-fluid-sm mt-fluid-xs">{shoeBrand}</p>
+                <p className="text-brand-putty/40 font-sora text-fluid-sm mt-fluid-xs">{shoeBrand}</p>
               </div>
             </div>
           </div>

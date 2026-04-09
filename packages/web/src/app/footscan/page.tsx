@@ -226,13 +226,13 @@ export default function FootLabPage() {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="text-center">
-          <div className="w-16 h-16 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-16 h-16 bg-brand-red/10 rounded-lg flex items-center justify-center mx-auto mb-6 hal-glow-animate">
             <Footprints className="w-8 h-8 text-brand-red" />
           </div>
           <h1 className="font-tanker text-5xl mb-3">FOOT PROFILE</h1>
           <p className="font-sora text-neutral-500 mb-6">Log in to discover your foot shape</p>
           <Link href="/auth/login">
-            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-brand-red text-black font-tanker text-lg px-8 py-3 rounded-2xl">
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-brand-red text-black font-tanker text-lg px-8 py-3 rounded-lg">
               LOG IN
             </motion.button>
           </Link>
@@ -261,7 +261,7 @@ export default function FootLabPage() {
           <div className="mt-6">
             <Link
               href="/footscan/model"
-              className="inline-flex items-center rounded-2xl border border-brand-red/30 bg-brand-red/10 px-5 py-3 font-sora text-sm text-brand-red transition-colors hover:border-brand-red/50 hover:bg-brand-red/15"
+              className="inline-flex items-center rounded-lg border border-brand-red/20 bg-brand-red/5 px-5 py-3 font-sora text-sm text-brand-red transition-all duration-500 hover:border-brand-red/40 hover:bg-brand-red/10"
             >
               Open 3D foot model viewer
             </Link>
@@ -295,9 +295,9 @@ export default function FootLabPage() {
                   whileHover={{ y: -4 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setSelectedFootShape(shape)}
-                  className={`rounded-3xl p-4 text-left transition-all duration-300 border ${isSelected
-                      ? 'border-brand-red bg-brand-red/10'
-                      : 'border-neutral-800 bg-neutral-900 hover:border-neutral-700'
+                  className={`monolith-card rounded-lg p-4 text-left transition-all duration-500 border ${isSelected
+                      ? 'border-brand-red/40 bg-brand-red/10 hal-glow'
+                      : 'border-white/[0.06] bg-brand-charcoal hover:border-white/10'
                     }`}
                 >
                   <div className="mb-4 pt-2">
@@ -350,9 +350,9 @@ export default function FootLabPage() {
                   whileHover={{ y: -4 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setSelectedFootVolume(volume)}
-                  className={`rounded-3xl p-6 text-left transition-all duration-300 border ${isSelected
-                      ? 'border-brand-red bg-brand-red/10'
-                      : 'border-neutral-800 bg-neutral-900 hover:border-neutral-700'
+                  className={`monolith-card rounded-lg p-6 text-left transition-all duration-500 border ${isSelected
+                      ? 'border-brand-red/40 bg-brand-red/10 hal-glow'
+                      : 'border-white/[0.06] bg-brand-charcoal hover:border-white/10'
                     }`}
                 >
                   <div className="mb-5">
@@ -379,14 +379,14 @@ export default function FootLabPage() {
         </motion.div>
 
         {error && (
-          <div className="text-red-400 text-sm font-sora bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-6">{error}</div>
+          <div className="text-red-400 text-sm font-sora bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">{error}</div>
         )}
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-neutral-900/50 border border-neutral-800 rounded-3xl p-6 md:p-8"
+          className="bg-brand-charcoal/50 border border-white/[0.06] rounded-lg p-6 md:p-8"
         >
           <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Why it matters</p>
           <h2 className="font-tanker text-2xl mb-5">Your foot shape changes everything</h2>
@@ -414,7 +414,7 @@ export default function FootLabPage() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-            className="fixed bottom-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-md border-t border-white/5 px-6 py-4"
+            className="fixed bottom-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-md border-t border-white/[0.06] px-6 py-4"
           >
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
               <div>
@@ -430,7 +430,7 @@ export default function FootLabPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={saveFootProfile}
                 disabled={saving || isAlreadySaved}
-                className={`font-tanker text-lg px-8 py-3 rounded-2xl transition-all flex items-center gap-2 disabled:opacity-60 ${saved || isAlreadySaved
+                className={`font-tanker text-lg px-8 py-3 rounded-lg transition-all duration-500 flex items-center gap-2 disabled:opacity-60 ${saved || isAlreadySaved
                     ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                     : 'bg-brand-red hover:bg-brand-red/80 text-black'
                   }`}

@@ -31,6 +31,7 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`min-h-screen bg-background antialiased ${basteleur.variable} ${sora.variable} ${tanker.variable} ${soCloudy.variable}`}>
         <AppShell>{children}</AppShell>
+        <div className="crt-vignette" aria-hidden="true" />
         <div className="grain-overlay-animated" aria-hidden="true" />
       </body>
     </html>
