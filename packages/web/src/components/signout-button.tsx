@@ -27,24 +27,17 @@ export function SignOutButton({
   const [isPending, setIsPending] = useState(false)
 
   const handleSignOut = async () => {
-    console.log('SignOutButton: Starting sign out process...');
-    
     try {
       await signOut({
         fetchOptions: {
           onRequest: () => {
-            console.log('SignOutButton: Sign out request started');
             setIsPending(true)
           },
           onResponse: () => {
-            console.log('SignOutButton: Sign out response received');
             setIsPending(false)
           },
           onSuccess: () => {
-            console.log('SignOutButton: Sign out successful');
-            if (onClick) {
-              onClick()
-            }
+            onClick?.()
             router.push("/auth/login")
           },
           onError: (ctx) => {
@@ -61,9 +54,9 @@ export function SignOutButton({
   }
 
   return (
-    <Button 
-      variant={variant} 
-      size={size} 
+    <Button
+      variant={variant}
+      size={size}
       className={className}
       onClick={handleSignOut}
       disabled={isPending}
@@ -71,12 +64,12 @@ export function SignOutButton({
       {isPending ? (
         <span className="flex items-center gap-2">
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-          {children || "Signing out..."}
+          {children ?? "Signing out..."}
         </span>
       ) : (
         <span className="flex items-center gap-2">
           {showIcon && <LogOut className="h-4 w-4" />}
-          {children || "Sign out"}
+          {children ?? "Sign out"}
         </span>
       )}
     </Button>

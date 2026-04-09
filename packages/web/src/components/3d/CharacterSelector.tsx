@@ -61,13 +61,11 @@ function RotatingCarousel({ selectedIndex }: { selectedIndex: number }) {
                 position={[0, 0, 0]}
                 onPointerEnter={(e) => {
                   e.stopPropagation();
-                  console.log(`Hovering over: ${character.name}, index: ${index}, isInFront: ${isInFront}`);
                   setHoveredIndex(index);
                   document.body.style.cursor = 'pointer';
                 }}
                 onPointerLeave={(e) => {
                   e.stopPropagation();
-                  console.log(`Left hover: ${character.name}`);
                   setHoveredIndex(null);
                   document.body.style.cursor = 'default';
                 }}

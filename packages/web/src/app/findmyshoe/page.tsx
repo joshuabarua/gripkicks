@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { useSession } from "@/lib/auth";
-import { useSubscription } from "@/hooks/useSubscription";
 import {
   useFindMyShoe,
   type AggregatedRating,
@@ -18,7 +17,6 @@ import {
   TrendingUp,
   Footprints,
   ArrowUpRight,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -37,7 +35,6 @@ type Category = (typeof categories)[number]["key"];
 
 export default function SoleMatePage() {
   const { data: session } = useSession();
-  const { isPremium } = useSubscription();
   const {
     recommendations,
     soleMateMatches,
@@ -214,7 +211,7 @@ export default function SoleMatePage() {
             </div>
           </motion.div>
 
-          {filteredSoleMateMatches.length > 0 && isPremium && (
+          {filteredSoleMateMatches.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -244,37 +241,6 @@ export default function SoleMatePage() {
                       match={match}
                     />
                   ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {filteredSoleMateMatches.length > 0 && !isPremium && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="mb-8"
-            >
-              <div className="bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-3xl p-6 relative overflow-hidden">
-                <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-                <div className="relative z-10 flex flex-col items-center justify-center py-8 text-center">
-                  <Sparkles className="w-10 h-10 text-orange-500 mb-4" />
-                  <h3 className="font-tanker text-2xl text-white mb-2">
-                    SOLE MATE SPOTLIGHT
-                  </h3>
-                  <p className="font-sora text-neutral-400 mb-4 max-w-sm">
-                    Exact foot matches have different shoes rated above 8.5
-                  </p>
-                  <Link href="/pricing">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="bg-orange-500 hover:bg-orange-600 text-black font-tanker px-6 py-2 rounded-xl transition-colors"
-                    >
-                      UNLOCK PREMIUM
-                    </motion.button>
-                  </Link>
                 </div>
               </div>
             </motion.div>
@@ -332,7 +298,7 @@ export default function SoleMatePage() {
               <>
                 <div className="space-y-3">
                   {filteredRatings
-                    .filter((r) => !isPremium || !spotlightShoeIds.has(r.shoe._id))
+                    .filter((r) => !spotlightShoeIds.has(r.shoe._id))
                     .map((rating, index) => (
                       <motion.div
                         key={rating.shoe._id}

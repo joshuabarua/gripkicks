@@ -94,18 +94,6 @@ function FootModel({
       if (child instanceof THREE.Mesh && child.morphTargetInfluences) {
         meshRef.current = child;
 
-        // Log available morph targets for debugging
-        console.log(
-          "Available morph targets:",
-          child.morphTargetDictionary
-            ? Object.keys(child.morphTargetDictionary)
-            : "None",
-        );
-        console.log(
-          "Number of morph targets:",
-          child.morphTargetInfluences.length,
-        );
-
         // Reset all morphs
         child.morphTargetInfluences.fill(0);
 
@@ -122,9 +110,6 @@ function FootModel({
               const index = child.morphTargetDictionary[shapeMorph];
               if (index === undefined) return;
               child.morphTargetInfluences[index] = 1.0;
-              console.log(
-                `Applied shape morph: ${shapeMorph} at index ${index}`,
-              );
             }
           }
 
@@ -139,19 +124,12 @@ function FootModel({
               const index = child.morphTargetDictionary[volumeMorph];
               if (index === undefined) return;
               child.morphTargetInfluences[index] = 1.0;
-              console.log(
-                `Applied volume morph: ${volumeMorph} at index ${index}`,
-              );
             }
           }
         }
 
         // Fallback to hardcoded indices if no dictionary exists
-        if (
-          !child.morphTargetDictionary &&
-          child.morphTargetInfluences.length > 0
-        ) {
-          console.log("Using fallback morph indices");
+        if (!child.morphTargetDictionary && child.morphTargetInfluences.length > 0) {
           // You'll need to adjust these based on your actual GLB morph target order
           if (child.morphTargetInfluences[0] !== undefined) {
             child.morphTargetInfluences[0] =
