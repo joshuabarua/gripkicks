@@ -229,11 +229,13 @@ export function ShoeRadarMatcher() {
     );
   }, [scoredShoes]);
 
-  const leadShoe = recommendedShoes[0];
+  const topShoes = recommendedShoes.slice(0, 10);
+
+  const leadShoe = topShoes[0];
   const leadQuadrant = leadShoe ? quadrants[leadShoe.quadrantKey] : null;
 
   const quadrantCounts = useMemo(() => {
-    return recommendedShoes.reduce(
+    return topShoes.reduce(
       (counts, shoe) => {
         counts[shoe.quadrantKey] += 1;
         return counts;
@@ -245,7 +247,7 @@ export function ShoeRadarMatcher() {
         competition: 0,
       } as Record<QuadrantKey, number>,
     );
-  }, [recommendedShoes]);
+  }, [topShoes]);
 
   if (isLoading) {
     return (
@@ -375,7 +377,7 @@ export function ShoeRadarMatcher() {
 
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-2 h-2 bg-orange-500 rounded-full" />
 
-        {recommendedShoes.map((pos, index) => (
+        {topShoes.slice(0, 10).map((pos, index) => (
           <motion.div
             key={pos.shoe._id}
             className="absolute z-30"
@@ -406,14 +408,14 @@ export function ShoeRadarMatcher() {
       </div>
 
       {/* Unified ranked list — shows shoes #2+ */}
-      {recommendedShoes.length > 1 && (
+      {topShoes.length > 1 && (
         <div>
           <div className="flex items-end justify-between mb-6">
-            <h2 className="font-tanker text-3xl md:text-4xl text-white leading-none">All Matches</h2>
-            <p className="font-sora text-xs text-neutral-500 uppercase tracking-[0.2em]">{recommendedShoes.length - 1} more</p>
+            <h2 className="font-tanker text-3xl md:text-4xl text-white leading-none">Top 10 Matches</h2>
+            <p className="font-sora text-xs text-neutral-500 uppercase tracking-[0.2em]">{topShoes.length - 1} more</p>
           </div>
           <div className="space-y-3">
-            {recommendedShoes.slice(1).map((shoe, idx) => {
+            {topShoes.slice(1).map((shoe, idx) => {
               const quadrant = quadrants[shoe.quadrantKey];
               return (
                 <motion.div
@@ -483,7 +485,7 @@ export function ShoeRadarMatcher() {
         </div>
       )}
 
-      {!recommendedShoes.length && !isLoading && (
+      {!topShoes.length && !isLoading && (
         <div className="p-6 bg-neutral-900 border border-neutral-800 rounded-3xl text-center">
           <p className="font-sora text-neutral-400 text-sm">No shoe recommendations available yet.</p>
         </div>

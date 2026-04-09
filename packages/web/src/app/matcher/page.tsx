@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { useSession } from '@/lib/auth';
 import { FullPageLoading } from '@/components/ui/loading';
 import { ShoeRadarMatcher } from '@/components/shoe/ShoeRadarMatcher';
+import CragRadar from '@/components/shoe/CragRadar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, Zap, Activity, Clock, Users, Footprints, Sparkles, ArrowUpRight } from 'lucide-react';
+import { Target, Zap, Activity, Clock, Users, Footprints, ArrowUpRight } from 'lucide-react';
 import { useFindMyShoe, type SoleMateClimberMatch, type AggregatedRating } from '@/hooks/useFindMyShoe';
-import { useSubscription } from '@/hooks/useSubscription';
 import Link from 'next/link';
 import Image from 'next/image';
 
-type Tab = 'seek' | 'mate';
+type Tab = 'seek' | 'mate' | 'crag';
 
 export default function SoleSeekPage() {
   const { data: session, isPending: sessionLoading } = useSession();
@@ -87,17 +87,20 @@ export default function SoleSeekPage() {
         </div>
 
         <div className="flex border-b border-neutral-800">
-          {(['seek', 'mate'] as const).map((tab) => (
+          {([
+            ['seek', 'Matcher'],
+            ['mate', 'Sole Mate'],
+            ['crag', 'Crag'],
+          ] as const).map(([tab, label]) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`font-sora text-sm px-5 py-3 border-b-2 transition-colors capitalize ${
-                activeTab === tab
+              className={`font-sora text-sm px-5 py-3 border-b-2 transition-colors capitalize ${activeTab === tab
                   ? 'border-orange-500 text-white'
                   : 'border-transparent text-neutral-500 hover:text-neutral-300'
-              }`}
+                }`}
             >
-              {tab === 'seek' ? 'Matcher' : 'Sole Mate'}
+              {label}
             </button>
           ))}
         </div>
@@ -107,6 +110,10 @@ export default function SoleSeekPage() {
         {activeTab === 'seek' ? (
           <motion.div key="seek" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
             <ShoeRadarMatcher />
+          </motion.div>
+        ) : activeTab === 'crag' ? (
+          <motion.div key="crag" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+            <CragRadar />
           </motion.div>
         ) : (
           <motion.div key="mate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
@@ -120,7 +127,6 @@ export default function SoleSeekPage() {
 
 function SoleMateTab() {
   const { soleMateMatches, isLoading, hasProfile } = useFindMyShoe(10);
-  const { isPremium } = useSubscription();
 
   if (isLoading) {
     return (
@@ -148,26 +154,6 @@ function SoleMateTab() {
             FOOT LAB
           </motion.button>
         </Link>
-      </div>
-    );
-  }
-
-  if (!isPremium) {
-    return (
-      <div className="px-6 md:px-12 lg:px-16 py-16 max-w-[1440px] mx-auto">
-        <div className="relative bg-gradient-to-br from-orange-500/10 to-amber-500/5 border border-orange-500/20 rounded-3xl p-12 text-center overflow-hidden">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="relative z-10">
-            <Sparkles className="w-10 h-10 text-orange-500 mx-auto mb-4" />
-            <h2 className="font-tanker text-3xl text-white mb-2">SOLE MATE</h2>
-            <p className="font-sora text-neutral-400 mb-6 max-w-sm mx-auto">See climbers with your exact foot profile and the shoes they swear by</p>
-            <Link href="/pricing">
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-orange-500 hover:bg-orange-600 text-black font-tanker px-6 py-2.5 rounded-xl transition-colors">
-                UNLOCK PREMIUM
-              </motion.button>
-            </Link>
-          </div>
-        </div>
       </div>
     );
   }

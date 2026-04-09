@@ -88,27 +88,27 @@ The system sets dynamic CSS variables based on screen dimensions:
 
 ```css
 :root {
-  --scale: 1; /* Dynamic scale factor */
-  --scale-x: 1; /* Horizontal scale */
-  --scale-y: 1; /* Vertical scale */
-  --is-portrait: 1; /* Boolean flag */
-  --is-landscape: 0; /* Boolean flag */
+	--scale: 1; /* Dynamic scale factor */
+	--scale-x: 1; /* Horizontal scale */
+	--scale-y: 1; /* Vertical scale */
+	--is-portrait: 1; /* Boolean flag */
+	--is-landscape: 0; /* Boolean flag */
 
-  /* Fluid spacing */
-  --space-xs: calc(8px * var(--scale));
-  --space-sm: calc(12px * var(--scale));
-  --space-md: calc(16px * var(--scale));
-  /* ... */
+	/* Fluid spacing */
+	--space-xs: calc(8px * var(--scale));
+	--space-sm: calc(12px * var(--scale));
+	--space-md: calc(16px * var(--scale));
+	/* ... */
 
-  /* Fluid font sizes */
-  --text-sm: calc(14px * var(--scale));
-  --text-md: calc(16px * var(--scale));
-  /* ... */
+	/* Fluid font sizes */
+	--text-sm: calc(14px * var(--scale));
+	--text-md: calc(16px * var(--scale));
+	/* ... */
 
-  /* Title sizes with tight line height */
-  --title-sm: clamp(24px, calc(30px * var(--scale)), 48px);
-  --title-md: clamp(36px, calc(48px * var(--scale)), 72px);
-  /* ... */
+	/* Title sizes with tight line height */
+	--title-sm: clamp(24px, calc(30px * var(--scale)), 48px);
+	--title-md: clamp(36px, calc(48px * var(--scale)), 72px);
+	/* ... */
 }
 ```
 
@@ -119,17 +119,17 @@ A Zustand store manages orientation state and updates CSS variables:
 ```typescript
 // src/stores/orientationStore.ts
 export const useOrientationStore = create<OrientationState>((set) => ({
-  isPortrait: true,
-  scale: 1,
-  initialize: () => {
-    // Updates CSS variables on resize/orientation change
-    const updateOrientation = () => {
-      const scale = calculateScale();
-      document.documentElement.style.setProperty("--scale", scale.toString());
-      // ... update other variables
-    };
-    window.addEventListener("resize", updateOrientation);
-  },
+	isPortrait: true,
+	scale: 1,
+	initialize: () => {
+		// Updates CSS variables on resize/orientation change
+		const updateOrientation = () => {
+			const scale = calculateScale();
+			document.documentElement.style.setProperty("--scale", scale.toString());
+			// ... update other variables
+		};
+		window.addEventListener("resize", updateOrientation);
+	},
 }));
 ```
 
@@ -242,7 +242,8 @@ function MyComponent() {
 
 - **Root Directory**: `packages/web`
 - **Node**: `20.x`
-- **Install Command**: `corepack enable && corepack prepare yarn@4.6.0 --activate && YARN_ENABLE_SCRIPTS=false corepack yarn install --immutable`
+- **Install Command**:
+  `corepack enable && corepack prepare yarn@4.6.0 --activate && YARN_ENABLE_SCRIPTS=false corepack yarn install --immutable`
 - **Build Command**: `corepack yarn build`
 - **Required env vars**:
   - `NEXT_PUBLIC_API_URL=https://api.grip-kicks.com`
@@ -253,10 +254,12 @@ function MyComponent() {
 #### Render (Backend API)
 
 - **Root Directory**: `packages/backend-api`
-- **Build Command**: `yarn build`
-- **Start Command**: `yarn start`
+- **Build Command**: `npm install && npm run build`
+- **Start Command**: `npm start`
 - **Runtime**: Node `20`
-- **Port binding**: service listens on `PORT` (Render default) with fallback to `BACKEND_PORT`
+- **Port binding**: service listens on `PORT` (Render default) with fallback to
+  `BACKEND_PORT`
+- **Blueprint**: `render.yaml`
 - **Required env vars**:
   - `PORT=10000` (or let Render inject)
   - `FRONTEND_URL=https://grip-kicks.com,https://www.grip-kicks.com`
@@ -272,7 +275,8 @@ function MyComponent() {
 
 #### Cloudflare Recommendations
 
-- Keep Cloudflare edge rate limits as the first layer, and backend limits as the second layer.
+- Keep Cloudflare edge rate limits as the first layer, and backend limits as the
+  second layer.
 - Suggested edge limits:
   - `/api/auth/*`: `10 requests / minute / IP`
   - `/api/v1/auth/*`: `20 requests / minute / IP`
@@ -285,7 +289,8 @@ function MyComponent() {
 #### Common production checks
 
 - `/health` returns `200` on the backend domain
-- `https://api.grip-kicks.com/api/auth/get-session` responds with CORS headers for both `grip-kicks.com` and `www.grip-kicks.com`
+- `https://api.grip-kicks.com/api/auth/get-session` responds with CORS headers
+  for both `grip-kicks.com` and `www.grip-kicks.com`
 - frontend and backend point to the same production Convex deployment
 
 ## Database Schema
@@ -295,32 +300,32 @@ function MyComponent() {
 ```typescript
 // Shoes table
 shoes: defineTable({
-  name: v.string(),
-  brand: v.string(),
-  imageUrl: v.optional(v.string()),
-  aggressiveness: v.string(),
-  stiffness: v.string(),
-  climbingDiscipline: v.string(),
-  volume: v.string(),
-  rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
+	name: v.string(),
+	brand: v.string(),
+	imageUrl: v.optional(v.string()),
+	aggressiveness: v.string(),
+	stiffness: v.string(),
+	climbingDiscipline: v.string(),
+	volume: v.string(),
+	rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
 });
 
 // Users table (Better Auth)
 users: defineTable({
-  name: v.string(),
-  email: v.string(),
-  emailVerified: v.boolean(),
-  image: v.optional(v.string()),
-  isAdmin: v.optional(v.boolean()),
-  onboardingComplete: v.boolean(),
-  footShape: v.optional(footShapeValidator),
-  favoriteShoeId: v.optional(v.id("shoes")),
+	name: v.string(),
+	email: v.string(),
+	emailVerified: v.boolean(),
+	image: v.optional(v.string()),
+	isAdmin: v.optional(v.boolean()),
+	onboardingComplete: v.boolean(),
+	footShape: v.optional(footShapeValidator),
+	favoriteShoeId: v.optional(v.id("shoes")),
 });
 
 // User's shoe collection
 userShoes: defineTable({
-  userId: v.id("users"),
-  shoeId: v.id("shoes"),
+	userId: v.id("users"),
+	shoeId: v.id("shoes"),
 });
 ```
 
