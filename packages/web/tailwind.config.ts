@@ -58,6 +58,17 @@ const config: Config = {
 				'fluid-xl': 'var(--container-xl)',
 			},
 			colors: {
+				brand: {
+					base: '#0f1110',
+					surface: '#171a18',
+					'soft-surface': '#222623',
+					orange: '#d97757',
+					blue: '#6a9bcc',
+					green: '#788c5d',
+					text: '#f4f0e8',
+					'text-secondary': '#b8b1a6',
+					border: 'rgba(244, 240, 232, 0.08)',
+				},
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				card: {
@@ -103,6 +114,9 @@ const config: Config = {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			backgroundImage: {
+				'topo': "url('/imgs/topo.svg')",
 			}
 		}
 	},

@@ -129,8 +129,7 @@ const Navigation: React.FC = () => {
   return (
     <motion.nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 p-fluid-md bg-background/99 backdrop-blur-sm border-b border-white"
-      style={{ borderImage: 'none', borderColor: 'rgba(255, 255, 255, 0.8)' }}
+      className="fixed top-0 left-0 right-0 z-50 px-6 py-3 bg-brand-base/95 backdrop-blur-md border-b border-brand-border"
       initial={{ y: -100 }}
       animate={{ y: isVisible ? 0 : -100 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -165,37 +164,37 @@ const Navigation: React.FC = () => {
                       exit={{ opacity: 0, scaleY: 0.35 }}
                       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                       style={{ transformOrigin: 'top center' }}
-                      className="flex min-h-[28rem] overflow-hidden rounded-[1.75rem] border border-orange-500/15 bg-[#f4b183] pt-24 shadow-2xl"
+                      className="flex min-h-[28rem] overflow-hidden rounded-[1.75rem] border border-brand-orange/15 bg-brand-surface pt-24 shadow-2xl"
                     >
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ delay: 0.12, duration: 0.18, ease: 'easeOut' }}
-                        className="flex w-full flex-col justify-end px-3 pb-3 text-black"
+                        className="flex w-full flex-col justify-end px-3 pb-3 text-brand-text"
                       >
                         <div className="px-2 pb-3">
                           <div className="flex flex-col space-y-1 font-sora">
                             <p className="text-sm font-medium leading-none">{session.user.name}</p>
-                            <p className="text-xs leading-none text-black/60">{session.user.email}</p>
+                            <p className="text-xs leading-none text-brand-text-secondary">{session.user.email}</p>
                           </div>
                         </div>
-                        <div className="h-px bg-black/10" />
+                        <div className="h-px bg-brand-border" />
                         <div className="pt-2">
                           <Link
                             href="/profile"
                             onClick={closeProfileMenu}
-                            className="flex w-full items-center gap-2 rounded-xl px-2 py-2 font-sora text-sm text-black transition-colors hover:bg-black/5"
+                            className="flex w-full items-center gap-2 rounded-xl px-2 py-2 font-sora text-sm text-brand-text transition-colors hover:bg-brand-soft-surface"
                           >
                             <User className="h-4 w-4" />
                             <span>Profile</span>
                           </Link>
                         </div>
-                        <div className="mt-2 h-px bg-black/10" />
+                        <div className="mt-2 h-px bg-brand-border" />
                         <div className="pt-2">
                           <SignOutButton
                             variant="ghost"
-                            className="h-auto w-full justify-start rounded-xl px-2 py-2 font-sora text-sm text-black hover:bg-black/5"
+                            className="h-auto w-full justify-start rounded-xl px-2 py-2 font-sora text-sm text-brand-text hover:bg-brand-soft-surface"
                             onClick={() => {
                               closeProfileMenu();
                               closeMenu();

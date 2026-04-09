@@ -106,58 +106,68 @@ body {
 
 @layer base {
 	:root {
-		--background: 0 0% 0%;
-		--foreground: 222.2 84% 4.9%;
-		--card: 0 0% 100%;
-		--card-foreground: 222.2 84% 4.9%;
-		--popover: 0 0% 100%;
-		--popover-foreground: 222.2 84% 4.9%;
-		--primary: 222.2 47.4% 11.2%;
-		--primary-foreground: 210 40% 98%;
-		--secondary: 210 40% 96.1%;
-		--secondary-foreground: 222.2 47.4% 11.2%;
-		--muted: 210 40% 96.1%;
-		--muted-foreground: 215.4 16.3% 46.9%;
-		--accent: 210 40% 96.1%;
-		--accent-foreground: 222.2 47.4% 11.2%;
+		--background: 130 7% 6%;
+		--foreground: 37 36% 93%;
+		--card: 150 8% 10%;
+		--card-foreground: 37 36% 93%;
+		--popover: 150 8% 10%;
+		--popover-foreground: 37 36% 93%;
+		--primary: 37 36% 93%;
+		--primary-foreground: 130 7% 6%;
+		--secondary: 33 14% 69%;
+		--secondary-foreground: 37 36% 93%;
+		--muted: 135 7% 14%;
+		--muted-foreground: 33 14% 69%;
+		--accent: 17 62% 60%;
+		--accent-foreground: 37 36% 93%;
 		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 210 40% 98%;
-		--border: 214.3 31.8% 91.4%;
-		--input: 214.3 31.8% 91.4%;
-		--ring: 222.2 84% 4.9%;
-		--chart-1: 12 76% 61%;
-		--chart-2: 173 58% 39%;
-		--chart-3: 197 37% 24%;
+		--destructive-foreground: 37 36% 93%;
+		--border: 37 36% 93% / 0.08;
+		--input: 37 36% 93% / 0.08;
+		--ring: 17 62% 60%;
+		--chart-1: 17 62% 60%;
+		--chart-2: 208 39% 61%;
+		--chart-3: 92 20% 46%;
 		--chart-4: 43 74% 66%;
 		--chart-5: 27 87% 67%;
 		--radius: 0.5rem;
 		--nav-size: 60px;
 		--speed: 500ms;
+
+		--brand-base: #0f1110;
+		--brand-surface: #171a18;
+		--brand-soft-surface: #222623;
+		--brand-text-primary: #f4f0e8;
+		--brand-text-secondary: #b8b1a6;
+		--brand-border: rgba(244, 240, 232, 0.08);
+		--brand-accent-orange: #d97757;
+		--brand-accent-blue: #6a9bcc;
+		--brand-accent-green: #788c5d;
 	}
 	.dark {
-		--background: 0 0% 0%;
-		--foreground: 46 100% 97%;
-		--card: 34 6% 24%;
-		--card-foreground: 34 0% 100%;
-		--popover: 34 6% 24%;
-		--popover-foreground: 34 0% 100%;
-		--primary: 46 100% 97%;
-		--primary-foreground: 46 0% 0%;
-		--secondary: 38 16% 76%;
-		--secondary-foreground: 38 0% 100%;
-		--muted: 34 6% 24%;
-		--muted-foreground: 34 0% 100%;
-		--accent: 17 83% 54%;
-		--accent-foreground: 17 0% 100%;
+		--background: 130 7% 6%;
+		--foreground: 37 36% 93%;
+		--card: 150 8% 10%;
+		--card-foreground: 37 36% 93%;
+		--popover: 150 8% 10%;
+		--popover-foreground: 37 36% 93%;
+		--primary: 37 36% 93%;
+		--primary-foreground: 130 7% 6%;
+		--secondary: 33 14% 69%;
+		--secondary-foreground: 37 36% 93%;
+		--muted: 135 7% 14%;
+		--muted-foreground: 33 14% 69%;
+		--accent: 17 62% 60%;
+		--accent-foreground: 37 36% 93%;
 		--destructive: 0 84% 60%;
-		--destructive-foreground: 0 0% 100%;
-		--border: 17 83% 54%;
-		--input: 17 83% 54%;
-		--ring: 17 83% 54%;
-		--chart-1: 220 70% 50%;
-		--chart-2: 160 60% 45%;
-		--chart-3: 30 80% 55%;
-		--chart-4: 280 65% 60%;
+		--destructive-foreground: 37 36% 93%;
+		--border: 37 36% 93% / 0.08;
+		--input: 37 36% 93% / 0.08;
+		--ring: 17 62% 60%;
+		--chart-1: 17 62% 60%;
+		--chart-2: 208 39% 61%;
+		--chart-3: 92 20% 46%;
+		--chart-4: 43 74% 66%;
 		--chart-5: 340 75% 55%;
 	}
 }
@@ -204,16 +214,16 @@ a {
 .nav-el {
 	width: 100%;
 	height: 100%;
-	background-color: hsl(17, 83%, 54%);
+	background-color: var(--brand-accent-orange);
 	z-index: 1001;
 	p {
 		margin: 0px;
-		color: hsl(46 100% 97%);
+		color: var(--brand-text-primary);
 	}
 	&:nth-of-type(2) {
-		background-color: hsl(46 100% 97%);
+		background-color: var(--brand-text-primary);
 		p {
-			color: hsl(17, 83%, 54%);
+			color: var(--brand-accent-orange);
 		}
 	}
 	&:hover {
@@ -274,7 +284,7 @@ a {
 
 	.nav-menu {
 	width: 520px;
-	background-color: hsl(17, 83%, 54%);
+	background-color: var(--brand-accent-orange);
 	border-radius: 25px;
 	position: absolute;
 	z-index: 999;
@@ -299,7 +309,7 @@ a {
 		}
 		a {
 			text-decoration: none;
-			color: hsl(46 100% 97%);
+			color: var(--brand-text-primary);
 			font-size: var(--text-md);
 			position: relative;
 			z-index: 1000;

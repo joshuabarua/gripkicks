@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <path d="M0,50 Q100,20 200,80 T400,30" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,100 Q120,40 220,110 T400,60" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,150 Q140,60 240,140 T400,90" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,200 Q160,80 260,170 T400,120" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,250 Q180,100 280,200 T400,150" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,300 Q200,120 300,230 T400,180" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,350 Q220,140 320,260 T400,210" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  
+  <path d="M0,60 Q80,120 180,90 T400,140" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,110 Q90,160 190,120 T400,190" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,160 Q100,200 200,150 T400,240" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,210 Q110,240 210,180 T400,290" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+  <path d="M0,260 Q120,280 220,210 T400,340" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+</svg>
