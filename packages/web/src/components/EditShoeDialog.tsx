@@ -33,7 +33,7 @@ export default function EditShoeDialog({
     <AnimatePresence>
       {editingShoe && (
         <Dialog open={!!editingShoe} onOpenChange={() => setEditingShoe(null)}>
-          <DialogContent className="bg-neutral-950 text-white border border-neutral-800 w-[min(96vw,56rem)] max-w-4xl rounded-3xl shadow-2xl shadow-orange-500/5 p-0 overflow-hidden">
+          <DialogContent className="bg-neutral-950 text-white border border-neutral-800 w-[min(96vw,56rem)] max-w-4xl rounded-3xl shadow-2xl shadow-brand-red/5 p-0 overflow-hidden">
             <DialogHeader className="space-y-3 border-b border-neutral-800 px-5 py-6 sm:px-8 sm:py-7">
               <div className="flex items-center gap-fluid-sm">
                 <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30">Edit Stats</p>
@@ -45,9 +45,9 @@ export default function EditShoeDialog({
             </DialogHeader>
 
             <div className="space-y-6 px-5 py-6 sm:space-y-8 sm:px-8 sm:py-8">
-              <div className="rounded-2xl border border-orange-500/15 bg-orange-500/5 px-4 py-4 sm:px-5">
+              <div className="rounded-2xl border border-brand-red/15 bg-brand-red/5 px-4 py-4 sm:px-5">
                 <div className="flex items-start gap-3">
-                  <div className="mt-0.5 rounded-xl bg-orange-500/15 p-2 text-orange-400">
+                  <div className="mt-0.5 rounded-xl bg-brand-red/15 p-2 text-brand-red">
                     <SlidersHorizontal className="h-4 w-4" />
                   </div>
                   <div className="space-y-1">
@@ -64,7 +64,7 @@ export default function EditShoeDialog({
                     id="size"
                     value={editForm.size || ''}
                     onChange={(e) => setEditForm({ ...editForm, size: e.target.value })}
-                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-neutral-800 rounded-xl focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/20 transition-colors"
+                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-neutral-800 rounded-xl focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20 transition-colors"
                   >
                     <option value="">Select size</option>
                     {shoeSizes.map((size: ShoeSizeOption, index) => {
@@ -90,7 +90,7 @@ export default function EditShoeDialog({
                     id="condition"
                     value={editForm.condition || ''}
                     onChange={(e) => setEditForm({ ...editForm, condition: e.target.value })}
-                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-neutral-800 rounded-xl focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/20 transition-colors"
+                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-neutral-800 rounded-xl focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20 transition-colors"
                   >
                     <option value="">Select condition</option>
                     {conditions.map((condition) => (
@@ -108,7 +108,7 @@ export default function EditShoeDialog({
                     type="date"
                     value={editForm.purchaseDate ? new Date(editForm.purchaseDate).toISOString().split('T')[0] : ''}
                     onChange={(e) => setEditForm({ ...editForm, purchaseDate: e.target.value })}
-                    className="h-12 bg-neutral-900 text-white border-neutral-800 rounded-xl focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
+                    className="h-12 bg-neutral-900 text-white border-neutral-800 rounded-xl focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
                   />
                 </div>
 
@@ -181,7 +181,7 @@ export default function EditShoeDialog({
                       onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
                       placeholder="Any additional notes about this shoe..."
                       rows={4}
-                      className="bg-neutral-900 text-white placeholder:text-neutral-600 border-neutral-800 rounded-xl focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 resize-none"
+                      className="bg-neutral-900 text-white placeholder:text-neutral-600 border-neutral-800 rounded-xl focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20 resize-none"
                     />
                   </div>
                 )}
@@ -205,7 +205,7 @@ export default function EditShoeDialog({
                   </Button>
                 )}
                 <Button
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-black font-tanker rounded-xl py-3"
+                  className="flex-1 bg-brand-red hover:bg-brand-red/80 text-black font-tanker rounded-xl py-3"
                   onClick={updateShoeStats}
                 >
                   <Save className="w-4 h-4 mr-2" />
@@ -252,7 +252,7 @@ function RatingSlider({
           setDraftValue(nextValue);
           onChange(nextValue);
         }}
-        className={`h-2 w-full cursor-pointer appearance-none rounded-full accent-orange-500 transition-opacity ${isUnset ? 'bg-neutral-900 opacity-45' : 'bg-neutral-800 opacity-100'}`}
+        className={`h-2 w-full cursor-pointer appearance-none rounded-full accent-brand-red transition-opacity ${isUnset ? 'bg-neutral-900 opacity-45' : 'bg-neutral-800 opacity-100'}`}
       />
       <button
         type="button"

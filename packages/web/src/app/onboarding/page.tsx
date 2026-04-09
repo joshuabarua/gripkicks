@@ -179,14 +179,14 @@ export default function OnboardingPage() {
               </p>
               <button 
                 onClick={handleSkipOnboarding}
-                className="font-sora text-xs text-neutral-500 hover:text-orange-500 transition-colors"
+                className="font-sora text-xs text-brand-putty/40 hover:text-brand-red transition-colors duration-500"
               >
                 Skip for now
               </button>
             </div>
-            <div className="w-full h-1 bg-neutral-800 rounded-full overflow-hidden">
+            <div className="w-full h-px bg-white/10 overflow-hidden">
               <motion.div
-                className="h-full bg-orange-500 rounded-full"
+                className="h-full bg-brand-red/60"
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.5 }}
               />
@@ -208,12 +208,12 @@ export default function OnboardingPage() {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5 }}
-                    className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6"
+                    className="w-20 h-20 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-6"
                   >
-                    <Sparkles className="w-10 h-10 text-orange-500" />
+                    <Sparkles className="w-10 h-10 text-brand-red" />
                   </motion.div>
                   <h1 className="font-tanker text-5xl md:text-6xl mb-4">
-                    WELCOME TO<br /><span className="text-orange-500">GRIPKICKS</span>
+                    WELCOME TO<br /><span className="text-brand-red">GRIPKICKS</span>
                   </h1>
                   <p className="font-sora text-neutral-400 text-lg mb-10">Your personal climbing shoe companion</p>
 
@@ -223,9 +223,9 @@ export default function OnboardingPage() {
                       { icon: Star, title: 'Rate Your Shoes', desc: 'Track how each pair feels on comfort and performance' },
                       { icon: Plus, title: 'Find Your Fit', desc: 'Get shoe recs based on real data from your feet' },
                     ].map((item) => (
-                      <div key={item.title} className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 group hover:border-orange-500/30 transition-colors">
-                        <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center mb-4">
-                          <item.icon className="w-5 h-5 text-orange-500" />
+                      <div key={item.title} className="bg-brand-surface border border-white/[0.06] p-6 group hover:border-brand-red/30 transition-colors duration-500">
+                        <div className="w-10 h-10 bg-brand-red/10 flex items-center justify-center mb-4">
+                          <item.icon className="w-5 h-5 text-brand-red" />
                         </div>
                         <h3 className="font-tanker text-lg text-white mb-1">{item.title}</h3>
                         <p className="font-sora text-neutral-500 text-xs">{item.desc}</p>
@@ -237,7 +237,7 @@ export default function OnboardingPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleNext}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
+                    className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
                   >
                     LET&apos;S GET STARTED
                     <ChevronRight className="w-5 h-5" />
@@ -246,9 +246,9 @@ export default function OnboardingPage() {
               )}
 
               {currentStep === 'foot-data' && (
-                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8">
-                  <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
-                    <Footprints className="w-7 h-7 text-orange-500" />
+                <div className="bg-brand-surface border border-white/[0.06] p-8">
+                  <div className="w-14 h-14 bg-brand-red/10 flex items-center justify-center mb-6">
+                    <Footprints className="w-7 h-7 text-brand-red" />
                   </div>
                   <h2 className="font-tanker text-3xl mb-2">FOOT SHAPE</h2>
                   <p className="font-sora text-neutral-500 text-sm mb-8">This helps us recommend shoes that will fit you best</p>
@@ -271,8 +271,8 @@ export default function OnboardingPage() {
                             onClick={() => setFootShape(shape.value)}
                             className={`p-3 rounded-2xl border text-left transition-all ${
                               footShape === shape.value
-                                ? 'border-orange-500 bg-orange-500/10'
-                                : 'border-neutral-800 hover:border-neutral-700 bg-neutral-800/50'
+                                ? 'border-brand-red bg-brand-red/10'
+                                : 'border-white/[0.06] hover:border-white/10 bg-black/50'
                             }`}
                           >
                             <div className="font-sora font-medium text-white text-sm">{shape.label}</div>
@@ -297,8 +297,8 @@ export default function OnboardingPage() {
                             onClick={() => setFootVolume(volume.value)}
                             className={`p-3 rounded-2xl border text-center transition-all ${
                               footVolume === volume.value
-                                ? 'border-orange-500 bg-orange-500/10'
-                                : 'border-neutral-800 hover:border-neutral-700 bg-neutral-800/50'
+                                ? 'border-brand-red bg-brand-red/10'
+                                : 'border-white/[0.06] hover:border-white/10 bg-black/50'
                             }`}
                           >
                             <div className="font-sora font-medium text-white text-sm">{volume.label}</div>
@@ -309,10 +309,10 @@ export default function OnboardingPage() {
                     </div>
 
                     <div className="flex justify-between pt-4">
-                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePrevious} className="border border-neutral-700 hover:border-orange-500/30 text-neutral-400 font-sora text-sm px-6 py-3 rounded-2xl transition-all flex items-center gap-2">
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePrevious} className="border border-white/[0.06] hover:border-brand-red/30 text-brand-putty/50 font-sora text-sm px-6 py-3 transition-all duration-500 flex items-center gap-2">
                         <ChevronLeft className="w-4 h-4" /> Back
                       </motion.button>
-                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleNext} disabled={!footShape || !footVolume || isLoading} className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors flex items-center gap-2">
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleNext} disabled={!footShape || !footVolume || isLoading} className="bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 transition-colors duration-500 flex items-center gap-2">
                         {isLoading ? 'SAVING...' : 'NEXT'} <ChevronRight className="w-4 h-4" />
                       </motion.button>
                     </div>
@@ -321,9 +321,9 @@ export default function OnboardingPage() {
               )}
 
               {currentStep === 'first-shoe' && (
-                <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8">
-                  <div className="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
-                    <Plus className="w-7 h-7 text-orange-500" />
+                <div className="bg-brand-surface border border-white/[0.06] p-8">
+                  <div className="w-14 h-14 bg-brand-red/10 flex items-center justify-center mb-6">
+                    <Plus className="w-7 h-7 text-brand-red" />
                   </div>
                   <h2 className="font-tanker text-3xl mb-2">ADD YOUR FIRST SHOE</h2>
                   <p className="font-sora text-neutral-500 text-sm mb-8">Search for a shoe and rate your experience with it</p>
@@ -340,7 +340,7 @@ export default function OnboardingPage() {
                     </div>
 
                     {selectedShoe && (
-                      <div className="p-4 rounded-2xl border border-orange-500/20 bg-orange-500/5">
+                      <div className="p-4 border border-brand-red/20 bg-brand-red/5">
                         <div className="flex items-center gap-4">
                           <div className="w-20 h-20 bg-neutral-800 rounded-xl overflow-hidden">
                             <ShoeImage
@@ -365,7 +365,7 @@ export default function OnboardingPage() {
                           <div className="space-y-2">
                             <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Size</Label>
                             <Select value={shoeFormData.size} onValueChange={(value) => setShoeFormData({ ...shoeFormData, size: value })}>
-                              <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white rounded-xl h-12 focus:border-orange-500">
+                              <SelectTrigger className="bg-black border-white/[0.06] text-brand-chalk rounded-none h-12 focus:border-brand-red">
                                 <SelectValue placeholder="Select size" />
                               </SelectTrigger>
                               <SelectContent className="bg-neutral-800 border-neutral-700">
@@ -378,7 +378,7 @@ export default function OnboardingPage() {
                           <div className="space-y-2">
                             <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">Condition</Label>
                             <Select value={shoeFormData.condition} onValueChange={(value: string) => setShoeFormData({ ...shoeFormData, condition: value })}>
-                              <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white rounded-xl h-12 focus:border-orange-500">
+                              <SelectTrigger className="bg-black border-white/[0.06] text-brand-chalk rounded-none h-12 focus:border-brand-red">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent className="bg-neutral-800 border-neutral-700">
@@ -403,8 +403,8 @@ export default function OnboardingPage() {
                                   onClick={() => setShoeFormData({ ...shoeFormData, comfort: rating })}
                                   className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-tanker text-sm transition-all ${
                                     shoeFormData.comfort >= rating
-                                      ? 'border-orange-500 bg-orange-500/20 text-orange-500'
-                                      : 'border-neutral-700 text-neutral-600'
+                                      ? 'border-brand-red bg-brand-red/20 text-brand-red'
+                                      : 'border-white/10 text-brand-putty/30'
                                   }`}
                                 >
                                   {rating}
@@ -423,8 +423,8 @@ export default function OnboardingPage() {
                                   onClick={() => setShoeFormData({ ...shoeFormData, performance: rating })}
                                   className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-tanker text-sm transition-all ${
                                     shoeFormData.performance >= rating
-                                      ? 'border-orange-500 bg-orange-500/20 text-orange-500'
-                                      : 'border-neutral-700 text-neutral-600'
+                                      ? 'border-brand-red bg-brand-red/20 text-brand-red'
+                                      : 'border-white/10 text-brand-putty/30'
                                   }`}
                                 >
                                   {rating}
@@ -442,17 +442,17 @@ export default function OnboardingPage() {
                             onChange={(e) => setShoeFormData({ ...shoeFormData, notes: e.target.value })}
                             placeholder="Any additional notes about this shoe..."
                             rows={3}
-                            className="bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-orange-500 rounded-xl"
+                            className="bg-black border-white/[0.06] text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red rounded-none"
                           />
                         </div>
                       </div>
                     )}
 
                     <div className="flex justify-between pt-4">
-                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePrevious} className="border border-neutral-700 hover:border-orange-500/30 text-neutral-400 font-sora text-sm px-6 py-3 rounded-2xl transition-all flex items-center gap-2">
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePrevious} className="border border-white/[0.06] hover:border-brand-red/30 text-brand-putty/50 font-sora text-sm px-6 py-3 transition-all duration-500 flex items-center gap-2">
                         <ChevronLeft className="w-4 h-4" /> Back
                       </motion.button>
-                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleNext} disabled={!selectedShoe || !shoeFormData.size || isLoading} className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors flex items-center gap-2">
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleNext} disabled={!selectedShoe || !shoeFormData.size || isLoading} className="bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 transition-colors duration-500 flex items-center gap-2">
                         {isLoading ? 'COMPLETING...' : 'COMPLETE SETUP'} <CheckCircle2 className="w-4 h-4" />
                       </motion.button>
                     </div>
@@ -466,12 +466,12 @@ export default function OnboardingPage() {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5 }}
-                    className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6"
+                    className="w-20 h-20 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-6"
                   >
-                    <CheckCircle2 className="w-10 h-10 text-orange-500" />
+                    <CheckCircle2 className="w-10 h-10 text-brand-red" />
                   </motion.div>
                   <h1 className="font-tanker text-5xl md:text-6xl mb-4">
-                    YOU&apos;RE<br /><span className="text-orange-500">ALL SET!</span>
+                    YOU&apos;RE<br /><span className="text-brand-red">ALL SET!</span>
                   </h1>
                   <p className="font-sora text-neutral-400 text-lg mb-10">Your profile is ready and you can start exploring</p>
 
@@ -485,9 +485,9 @@ export default function OnboardingPage() {
                         <motion.div
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col items-center gap-3 hover:border-orange-500/30 transition-colors cursor-pointer"
+                          className="bg-brand-surface border border-white/[0.06] p-6 flex flex-col items-center gap-3 hover:border-brand-red/30 transition-colors duration-500 cursor-pointer"
                         >
-                          <item.icon className="w-8 h-8 text-orange-500" />
+                          <item.icon className="w-8 h-8 text-brand-red" />
                           <span className="font-tanker text-lg text-white">{item.label}</span>
                         </motion.div>
                       </Link>
@@ -498,7 +498,7 @@ export default function OnboardingPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleFinish}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
+                    className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
                   >
                     GO TO SHOE SANCTUARY
                     <ArrowUpRight className="w-5 h-5" />

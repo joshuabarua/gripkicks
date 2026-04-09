@@ -48,15 +48,15 @@ export default function PrivacyPage() {
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Hero */}
       <section className="relative px-6 md:px-12 lg:px-16 pt-32 pb-24">
-        <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-orange-500/10" />
-        <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-orange-500/10" />
+        <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-white/[0.06]" />
+        <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-white/[0.06]" />
 
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Privacy Promise</p>
             <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
               YOUR DATA<br />
-              <span className="text-orange-500">YOUR RULES</span>
+              <span className="text-brand-red">YOUR RULES</span>
             </h1>
           </motion.div>
 
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
       </section>
 
       {/* The Promise Banner */}
-      <section className="py-8 bg-orange-500 overflow-hidden">
+      <section className="py-8 bg-brand-red overflow-hidden">
         <motion.div
           animate={{ x: [0, -1200] }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
@@ -91,14 +91,14 @@ export default function PrivacyPage() {
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">TL;DR</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-8">
-              THE SHORT<br /><span className="text-orange-500">VERSION</span>
+              THE SHORT<br /><span className="text-brand-red">VERSION</span>
             </h2>
           </motion.div>
 
           <motion.div
             {...fadeUp}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="bg-neutral-900 border border-orange-500/20 rounded-3xl p-8 md:p-10"
+            className="bg-neutral-900 border border-brand-red/20 rounded-3xl p-8 md:p-10"
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
@@ -114,7 +114,7 @@ export default function PrivacyPage() {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <div className="font-tanker text-4xl md:text-5xl text-orange-500 mb-2">{stat.value}</div>
+                  <div className="font-tanker text-4xl md:text-5xl text-brand-red mb-2">{stat.value}</div>
                   <p className="font-sora text-sm text-neutral-500">{stat.label}</p>
                 </motion.div>
               ))}
@@ -129,7 +129,7 @@ export default function PrivacyPage() {
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">Our Promises</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-12">
-              SIX PROMISES<br /><span className="text-orange-500">WE KEEP</span>
+              SIX PROMISES<br /><span className="text-brand-red">WE KEEP</span>
             </h2>
           </motion.div>
 
@@ -141,10 +141,10 @@ export default function PrivacyPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: i * 0.08 }}
                 viewport={{ once: true }}
-                className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 group hover:border-orange-500/20 transition-colors"
+                className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 group hover:border-brand-red/20 transition-colors"
               >
-                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
-                  <promise.icon className="w-6 h-6 text-orange-500" />
+                <div className="w-12 h-12 bg-brand-red/10 rounded-2xl flex items-center justify-center mb-6">
+                  <promise.icon className="w-6 h-6 text-brand-red" />
                 </div>
                 <h3 className="font-tanker text-xl mb-3">{promise.title}</h3>
                 <p className="font-sora text-sm text-neutral-500 leading-relaxed">{promise.body}</p>
@@ -160,7 +160,7 @@ export default function PrivacyPage() {
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">What We Collect</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-12">
-              EXACTLY WHAT<br /><span className="text-orange-500">WE NEED</span>
+              EXACTLY WHAT<br /><span className="text-brand-red">WE NEED</span>
             </h2>
           </motion.div>
 
@@ -198,10 +198,10 @@ export default function PrivacyPage() {
           <motion.div
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-8 bg-orange-500/5 border border-orange-500/20 rounded-2xl p-6"
+            className="mt-8 bg-brand-red/5 border border-brand-red/20 rounded-2xl p-6"
           >
             <p className="font-sora text-sm text-neutral-400">
-              <span className="text-orange-500 font-medium">What we don&apos;t collect:</span> browsing habits, location data, device fingerprints, contacts, photos, or anything else that isn&apos;t directly needed to help you find climbing shoes.
+              <span className="text-brand-red font-medium">What we don&apos;t collect:</span> browsing habits, location data, device fingerprints, contacts, photos, or anything else that isn&apos;t directly needed to help you find climbing shoes.
             </p>
           </motion.div>
         </div>
@@ -212,7 +212,7 @@ export default function PrivacyPage() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <h2 className="font-tanker text-5xl md:text-7xl mb-6">
-              QUESTIONS?<br /><span className="text-orange-500">ASK US</span>
+              QUESTIONS?<br /><span className="text-brand-red">ASK US</span>
             </h2>
             <p className="font-sora text-neutral-500 text-lg mb-10 max-w-xl mx-auto">
               We believe in transparency. If you have questions about your data or our practices, we&apos;re happy to answer.
@@ -222,7 +222,7 @@ export default function PrivacyPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
+                  className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
                 >
                   JOIN GRIPKICKS
                   <ArrowUpRight className="w-5 h-5" />
@@ -232,7 +232,7 @@ export default function PrivacyPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="border border-neutral-700 hover:border-orange-500/30 text-neutral-400 hover:text-orange-500 font-sora px-10 py-4 rounded-2xl transition-all"
+                  className="border border-neutral-700 hover:border-brand-red/30 text-neutral-400 hover:text-brand-red font-sora px-10 py-4 rounded-2xl transition-all"
                 >
                   Why we built this
                 </motion.button>

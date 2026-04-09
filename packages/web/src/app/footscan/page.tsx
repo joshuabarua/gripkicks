@@ -93,7 +93,7 @@ function ToeProfile({ shape, active }: { shape: FootShape; active: boolean }) {
             width={14}
             height={barH}
             rx={7}
-            className={`transition-colors duration-300 ${active ? 'fill-orange-500' : 'fill-neutral-700'
+            className={`transition-colors duration-300 ${active ? 'fill-brand-red' : 'fill-neutral-700'
               }`}
           />
         );
@@ -108,14 +108,14 @@ function VolumeArch({ volume, active }: { volume: FootVolume; active: boolean })
       <line
         x1="8" y1="46" x2="72" y2="46"
         strokeWidth="1"
-        className={active ? 'stroke-orange-500/30' : 'stroke-neutral-800'}
+        className={active ? 'stroke-brand-red/30' : 'stroke-neutral-800'}
       />
       <path
         d={VOLUME_ARCH[volume]}
         fill="none"
         strokeWidth="3"
         strokeLinecap="round"
-        className={`transition-colors duration-300 ${active ? 'stroke-orange-500' : 'stroke-neutral-600'
+        className={`transition-colors duration-300 ${active ? 'stroke-brand-red' : 'stroke-neutral-600'
           }`}
       />
     </svg>
@@ -226,13 +226,13 @@ export default function FootLabPage() {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="text-center">
-          <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Footprints className="w-8 h-8 text-orange-500" />
+          <div className="w-16 h-16 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Footprints className="w-8 h-8 text-brand-red" />
           </div>
           <h1 className="font-tanker text-5xl mb-3">FOOT PROFILE</h1>
           <p className="font-sora text-neutral-500 mb-6">Log in to discover your foot shape</p>
           <Link href="/auth/login">
-            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-orange-500 text-black font-tanker text-lg px-8 py-3 rounded-2xl">
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-brand-red text-black font-tanker text-lg px-8 py-3 rounded-2xl">
               LOG IN
             </motion.button>
           </Link>
@@ -253,7 +253,7 @@ export default function FootLabPage() {
         >
           <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Foot Profile</p>
           <h1 className="font-tanker text-6xl md:text-8xl leading-none mb-4">
-            KNOW YOUR<br /><span className="text-orange-500">FOOT</span>
+            KNOW YOUR<br /><span className="text-brand-red">FOOT</span>
           </h1>
           <p className="font-sora text-neutral-400 text-lg max-w-lg">
             Two questions. Better shoes. Tell us about your foot and we&apos;ll match you to the right rubber.
@@ -261,7 +261,7 @@ export default function FootLabPage() {
           <div className="mt-6">
             <Link
               href="/footscan/model"
-              className="inline-flex items-center rounded-2xl border border-orange-500/30 bg-orange-500/10 px-5 py-3 font-sora text-sm text-orange-400 transition-colors hover:border-orange-500/50 hover:bg-orange-500/15"
+              className="inline-flex items-center rounded-2xl border border-brand-red/30 bg-brand-red/10 px-5 py-3 font-sora text-sm text-brand-red transition-colors hover:border-brand-red/50 hover:bg-brand-red/15"
             >
               Open 3D foot model viewer
             </Link>
@@ -296,7 +296,7 @@ export default function FootLabPage() {
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setSelectedFootShape(shape)}
                   className={`rounded-3xl p-4 text-left transition-all duration-300 border ${isSelected
-                      ? 'border-orange-500 bg-orange-500/10'
+                      ? 'border-brand-red bg-brand-red/10'
                       : 'border-neutral-800 bg-neutral-900 hover:border-neutral-700'
                     }`}
                 >
@@ -311,7 +311,7 @@ export default function FootLabPage() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="font-sora text-[10px] text-orange-500 mt-2 overflow-hidden"
+                        className="font-sora text-[10px] text-brand-red mt-2 overflow-hidden"
                       >
                         {footShapeInfo[shape].fit}
                       </motion.p>
@@ -351,7 +351,7 @@ export default function FootLabPage() {
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setSelectedFootVolume(volume)}
                   className={`rounded-3xl p-6 text-left transition-all duration-300 border ${isSelected
-                      ? 'border-orange-500 bg-orange-500/10'
+                      ? 'border-brand-red bg-brand-red/10'
                       : 'border-neutral-800 bg-neutral-900 hover:border-neutral-700'
                     }`}
                 >
@@ -366,7 +366,7 @@ export default function FootLabPage() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="font-sora text-[10px] text-orange-500 overflow-hidden"
+                        className="font-sora text-[10px] text-brand-red overflow-hidden"
                       >
                         {footVolumeInfo[volume].fit}
                       </motion.p>
@@ -398,7 +398,7 @@ export default function FootLabPage() {
               'Personalised to how you actually climb',
             ].map((item) => (
               <div key={item} className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-red mt-2 flex-shrink-0" />
                 <span className="font-sora text-sm text-neutral-400">{item}</span>
               </div>
             ))}
@@ -419,7 +419,7 @@ export default function FootLabPage() {
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
               <div>
                 <p className="font-tanker text-xl capitalize">
-                  {selectedFootShape} <span className="text-orange-500">·</span> {selectedFootVolume} volume
+                  {selectedFootShape} <span className="text-brand-red">·</span> {selectedFootVolume} volume
                 </p>
                 <p className="font-sora text-xs text-neutral-500">
                   {isAlreadySaved ? 'Profile already saved' : 'Ready to save your profile'}
@@ -432,7 +432,7 @@ export default function FootLabPage() {
                 disabled={saving || isAlreadySaved}
                 className={`font-tanker text-lg px-8 py-3 rounded-2xl transition-all flex items-center gap-2 disabled:opacity-60 ${saved || isAlreadySaved
                     ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-orange-500 hover:bg-orange-400 text-black'
+                    : 'bg-brand-red hover:bg-brand-red/80 text-black'
                   }`}
               >
                 {saving ? (

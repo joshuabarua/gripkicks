@@ -85,9 +85,9 @@ const quadrants: Record<QuadrantKey, QuadrantInfo> = {
     name: 'Aggressive Comfort',
     description: 'Downturned but padded',
     icon: <Shield className="w-4 h-4" />,
-    borderColor: 'border-orange-500/40',
-    bgColor: 'bg-orange-500/5',
-    accentClass: 'text-orange-400/80',
+    borderColor: 'border-brand-red/40',
+    bgColor: 'bg-brand-red/5',
+    accentClass: 'text-brand-red/80',
   },
   competition: {
     name: 'Competition',
@@ -253,7 +253,7 @@ export function ShoeRadarMatcher() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-red mx-auto mb-4" />
           <p className="font-sora text-neutral-500 text-sm">Loading shoe radar...</p>
         </div>
       </div>
@@ -269,11 +269,11 @@ export function ShoeRadarMatcher() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="rounded-3xl border border-orange-500/40 bg-neutral-950 p-6 sm:p-8 mb-6 shadow-[0_0_60px_rgba(249,115,22,0.08)]"
+          className="rounded-3xl border border-brand-red/40 bg-neutral-950 p-6 sm:p-8 mb-6 shadow-[0_0_60px_rgba(244,91,91,0.08)]"
         >
           <div className="flex flex-col lg:flex-row lg:items-start gap-6">
             <div className="flex items-start gap-5 flex-1 min-w-0">
-              <div className="w-24 h-24 bg-neutral-900 rounded-2xl overflow-hidden flex-shrink-0 border border-orange-500/20">
+              <div className="w-24 h-24 bg-neutral-900 rounded-2xl overflow-hidden flex-shrink-0 border border-brand-red/20">
                 <ShoeImage
                   brand={leadShoe.shoe.brand}
                   shoeName={leadShoe.shoe.name}
@@ -284,7 +284,7 @@ export function ShoeRadarMatcher() {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2 mb-3">
-                  <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-orange-500">Your top match</p>
+                  <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-red">Your top match</p>
                   <Badge className={`${leadQuadrant.bgColor} ${leadQuadrant.borderColor} border ${leadQuadrant.accentClass} font-sora`}>
                     {leadQuadrant.name}
                   </Badge>
@@ -375,7 +375,7 @@ export function ShoeRadarMatcher() {
           </div>
         </div>
 
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-2 h-2 bg-orange-500 rounded-full" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-2 h-2 bg-brand-red rounded-full" />
 
         {topShoes.slice(0, 10).map((pos, index) => (
           <motion.div
@@ -387,7 +387,7 @@ export function ShoeRadarMatcher() {
             transition={{ delay: index * 0.08 }}
           >
             <div className="relative">
-              <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden shadow-lg ${index === 0 ? 'border-2 border-orange-500/70 bg-neutral-900 shadow-orange-500/20' : 'border border-neutral-700 bg-neutral-900'}`}>
+              <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden shadow-lg ${index === 0 ? 'border-2 border-brand-red/70 bg-neutral-900 shadow-brand-red/20' : 'border border-neutral-700 bg-neutral-900'}`}>
                 <ShoeImage
                   brand={pos.shoe.brand}
                   shoeName={pos.shoe.name}
@@ -396,11 +396,11 @@ export function ShoeRadarMatcher() {
                   {...(pos.shoe.imageUrl ? { imageUrl: pos.shoe.imageUrl } : {})}
                 />
               </div>
-              <div className={`absolute -top-1 -left-1 min-w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center px-1.5 ${index === 0 ? 'bg-orange-500 text-black' : 'bg-neutral-700 text-white'}`}>
+              <div className={`absolute -top-1 -left-1 min-w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center px-1.5 ${index === 0 ? 'bg-brand-red text-black' : 'bg-neutral-700 text-white'}`}>
                 {index + 1}
               </div>
               <div className="absolute -bottom-1 -right-1 min-w-6 h-5 rounded-full bg-neutral-900 border border-neutral-700 flex items-center justify-center px-1.5">
-                <span className="text-[8px] font-bold text-orange-400">{Math.round((pos.score / 5) * 100)}</span>
+                <span className="text-[8px] font-bold text-brand-red">{Math.round((pos.score / 5) * 100)}</span>
               </div>
             </div>
           </motion.div>
@@ -497,7 +497,7 @@ export function ShoeRadarMatcher() {
           <p className="font-sora text-neutral-400 text-sm flex-1">
             Complete your foot profile for stronger recommendation accuracy.
           </p>
-          <Link href="/footscan" className="font-sora text-sm text-orange-500 hover:text-orange-400 transition-colors shrink-0">
+          <Link href="/footscan" className="font-sora text-sm text-brand-red hover:text-brand-red transition-colors shrink-0">
             Set up →
           </Link>
         </div>
@@ -528,7 +528,7 @@ function MetricBar({ label, value }: { label: string; value: number }) {
         <span className="text-xs text-white font-medium">{value.toFixed(1)}</span>
       </div>
       <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-        <div className="h-full bg-orange-500 rounded-full" style={{ width: `${pct}%` }} />
+        <div className="h-full bg-brand-red rounded-full" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );

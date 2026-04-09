@@ -1,34 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-
-const transitionImages = [
-  "/imgs/transition/blue_hold.png",
-  "/imgs/transition/rock1.png",
-  "/imgs/transition/green_hold.png",
-  "/imgs/transition/yellow_hold.png",
-];
-const DEFAULT_TRANSITION_IMAGE = "/imgs/transition/blue_hold.png";
-
-const IMAGE_CYCLE_DURATION_MS = 520;
-const IMAGE_TRANSITION_DURATION_S = 0.34;
 
 export default function BootLoader({ visible }: { visible: boolean }) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const currentImage = transitionImages[currentImageIndex] ?? DEFAULT_TRANSITION_IMAGE;
-
-  useEffect(() => {
-    if (!visible) return;
-
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % transitionImages.length);
-    }, IMAGE_CYCLE_DURATION_MS);
-
-    return () => clearInterval(interval);
-  }, [visible]);
-
   return (
     <AnimatePresence>
       {visible ? (
@@ -36,108 +10,43 @@ export default function BootLoader({ visible }: { visible: boolean }) {
           key="boot-loader"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          className="fixed inset-0 z-[10000] flex items-center justify-center bg-neutral-950"
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-black"
         >
-          <div className="absolute inset-0 overflow-hidden pointer-events-none select-none flex flex-col justify-center gap-4 opacity-30">
+          <div className="relative z-10 flex flex-col items-center gap-10">
             <motion.div
-              animate={{ x: [0, -500] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="flex gap-8 whitespace-nowrap"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="relative"
             >
-              {Array(20)
-                .fill(null)
-                .map((_, i) => (
-                  <span
-                    key={i}
-                    className="font-tanker text-xl text-orange-500/20"
-                  >
-                    GRIP KICKS - LOADING -
-                  </span>
-                ))}
+              <div className="w-3 h-3 rounded-full bg-[#f45b5b] animate-hal-pulse" />
+              <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#f45b5b] blur-md opacity-60 animate-hal-pulse" />
             </motion.div>
-            <motion.div
-              animate={{ x: [0, 500] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="flex gap-8 whitespace-nowrap"
-            >
-              {Array(20)
-                .fill(null)
-                .map((_, i) => (
-                  <span
-                    key={`mid-${i}`}
-                    className="font-tanker text-xl text-orange-500/20"
-                  >
-                    COMMUNITY DRIVEN - CLIMBING SHOES -
-                  </span>
-                ))}
-            </motion.div>
-            <motion.div
-              animate={{ x: [0, -500] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="flex gap-8 whitespace-nowrap"
-            >
-              {Array(20)
-                .fill(null)
-                .map((_, i) => (
-                  <span
-                    key={`bot-${i}`}
-                    className="font-tanker text-xl text-orange-500/20"
-                  >
-                    FIND YOUR FIT -
-                  </span>
-                ))}
-            </motion.div>
-          </div>
 
-          <div className="absolute top-6 left-1/2 -translate-x-1/2">
-            <span className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">
-              Loading
-            </span>
-          </div>
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="flex flex-col items-center gap-6"
+            >
+              <div className="font-tanker text-xl tracking-wider text-white/90">
+                GRIP KICKS
+              </div>
 
-          <div className="relative z-10 flex flex-col items-center">
-            <div className="rounded-xl p-4 relative overflow-hidden">
-              <AnimatePresence mode="popLayout">
+              <div className="w-32 h-px bg-white/10 overflow-hidden">
                 <motion.div
-                  key={currentImageIndex}
-                  initial={{ scale: 1.3, opacity: 0, rotate: -10 }}
-                  animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                  exit={{ scale: 0.7, opacity: 0, rotate: 10 }}
-                  transition={{ duration: IMAGE_TRANSITION_DURATION_S, ease: "easeOut" }}
-                >
-                  <Image
-                    src={currentImage}
-                    alt="Loading climbing object"
-                    width={180}
-                    height={180}
-                    className="w-[180px] h-[180px] object-contain"
-                    priority
-                  />
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            <div className="mt-6 flex items-center gap-3">
-              <span className="font-sora text-[10px] text-neutral-600">
-                {String(currentImageIndex + 1).padStart(2, "0")}
-                /{String(transitionImages.length).padStart(2, "0")}
-              </span>
-              <div className="w-24 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-orange-500"
-                  initial={{ width: 0 }}
-                  animate={{
-                    width: `${((currentImageIndex + 1) / transitionImages.length) * 100}%`,
-                  }}
-                  transition={{ duration: IMAGE_TRANSITION_DURATION_S }}
+                  className="h-full bg-[#f45b5b]/60"
+                  initial={{ x: "-100%" }}
+                  animate={{ x: "100%" }}
+                  transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
                 />
               </div>
-            </div>
 
-            <div className="font-tanker text-2xl text-white mt-6">
-              GRIP <span className="text-orange-500">KICKS</span>
-            </div>
+              <span className="font-sora text-[9px] uppercase tracking-[0.4em] text-white/20">
+                Initializing
+              </span>
+            </motion.div>
           </div>
         </motion.div>
       ) : null}

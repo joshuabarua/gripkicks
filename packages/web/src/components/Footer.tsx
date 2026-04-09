@@ -20,29 +20,29 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-neutral-950 border-t border-neutral-900 relative">
+    <footer className="bg-black border-t border-white/[0.06] relative">
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
           <div className="md:col-span-2">
             <Link href="/">
-              <h2 className="font-tanker text-3xl text-white mb-3">
-                GRIP <span className="text-orange-500">KICKS</span>
+              <h2 className="font-tanker text-3xl text-brand-chalk mb-3">
+                GRIP <span className="text-brand-red">KICKS</span>
               </h2>
             </Link>
-            <p className="font-sora text-sm text-neutral-500 max-w-xs leading-relaxed">
+            <p className="font-sora text-sm text-brand-putty/40 max-w-xs leading-relaxed">
               Community-driven climbing shoe recommendations. Built by climbers,
               for climbers. No AI, no gimmicks.
             </p>
           </div>
 
           <div>
-            <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 mb-4">Product</p>
+            <p className="font-sora text-[9px] uppercase tracking-[0.35em] text-brand-putty/30 mb-4">Product</p>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="font-sora text-sm text-neutral-500 hover:text-orange-500 transition-colors"
+                    className="font-sora text-sm text-brand-putty/50 hover:text-brand-red transition-colors duration-500"
                   >
                     {link.title}
                   </Link>
@@ -52,13 +52,13 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 mb-4">Company</p>
+            <p className="font-sora text-[9px] uppercase tracking-[0.35em] text-brand-putty/30 mb-4">Company</p>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="font-sora text-sm text-neutral-500 hover:text-orange-500 transition-colors"
+                    className="font-sora text-sm text-brand-putty/50 hover:text-brand-red transition-colors duration-500"
                   >
                     {link.title}
                   </Link>
@@ -68,20 +68,20 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-neutral-900 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="font-sora text-xs text-neutral-700">
+        <div className="mt-16 pt-8 border-t border-white/[0.06] flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="font-sora text-xs text-brand-putty/25">
             &copy; {new Date().getFullYear()} GripKicks. Your data, your shoes.
           </p>
           <div className="flex items-center gap-6">
             <Link
               href="/privacy"
-              className="font-sora text-xs text-neutral-700 hover:text-orange-500 transition-colors"
+              className="font-sora text-xs text-brand-putty/25 hover:text-brand-red transition-colors duration-500"
             >
               Privacy
             </Link>
             <Link
               href="/about"
-              className="font-sora text-xs text-neutral-700 hover:text-orange-500 transition-colors"
+              className="font-sora text-xs text-brand-putty/25 hover:text-brand-red transition-colors duration-500"
             >
               About
             </Link>
@@ -90,7 +90,7 @@ export default function Footer() {
       </div>
 
       <motion.div
-        className="h-1 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500"
+        className="h-px bg-brand-red/40"
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true }}

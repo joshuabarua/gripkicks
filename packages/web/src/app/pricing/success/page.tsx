@@ -24,9 +24,9 @@ function SuccessContent() {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
-          className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-8"
+          className="w-20 h-20 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-8"
         >
-          <CheckCircle className="w-10 h-10 text-orange-500" />
+          <CheckCircle className="w-10 h-10 text-brand-red" />
         </motion.div>
 
         <motion.div
@@ -38,7 +38,7 @@ function SuccessContent() {
             Welcome to GripKicks
           </p>
           <h1 className="font-tanker text-5xl md:text-6xl mb-4">
-            YOU&apos;RE <span className="text-orange-500">IN</span>
+            YOU&apos;RE <span className="text-brand-red">IN</span>
           </h1>
           <p className="font-sora text-neutral-400 text-lg mb-2">
             Your account is all set.
@@ -59,7 +59,7 @@ function SuccessContent() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors inline-flex items-center gap-2"
+                className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors inline-flex items-center gap-2"
               >
                 FIND YOUR SOLE MATE
                 <ArrowUpRight className="w-5 h-5" />
@@ -69,7 +69,7 @@ function SuccessContent() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="border border-neutral-700 hover:border-orange-500/30 text-neutral-400 hover:text-white font-sora px-8 py-3 rounded-2xl transition-all"
+                className="border border-neutral-700 hover:border-brand-red/30 text-neutral-400 hover:text-white font-sora px-8 py-3 rounded-2xl transition-all"
               >
                 Go to Dashboard
               </motion.button>

@@ -104,7 +104,7 @@ export default function CragRadar() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-red mx-auto mb-4" />
           <p className="font-sora text-neutral-500 text-sm">Loading Crag...</p>
         </div>
       </div>
@@ -125,7 +125,7 @@ export default function CragRadar() {
             <h2 className="font-tanker text-5xl md:text-6xl text-white leading-none">
               COMMUNITY
               <br />
-              <span className="text-orange-500">RANKING</span>
+              <span className="text-brand-red">RANKING</span>
             </h2>
             <p className="font-sora text-sm md:text-base text-neutral-400 max-w-xl">
               Browse the community’s favorite shoes with brand filters, ranking metrics, and a grid that plots every result by fit and performance.
@@ -134,7 +134,7 @@ export default function CragRadar() {
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:min-w-[420px]">
             <div className="rounded-2xl border border-neutral-800 bg-black/30 px-4 py-3 text-center">
-              <p className="font-tanker text-2xl text-orange-500">{radarEntries.length}</p>
+              <p className="font-tanker text-2xl text-brand-red">{radarEntries.length}</p>
               <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30">Shoes</p>
             </div>
             <div className="rounded-2xl border border-neutral-800 bg-black/30 px-4 py-3 text-center">
@@ -167,7 +167,7 @@ export default function CragRadar() {
               placeholder="Search brands or shoes"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-neutral-700 bg-neutral-800 py-3 pl-12 pr-4 font-sora text-white placeholder:text-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+              className="w-full rounded-xl border border-neutral-700 bg-neutral-800 py-3 pl-12 pr-4 font-sora text-white placeholder:text-neutral-500 focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
             />
           </label>
 
@@ -176,7 +176,7 @@ export default function CragRadar() {
             <select
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
-              className="w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-3 font-sora text-sm text-white focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+              className="w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-3 font-sora text-sm text-white focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
             >
               {uniqueBrands.map((brand) => (
                 <option key={brand} value={brand}>
@@ -191,7 +191,7 @@ export default function CragRadar() {
             <select
               value={sortMetric}
               onChange={(e) => setSortMetric(e.target.value as SortMetric)}
-              className="w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-3 font-sora text-sm text-white focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+              className="w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-3 font-sora text-sm text-white focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20"
             >
               {sortOptions.map((option) => (
                 <option key={option.key} value={option.key}>
@@ -206,7 +206,7 @@ export default function CragRadar() {
               type="button"
               onClick={handleReset}
               variant="outline"
-              className="w-full border-neutral-700 text-neutral-300 hover:border-orange-500/30 hover:text-white"
+              className="w-full border-neutral-700 text-neutral-300 hover:border-brand-red/30 hover:text-white"
             >
               <SlidersHorizontal className="mr-2 h-4 w-4" />
               Reset
@@ -256,7 +256,7 @@ export default function CragRadar() {
           })}
         </div>
 
-        <div className="absolute left-1/2 top-1/2 z-10 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.6)]" />
+        <div className="absolute left-1/2 top-1/2 z-10 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-red shadow-[0_0_8px_rgba(244,91,91,0.6)]" />
 
         {radarEntries.map((entry, index) => (
           <motion.div
@@ -268,7 +268,7 @@ export default function CragRadar() {
             transition={{ delay: index * 0.05 }}
           >
             <div className="relative">
-              <div className="h-12 w-12 overflow-hidden rounded-lg border border-neutral-700 bg-neutral-900 shadow-lg transition-colors hover:border-orange-500/40 sm:h-14 sm:w-14">
+              <div className="h-12 w-12 overflow-hidden rounded-lg border border-neutral-700 bg-neutral-900 shadow-lg transition-colors hover:border-brand-red/40 sm:h-14 sm:w-14">
                 <ShoeImage
                   brand={entry.shoe.brand}
                   shoeName={entry.shoe.name}
@@ -277,11 +277,11 @@ export default function CragRadar() {
                   {...(entry.shoe.imageUrl ? { imageUrl: entry.shoe.imageUrl } : {})}
                 />
               </div>
-              <div className="absolute -left-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1.5 text-[9px] font-bold text-black">
+              <div className="absolute -left-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-red px-1.5 text-[9px] font-bold text-black">
                 {index + 1}
               </div>
               <div className="absolute -bottom-1 -right-1 flex h-5 min-w-6 items-center justify-center rounded-full border border-neutral-700 bg-neutral-900 px-1.5">
-                <span className="text-[8px] font-bold text-orange-400">{Math.round(entry.score)}</span>
+                <span className="text-[8px] font-bold text-brand-red">{Math.round(entry.score)}</span>
               </div>
               <div className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-neutral-700 bg-neutral-900 px-2 py-1 opacity-0 shadow-xl transition-opacity group-hover:opacity-100">
                 <p className="font-sora text-[10px] text-white">{entry.shoe.name}</p>
@@ -326,7 +326,7 @@ export default function CragRadar() {
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-tanker text-lg leading-none text-white">{entry.shoe.name}</h3>
                       {index === 0 && (
-                        <span className="rounded-full border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 font-sora text-[9px] uppercase tracking-[0.2em] text-orange-500">
+                        <span className="rounded-full border border-brand-red/20 bg-brand-red/10 px-2 py-0.5 font-sora text-[9px] uppercase tracking-[0.2em] text-brand-red">
                           Top rank
                         </span>
                       )}
@@ -373,7 +373,7 @@ export default function CragRadar() {
               </Badge>
               <Link
                 href="/matcher"
-                className="inline-flex items-center gap-1.5 rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-orange-500/40 hover:text-white"
+                className="inline-flex items-center gap-1.5 rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-brand-red/40 hover:text-white"
               >
                 Open matcher <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>

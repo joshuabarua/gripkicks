@@ -8,8 +8,8 @@ export default function Login() {
     <main className="min-h-screen bg-black text-white flex flex-col">
       <div className="flex-1 flex items-center justify-center px-6 py-12 relative">
         {/* Corner accents */}
-        <div className="absolute top-6 left-6 w-16 h-16 border-l-2 border-t-2 border-orange-500/20" />
-        <div className="absolute bottom-6 right-6 w-16 h-16 border-r-2 border-b-2 border-orange-500/20" />
+        <div className="absolute top-6 left-6 w-16 h-16 border-l border-t border-white/[0.06]" />
+        <div className="absolute bottom-6 right-6 w-16 h-16 border-r border-b border-white/[0.06]" />
 
         <div className="w-full max-w-md">
           <motion.div
@@ -20,7 +20,7 @@ export default function Login() {
           >
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">Authenticate</p>
             <h1 className="font-tanker text-5xl md:text-6xl">
-              WELCOME<br /><span className="text-orange-500">BACK</span>
+              WELCOME<br /><span className="text-brand-red">BACK</span>
             </h1>
           </motion.div>
 

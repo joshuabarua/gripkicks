@@ -129,7 +129,7 @@ const Navigation: React.FC = () => {
   return (
     <motion.nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 px-6 py-3 bg-brand-base/95 backdrop-blur-md border-b border-brand-border"
+      className="fixed top-0 left-0 right-0 z-50 px-6 py-3 bg-black/90 backdrop-blur-md border-b border-white/[0.06]"
       initial={{ y: -100 }}
       animate={{ y: isVisible ? 0 : -100 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -164,7 +164,7 @@ const Navigation: React.FC = () => {
                       exit={{ opacity: 0, scaleY: 0.35 }}
                       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                       style={{ transformOrigin: 'top center' }}
-                      className="flex min-h-[28rem] overflow-hidden rounded-[1.75rem] border border-brand-orange/15 bg-brand-surface pt-24 shadow-2xl"
+                      className="flex min-h-[28rem] overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-brand-surface pt-24 shadow-2xl"
                     >
                       <motion.div
                         initial={{ opacity: 0 }}

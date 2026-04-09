@@ -27,7 +27,7 @@ export default function CommunityStatsSection({
       <h3 className="font-tanker text-lg text-white mb-3">Community Rank</h3>
       {showCommunityAverages ? (
         <>
-          <p className="text-xs text-orange-500 font-sora tracking-wider mb-3">Based on {totalRatings} user ratings</p>
+          <p className="text-xs text-brand-red font-sora tracking-wider mb-3">Based on {totalRatings} user ratings</p>
           {popularityCount && popularityCount > 100 && (
             <div className="mb-3 p-3 bg-neutral-900 rounded-2xl border border-neutral-800">
               <div className="flex items-center justify-between">

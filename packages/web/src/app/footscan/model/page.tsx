@@ -138,7 +138,7 @@ export default function FootModelPage() {
               Foot Lab Model Testing
             </p>
             <h1 className="font-tanker text-5xl leading-none md:text-7xl">
-              VIEW <span className="text-orange-500">EVERY</span> MODEL
+              VIEW <span className="text-brand-red">EVERY</span> MODEL
             </h1>
             <p className="max-w-2xl font-sora text-base text-neutral-400 md:text-lg">
               Use the interactive viewer to test shape and volume switching, then compare the shipped GLB variants side by side below.

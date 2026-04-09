@@ -27,7 +27,7 @@ export function LoginForm() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 space-y-5">
+      <div className="bg-brand-surface border border-white/[0.06] p-8 space-y-5">
         <div className="space-y-2">
           <Label
             htmlFor="email"
@@ -42,7 +42,7 @@ export function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             value={email}
             required
-            className="bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-orange-500 focus:ring-orange-500 rounded-xl h-12"
+            className="bg-black border-white/[0.06] text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red focus:ring-brand-red rounded-none h-12"
           />
         </div>
         <div className="space-y-2">
@@ -55,7 +55,7 @@ export function LoginForm() {
             </Label>
             <Link
               href="/auth/reset-password"
-              className="font-sora text-xs text-neutral-500 hover:text-orange-500 transition-colors"
+              className="font-sora text-xs text-brand-putty/40 hover:text-brand-red transition-colors duration-500"
             >
               Forgot password?
             </Link>
@@ -68,7 +68,7 @@ export function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             value={password}
             required
-            className="bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-orange-500 focus:ring-orange-500 rounded-xl h-12"
+            className="bg-black border-white/[0.06] text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red focus:ring-brand-red rounded-none h-12"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export function LoginForm() {
             id="rememberMe"
             checked={rememberMe}
             onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-            className="border-neutral-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+            className="border-white/10 data-[state=checked]:bg-brand-red data-[state=checked]:border-brand-red"
           />
           <Label
             htmlFor="rememberMe"
@@ -117,7 +117,7 @@ export function LoginForm() {
               },
             });
           }}
-          className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-black font-tanker text-lg py-3 rounded-2xl transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-tanker text-lg py-3 transition-colors duration-500 flex items-center justify-center gap-2"
         >
           {loading ? <Loader2 size={20} className="animate-spin" /> : "LOGIN"}
         </motion.button>
@@ -146,7 +146,7 @@ export function LoginForm() {
               },
             });
           }}
-          className="w-full border border-neutral-700 hover:border-orange-500/30 text-white font-sora text-sm py-3 rounded-2xl transition-all flex items-center justify-center gap-3"
+          className="w-full border border-white/[0.06] hover:border-brand-red/30 text-brand-chalk font-sora text-sm py-3 transition-all duration-500 flex items-center justify-center gap-3"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -179,7 +179,7 @@ export function LoginForm() {
           Don&apos;t have an account?{" "}
           <Link
             href={signupHref}
-            className="text-orange-500 hover:text-orange-400 transition-colors"
+            className="text-brand-red hover:text-white transition-colors duration-500"
           >
             Sign up
           </Link>

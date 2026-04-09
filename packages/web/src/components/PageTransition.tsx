@@ -28,7 +28,7 @@ const MarqueeText = ({
     {Array(20)
       .fill(null)
       .map((_, i) => (
-        <span key={i} className="font-tanker text-xl text-orange-500/20">
+        <span key={i} className="font-sora text-[10px] uppercase tracking-[0.4em] text-brand-putty/10">
           {children}
         </span>
       ))}
@@ -139,13 +139,13 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 
             {/* Corner accents */}
             <motion.div
-              className="absolute top-6 left-6 w-16 h-16 border-l-2 border-t-2 border-orange-500/30"
+              className="absolute top-6 left-6 w-16 h-16 border-l border-t border-white/[0.06]"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
             />
             <motion.div
-              className="absolute bottom-6 right-6 w-16 h-16 border-r-2 border-b-2 border-orange-500/30"
+              className="absolute bottom-6 right-6 w-16 h-16 border-r border-b border-white/[0.06]"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
@@ -206,9 +206,9 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
                   {String(imageCounter).padStart(2, "0")}
                   /{String(transitionImages.length).padStart(2, "0")}
                 </span>
-                <div className="w-24 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
+                <div className="w-24 h-px bg-white/10 overflow-hidden">
                   <motion.div
-                    className="h-full bg-orange-500"
+                    className="h-full bg-brand-red/60"
                     initial={{ width: 0 }}
                     animate={{
                       width: `${(imageCounter / transitionImages.length) * 100}%`,
@@ -226,11 +226,11 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
             >
-              <div className="font-tanker text-2xl text-white mb-1">
-                GRIP <span className="text-orange-500">KICKS</span>
+              <div className="font-tanker text-xl tracking-wider text-white/90 mb-1">
+                GRIP KICKS
               </div>
-              <div className="font-sora text-[9px] text-neutral-600 tracking-wider">
-                V.2024
+              <div className="font-sora text-[9px] text-brand-putty/20 tracking-[0.3em] uppercase">
+                V.2025
               </div>
             </motion.div>
           </motion.div>

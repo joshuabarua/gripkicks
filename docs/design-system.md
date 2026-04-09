@@ -2,7 +2,7 @@
 
 ## Aesthetic Direction
 
-**Editorial × Precision Tool.** Like a climbing magazine designed by engineers who care about beauty. Approachable for everyday climbers, not just technical users. Dark, warm, focused.
+**Monolithic Minimalism × Retro Sci-Fi.** Inspired by 2001: A Space Odyssey — HAL 9000's red eye, monolithic surfaces, restrained motion. Dark, warm, focused. Approachable for everyday climbers, not just technical users.
 
 ---
 
@@ -14,8 +14,11 @@
 | Background | `bg-black` / `bg-neutral-950` | Page backgrounds |
 | Surface | `bg-neutral-900` | Cards, panels |
 | Border | `border-neutral-800` | Card borders, dividers |
-| Accent | `orange-500` | CTAs, highlights, active states |
-| Accent hover | `orange-400` | Hover on orange elements |
+| Accent | `brand-red` (`#f45b5b`) | CTAs, highlights, active states |
+| Accent hover | `brand-red/80` | Hover on accent elements |
+| Chalk | `brand-chalk` (`#f0ede5`) | Light text accents, warm white |
+| Putty | `brand-putty` (`#c8bfb3`) | Secondary warm neutral |
+| Charcoal | `brand-charcoal` (`#2d2d2d`) | Elevated surface, subtle cards |
 | Text primary | `text-white` | Headlines |
 | Text secondary | `text-neutral-400` / `text-neutral-500` | Body copy |
 | Text muted | `text-white/30` | Labels, meta |
@@ -33,13 +36,13 @@
 
 ## Section Labels
 
-**Old (avoid):** `<p className="font-mono text-xs text-orange-500 tracking-[0.3em]">[DASHBOARD]</p>`
+**Old (avoid):** `<p className="font-mono text-xs text-orange-500 tracking-[0.3em]">[DASHBOARD]</p>` (orange-500 is fully retired)
 
 **New (use):** `<p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Your Dashboard</p>`
 
 Rules:
 - `font-sora` not `font-mono`
-- `text-white/30` not `text-orange-500` — subtle, not technical
+- `text-white/30` not `text-brand-red` — subtle, not technical
 - No brackets `[ ]` — plain human-readable words
 - Sentence case for multi-word labels ("Your Dashboard", not "YOUR_DASHBOARD")
 - Trailing `mb-3` or `mb-4` before the heading
@@ -78,8 +81,8 @@ Every authenticated page follows:
 bg-neutral-900 border border-neutral-800 rounded-3xl p-6
 ```
 
-Hover state: `hover:border-orange-500/30 transition-colors`
-Active/selected: `border-orange-500 bg-orange-500/10`
+Hover state: `hover:border-brand-red/30 transition-colors`
+Active/selected: `border-brand-red bg-brand-red/10`
 
 ---
 
@@ -113,4 +116,5 @@ Note: `/foot-lab` redirects to `/dashboard`. Foot profile data lives in dashboar
 - `font-mono` for UI labels — technical, cold
 - `font-bold` headings — use `font-tanker` instead
 - Purple gradients, white backgrounds, generic layouts
+- `orange-500` anywhere — fully replaced by `brand-red`
 - `text-3xl font-bold` — use `font-tanker text-3xl` etc.

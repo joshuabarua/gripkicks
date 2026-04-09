@@ -24,7 +24,7 @@ const BadgeTooltip: React.FC<{ children: React.ReactNode; text: string }> = ({ c
         {children}
       </div>
       {isVisible && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 bg-neutral-900 text-white text-xs rounded-lg whitespace-nowrap z-50 border border-orange-500/20 shadow-xl">
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 bg-neutral-900 text-white text-xs rounded-lg whitespace-nowrap z-50 border border-brand-red/20 shadow-xl">
           {text}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
             <div className="border-4 border-transparent border-t-neutral-900"></div>
@@ -119,7 +119,7 @@ export default function ShoeStatsModal({
   return (
     <TooltipProvider>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-2xl p-0 overflow-hidden rounded-3xl shadow-2xl shadow-orange-500/5">
+        <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-2xl p-0 overflow-hidden rounded-3xl shadow-2xl shadow-brand-red/5">
           <DialogTitle className="sr-only">
             Shoe Rank - {shoeName}
           </DialogTitle>
@@ -129,7 +129,7 @@ export default function ShoeStatsModal({
 
           <div className="relative p-fluid-lg border-b border-neutral-800">
             <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-brand-red rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
             </div>
 
             <div className="absolute top-fluid-sm right-fluid-sm flex items-center gap-fluid-xs z-10">
@@ -138,7 +138,7 @@ export default function ShoeStatsModal({
                   onClick={onToggleFavourite}
                   className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center transition-colors"
                 >
-                  <Star className={`w-4 h-4 ${shoe.isFavourite ? 'fill-orange-500 text-orange-500' : 'text-neutral-500'}`} />
+                  <Star className={`w-4 h-4 ${shoe.isFavourite ? 'fill-brand-red text-brand-red' : 'text-neutral-500'}`} />
                 </button>
               )}
               {onEditShoe && (
@@ -186,14 +186,14 @@ export default function ShoeStatsModal({
                   <div className="flex items-center gap-1.5">
                     {rank && (
                       <BadgeTooltip text={`Rank #${rank} in your collection`}>
-                        <div className="bg-orange-500 text-black text-[10px] font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                        <div className="bg-brand-red text-black text-[10px] font-bold rounded-full w-6 h-6 flex items-center justify-center">
                           #{rank}
                         </div>
                       </BadgeTooltip>
                     )}
                     {shoe.isFavourite && (
                       <BadgeTooltip text="Favorite shoe">
-                        <div className="bg-orange-500/20 text-orange-500 rounded-full w-6 h-6 flex items-center justify-center border border-orange-500/30">
+                        <div className="bg-brand-red/20 text-brand-red rounded-full w-6 h-6 flex items-center justify-center border border-brand-red/30">
                           <Star className="w-3 h-3 fill-current" />
                         </div>
                       </BadgeTooltip>

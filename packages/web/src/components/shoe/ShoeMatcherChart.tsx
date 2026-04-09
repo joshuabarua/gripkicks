@@ -344,7 +344,7 @@ export function ShoeMatcherChart() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-red mx-auto mb-4"></div>
           <p className="text-neutral-500">Loading shoe matcher...</p>
         </div>
       </div>
@@ -384,7 +384,7 @@ export function ShoeMatcherChart() {
             <Filter className="w-4 h-4 mr-2" />
             Filters
             {selectedQuadrantFilter !== "all" && (
-              <Badge className="ml-2 bg-orange-500 text-black">1</Badge>
+              <Badge className="ml-2 bg-brand-red text-black">1</Badge>
             )}
           </Button>
         </div>
@@ -420,7 +420,7 @@ export function ShoeMatcherChart() {
                 onClick={() => setSelectedQuadrantFilter("all")}
                 className={
                   selectedQuadrantFilter === "all"
-                    ? "bg-orange-500 text-black"
+                    ? "bg-brand-red text-black"
                     : "bg-neutral-800 border-neutral-700 text-white"
                 }
               >
@@ -436,7 +436,7 @@ export function ShoeMatcherChart() {
                   onClick={() => setSelectedQuadrantFilter(key)}
                   className={
                     selectedQuadrantFilter === key
-                      ? "bg-orange-500 text-black"
+                      ? "bg-brand-red text-black"
                       : "bg-neutral-800 border-neutral-700 text-white"
                   }
                 >
@@ -491,7 +491,7 @@ export function ShoeMatcherChart() {
                     <div>
                       <p className="text-xs text-neutral-500">Comfort</p>
                       <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 text-orange-500" />
+                        <Star className="w-3 h-3 text-brand-red" />
                         <p className="text-sm text-white">
                           {selectedShoe.avgComfortScore?.toFixed(1) ||
                             "No rating"}
@@ -501,7 +501,7 @@ export function ShoeMatcherChart() {
                     <div>
                       <p className="text-xs text-neutral-500">Performance</p>
                       <div className="flex items-center gap-1">
-                        <Zap className="w-3 h-3 text-orange-500" />
+                        <Zap className="w-3 h-3 text-brand-red" />
                         <p className="text-sm text-white">
                           {selectedShoe.avgPerformanceRating?.toFixed(1) ||
                             "No rating"}
@@ -511,7 +511,7 @@ export function ShoeMatcherChart() {
                     <div>
                       <p className="text-xs text-neutral-500">Durability</p>
                       <div className="flex items-center gap-1">
-                        <Shield className="w-3 h-3 text-orange-500" />
+                        <Shield className="w-3 h-3 text-brand-red" />
                         <p className="text-sm text-white">
                           {selectedShoe.avgDurabilityRating?.toFixed(1) ||
                             "No rating"}

@@ -130,8 +130,8 @@ export function AdvancedFilters({
           onClick={() => onChange(option.value)}
           className={`px-3 py-1.5 rounded-full text-xs font-sora transition-all border ${
             selectedValue === option.value
-              ? 'bg-orange-500 text-black border-orange-500 shadow-lg shadow-orange-500/20'
-              : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-orange-500/40 hover:text-white'
+              ? 'bg-brand-red text-black border-brand-red shadow-lg shadow-brand-red/20'
+              : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-brand-red/40 hover:text-white'
           }`}
         >
           {option.label}
@@ -145,10 +145,10 @@ export function AdvancedFilters({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-orange-500" />
+            <Filter className="w-4 h-4 text-brand-red" />
             <CardTitle className="text-lg text-white">Advanced Filters</CardTitle>
             {activeFiltersCount > 0 && (
-              <Badge variant="secondary" className="bg-orange-500 text-black">
+              <Badge variant="secondary" className="bg-brand-red text-black">
                 {activeFiltersCount}
               </Badge>
             )}
@@ -200,7 +200,7 @@ export function AdvancedFilters({
                   <select
                     value={selectedBrand}
                     onChange={(e) => onBrandChange(e.target.value)}
-                    className="w-full bg-neutral-900 text-white border border-neutral-800 rounded-lg px-3 py-2 text-sm focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/20"
+                    className="w-full bg-neutral-900 text-white border border-neutral-800 rounded-lg px-3 py-2 text-sm focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20"
                   >
                     <option value="all">All Brands</option>
                     {uniqueBrands.map((brand) => (

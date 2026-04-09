@@ -17,14 +17,14 @@ export default function RecommendationsPage() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-4">
           <Link
             href="/stash"
-            className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-6 py-3 rounded-2xl shadow-lg shadow-orange-500/20 transition-colors duration-200 w-full sm:w-auto"
+            className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-lg px-6 py-3 rounded-2xl shadow-lg shadow-brand-red/20 transition-colors duration-200 w-full sm:w-auto"
           >
             Go to Sanctuary
           </Link>
           {!session?.user && (
             <Link
               href="/login"
-              className="border border-neutral-700 hover:border-orange-500/50 text-white font-sora px-6 py-3 rounded-2xl transition-colors duration-200 w-full sm:w-auto"
+              className="border border-neutral-700 hover:border-brand-red/50 text-white font-sora px-6 py-3 rounded-2xl transition-colors duration-200 w-full sm:w-auto"
             >
               Log in to save picks
             </Link>

@@ -63,9 +63,9 @@ export const radarQuadrants: Record<RadarQuadrantKey, RadarQuadrantInfo> = {
   "aggressive-comfort": {
     name: "Aggressive Comfort",
     description: "Downturned but padded",
-    borderColor: "border-orange-500/40",
-    bgColor: "bg-orange-500/5",
-    accentClass: "text-orange-400/80",
+    borderColor: "border-brand-red/40",
+    bgColor: "bg-brand-red/5",
+    accentClass: "text-brand-red/80",
   },
   competition: {
     name: "Competition",

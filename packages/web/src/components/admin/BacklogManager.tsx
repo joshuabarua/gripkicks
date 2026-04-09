@@ -124,7 +124,7 @@ export function BacklogManager() {
         <h2 className="text-xl font-semibold text-white">Backlog Management</h2>
         <button
           onClick={() => setIsCreating(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-brand-red hover:bg-brand-red/80 text-white rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Item
@@ -138,7 +138,7 @@ export function BacklogManager() {
             key={filter.value}
             onClick={() => setStatusFilter(filter.value)}
             className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${statusFilter === filter.value
-              ? "bg-orange-600 text-white"
+              ? "bg-brand-red text-white"
               : "bg-white/10 text-white/70 hover:bg-white/20"
               }`}
           >

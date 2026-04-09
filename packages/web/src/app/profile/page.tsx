@@ -120,7 +120,7 @@ export default function ProfilePage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors"
+              className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-lg px-8 py-3 transition-colors duration-500"
             >
               LOG IN
             </motion.button>
@@ -148,7 +148,7 @@ export default function ProfilePage() {
                   userId={displayUserId}
                   name={displayName}
                   email={displayEmail}
-                  className="w-20 h-20 rounded-2xl border-2 border-orange-500/20"
+                  className="w-20 h-20 rounded-2xl border-2 border-brand-red/20"
                   size={160}
                 />
               </div>
@@ -173,14 +173,14 @@ export default function ProfilePage() {
             >
               <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                    <Footprints className="w-5 h-5 text-orange-500" />
+                  <div className="w-10 h-10 bg-brand-red/10 rounded-xl flex items-center justify-center">
+                    <Footprints className="w-5 h-5 text-brand-red" />
                   </div>
                   {!profile?.footShape && (
                     <Link href="/footscan">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
-                        className="font-sora text-[10px] text-orange-500 cursor-pointer uppercase tracking-wide"
+                        className="font-sora text-[10px] text-brand-red cursor-pointer uppercase tracking-wide"
                       >
                         Set up
                       </motion.span>
@@ -197,14 +197,14 @@ export default function ProfilePage() {
 
               <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                    <Star className="w-5 h-5 text-orange-500" />
+                  <div className="w-10 h-10 bg-brand-red/10 rounded-xl flex items-center justify-center">
+                    <Star className="w-5 h-5 text-brand-red" />
                   </div>
                   {!profile?.favoriteShoe && (
                     <Link href="/stash">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
-                        className="font-sora text-[10px] text-orange-500 cursor-pointer uppercase tracking-wide"
+                        className="font-sora text-[10px] text-brand-red cursor-pointer uppercase tracking-wide"
                       >
                         Choose
                       </motion.span>
@@ -225,7 +225,7 @@ export default function ProfilePage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 relative overflow-hidden"
+                className="bg-brand-red rounded-3xl p-8 relative overflow-hidden"
               >
                 <div className="absolute inset-0 opacity-20">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-black/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
@@ -245,7 +245,7 @@ export default function ProfilePage() {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="bg-black text-orange-500 font-tanker text-lg px-6 py-3 rounded-2xl flex items-center gap-2"
+                      className="bg-black text-brand-red font-tanker text-lg px-6 py-3 flex items-center gap-2"
                     >
                       START SETUP
                       <ArrowUpRight className="w-5 h-5" />
@@ -270,7 +270,7 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
-                      <Edit2 className="w-5 h-5 text-orange-500" />
+                      <Edit2 className="w-5 h-5 text-brand-red" />
                     </div>
                     <div>
                       <h3 className="font-tanker text-2xl text-white">Profile Information</h3>
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
-                      <Lock className="w-5 h-5 text-orange-500" />
+                      <Lock className="w-5 h-5 text-brand-red" />
                     </div>
                     <div>
                       <h3 className="font-tanker text-2xl text-white">Security</h3>

@@ -28,7 +28,7 @@ export default function RatingInfoTooltip({
     <Tooltip>
       <TooltipTrigger asChild>
         <div className="flex items-center gap-2 text-xs text-neutral-500 cursor-help font-sora">
-          <Info className="w-3.5 h-3.5 text-orange-500/50" />
+          <Info className="w-3.5 h-3.5 text-brand-red/50" />
           <span>{getMessage()}</span>
         </div>
       </TooltipTrigger>

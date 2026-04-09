@@ -232,7 +232,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
     error: <AlertCircle className="w-5 h-5 text-red-400" />,
     warning: <AlertTriangle className="w-5 h-5 text-yellow-400" />,
     info: <Info className="w-5 h-5 text-blue-400" />,
-    loading: <Loader2 className="w-5 h-5 text-orange-400 animate-spin" />,
+    loading: <Loader2 className="w-5 h-5 text-brand-red animate-spin" />,
   };
 
   const styles = {
@@ -240,7 +240,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
     error: "bg-red-950/90 border-red-500/30",
     warning: "bg-yellow-950/90 border-yellow-500/30",
     info: "bg-blue-950/90 border-blue-500/30",
-    loading: "bg-orange-950/90 border-orange-500/30",
+    loading: "bg-black/90 border-brand-red/30",
   };
 
   return (
@@ -271,7 +271,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
                   toast.onRetry?.();
                   onClose();
                 }}
-                className="text-xs font-sora text-orange-400 hover:text-orange-300 transition-colors"
+                className="text-xs font-sora text-brand-red hover:text-white transition-colors duration-500"
               >
                 Retry
               </button>

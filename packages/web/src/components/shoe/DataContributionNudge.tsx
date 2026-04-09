@@ -68,14 +68,14 @@ export function DataContributionNudge({
             {completedCount}/{totalSteps} signals provided
           </p>
         </div>
-        <span className="font-tanker text-2xl text-orange-500">
+        <span className="font-tanker text-2xl text-brand-red">
           {Math.round(progressPct)}%
         </span>
       </div>
 
       <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden mb-4">
         <div
-          className="h-full bg-orange-500 rounded-full transition-all duration-500"
+          className="h-full bg-brand-red rounded-full transition-all duration-500"
           style={{ width: `${progressPct}%` }}
         />
       </div>
@@ -84,7 +84,7 @@ export function DataContributionNudge({
         {steps.map((step) => (
           <div key={step.label} className="flex items-center gap-3">
             {step.done ? (
-              <CheckCircle className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
+              <CheckCircle className="w-3.5 h-3.5 text-brand-red flex-shrink-0" />
             ) : (
               <Circle className="w-3.5 h-3.5 text-neutral-700 flex-shrink-0" />
             )}
@@ -101,7 +101,7 @@ export function DataContributionNudge({
         <div className="mt-4 pt-4 border-t border-white/5">
           <Link
             href={nextStep.href}
-            className="font-sora text-xs text-orange-500 hover:text-orange-400 transition-colors"
+            className="font-sora text-xs text-brand-red hover:text-brand-red/80 transition-colors"
           >
             {nextStep.label} →
           </Link>

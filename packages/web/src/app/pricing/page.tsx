@@ -29,8 +29,8 @@ export default function PricingPage() {
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <section className="relative px-6 md:px-12 lg:px-16 pt-32 pb-16">
-        <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-orange-500/10" />
-        <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-orange-500/10" />
+        <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-white/[0.06]" />
+        <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-white/[0.06]" />
 
         <div className="max-w-5xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
@@ -40,7 +40,7 @@ export default function PricingPage() {
             <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
               EVERYTHING
               <br />
-              <span className="text-orange-500">FREE</span>
+              <span className="text-brand-red">FREE</span>
             </h1>
           </motion.div>
 
@@ -62,14 +62,14 @@ export default function PricingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-neutral-900 border border-orange-500/30 rounded-3xl p-8 md:p-10 relative overflow-hidden"
+            className="bg-neutral-900 border border-brand-red/30 rounded-3xl p-8 md:p-10 relative overflow-hidden"
           >
             <div className="absolute inset-0 opacity-5">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
             </div>
 
             <div className="relative mb-8">
-              <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-orange-500 mb-2">
+              <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-brand-red mb-2">
                 Full access
               </p>
               <div className="flex items-baseline gap-3 mb-1">
@@ -84,8 +84,8 @@ export default function PricingPage() {
             <ul className="space-y-3 mb-10 relative">
               {features.map((feature) => (
                 <li key={feature} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <Check className="w-3 h-3 text-orange-500" />
+                  <div className="w-5 h-5 rounded-full bg-brand-red/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <Check className="w-3 h-3 text-brand-red" />
                   </div>
                   <span className="font-sora text-sm text-neutral-300">
                     {feature}
@@ -98,7 +98,7 @@ export default function PricingPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="relative w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
+                className="relative w-full bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
               >
                 {isAuthenticated ? "GO TO DASHBOARD" : "JOIN FOR FREE"}
                 <ArrowUpRight className="w-5 h-5" />
@@ -117,7 +117,7 @@ export default function PricingPage() {
             <h2 className="font-tanker text-4xl md:text-6xl mb-6">
               MEET YOUR
               <br />
-              <span className="text-orange-500">SOLE MATE</span>
+              <span className="text-brand-red">SOLE MATE</span>
             </h2>
           </motion.div>
 
@@ -134,7 +134,7 @@ export default function PricingPage() {
             </p>
             <p>
               With{" "}
-              <span className="text-orange-500 font-medium">Sole Mate</span>, we
+              <span className="text-brand-red font-medium">Sole Mate</span>, we
               match you with your foot twin. When someone with your exact foot
               profile shares a shoe in common with you and has rated other shoes
               \u2014 you get notified. Their experience becomes your shortcut.
@@ -171,7 +171,7 @@ export default function PricingPage() {
                 key={item.step}
                 className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6"
               >
-                <span className="font-tanker text-3xl text-orange-500/20">
+                <span className="font-tanker text-3xl text-brand-red/20">
                   {item.step}
                 </span>
                 <h4 className="font-tanker text-lg mt-2 mb-1">{item.title}</h4>
@@ -193,7 +193,7 @@ export default function PricingPage() {
             <h2 className="font-tanker text-4xl md:text-5xl mb-12">
               STRAIGHT
               <br />
-              <span className="text-orange-500">TALK</span>
+              <span className="text-brand-red">TALK</span>
             </h2>
           </motion.div>
 
@@ -244,12 +244,12 @@ export default function PricingPage() {
               trigger="scroll"
               className="mx-auto mb-6"
             >
-              <Sparkles className="w-8 h-8 text-orange-500" />
+              <Sparkles className="w-8 h-8 text-brand-red" />
             </AnimatedIcon>
             <h2 className="font-tanker text-5xl md:text-7xl mb-6">
               FIND YOUR
               <br />
-              <span className="text-orange-500">PERFECT FIT</span>
+              <span className="text-brand-red">PERFECT FIT</span>
             </h2>
             <p className="font-sora text-neutral-500 text-lg mb-10 max-w-xl mx-auto">
               Every tool, every feature, completely free. Jump in and find the shoes that fit your feet.
@@ -258,7 +258,7 @@ export default function PricingPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
+                className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
               >
                 {isAuthenticated ? "GO TO DASHBOARD" : "JOIN FOR FREE"}
                 <ArrowUpRight className="w-5 h-5" />

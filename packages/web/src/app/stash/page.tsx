@@ -338,7 +338,7 @@ export default function ShoeSanctuaryPage() {
                 <h1 className="font-so-cloudy uppercase text-fluid-6xl md:text-fluid-7xl text-white leading-none">
                   Shoe
                   <br />
-                  <span className="text-orange-500">Sanctuary</span>
+                  <span className="text-brand-red">Sanctuary</span>
                 </h1>
                 <p className="font-sora text-neutral-500 text-sm md:text-fluid-base mt-fluid-sm max-w-md">
                   Your personal climbing shoe collection. Click any shoe to view
@@ -427,9 +427,9 @@ export default function ShoeSanctuaryPage() {
                 <motion.div
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mb-fluid-md"
+                  className="w-20 h-20 bg-brand-red/10 rounded-full flex items-center justify-center mb-fluid-md"
                 >
-                  <Footprints className="w-10 h-10 text-orange-500" />
+                  <Footprints className="w-10 h-10 text-brand-red" />
                 </motion.div>
                 <h3 className="font-tanker text-fluid-3xl text-white mb-fluid-xs">
                   YOUR SANCTUARY AWAITS

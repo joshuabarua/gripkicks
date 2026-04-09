@@ -16,15 +16,15 @@ export default function AboutPage() {
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Hero */}
       <section className="relative px-6 md:px-12 lg:px-16 pt-32 pb-24">
-        <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-orange-500/10" />
-        <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-orange-500/10" />
+        <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-white/[0.06]" />
+        <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-white/[0.06]" />
 
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Why GripKicks</p>
             <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
               BORN FROM<br />
-              <span className="text-orange-500">FRUSTRATION</span>
+              <span className="text-brand-red">FRUSTRATION</span>
             </h1>
           </motion.div>
 
@@ -59,7 +59,7 @@ export default function AboutPage() {
                 So I built GripKicks.
               </p>
               <p>
-                The idea is simple: <span className="text-orange-500">why not democratize the shoe-finding process?</span> Instead 
+                The idea is simple: <span className="text-brand-red">why not democratize the shoe-finding process?</span> Instead 
                 of relying on marketing, brand loyalty, or one person&apos;s review — what if we 
                 could match climbers by their actual foot shape and volume, and share real 
                 comfort and performance data across the community?
@@ -72,13 +72,13 @@ export default function AboutPage() {
           </motion.div>
 
           {/* Divider */}
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent my-16" />
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-red/20 to-transparent my-16" />
 
           {/* Values Grid */}
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">What We Believe</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-12">
-              BUILT ON<br /><span className="text-orange-500">PRINCIPLES</span>
+              BUILT ON<br /><span className="text-brand-red">PRINCIPLES</span>
             </h2>
           </motion.div>
 
@@ -111,11 +111,11 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 group hover:border-orange-500/20 transition-colors"
+                className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 group hover:border-brand-red/20 transition-colors"
               >
                 <AnimatedIcon animation="pop" trigger="scroll" delay={i * 0.1}>
-                  <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center mb-6">
-                    <card.icon className="w-6 h-6 text-orange-500" />
+                  <div className="w-12 h-12 bg-brand-red/10 rounded-2xl flex items-center justify-center mb-6">
+                    <card.icon className="w-6 h-6 text-brand-red" />
                   </div>
                 </AnimatedIcon>
                 <h3 className="font-tanker text-xl mb-3">{card.title}</h3>
@@ -132,7 +132,7 @@ export default function AboutPage() {
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">How It Works</p>
             <h2 className="font-tanker text-4xl md:text-5xl mb-16">
-              SIMPLE BY<br /><span className="text-orange-500">DESIGN</span>
+              SIMPLE BY<br /><span className="text-brand-red">DESIGN</span>
             </h2>
           </motion.div>
 
@@ -162,7 +162,7 @@ export default function AboutPage() {
                 viewport={{ once: true }}
                 className="flex gap-8 items-start"
               >
-                <div className="font-tanker text-6xl text-orange-500/20 leading-none shrink-0 w-20">
+                <div className="font-tanker text-6xl text-brand-red/20 leading-none shrink-0 w-20">
                   {item.step}
                 </div>
                 <div>
@@ -180,7 +180,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <h2 className="font-tanker text-5xl md:text-7xl mb-6">
-              LET&apos;S FIND YOUR<br /><span className="text-orange-500">PERFECT FIT</span>
+              LET&apos;S FIND YOUR<br /><span className="text-brand-red">PERFECT FIT</span>
             </h2>
             <p className="font-sora text-neutral-500 text-lg mb-10 max-w-xl mx-auto">
               Join a community of climbers who are tired of guessing and ready to share what actually works.
@@ -190,7 +190,7 @@ export default function AboutPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
+                  className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
                 >
                   GET STARTED
                   <ArrowUpRight className="w-5 h-5" />
@@ -200,7 +200,7 @@ export default function AboutPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="border border-neutral-700 hover:border-orange-500/30 text-neutral-400 hover:text-orange-500 font-sora px-10 py-4 rounded-2xl transition-all"
+                  className="border border-neutral-700 hover:border-brand-red/30 text-neutral-400 hover:text-brand-red font-sora px-10 py-4 rounded-2xl transition-all"
                 >
                   Read our privacy promise
                 </motion.button>
@@ -211,7 +211,7 @@ export default function AboutPage() {
       </section>
 
       {/* Marquee */}
-      <section className="py-6 bg-orange-500 overflow-hidden">
+      <section className="py-6 bg-brand-red overflow-hidden">
         <motion.div
           animate={{ x: [0, -1000] }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}

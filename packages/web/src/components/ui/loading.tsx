@@ -38,9 +38,9 @@ export function Loading({
   if (variant === 'minimal') {
     return (
       <div className="flex items-center gap-2">
-        <div className={`${sizeClasses[size]} h-[2px] bg-neutral-800 rounded-full overflow-hidden`}>
+        <div className={`${sizeClasses[size]} h-px bg-white/10 overflow-hidden`}>
           <motion.div
-            className="h-full bg-orange-500"
+            className="h-full bg-brand-red/60"
             initial={{ width: '0%' }}
             animate={{ width: showProgress ? `${progress}%` : ['0%', '100%', '0%'] }}
             transition={showProgress ? { duration: 0.15 } : { duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
@@ -53,17 +53,13 @@ export function Loading({
   if (variant === 'full') {
     return (
       <div className="flex min-h-svh w-full items-center justify-center bg-black">
-        <div className="flex flex-col items-center gap-4">
-          <motion.div
-            className="w-16 h-16 border-l-2 border-t-2 border-orange-500/30"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          />
+        <div className="flex flex-col items-center gap-8">
+          <div className="w-3 h-3 rounded-full bg-brand-red animate-hal-pulse" />
           <div className="flex flex-col items-center gap-3">
-            <span className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">{text}</span>
-            <div className={`${sizeClasses[size]} h-[2px] bg-neutral-800 rounded-full overflow-hidden`}>
+            <span className="font-sora text-[9px] uppercase tracking-[0.4em] text-white/20">{text}</span>
+            <div className={`${sizeClasses[size]} h-px bg-white/10 overflow-hidden`}>
               <motion.div
-                className="h-full bg-orange-500"
+                className="h-full bg-brand-red/60"
                 initial={{ width: '0%' }}
                 animate={{ width: showProgress ? `${progress}%` : ['0%', '100%', '0%'] }}
                 transition={showProgress ? { duration: 0.15 } : { duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
@@ -77,21 +73,21 @@ export function Loading({
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {[0, 1, 2].map((i) => (
           <motion.div
             key={i}
-            className={`${dotSizes[size]} bg-orange-500 rounded-full`}
-            animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1, 0.8] }}
-            transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+            className={`${dotSizes[size]} bg-brand-red rounded-full`}
+            animate={{ opacity: [0.2, 1, 0.2] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.3, ease: "easeInOut" }}
           />
         ))}
       </div>
-      <span className={`font-sora ${textSizes[size]} uppercase tracking-[0.2em] text-neutral-600`}>{text}</span>
+      <span className={`font-sora ${textSizes[size]} uppercase tracking-[0.3em] text-brand-putty/30`}>{text}</span>
       {showProgress && (
-        <div className={`${sizeClasses[size]} h-[2px] bg-neutral-800 rounded-full overflow-hidden`}>
+        <div className={`${sizeClasses[size]} h-px bg-white/10 overflow-hidden`}>
           <motion.div
-            className="h-full bg-orange-500"
+            className="h-full bg-brand-red/60"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.15 }}
@@ -111,9 +107,9 @@ export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
 
   return (
     <motion.div
-      className={`${sizes[size]} border-2 border-neutral-800 border-t-orange-500 rounded-full`}
+      className={`${sizes[size]} border border-white/10 border-t-brand-red rounded-full`}
       animate={{ rotate: 360 }}
-      transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+      transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
     />
   );
 }
@@ -128,9 +124,9 @@ export function LoadingBar({
   size?: 'sm' | 'md' | 'lg';
 }) {
   const sizeClasses = {
-    sm: 'w-16 h-[2px]',
-    md: 'w-24 h-[2px]',
-    lg: 'w-32 h-1'
+    sm: 'w-16 h-px',
+    md: 'w-24 h-px',
+    lg: 'w-32 h-px'
   };
 
   const isIndeterminate = progress === undefined;
@@ -139,13 +135,13 @@ export function LoadingBar({
   return (
     <div className="flex items-center gap-3">
       {showLabel && (
-        <span className="font-sora text-[10px] text-neutral-600">
+        <span className="font-sora text-[10px] text-brand-putty/30">
           {isIndeterminate ? '···' : `${Math.round(progress)}%`}
         </span>
       )}
-      <div className={`${sizeClasses[size]} bg-neutral-800 rounded-full overflow-hidden`}>
+      <div className={`${sizeClasses[size]} bg-white/10 overflow-hidden`}>
         <motion.div
-          className="h-full bg-orange-500"
+          className="h-full bg-brand-red/60"
           initial={{ width: '0%', x: 0 }}
           animate={isIndeterminate
             ? { x: ['-100%', '200%'] }
@@ -165,44 +161,32 @@ export function LoadingBar({
 export function FullPageLoading({ text = 'Loading' }: { text?: string }) {
   return (
     <div className="flex min-h-svh w-full items-center justify-center bg-black">
-      <div className="relative flex flex-col items-center">
+      <div className="relative flex flex-col items-center gap-10">
         <motion.div
-          className="absolute -top-8 -left-8 w-12 h-12 border-l-2 border-t-2 border-orange-500/20"
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
-        />
-        <motion.div
-          className="absolute -bottom-8 -right-8 w-12 h-12 border-r-2 border-b-2 border-orange-500/20"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-        />
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="relative"
+        >
+          <div className="w-3 h-3 rounded-full bg-brand-red animate-hal-pulse" />
+          <div className="absolute inset-0 w-3 h-3 rounded-full bg-brand-red blur-md opacity-60 animate-hal-pulse" />
+        </motion.div>
 
-        <div className="flex flex-col items-center gap-4 p-8">
-          <div className="font-tanker text-2xl text-white">
-            GRIP <span className="text-orange-500">KICKS</span>
+        <div className="flex flex-col items-center gap-6">
+          <div className="font-tanker text-xl tracking-wider text-white/90">
+            GRIP KICKS
           </div>
 
-          <div className="flex items-center gap-2">
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                className="w-2 h-2 bg-orange-500 rounded-full"
-                animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
-                transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
-              />
-            ))}
-          </div>
-
-          <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-600">{text}</span>
-
-          <div className="w-24 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
+          <div className="w-32 h-px bg-white/10 overflow-hidden">
             <motion.div
-              className="h-full bg-orange-500"
-              animate={{ x: ['-100%', '200%'] }}
+              className="h-full bg-brand-red/60"
+              initial={{ x: "-100%" }}
+              animate={{ x: "100%" }}
               transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-              style={{ width: '50%' }}
             />
           </div>
+
+          <span className="font-sora text-[9px] uppercase tracking-[0.4em] text-white/20">{text}</span>
         </div>
       </div>
     </div>

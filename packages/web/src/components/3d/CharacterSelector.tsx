@@ -10,7 +10,7 @@ interface CharacterSelectorProps {
 }
 
 const characters = [
-  { id: 'foot', name: 'Foot Lab', modelPath: '/glb/foot.glb', scale: 0.8, color: 'from-orange-500 via-pink-500 to-purple-600' },
+  { id: 'foot', name: 'Foot Lab', modelPath: '/glb/foot.glb', scale: 0.8, color: 'from-brand-red via-pink-500 to-purple-600' },
   { id: 'shoe', name: 'Shoe Sanctuary', modelPath: '/glb/drago.glb', scale: 1.2, color: 'from-blue-600 via-cyan-500 to-teal-400' },
 ];
 
@@ -167,7 +167,7 @@ export default function CharacterSelector({ onSelectCharacter }: CharacterSelect
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.1 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-orange-500 pointer-events-none"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-brand-red pointer-events-none"
             style={{ zIndex: -1 }}
           />
         )}

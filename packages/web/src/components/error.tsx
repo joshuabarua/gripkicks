@@ -104,7 +104,7 @@ function ErrorFallback({
   const severityColors = {
     low: "border-blue-500/30 bg-blue-500/5",
     medium: "border-yellow-500/30 bg-yellow-500/5",
-    high: "border-orange-500/30 bg-orange-500/5",
+    high: "border-brand-red/30 bg-brand-red/5",
     critical: "border-red-500/30 bg-red-500/5",
   };
 
@@ -130,7 +130,7 @@ function ErrorFallback({
         >
           <div className="flex items-center gap-4 mb-6">
             <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center">
-              <Icon className="w-6 h-6 text-orange-500" />
+              <Icon className="w-6 h-6 text-brand-red" />
             </div>
             <div>
               <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500">
@@ -150,7 +150,7 @@ function ErrorFallback({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onRetry}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg py-3 rounded-2xl transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-lg py-3 transition-colors duration-500 flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-5 h-5" />
                 TRY AGAIN
@@ -162,7 +162,7 @@ function ErrorFallback({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onGoBack}
-                className="flex-1 border border-neutral-700 hover:border-orange-500/30 text-neutral-400 hover:text-white font-sora text-sm py-3 rounded-2xl transition-all flex items-center justify-center gap-2"
+                className="flex-1 border border-white/[0.06] hover:border-brand-red/30 text-brand-putty/50 hover:text-white font-sora text-sm py-3 transition-all duration-500 flex items-center justify-center gap-2"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Go Back
@@ -172,7 +172,7 @@ function ErrorFallback({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onGoHome}
-                className="flex-1 border border-neutral-700 hover:border-orange-500/30 text-neutral-400 hover:text-white font-sora text-sm py-3 rounded-2xl transition-all flex items-center justify-center gap-2"
+                className="flex-1 border border-white/[0.06] hover:border-brand-red/30 text-brand-putty/50 hover:text-white font-sora text-sm py-3 transition-all duration-500 flex items-center justify-center gap-2"
               >
                 <Home className="w-4 h-4" />
                 Home

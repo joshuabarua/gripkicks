@@ -73,11 +73,11 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="relative flex flex-col justify-center items-center gap-fluid-sm p-fluid-md rounded-2xl border border-[#252525] bg-[#252525] shadow-[0_0_40px_0_rgba(87,89,88,0.10)] transition-all duration-300 group-hover:shadow-[0_0_60px_0_rgba(251,146,60,0.20)] group-hover:border-orange-500/50">
+      <div className="relative flex flex-col justify-center items-center gap-fluid-sm p-fluid-md rounded-2xl border border-[#252525] bg-[#252525] shadow-[0_0_40px_0_rgba(87,89,88,0.10)] transition-all duration-300 group-hover:shadow-[0_0_60px_0_rgba(244,91,91,0.20)] group-hover:border-brand-red/50">
         {(shoe.isFavourite || specialLabel) && (
           <div className="absolute top-fluid-sm left-fluid-sm z-20 flex gap-fluid-xs">
             {shoe.isFavourite && (
-              <div className="bg-orange-500/90 text-white rounded-full w-7 h-7 flex items-center justify-center">
+              <div className="bg-brand-red/90 text-white rounded-full w-7 h-7 flex items-center justify-center">
                 <Star className="w-3.5 h-3.5 fill-current" />
               </div>
             )}
@@ -94,7 +94,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
 
         <div className="absolute top-fluid-sm right-fluid-sm z-20">
           <div className="bg-black/20 backdrop-blur-sm rounded-full px-fluid-sm py-[2px] border border-white/10">
-            <span className="font-sora text-fluid-xs text-orange-400 font-bold">{avgScore}</span>
+            <span className="font-sora text-fluid-xs text-brand-red font-bold">{avgScore}</span>
           </div>
         </div>
 
@@ -122,7 +122,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
         </div>
 
         <div className="w-full text-center">
-          <p className="font-sora uppercase text-white text-sm font-medium leading-tight truncate group-hover:text-orange-400 transition-colors">
+          <p className="font-sora uppercase text-white text-sm font-medium leading-tight truncate group-hover:text-brand-red transition-colors">
             {name}
           </p>
         </div>

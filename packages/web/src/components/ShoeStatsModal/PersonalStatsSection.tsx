@@ -37,7 +37,7 @@ export default function PersonalStatsSection({
           className="bg-neutral-900 rounded-2xl p-4 border border-neutral-800"
         >
           <div className="flex items-center gap-2 mb-2">
-            <Trophy className="w-4 h-4 text-orange-500" />
+            <Trophy className="w-4 h-4 text-brand-red" />
             <span className="text-xs text-neutral-400 font-sora">Comfort</span>
           </div>
           <div className="text-2xl font-tanker text-white">
@@ -52,7 +52,7 @@ export default function PersonalStatsSection({
           className="bg-neutral-900 rounded-2xl p-4 border border-neutral-800"
         >
           <div className="flex items-center gap-2 mb-2">
-            <Zap className="w-4 h-4 text-orange-500" />
+            <Zap className="w-4 h-4 text-brand-red" />
             <span className="text-xs text-neutral-400 font-sora">Performance</span>
           </div>
           <div className="text-2xl font-tanker text-white">
@@ -67,7 +67,7 @@ export default function PersonalStatsSection({
           className="bg-neutral-900 rounded-2xl p-4 border border-neutral-800"
         >
           <div className="flex items-center gap-2 mb-2">
-            <Shield className="w-4 h-4 text-orange-500" />
+            <Shield className="w-4 h-4 text-brand-red" />
             <span className="text-xs text-neutral-400 font-sora">Durability</span>
           </div>
           <div className="text-2xl font-tanker text-white">

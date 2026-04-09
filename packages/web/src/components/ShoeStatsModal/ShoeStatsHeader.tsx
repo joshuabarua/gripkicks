@@ -22,7 +22,7 @@ export default function ShoeStatsHeader({
   onClose
 }: ShoeStatsHeaderProps) {
   return (
-    <div className="relative bg-gradient-to-r from-orange-600/20 to-amber-600/20 p-6 border-b border-white/30">
+    <div className="relative bg-gradient-to-r from-brand-red/20 to-brand-red/10 p-6 border-b border-white/30">
       <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
         {onToggleFavourite && (
           <button
@@ -58,7 +58,7 @@ export default function ShoeStatsHeader({
 
       <div>
         <h2 className="text-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
-        <p className="text-orange-100">{shoeBrand}</p>
+        <p className="text-neutral-300">{shoeBrand}</p>
       </div>
     </div>
   );

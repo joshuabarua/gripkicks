@@ -33,7 +33,7 @@ const MarqueeText = ({ children, reverse = false }: { children: React.ReactNode;
     className="flex gap-8 whitespace-nowrap"
   >
     {Array(20).fill(null).map((_, i) => (
-      <span key={i} className="font-tanker text-xl text-orange-500/20">
+      <span key={i} className="font-sora text-[10px] uppercase tracking-[0.4em] text-brand-putty/15">
         {children}
       </span>
     ))}
@@ -83,230 +83,219 @@ export default function Dashboard() {
   const hasFootProfile = !!(footShape && footVolume);
 
   return (
-    <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      <section className="py-4 bg-orange-500/10 backdrop-blur-sm overflow-hidden">
-        <MarqueeText>YOUR GEAR • YOUR STATS • GRIP KICKS • </MarqueeText>
+    <main className="min-h-screen bg-black text-brand-chalk overflow-x-hidden">
+      <div className="scanline-overlay" />
+
+      <section className="py-3 border-b border-white/[0.06] overflow-hidden">
+        <MarqueeText>YOUR GEAR &mdash; YOUR STATS &mdash; GRIP KICKS &mdash; </MarqueeText>
       </section>
 
       <section className="px-6 md:px-12 lg:px-16 py-12 max-w-7xl mx-auto">
 
-        {/* Hero Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-12 mb-12"
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-12 mb-12"
         >
           <div>
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Your Dashboard</p>
-            <h1 className="font-tanker text-5xl md:text-7xl lg:text-8xl leading-[0.9]">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-2 h-2 rounded-full bg-brand-red animate-hal-pulse" />
+              <p className="font-sora text-[9px] uppercase tracking-[0.35em] text-brand-putty/40">Your Dashboard</p>
+            </div>
+            <h1 className="font-tanker text-5xl md:text-7xl lg:text-8xl leading-[0.9] text-brand-chalk">
               Hey {firstName},<br />
-              <span className="text-orange-500">ready to climb?</span>
+              <span className="text-brand-red">ready to climb?</span>
             </h1>
           </div>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => router.push('/stash')}
-            className="group flex items-center gap-3 font-tanker text-2xl text-orange-500 hover:text-orange-400 transition-colors shrink-0"
+            className="group flex items-center gap-3 font-tanker text-2xl text-brand-red hover:text-white transition-colors duration-500 shrink-0"
           >
             View Collection
-            <div className="w-10 h-10 rounded-full border border-orange-500/30 flex items-center justify-center group-hover:border-orange-500 transition-colors">
-              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
+            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-brand-red transition-colors duration-500">
+              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-700" />
             </div>
           </motion.button>
         </motion.div>
 
-        {/* Stats Bento */}
-        <div className="grid grid-cols-12 gap-4 auto-rows-[140px] mb-12">
+        <div className="w-full h-px bg-white/[0.06] mb-12" />
+
+        <div className="grid grid-cols-12 gap-px bg-white/[0.06] mb-12">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="col-span-12 md:col-span-4 row-span-2 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between"
+            className="col-span-12 md:col-span-4 row-span-2 bg-black p-8 flex flex-col justify-between min-h-[280px]"
           >
-            <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-              <Plus className="w-6 h-6 text-orange-500" />
-            </div>
+            <Plus className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
             <div>
-              <div className="font-tanker text-7xl text-white leading-none">{userShoes.length}</div>
-              <p className="font-sora text-neutral-500 text-sm mt-2">Shoes in your collection</p>
+              <div className="font-tanker text-7xl text-brand-chalk leading-none">{userShoes.length}</div>
+              <p className="font-sora text-brand-putty/40 text-sm mt-2">Shoes in your collection</p>
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.08 }}
-            className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between"
+            className="col-span-6 md:col-span-4 bg-black p-8 flex items-center justify-between min-h-[140px]"
           >
             <div>
-              <div className="font-tanker text-4xl text-white">{favCount}</div>
-              <p className="font-sora text-neutral-500 text-xs mt-1">Favorites</p>
+              <div className="font-tanker text-4xl text-brand-chalk">{favCount}</div>
+              <p className="font-sora text-brand-putty/40 text-xs mt-1">Favorites</p>
             </div>
-            <Heart className="w-8 h-8 text-orange-500" />
+            <Heart className="w-6 h-6 text-brand-red" strokeWidth={1.5} />
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.12 }}
-            className="col-span-6 md:col-span-4 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between"
+            className="col-span-6 md:col-span-4 bg-black p-8 flex items-center justify-between min-h-[140px]"
           >
             <div>
-              <div className="font-tanker text-4xl text-white">{avgComfort}</div>
-              <p className="font-sora text-neutral-500 text-xs mt-1">Avg Comfort</p>
+              <div className="font-tanker text-4xl text-brand-chalk">{avgComfort}</div>
+              <p className="font-sora text-brand-putty/40 text-xs mt-1">Avg Comfort</p>
             </div>
-            <Star className="w-8 h-8 text-orange-500" />
+            <Star className="w-6 h-6 text-brand-red" strokeWidth={1.5} />
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.16 }}
             onClick={() => router.push('/footscan')}
-            className="col-span-12 md:col-span-8 row-span-1 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex items-center justify-between cursor-pointer hover:border-orange-500/30 transition-all group"
+            className="col-span-12 md:col-span-8 bg-black p-8 flex items-center justify-between cursor-pointer hover:bg-brand-surface transition-colors duration-500 group min-h-[140px]"
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-orange-500/20 transition-colors">
-                <Footprints className="w-6 h-6 text-orange-500" />
-              </div>
+              <Footprints className="w-6 h-6 text-brand-red flex-shrink-0" strokeWidth={1.5} />
               <div>
                 {hasFootProfile ? (
                   <>
-                    <div className="font-tanker text-2xl text-white capitalize">
-                      {footShape} <span className="text-white/30">·</span> {footVolume} volume
+                    <div className="font-tanker text-2xl text-brand-chalk capitalize">
+                      {footShape} <span className="text-brand-putty/30">/</span> {footVolume} volume
                     </div>
-                    <p className="font-sora text-neutral-500 text-xs mt-0.5">Your foot profile — tap to update</p>
+                    <p className="font-sora text-brand-putty/40 text-xs mt-0.5">Your foot profile — tap to update</p>
                   </>
                 ) : (
                   <>
-                    <div className="font-tanker text-xl text-orange-500">Set up your foot profile</div>
-                    <p className="font-sora text-neutral-500 text-xs mt-0.5">Takes 30 seconds — unlocks better matches</p>
+                    <div className="font-tanker text-xl text-brand-red">Set up your foot profile</div>
+                    <p className="font-sora text-brand-putty/40 text-xs mt-0.5">Takes 30 seconds — unlocks better matches</p>
                   </>
                 )}
               </div>
             </div>
-            <ArrowUpRight className="w-5 h-5 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-45 transition-all flex-shrink-0" />
+            <ArrowUpRight className="w-5 h-5 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500 flex-shrink-0" />
           </motion.div>
         </div>
 
-        {/* Where to next */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="border-t border-white/5 pt-12 mb-12"
+          className="mb-12"
         >
+          <div className="w-full h-px bg-white/[0.06] mb-12" />
+
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <h2 className="font-tanker text-4xl md:text-5xl leading-none">Where to next?</h2>
+            <h2 className="font-tanker text-4xl md:text-5xl leading-none text-brand-chalk">Where to next?</h2>
             <button
               onClick={() => router.push('/findmyshoe')}
-              className="group flex items-center gap-2 font-tanker text-xl text-orange-500 hover:text-orange-400 transition-colors"
+              className="group flex items-center gap-2 font-tanker text-xl text-brand-red hover:text-white transition-colors duration-500"
             >
               Find my shoe
-              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
+              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
             </button>
           </div>
 
-          <div className="grid grid-cols-12 gap-4">
+          <div className="grid grid-cols-12 gap-px bg-white/[0.06]">
             <motion.div
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
+              whileHover={{ scale: 1.005 }}
+              whileTap={{ scale: 0.995 }}
               onClick={() => router.push('/stash')}
-              className="col-span-12 md:col-span-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 flex flex-col justify-between cursor-pointer group relative overflow-hidden min-h-[180px]"
+              className="col-span-12 md:col-span-8 bg-brand-red p-8 flex flex-col justify-between cursor-pointer group relative overflow-hidden min-h-[180px]"
             >
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-black/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
-              </div>
               <div className="relative flex justify-between items-start">
                 <h3 className="font-tanker text-4xl md:text-5xl text-black">Shoe Sanctuary</h3>
-                <div className="w-12 h-12 bg-black/10 rounded-full flex items-center justify-center group-hover:bg-black/20 transition-colors">
-                  <ArrowUpRight className="w-6 h-6 text-black group-hover:rotate-45 transition-transform" />
+                <div className="w-10 h-10 border border-black/20 flex items-center justify-center group-hover:border-black/40 transition-colors">
+                  <ArrowUpRight className="w-5 h-5 text-black group-hover:rotate-45 transition-transform duration-500" />
                 </div>
               </div>
-              <p className="relative font-sora text-black/70 max-w-md">Your full climbing shoe collection</p>
+              <p className="relative font-sora text-black/60 max-w-md text-sm">Your full climbing shoe collection</p>
             </motion.div>
 
             <motion.div
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
+              whileHover={{ backgroundColor: 'rgba(26,26,26,1)' }}
               onClick={() => router.push('/findmyshoe')}
-              className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
+              className="col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
             >
               <div className="flex justify-between items-start">
-                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-orange-500" />
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
+                <TrendingUp className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
+                <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
               </div>
               <div>
-                <h4 className="font-tanker text-xl text-white mb-1">Sole Mate</h4>
-                <p className="font-sora text-neutral-500 text-xs">Discover shoes made for you</p>
+                <h4 className="font-tanker text-xl text-brand-chalk mb-1">Sole Mate</h4>
+                <p className="font-sora text-brand-putty/40 text-xs">Discover shoes made for you</p>
               </div>
             </motion.div>
 
             <motion.div
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
+              whileHover={{ backgroundColor: 'rgba(26,26,26,1)' }}
               onClick={() => router.push('/footscan')}
-              className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
+              className="col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
             >
               <div className="flex justify-between items-start">
-                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                  <Footprints className="w-6 h-6 text-orange-500" />
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
+                <Footprints className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
+                <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
               </div>
               <div>
-                <h4 className="font-tanker text-xl text-white mb-1">Foot Lab</h4>
-                <p className="font-sora text-neutral-500 text-xs">Update your foot profile</p>
+                <h4 className="font-tanker text-xl text-brand-chalk mb-1">Foot Lab</h4>
+                <p className="font-sora text-brand-putty/40 text-xs">Update your foot profile</p>
               </div>
             </motion.div>
 
             <motion.div
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
+              whileHover={{ backgroundColor: 'rgba(26,26,26,1)' }}
               onClick={() => router.push('/matcher')}
-              className="col-span-6 md:col-span-4 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 flex flex-col justify-between cursor-pointer group hover:border-orange-500/30 transition-colors min-h-[180px]"
+              className="col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
             >
               <div className="flex justify-between items-start">
-                <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                  <Target className="w-6 h-6 text-orange-500" />
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
+                <Target className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
+                <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
               </div>
               <div>
-                <h4 className="font-tanker text-xl text-white mb-1">Matcher</h4>
-                <p className="font-sora text-neutral-500 text-xs">Visual shoe matcher</p>
+                <h4 className="font-tanker text-xl text-brand-chalk mb-1">Matcher</h4>
+                <p className="font-sora text-brand-putty/40 text-xs">Visual shoe matcher</p>
               </div>
             </motion.div>
           </div>
         </motion.div>
 
-        {/* Recent Shoes */}
         {userShoes.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="border-t border-white/5 pt-12"
           >
+            <div className="w-full h-px bg-white/[0.06] mb-12" />
+
             <div className="flex items-end justify-between mb-8">
-              <h2 className="font-tanker text-4xl md:text-5xl leading-none">Recent Shoes</h2>
+              <h2 className="font-tanker text-4xl md:text-5xl leading-none text-brand-chalk">Recent Shoes</h2>
               {userShoes.length > 3 && (
                 <button
                   onClick={() => router.push('/stash')}
-                  className="group flex items-center gap-2 font-tanker text-xl text-orange-500 hover:text-orange-400 transition-colors"
+                  className="group flex items-center gap-2 font-tanker text-xl text-brand-red hover:text-white transition-colors duration-500"
                 >
                   View all
-                  <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
+                  <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
                 </button>
               )}
             </div>
-            <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
-              <div className="space-y-3">
+            <div className="border border-white/[0.06]">
+              <div className="divide-y divide-white/[0.06]">
                 {userShoes.slice(0, 3).map((shoe, index) => {
                   const details = shoe.shoe ?? shoe.shoeDetails;
                   const brand = details?.brand ?? 'Unknown Brand';
@@ -322,10 +311,10 @@ export default function Dashboard() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.08 }}
                       onClick={() => router.push('/stash')}
-                      className="flex items-center justify-between p-4 rounded-2xl bg-neutral-800/50 hover:bg-neutral-800 border border-transparent hover:border-orange-500/10 cursor-pointer transition-all group"
+                      className="flex items-center justify-between p-5 hover:bg-brand-surface cursor-pointer transition-colors duration-500 group"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
+                        <div className="w-14 h-14 bg-brand-surface overflow-hidden flex-shrink-0">
                           <ShoeImage
                             brand={brand}
                             shoeName={name}
@@ -337,19 +326,19 @@ export default function Dashboard() {
                           />
                         </div>
                         <div>
-                          <h3 className="font-sora font-medium text-white group-hover:text-orange-500 transition-colors">{name}</h3>
-                          <p className="font-sora text-[10px] text-neutral-600">{brand}</p>
+                          <h3 className="font-sora font-medium text-brand-chalk group-hover:text-brand-red transition-colors duration-500">{name}</h3>
+                          <p className="font-sora text-[10px] text-brand-putty/30">{brand}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <div className="flex items-center gap-1">
-                            <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
-                            <span className="font-sora text-xs text-neutral-400">{shoe.comfortScore || 0}</span>
+                            <Star className="w-3 h-3 text-brand-red fill-brand-red" />
+                            <span className="font-sora text-xs text-brand-putty/50">{shoe.comfortScore || 0}</span>
                           </div>
-                          <span className="font-sora text-[10px] text-neutral-600">Comfort</span>
+                          <span className="font-sora text-[10px] text-brand-putty/30">Comfort</span>
                         </div>
-                        <ArrowUpRight className="w-4 h-4 text-neutral-600 group-hover:text-orange-500 group-hover:rotate-45 transition-all" />
+                        <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
                       </div>
                     </motion.div>
                   );
@@ -364,24 +353,24 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="border-t border-white/5 pt-16 text-center"
+            className="pt-16 text-center"
           >
+            <div className="w-full h-px bg-white/[0.06] mb-16" />
+
             <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6"
-            >
-              <Plus className="w-10 h-10 text-orange-500" />
-            </motion.div>
-            <h3 className="font-tanker text-4xl text-white mb-3">NO SHOES YET</h3>
-            <p className="font-sora text-neutral-500 mb-8 max-w-sm mx-auto">
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="w-3 h-3 bg-brand-red rounded-full mx-auto mb-8"
+            />
+            <h3 className="font-tanker text-4xl text-brand-chalk mb-3">NO SHOES YET</h3>
+            <p className="font-sora text-brand-putty/40 mb-8 max-w-sm mx-auto">
               Add your shoes so we can start figuring out what fits you best
             </p>
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => router.push('/stash')}
-              className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors"
+              className="border border-brand-red text-brand-red font-tanker text-lg px-8 py-3 hover:bg-brand-red hover:text-black transition-all duration-500"
             >
               ADD YOUR FIRST SHOE
             </motion.button>
@@ -389,19 +378,19 @@ export default function Dashboard() {
         )}
       </section>
 
-      <section className="py-8 bg-orange-500 overflow-hidden mt-16">
+      <div className="mt-16 py-3 border-y border-white/[0.06] overflow-hidden">
         <motion.div
           animate={{ x: [0, -1000] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
           className="flex gap-8 whitespace-nowrap"
         >
           {Array(10).fill(null).map((_, i) => (
-            <span key={i} className="font-tanker text-2xl text-black/80">
-              SCAN • MATCH • CLIMB • REPEAT •
+            <span key={i} className="font-sora text-[10px] uppercase tracking-[0.4em] text-brand-putty/15">
+              SCAN &mdash; MATCH &mdash; CLIMB &mdash; REPEAT &mdash;
             </span>
           ))}
         </motion.div>
-      </section>
+      </div>
     </main>
   );
 }

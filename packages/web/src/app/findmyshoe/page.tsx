@@ -108,8 +108,8 @@ export default function SoleMatePage() {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="text-center">
-          <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Footprints className="w-8 h-8 text-orange-500" />
+          <div className="w-16 h-16 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Footprints className="w-8 h-8 text-brand-red" />
           </div>
           <h1 className="font-tanker text-4xl mb-2">SOLE MATE</h1>
           <p className="font-sora text-neutral-500 mb-6">
@@ -119,7 +119,7 @@ export default function SoleMatePage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors"
+              className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors"
             >
               LOG IN
             </motion.button>
@@ -133,8 +133,8 @@ export default function SoleMatePage() {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Footprints className="w-8 h-8 text-orange-500" />
+          <div className="w-16 h-16 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Footprints className="w-8 h-8 text-brand-red" />
           </div>
           <h1 className="font-tanker text-4xl mb-2">COMPLETE YOUR PROFILE</h1>
           <p className="font-sora text-neutral-500 mb-8">
@@ -144,7 +144,7 @@ export default function SoleMatePage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-black font-tanker text-lg py-3 rounded-2xl transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-lg py-3 rounded-2xl transition-colors flex items-center justify-center gap-2"
             >
               GO TO FOOT LAB <ArrowUpRight className="w-5 h-5" />
             </motion.button>
@@ -168,7 +168,7 @@ export default function SoleMatePage() {
             <h1 className="font-tanker text-6xl md:text-8xl mb-4">
               FIND YOUR
               <br />
-              <span className="text-orange-500">MATCH</span>
+              <span className="text-brand-red">MATCH</span>
             </h1>
             <p className="font-sora text-lg text-neutral-400 max-w-2xl mx-auto">
               Discover your perfect climbing shoe based on community insights
@@ -189,7 +189,7 @@ export default function SoleMatePage() {
                   placeholder="Search shoes..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder:text-neutral-500 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 font-sora"
+                  className="w-full pl-12 pr-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder:text-neutral-500 focus:border-brand-red focus:outline-none focus:ring-2 focus:ring-brand-red/20 font-sora"
                 />
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1">
@@ -200,8 +200,8 @@ export default function SoleMatePage() {
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedCategory(cat.key)}
                     className={`px-5 py-3 rounded-xl font-sora text-sm whitespace-nowrap transition-all ${selectedCategory === cat.key
-                      ? "bg-orange-500 text-black font-medium"
-                      : "bg-neutral-800 border border-neutral-700 text-neutral-400 hover:border-orange-500/30"
+                      ? "bg-brand-red text-black font-medium"
+                      : "bg-neutral-800 border border-neutral-700 text-neutral-400 hover:border-brand-red/30"
                       }`}
                   >
                     {cat.label}
@@ -218,11 +218,11 @@ export default function SoleMatePage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="mb-8"
             >
-              <div className="bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-3xl p-6">
+              <div className="bg-gradient-to-br from-brand-red/10 to-brand-red/5 border border-brand-red/20 rounded-3xl p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <AnimatedIcon animation="pulse" trigger="scroll">
-                    <div className="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center">
-                      <Users className="w-5 h-5 text-orange-500" />
+                    <div className="w-10 h-10 bg-brand-red/20 rounded-xl flex items-center justify-center">
+                      <Users className="w-5 h-5 text-brand-red" />
                     </div>
                   </AnimatedIcon>
                   <div>
@@ -254,8 +254,8 @@ export default function SoleMatePage() {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <AnimatedIcon animation="float" trigger="scroll">
-                  <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-orange-500" />
+                  <div className="w-10 h-10 bg-brand-red/10 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-brand-red" />
                   </div>
                 </AnimatedIcon>
                 <h2 className="font-tanker text-2xl text-white">
@@ -287,7 +287,7 @@ export default function SoleMatePage() {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="bg-orange-500 hover:bg-orange-600 text-black font-tanker px-6 py-3 rounded-2xl transition-colors"
+                      className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker px-6 py-3 rounded-2xl transition-colors"
                     >
                       ADD SHOES TO SANCTUARY
                     </motion.button>
@@ -317,7 +317,7 @@ export default function SoleMatePage() {
                       variant="outline"
                       onClick={pagination.prevPage}
                       disabled={pagination.currentPage === 1}
-                      className="border-neutral-700 text-neutral-400 hover:text-white hover:border-orange-500/30"
+                      className="border-neutral-700 text-neutral-400 hover:text-white hover:border-brand-red/30"
                     >
                       <ChevronLeft className="w-4 h-4 mr-1" />
                       Previous
@@ -333,7 +333,7 @@ export default function SoleMatePage() {
                       variant="outline"
                       onClick={pagination.nextPage}
                       disabled={!pagination.hasMore}
-                      className="border-neutral-700 text-neutral-400 hover:text-white hover:border-orange-500/30"
+                      className="border-neutral-700 text-neutral-400 hover:text-white hover:border-brand-red/30"
                     >
                       Next
                       <ChevronRight className="w-4 h-4 ml-1" />
@@ -367,7 +367,7 @@ function SoleMateMatchCard({
               className="h-full w-full object-cover"
             />
           ) : (
-            <Users className="h-5 w-5 text-orange-500" />
+            <Users className="h-5 w-5 text-brand-red" />
           )}
         </div>
         <div>
@@ -403,7 +403,7 @@ function ShoeCard({
     <div
       className={`flex items-center justify-between p-4 ${isSpotlight
         ? "bg-neutral-900/80 rounded-2xl border border-neutral-800"
-        : "bg-neutral-900 border border-neutral-800 rounded-2xl hover:border-orange-500/20 transition-all group cursor-pointer"
+        : "bg-neutral-900 border border-neutral-800 rounded-2xl hover:border-brand-red/20 transition-all group cursor-pointer"
         }`}
     >
       <div className="flex items-center gap-4">
@@ -424,15 +424,15 @@ function ShoeCard({
           ) : (
             <Footprints
               className={`w-7 h-7 ${isSpotlight
-                ? "text-orange-500"
-                : "text-neutral-600 group-hover:text-orange-500 transition-colors"
+                ? "text-brand-red"
+                : "text-neutral-600 group-hover:text-brand-red transition-colors"
                 }`}
             />
           )}
         </div>
         <div>
           <h3
-            className={`font-sora font-semibold text-white ${!isSpotlight && "group-hover:text-orange-500 transition-colors"
+            className={`font-sora font-semibold text-white ${!isSpotlight && "group-hover:text-brand-red transition-colors"
               }`}
           >
             {rating.shoe.name}
@@ -443,12 +443,12 @@ function ShoeCard({
           <div className="flex items-center gap-2 mt-1">
             <span
               className={`font-sora text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${isSpotlight
-                ? "bg-orange-500/20 text-orange-500"
+                ? "bg-brand-red/20 text-brand-red"
                 : "bg-neutral-800 text-neutral-400"
                 }`}
             >
               <Star
-                className={`w-3 h-3 ${isSpotlight ? "fill-orange-500" : ""}`}
+                className={`w-3 h-3 ${isSpotlight ? "fill-brand-red" : ""}`}
               />
               {rating.matchScore}% MATCH
             </span>

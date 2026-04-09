@@ -27,7 +27,7 @@ function TagChip({ label, value, tooltip }: TagChipProps) {
               {label}
               <Info className="w-3 h-3 text-neutral-600" />
             </span>
-            <span className="px-3 py-1 bg-neutral-900 rounded-full text-xs font-medium text-orange-500 border border-neutral-800">
+            <span className="px-3 py-1 bg-neutral-900 rounded-full text-xs font-medium text-brand-red border border-neutral-800">
               {value}
             </span>
           </button>

@@ -56,7 +56,7 @@ const quadrants: Record<string, QuadrantInfo> = {
     name: "Technical Sport",
     description: "Precision shoes for difficult sport climbing",
     icon: <Zap className="w-4 h-4" />,
-    color: "bg-orange-500/20 border-orange-500/50",
+    color: "bg-brand-red/20 border-brand-red/50",
     characteristics: [
       "High performance",
       "Stiff edge",
@@ -175,7 +175,7 @@ export function ShoeMatcher() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-red mx-auto mb-4"></div>
           <p className="text-neutral-500">Loading shoe matcher...</p>
         </div>
       </div>
@@ -214,7 +214,7 @@ export function ShoeMatcher() {
             <Filter className="w-4 h-4 mr-2" />
             Filters
             {selectedQuadrantFilter !== "all" && (
-              <Badge className="ml-2 bg-orange-500 text-black">1</Badge>
+              <Badge className="ml-2 bg-brand-red text-black">1</Badge>
             )}
           </Button>
         </div>
@@ -250,7 +250,7 @@ export function ShoeMatcher() {
                 onClick={() => setSelectedQuadrantFilter("all")}
                 className={
                   selectedQuadrantFilter === "all"
-                    ? "bg-orange-500 text-black"
+                    ? "bg-brand-red text-black"
                     : "bg-neutral-800 border-neutral-700 text-white"
                 }
               >
@@ -266,7 +266,7 @@ export function ShoeMatcher() {
                   onClick={() => setSelectedQuadrantFilter(key)}
                   className={
                     selectedQuadrantFilter === key
-                      ? "bg-orange-500 text-black"
+                      ? "bg-brand-red text-black"
                       : "bg-neutral-800 border-neutral-700 text-white"
                   }
                 >
@@ -378,14 +378,14 @@ export function ShoeMatcher() {
                   ]}
                 />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-orange-500 rounded-full border-2 border-neutral-950"></div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-brand-red rounded-full border-2 border-neutral-950"></div>
             </div>
           </motion.div>
         ))}
 
         {/* Center Point */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-          <div className="w-4 h-4 bg-orange-500 rounded-full border-2 border-neutral-950"></div>
+          <div className="w-4 h-4 bg-brand-red rounded-full border-2 border-neutral-950"></div>
         </div>
       </div>
 

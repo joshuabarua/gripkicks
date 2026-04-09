@@ -52,7 +52,7 @@ export function RealityCheck({
           </span>
         )}
         {isLower && (
-          <span className="text-[10px] font-medium text-orange-400 bg-orange-400/10 border border-orange-400/20 px-1.5 py-0.5 rounded-full">
+          <span className="text-[10px] font-medium text-brand-red bg-brand-red/10 border border-brand-red/20 px-1.5 py-0.5 rounded-full">
             -{deltaAbs} vs brand
           </span>
         )}
@@ -73,7 +73,7 @@ export function RealityCheck({
           <span className="text-[10px] text-neutral-600 w-16 shrink-0">Community</span>
           <div className="flex-1 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-orange-500 rounded-full transition-all"
+              className="h-full bg-brand-red rounded-full transition-all"
               style={{ width: `${communityPct}%` }}
             />
           </div>

@@ -36,7 +36,7 @@ export function MatchScoreTooltip({ score, breakdown }: MatchScoreTooltipProps) 
         <TooltipTrigger asChild>
           <div className="cursor-help flex items-center gap-1.5 transition-opacity hover:opacity-80">
             <span className="text-2xl font-bold text-white">{Math.round((score / 5) * 100)}%</span>
-            <Info className="w-4 h-4 text-orange-500/70" />
+            <Info className="w-4 h-4 text-brand-red/70" />
           </div>
         </TooltipTrigger>
         <TooltipContent 
