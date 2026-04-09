@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useSession } from '@/lib/auth';
-import AuthButton from '@/components/auth-button';
-import { Glow, GlowArea } from '@/components/ui/glow';
-import NavButton from '@/components/ui/nav-button';
-import { motion, AnimatePresence } from 'framer-motion';
-import NavLinks from '@/components/ui/nav-links';
-import { UserAvatar } from '@/components/ui/UserAvatar';
-import { SignOutButton } from '@/components/signout-button';
-import { User } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSession } from "@/lib/auth";
+import AuthButton from "@/components/auth-button";
+import { Glow, GlowArea } from "@/components/ui/glow";
+import NavButton from "@/components/ui/nav-button";
+import { motion, AnimatePresence } from "framer-motion";
+import NavLinks from "@/components/ui/nav-links";
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import { SignOutButton } from "@/components/signout-button";
+import { User } from "lucide-react";
 import { useOrientation } from "@/hooks/useOrientationScale";
 
 const menu = {
@@ -20,27 +20,37 @@ const menu = {
     height: "460px",
     top: "-25px",
     right: "-25px",
-    transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] }
+    transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] },
   },
   closed: {
     width: "80px",
     height: " 35px",
     top: "-0px",
     right: "-0px",
-    transition: { duration: 0.75, delay: 0.35, type: "tween", ease: [0.76, 0, 0.24, 1] }
+    transition: {
+      duration: 0.75,
+      delay: 0.35,
+      type: "tween",
+      ease: [0.76, 0, 0.24, 1],
+    },
   },
   closedText: {
     width: "80px",
     height: " 35px",
     top: "-0px",
     right: "-0px",
-    transition: { duration: 0.25, delay: 0.25, type: "tween", ease: [0.76, 0, 0.24, 1] }
-  }
-}
+    transition: {
+      duration: 0.25,
+      delay: 0.25,
+      type: "tween",
+      ease: [0.76, 0, 0.24, 1],
+    },
+  },
+};
 
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -54,16 +64,20 @@ const Navigation: React.FC = () => {
     orientation === "portrait" && screenWidth > 0 && screenWidth < 768;
   const menuVariants = isPhonePortrait
     ? {
-      open: {
-        width: "min(92vw, 360px)",
-        height: "430px",
-        top: "-18px",
-        right: "-12px",
-        transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] }
-      },
-      closed: menu.closed,
-      closedText: menu.closedText
-    }
+        open: {
+          width: "min(92vw, 360px)",
+          height: "430px",
+          top: "-18px",
+          right: "-12px",
+          transition: {
+            duration: 0.75,
+            type: "tween",
+            ease: [0.76, 0, 0.24, 1],
+          },
+        },
+        closed: menu.closed,
+        closedText: menu.closedText,
+      }
     : menu;
 
   // Function to close menu (used after logout)
@@ -90,12 +104,13 @@ const Navigation: React.FC = () => {
 
   // Set up mouse movement and scroll listeners
   useEffect(() => {
-    document.addEventListener('mousemove', handleUserActivity);
-    window.addEventListener('scroll', handleUserActivity, { passive: true });
+    setIsVisible(true);
+    document.addEventListener("mousemove", handleUserActivity);
+    window.addEventListener("scroll", handleUserActivity, { passive: true });
 
     return () => {
-      document.removeEventListener('mousemove', handleUserActivity);
-      window.removeEventListener('scroll', handleUserActivity);
+      document.removeEventListener("mousemove", handleUserActivity);
+      window.removeEventListener("scroll", handleUserActivity);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -118,11 +133,11 @@ const Navigation: React.FC = () => {
     };
 
     if (isActive) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isActive]);
 
@@ -132,14 +147,19 @@ const Navigation: React.FC = () => {
       className="fixed top-0 left-0 right-0 z-50 px-6 py-3 bg-black/90 backdrop-blur-md border-b border-white/[0.06]"
       initial={{ y: -100 }}
       animate={{ y: isVisible ? 0 : -100 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <ul className="flex justify-between items-center text-foreground w-full">
         <li className="flex-1">
           <GlowArea className="w-[120px] z-4">
-            <Glow color="whitesmoke" className="rounded-sm flex justify-center items-center">
+            <Glow
+              color="whitesmoke"
+              className="rounded-sm flex justify-center items-center"
+            >
               <Link href="/">
-                <h1 className="font-tanker text-fluid-2xl hover:scale-105 duration-1000 ease-in-out whitespace-nowrap">Grip Kicks</h1>
+                <h1 className="font-tanker text-fluid-2xl hover:scale-105 duration-1000 ease-in-out whitespace-nowrap">
+                  Grip Kicks
+                </h1>
               </Link>
             </Glow>
           </GlowArea>
@@ -155,7 +175,7 @@ const Navigation: React.FC = () => {
                     initial={{ opacity: 0, y: -140 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -140 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
                     className="absolute left-1/2 top-[-200px] z-0 w-[15rem] -translate-x-1/2"
                   >
                     <motion.div
@@ -163,20 +183,28 @@ const Navigation: React.FC = () => {
                       animate={{ opacity: 1, scaleY: 1 }}
                       exit={{ opacity: 0, scaleY: 0.35 }}
                       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                      style={{ transformOrigin: 'top center' }}
+                      style={{ transformOrigin: "top center" }}
                       className="flex min-h-[28rem] overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-brand-surface pt-24 shadow-2xl"
                     >
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ delay: 0.12, duration: 0.18, ease: 'easeOut' }}
+                        transition={{
+                          delay: 0.12,
+                          duration: 0.18,
+                          ease: "easeOut",
+                        }}
                         className="flex w-full flex-col justify-end px-3 pb-3 text-brand-text"
                       >
                         <div className="px-2 pb-3">
                           <div className="flex flex-col space-y-1 font-sora">
-                            <p className="text-sm font-medium leading-none">{session.user.name}</p>
-                            <p className="text-xs leading-none text-brand-text-secondary">{session.user.email}</p>
+                            <p className="text-sm font-medium leading-none">
+                              {session.user.name}
+                            </p>
+                            <p className="text-xs leading-none text-brand-text-secondary">
+                              {session.user.email}
+                            </p>
                           </div>
                         </div>
                         <div className="h-px bg-brand-border" />
@@ -240,7 +268,10 @@ const Navigation: React.FC = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
-              <NavButton isActive={isActive} toggleMenu={() => setIsActive(!isActive)} />
+              <NavButton
+                isActive={isActive}
+                toggleMenu={() => setIsActive(!isActive)}
+              />
             </div>
           ) : (
             <AuthButton />

@@ -79,6 +79,13 @@ export default function Dashboard() {
     }
   }, [session, isPending]);
 
+  useEffect(() => {
+    if (isPending || session?.user) return;
+
+    setIsLoading(false);
+    router.replace("/auth/login");
+  }, [isPending, router, session?.user]);
+
   const loadUserData = async () => {
     try {
       const profileResult = await fetchApi<Profile>("/api/v1/profile");
@@ -95,13 +102,10 @@ export default function Dashboard() {
     }
   };
 
+  if (!isPending && !session?.user) return null;
   if ((isPending && !sessionTimedOut) || isLoading) return <FullPageLoading />;
-  if (!session?.user) {
-    router.push("/auth/login");
-    return null;
-  }
 
-  const firstName = (profile?.name || session.user.name || "Climber").split(
+  const firstName = (profile?.name || session?.user?.name || "Climber").split(
     " ",
   )[0];
   const avgComfort =
