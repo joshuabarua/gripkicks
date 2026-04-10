@@ -114,17 +114,21 @@ export const update = mutation({
 export const completeOnboarding = mutation({
   args: {
     userId: v.id("users"),
-    footShape: footShapeValidator,
+    footShape: v.optional(footShapeValidator),
     footVolume: v.optional(v.string()),
     favoriteShoeId: v.optional(v.id("shoes")),
   },
   handler: async (ctx, args) => {
-    await ctx.db.patch(args.userId, {
-      footShape: args.footShape,
-      footVolume: args.footVolume,
-      favoriteShoeId: args.favoriteShoeId,
-      onboardingComplete: true,
-    });
+    const updates = Object.fromEntries(
+      Object.entries({
+        footShape: args.footShape,
+        footVolume: args.footVolume,
+        favoriteShoeId: args.favoriteShoeId,
+        onboardingComplete: true,
+      }).filter(([_, value]) => value !== undefined)
+    );
+
+    await ctx.db.patch(args.userId, updates);
     return await ctx.db.get(args.userId);
   },
 });

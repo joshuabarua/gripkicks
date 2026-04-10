@@ -12,10 +12,15 @@ interface OnboardingGuardProps {
 /** Paths that never need onboarding checks or session gating */
 const PUBLIC_PATH_PREFIXES = ['/auth', '/onboarding', '/about', '/privacy', '/pricing']
 const PUBLIC_EXACT = ['/']
+const ONBOARDING_OPTIONAL_PATH_PREFIXES = ['/footscan']
 
 function isPublicPath(pathname: string): boolean {
   if (PUBLIC_EXACT.includes(pathname)) return true
   return PUBLIC_PATH_PREFIXES.some(prefix => pathname.startsWith(prefix))
+}
+
+function isOnboardingOptionalPath(pathname: string): boolean {
+  return ONBOARDING_OPTIONAL_PATH_PREFIXES.some(prefix => pathname.startsWith(prefix))
 }
 
 /** Max time (ms) to wait for session before giving up and rendering anyway */
@@ -30,6 +35,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
 
   // Public pages render immediately — no session/onboarding gate
   const isPublic = isPublicPath(pathname)
+  const allowsIncompleteOnboarding = isOnboardingOptionalPath(pathname)
 
   // Timeout: if session is still pending after N seconds, stop blocking
   useEffect(() => {
@@ -51,7 +57,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
     }
 
     // Public path → no redirect needed
-    if (isPublic) {
+    if (isPublic || allowsIncompleteOnboarding) {
       setIsCheckingOnboarding(false)
       return
     }
@@ -73,7 +79,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
     } finally {
       setIsCheckingOnboarding(false)
     }
-  }, [session?.user, isPublic, router])
+  }, [session?.user, isPublic, allowsIncompleteOnboarding, router])
 
   useEffect(() => {
     // Wait for session to resolve (or time out) before checking onboarding

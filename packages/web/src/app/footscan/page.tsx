@@ -133,13 +133,15 @@ export default function FootLabPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [onboardingComplete, setOnboardingComplete] = useState<boolean>(true);
 
   const loadUserFootProfile = useCallback(async () => {
     try {
-      const response = await fetchApi<{ footShape?: string; footVolume?: string }>('/api/v1/profile');
+      const response = await fetchApi<{ footShape?: string; footVolume?: string; onboardingComplete?: boolean }>('/api/v1/profile');
       if (response.isOk()) {
         const data = response.value;
         const normalizedProfile = normalizeBackendFootProfile(data);
+        setOnboardingComplete(Boolean(data.onboardingComplete));
 
         if (normalizedProfile) {
           setProfile(normalizedProfile);
@@ -268,6 +270,31 @@ export default function FootLabPage() {
             </Link>
           </div>
         </motion.div>
+
+        {!onboardingComplete && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05, duration: 0.5 }}
+            className="mb-10 rounded-lg border border-brand-red/20 bg-brand-red/5 p-5"
+          >
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-red/70 mb-2">Onboarding</p>
+                <h2 className="font-tanker text-2xl text-brand-chalk mb-2">Foot Lab is ready — finish setup when you want</h2>
+                <p className="font-sora text-sm text-brand-putty/70 max-w-2xl">
+                  You can use Foot Lab right now, or jump back into onboarding to finish your guided setup and add your first shoe.
+                </p>
+              </div>
+              <Link
+                href="/onboarding"
+                className="inline-flex items-center justify-center rounded-lg border border-brand-red/30 bg-brand-red px-5 py-3 font-tanker text-sm text-black transition-colors duration-500 hover:bg-brand-red/80"
+              >
+                CONTINUE ONBOARDING
+              </Link>
+            </div>
+          </motion.div>
+        )}
 
         {/* Step 1: Shape */}
         <motion.div

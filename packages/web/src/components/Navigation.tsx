@@ -17,7 +17,7 @@ import { useOrientation } from "@/hooks/useOrientationScale";
 const menu = {
   open: {
     width: "420px",
-    height: "460px",
+    height: "540px",
     top: "-25px",
     right: "-25px",
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] },
@@ -50,12 +50,10 @@ const menu = {
 
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { orientation, screenWidth } = useOrientation();
 
-  // Use Better Auth session hook to check if user is authenticated
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
   const isPhonePortrait =
@@ -64,7 +62,7 @@ const Navigation: React.FC = () => {
     ? {
         open: {
           width: "min(92vw, 360px)",
-          height: "430px",
+          height: "500px",
           top: "-18px",
           right: "-12px",
           transition: {
@@ -78,22 +76,16 @@ const Navigation: React.FC = () => {
       }
     : menu;
 
-  // Function to close menu (used after logout)
   const closeMenu = () => setIsActive(false);
-  const closeProfileMenu = () => setIsProfileMenuOpen(false);
 
-  // Close menu when route changes
   useEffect(() => {
     setIsActive(false);
-    setIsProfileMenuOpen(false);
   }, [pathname]);
 
-  // Add click outside listener
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
         setIsActive(false);
-        setIsProfileMenuOpen(false);
       }
     };
 
@@ -130,92 +122,7 @@ const Navigation: React.FC = () => {
           </GlowArea>
         </li>
 
-        {/* Center element - User Avatar */}
-        <li className="flex-1 flex justify-center">
-          {isAuthenticated && session?.user && (
-            <div className="relative flex items-start justify-center w-10">
-              <AnimatePresence>
-                {isProfileMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -140 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -140 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="absolute left-1/2 top-[-200px] z-0 w-[15rem] -translate-x-1/2"
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, scaleY: 0.35 }}
-                      animate={{ opacity: 1, scaleY: 1 }}
-                      exit={{ opacity: 0, scaleY: 0.35 }}
-                      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                      style={{ transformOrigin: "top center" }}
-                      className="flex min-h-[28rem] overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-brand-surface pt-24 shadow-2xl"
-                    >
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{
-                          delay: 0.12,
-                          duration: 0.18,
-                          ease: "easeOut",
-                        }}
-                        className="flex w-full flex-col justify-end px-3 pb-3 text-brand-text"
-                      >
-                        <div className="px-2 pb-3">
-                          <div className="flex flex-col space-y-1 font-sora">
-                            <p className="text-sm font-medium leading-none">
-                              {session.user.name}
-                            </p>
-                            <p className="text-xs leading-none text-brand-text-secondary">
-                              {session.user.email}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="h-px bg-brand-border" />
-                        <div className="pt-2">
-                          <Link
-                            href="/profile"
-                            onClick={closeProfileMenu}
-                            className="flex w-full items-center gap-2 rounded-xl px-2 py-2 font-sora text-sm text-brand-text transition-colors hover:bg-brand-soft-surface"
-                          >
-                            <User className="h-4 w-4" />
-                            <span>Profile</span>
-                          </Link>
-                        </div>
-                        <div className="mt-2 h-px bg-brand-border" />
-                        <div className="pt-2">
-                          <SignOutButton
-                            variant="ghost"
-                            className="h-auto w-full justify-start rounded-xl px-2 py-2 font-sora text-sm text-brand-text hover:bg-brand-soft-surface"
-                            onClick={() => {
-                              closeProfileMenu();
-                              closeMenu();
-                            }}
-                          />
-                        </div>
-                      </motion.div>
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <button
-                onClick={() => setIsProfileMenuOpen((open) => !open)}
-                className="relative z-10 transition-transform hover:scale-105 outline-none rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                <UserAvatar
-                  userId={session.user.id}
-                  name={session.user.name}
-                  email={session.user.email}
-                  className="h-10 w-10"
-                />
-              </button>
-            </div>
-          )}
-        </li>
-
-        <li className="flex-1 flex justify-end items-center">
+        <li className="flex items-center justify-end">
           {isAuthenticated ? (
             <div className="relative flex items-center ">
               <AnimatePresence mode="wait">
@@ -227,7 +134,46 @@ const Navigation: React.FC = () => {
                     initial="closed"
                     exit="closed"
                   >
-                    <NavLinks />
+                    <div className="flex h-full flex-col p-4 pt-16">
+                      {session?.user && (
+                        <div className="mb-4 rounded-2xl border border-black/10 bg-black/10 p-3 text-black">
+                          <div className="flex items-center gap-3">
+                            <UserAvatar
+                              userId={session.user.id}
+                              name={session.user.name}
+                              email={session.user.email}
+                              className="h-11 w-11 rounded-full border border-black/10"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate font-sora text-sm font-semibold leading-none">
+                                {session.user.name}
+                              </p>
+                              <p className="truncate pt-1 font-sora text-[11px] leading-none text-black/55">
+                                {session.user.email}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="mt-3 space-y-1.5 border-t border-black/10 pt-3">
+                            <Link
+                              href="/profile"
+                              onClick={closeMenu}
+                              className="flex w-full items-center gap-2 rounded-xl px-2 py-2 font-sora text-sm text-black transition-colors hover:bg-black/10"
+                            >
+                              <User className="h-4 w-4" />
+                              <span>Profile</span>
+                            </Link>
+                            <SignOutButton
+                              variant="ghost"
+                              className="h-auto w-full justify-start rounded-xl px-2 py-2 font-sora text-sm text-black hover:bg-black/10 hover:text-black"
+                              onClick={closeMenu}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      <div className="min-h-0 flex-1">
+                        <NavLinks />
+                      </div>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
