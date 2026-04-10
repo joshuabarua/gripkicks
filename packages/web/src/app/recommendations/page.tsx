@@ -23,7 +23,7 @@ export default function RecommendationsPage() {
           </Link>
           {!session?.user && (
             <Link
-              href="/login"
+              href="/auth/login?callbackUrl=%2Frecommendations"
               className="border border-neutral-700 hover:border-brand-red/50 text-white font-sora px-6 py-3 rounded-2xl transition-colors duration-200 w-full sm:w-auto"
             >
               Log in to save picks

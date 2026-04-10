@@ -56,7 +56,7 @@ const Navigation: React.FC = () => {
   const { orientation, screenWidth } = useOrientation();
 
   // Use Better Auth session hook to check if user is authenticated
-  const { data: session, isPending } = useSession();
+  const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
   const isPhonePortrait =
     orientation === "portrait" && screenWidth > 0 && screenWidth < 768;
@@ -216,9 +216,7 @@ const Navigation: React.FC = () => {
         </li>
 
         <li className="flex-1 flex justify-end items-center">
-          {isPending ? (
-            <div className="h-9 w-20 animate-pulse bg-muted rounded" />
-          ) : isAuthenticated ? (
+          {isAuthenticated ? (
             <div className="relative flex items-center ">
               <AnimatePresence mode="wait">
                 {isActive && (

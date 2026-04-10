@@ -116,14 +116,11 @@ export default function ProfilePage() {
           <p className="font-sora text-neutral-500 mb-6">
             Please log in to view your profile
           </p>
-          <Link href="/auth/login">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-lg px-8 py-3 transition-colors duration-500"
-            >
-              LOG IN
-            </motion.button>
+          <Link
+            href="/auth/login?callbackUrl=%2Fprofile"
+            className="inline-flex items-center justify-center bg-brand-red px-8 py-3 font-tanker text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
+          >
+            LOG IN
           </Link>
         </div>
       </main>

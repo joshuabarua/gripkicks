@@ -231,10 +231,11 @@ export default function FootLabPage() {
           </div>
           <h1 className="font-tanker text-5xl mb-3">FOOT PROFILE</h1>
           <p className="font-sora text-neutral-500 mb-6">Log in to discover your foot shape</p>
-          <Link href="/auth/login">
-            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-brand-red text-black font-tanker text-lg px-8 py-3 rounded-lg">
-              LOG IN
-            </motion.button>
+          <Link
+            href="/auth/login?callbackUrl=%2Ffootscan"
+            className="inline-flex items-center justify-center rounded-lg bg-brand-red px-8 py-3 font-tanker text-lg text-black"
+          >
+            LOG IN
           </Link>
         </div>
       </main>

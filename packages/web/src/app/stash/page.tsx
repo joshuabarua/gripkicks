@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Footprints } from "lucide-react";
 import { motion } from "framer-motion";
@@ -302,7 +303,13 @@ export default function ShoeSanctuaryPage() {
           <h1 className="text-title-md font-bold mb-4 font-so-cloudy uppercase">
             Shoe Sanctuary
           </h1>
-          <p>Please log in to view your shoe sanctuary</p>
+          <p className="mb-6">Please log in to view your shoe sanctuary</p>
+          <Link
+            href="/auth/login?callbackUrl=%2Fstash"
+            className="inline-flex items-center justify-center rounded-lg bg-brand-red px-6 py-3 font-tanker text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
+          >
+            LOG IN
+          </Link>
         </div>
       </div>
     );

@@ -62,8 +62,14 @@ export default function SoleSeekPage() {
             </div>
           </div>
 
-          <div className="mt-8 p-4 bg-neutral-900 rounded-xl border border-neutral-800">
-            <p className="font-sora text-sm text-neutral-400 text-center">Sign in to access Matcher</p>
+          <div className="mt-8 space-y-4 rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-center">
+            <p className="font-sora text-sm text-neutral-400">Sign in to access Matcher</p>
+            <Link
+              href="/auth/login?callbackUrl=%2Fmatcher"
+              className="inline-flex items-center justify-center rounded-lg bg-brand-red px-6 py-3 font-tanker text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
+            >
+              SIGN IN
+            </Link>
           </div>
         </motion.div>
       </div>
