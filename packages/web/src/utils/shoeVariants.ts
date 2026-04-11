@@ -1,24 +1,24 @@
 import type { Shoe, UserShoe } from "@/types/api";
 
 const variantPatterns = [
-  { pattern: /\blow\s*volume\b/gi, label: "LV" },
-  { pattern: /\blv\b/gi, label: "LV" },
-  { pattern: /\bhigh\s*volume\b/gi, label: "HV" },
-  { pattern: /\bhv\b/gi, label: "HV" },
-  { pattern: /\bmid\s*volume\b/gi, label: "MV" },
-  { pattern: /\bmv\b/gi, label: "MV" },
-  { pattern: /\bwomen'?s\b/gi, label: "Women" },
-  { pattern: /\bwomens\b/gi, label: "Women" },
-  { pattern: /\bwomen\b/gi, label: "Women" },
-  { pattern: /\bmen'?s\b/gi, label: "Men" },
-  { pattern: /\bmens\b/gi, label: "Men" },
-  { pattern: /\bmen\b/gi, label: "Men" },
-  { pattern: /\bkids\b/gi, label: "Kids" },
-  { pattern: /\bkid\b/gi, label: "Kids" },
-  { pattern: /\byouth\b/gi, label: "Kids" },
-  { pattern: /\bjunior\b/gi, label: "Kids" },
-  { pattern: /\bjr\b/gi, label: "Kids" },
-  { pattern: /\bunisex\b/gi, label: "Unisex" },
+  { pattern: /\blow\s*volume\b/gi, testPattern: /\blow\s*volume\b/i, label: "LV" },
+  { pattern: /\blv\b/gi, testPattern: /\blv\b/i, label: "LV" },
+  { pattern: /\bhigh\s*volume\b/gi, testPattern: /\bhigh\s*volume\b/i, label: "HV" },
+  { pattern: /\bhv\b/gi, testPattern: /\bhv\b/i, label: "HV" },
+  { pattern: /\bmid\s*volume\b/gi, testPattern: /\bmid\s*volume\b/i, label: "MV" },
+  { pattern: /\bmv\b/gi, testPattern: /\bmv\b/i, label: "MV" },
+  { pattern: /\bwomen'?s\b/gi, testPattern: /\bwomen'?s\b/i, label: "Women" },
+  { pattern: /\bwomens\b/gi, testPattern: /\bwomens\b/i, label: "Women" },
+  { pattern: /\bwomen\b/gi, testPattern: /\bwomen\b/i, label: "Women" },
+  { pattern: /\bmen'?s\b/gi, testPattern: /\bmen'?s\b/i, label: "Men" },
+  { pattern: /\bmens\b/gi, testPattern: /\bmens\b/i, label: "Men" },
+  { pattern: /\bmen\b/gi, testPattern: /\bmen\b/i, label: "Men" },
+  { pattern: /\bkids\b/gi, testPattern: /\bkids\b/i, label: "Kids" },
+  { pattern: /\bkid\b/gi, testPattern: /\bkid\b/i, label: "Kids" },
+  { pattern: /\byouth\b/gi, testPattern: /\byouth\b/i, label: "Kids" },
+  { pattern: /\bjunior\b/gi, testPattern: /\bjunior\b/i, label: "Kids" },
+  { pattern: /\bjr\b/gi, testPattern: /\bjr\b/i, label: "Kids" },
+  { pattern: /\bunisex\b/gi, testPattern: /\bunisex\b/i, label: "Unisex" },
 ] as const;
 
 function uniqueLabels(labels: string[]) {
@@ -46,8 +46,8 @@ export function getBaseShoeName(name: string) {
 export function getVariantLabels(name: string, gender?: string | null) {
   const labels: string[] = [];
 
-  for (const { pattern, label } of variantPatterns) {
-    if (pattern.test(name)) {
+  for (const { testPattern, label } of variantPatterns) {
+    if (testPattern.test(name)) {
       labels.push(label);
     }
   }
@@ -58,7 +58,12 @@ export function getVariantLabels(name: string, gender?: string | null) {
   if (normalizedGender === "kids") labels.push("Kids");
   if (normalizedGender === "unisex") labels.push("Unisex");
 
-  return uniqueLabels(labels).filter((label) => label !== "Unisex");
+  const unique = uniqueLabels(labels);
+  // Only remove Unisex if there are other labels
+  if (unique.length > 1 && unique.includes("Unisex")) {
+    return unique.filter((label) => label !== "Unisex");
+  }
+  return unique;
 }
 
 export function getVariantLabel(name: string, gender?: string | null) {
@@ -128,7 +133,7 @@ export function groupUserShoesByModel<T extends UserShoeLike>(userShoes: T[]) {
     }
 
     grouped.set(groupKey, {
-      brand: source.brand,
+      brand: brandName,
       baseName: modelName,
       groupKey,
       variants: [variant],
@@ -165,7 +170,7 @@ export function groupShoesByModel<T extends ShoeLike>(shoes: T[]) {
     }
 
     grouped.set(groupKey, {
-      brand: source.brand,
+      brand: brandName,
       baseName: modelName,
       groupKey,
       variants: [variant],

@@ -138,11 +138,13 @@ export class ValidationError extends AppError {
 }
 
 export class NotFoundError extends AppError {
-  constructor(resource: string = "Resource") {
+  constructor(resource: string = "Resource", customMessage?: string) {
     super({
       code: "NOT_FOUND_ERROR",
-      message: `${resource} not found`,
-      userMessage: `The ${resource.toLowerCase()} you're looking for doesn't exist or has been removed.`,
+      message: customMessage || `${resource} not found`,
+      userMessage: customMessage ? 
+        customMessage : 
+        `The ${resource.toLowerCase()} you're looking for doesn't exist or has been removed.`,
       severity: "low",
       category: "not_found",
       retryable: false,
@@ -230,7 +232,7 @@ export const ErrorFactory = {
       case 403:
         return new AuthorizationError(message);
       case 404:
-        return new NotFoundError(message || "Resource");
+        return new NotFoundError("Resource", message);
       case 408:
         return new TimeoutError(message || "Request");
       case 422:
