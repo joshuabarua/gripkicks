@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import {
@@ -13,18 +13,11 @@ import {
   Target,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { fetchApi } from "@/lib/api-client";
-import type { UserShoe } from "@/types/api";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
 import { FullPageLoading } from "@/components/ui/loading";
 import ShoeImage from "@/components/ShoeImage";
 import { useFootProfileStore } from "@/stores/footProfileStore";
-
-interface Profile {
-  name?: string;
-  footShape?: string;
-  footVolume?: string;
-  onboardingComplete?: boolean;
-}
 
 const MarqueeText = ({
   children,
@@ -54,9 +47,6 @@ const MarqueeText = ({
 export default function Dashboard() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const [userShoes, setUserShoes] = useState<UserShoe[]>([]);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [sessionTimedOut, setSessionTimedOut] = useState(false);
   const { profile: footProfile } = useFootProfileStore();
 
@@ -65,51 +55,36 @@ export default function Dashboard() {
 
     const timer = setTimeout(() => {
       setSessionTimedOut(true);
-      if (!session?.user) {
-        setIsLoading(false);
-      }
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [isPending, session?.user]);
-
-  useEffect(() => {
-    if (session?.user) {
-      loadUserData();
-    }
-  }, [session, isPending]);
+  }, [isPending]);
 
   useEffect(() => {
     if (isPending || session?.user) return;
 
-    setIsLoading(false);
     router.replace("/auth/login");
   }, [isPending, router, session?.user]);
 
-  const loadUserData = async () => {
-    try {
-      const [profileResult, shoesResult] = await Promise.all([
-        fetchApi<Profile>("/api/v1/profile"),
-        fetchApi<UserShoe[]>("/api/v1/stash"),
-      ]);
+  const userData = useQuery(
+    api.users.findByBetterAuthId,
+    session?.user ? { betterAuthId: session.user.id } : "skip",
+  );
+  const userStashData = useQuery(
+    api.stash.getUserStash,
+    userData ? { userId: userData._id } : "skip",
+  );
 
-      if (profileResult.isOk()) setProfile(profileResult.value);
-      if (shoesResult.isOk()) {
-        setUserShoes(Array.isArray(shoesResult.value) ? shoesResult.value : []);
-      }
-    } catch (error) {
-      console.error("Failed to load user data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const isLoadingData = userStashData === undefined || userData === undefined;
 
   if (!isPending && !session?.user) return null;
-  if ((isPending && !sessionTimedOut) || isLoading) return <FullPageLoading />;
+  if ((isPending && !sessionTimedOut) || isLoadingData)
+    return <FullPageLoading />;
 
-  const firstName = (profile?.name || session?.user?.name || "Climber").split(
+  const firstName = (userData?.name || session?.user?.name || "Climber").split(
     " ",
   )[0];
+  const userShoes = useMemo(() => userStashData ?? [], [userStashData]);
   const avgComfort =
     userShoes.length > 0
       ? (
@@ -118,8 +93,8 @@ export default function Dashboard() {
         ).toFixed(1)
       : "—";
   const favCount = userShoes.filter((s) => s.isFavourite).length;
-  const footShape = footProfile?.shape || profile?.footShape;
-  const footVolume = footProfile?.volume || profile?.footVolume;
+  const footShape = footProfile?.shape || userData?.footShape;
+  const footVolume = footProfile?.volume || userData?.footVolume;
   const hasFootProfile = !!(footShape && footVolume);
 
   return (
@@ -388,9 +363,10 @@ export default function Dashboard() {
             <div className="border border-white/[0.06]">
               <div className="divide-y divide-white/[0.06]">
                 {userShoes.slice(0, 3).map((shoe, index) => {
-                  const details = shoe.shoe ?? shoe.shoeDetails;
+                  const details = shoe.shoe;
                   const brand = details?.brand ?? "Unknown Brand";
-                  const name = details?.name ?? "Unknown Shoe";
+                  const name =
+                    details?.modelName ?? details?.name ?? "Unknown Shoe";
                   const imageUrl = details?.imageUrl;
                   const slug = details?.slug;
                   const gender = details?.gender;
