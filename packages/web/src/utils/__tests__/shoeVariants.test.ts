@@ -6,8 +6,6 @@ import {
   getShoeGroupKey,
   groupShoesByModel,
   groupUserShoesByModel,
-  type ShoeVariantGroup,
-  type GroupedVariant,
 } from "../shoeVariants";
 import type { Shoe, UserShoe } from "@/types/api";
 

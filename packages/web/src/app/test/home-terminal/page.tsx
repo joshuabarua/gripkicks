@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { ArrowLeft } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { fetchApi } from "@/lib/api-client";
 import Link from "next/link";

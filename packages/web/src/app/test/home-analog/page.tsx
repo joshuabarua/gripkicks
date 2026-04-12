@@ -4,7 +4,7 @@ import React, { useMemo, useEffect, useState } from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { ArrowLeft, ArrowUpRight, Footprints, Target, Activity } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Footprints, Activity } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { fetchApi } from "@/lib/api-client";
 import { useReducedEffects } from "@/hooks/useReducedEffects";

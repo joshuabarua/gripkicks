@@ -12,7 +12,6 @@ import {
   ErrorFactory,
   ResultUtils,
   type ErrorDetails,
-  type ErrorSeverity,
   type ErrorCategory,
   type ApiErrorType,
 } from "@/lib/errors";

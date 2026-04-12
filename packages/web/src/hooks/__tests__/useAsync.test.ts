@@ -272,8 +272,6 @@ describe("useMutation", () => {
       }
     );
 
-    const firstMutate = result.current.mutate;
-
     rerender({ mutationFn: vi.fn() });
 
     // mutate should remain stable even when mutationFn changes

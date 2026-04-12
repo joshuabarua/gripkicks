@@ -1,8 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-// Spy on setInterval before importing the module
-const setIntervalSpy = vi.spyOn(global, "setInterval");
-
 import { shoeCache } from "@/lib/cache";
 
 // Import the class to test directly

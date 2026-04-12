@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -47,7 +47,6 @@ export default function HudHome() {
   const isAuthenticated = !!session?.user;
   const memberCount = totalUsers ?? 0;
 
-  const activityLoop = useMemo(() => [...ACTIVITY_FEED, ...ACTIVITY_FEED, ...ACTIVITY_FEED], []);
 
   return (
     <main className="h-screen w-screen overflow-hidden bg-black text-[#5df] selection:bg-[#5df] selection:text-black antialiased relative">
