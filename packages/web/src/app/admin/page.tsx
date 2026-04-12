@@ -69,7 +69,9 @@ export default function AdminDashboard() {
   );
   const deleteShoe = useMutation(api.shoes.remove);
   const createShoe = useMutation(api.shoes.create);
-  const backfillVariantMetadata = useMutation(api.shoes.backfillVariantMetadata);
+  const backfillVariantMetadata = useMutation(
+    api.shoes.backfillVariantMetadata,
+  );
   const backfillMissingRubberTechnology = useMutation(
     api.shoes.backfillMissingRubberTechnology,
   );
@@ -107,16 +109,17 @@ export default function AdminDashboard() {
   const [backfillResult, setBackfillResult] = useState<string | null>(null);
   const [isBackfillingRubberTechnology, setIsBackfillingRubberTechnology] =
     useState(false);
-  const [rubberBackfillResult, setRubberBackfillResult] = useState<string | null>(
-    null,
-  );
+  const [rubberBackfillResult, setRubberBackfillResult] = useState<
+    string | null
+  >(null);
 
   const uniqueBrands = [...new Set(shoes?.map((s) => s.brand) || [])].sort();
 
   const users = useQuery(api.users.list);
   const rubberTechnologies = useQuery(api.rubberTechnologies.list);
   const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
-  const shouldLoadMissingRubberTechnologyReport = !isPending && !!session?.user && !!isAdmin;
+  const shouldLoadMissingRubberTechnologyReport =
+    !isPending && !!session?.user && !!isAdmin;
   const missingRubberTechnologyReport = useQuery(
     api.shoes.getMissingRubberTechnologyReport,
     shouldLoadMissingRubberTechnologyReport ? {} : "skip",
@@ -296,30 +299,33 @@ export default function AdminDashboard() {
         <div className="flex gap-2 mb-6">
           <button
             onClick={() => setActiveTab("shoes")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === "shoes"
-              ? "bg-accent text-white"
-              : "bg-white/10 text-white/70 hover:bg-white/20"
-              }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === "shoes"
+                ? "bg-accent text-white"
+                : "bg-white/10 text-white/70 hover:bg-white/20"
+            }`}
           >
             <Footprints className="w-4 h-4" />
             Shoes ({shoes?.length || 0})
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === "users"
-              ? "bg-accent text-white"
-              : "bg-white/10 text-white/70 hover:bg-white/20"
-              }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === "users"
+                ? "bg-accent text-white"
+                : "bg-white/10 text-white/70 hover:bg-white/20"
+            }`}
           >
             <Users className="w-4 h-4" />
             Users ({users?.length || 0})
           </button>
           <button
             onClick={() => setActiveTab("backlog")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === "backlog"
-              ? "bg-accent text-white"
-              : "bg-white/10 text-white/70 hover:bg-white/20"
-              }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === "backlog"
+                ? "bg-accent text-white"
+                : "bg-white/10 text-white/70 hover:bg-white/20"
+            }`}
           >
             <ListTodo className="w-4 h-4" />
             Backlog
@@ -339,10 +345,14 @@ export default function AdminDashboard() {
                     disabled={isBackfillingVariants}
                     className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
                   >
-                    {isBackfillingVariants ? "Backfilling..." : "Backfill Variants"}
+                    {isBackfillingVariants
+                      ? "Backfilling..."
+                      : "Backfill Variants"}
                   </button>
                   {backfillResult && (
-                    <div className="mt-1 text-xs text-white/60">{backfillResult}</div>
+                    <div className="mt-1 text-xs text-white/60">
+                      {backfillResult}
+                    </div>
                   )}
                 </div>
                 <div className="flex flex-col items-end">
@@ -464,7 +474,10 @@ export default function AdminDashboard() {
                             placeholder="e.g. Drago"
                             value={newShoe.modelName}
                             onChange={(e) =>
-                              setNewShoe({ ...newShoe, modelName: e.target.value })
+                              setNewShoe({
+                                ...newShoe,
+                                modelName: e.target.value,
+                              })
                             }
                             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
                           />
@@ -478,7 +491,10 @@ export default function AdminDashboard() {
                             placeholder="e.g. LV"
                             value={newShoe.variantLabel}
                             onChange={(e) =>
-                              setNewShoe({ ...newShoe, variantLabel: e.target.value })
+                              setNewShoe({
+                                ...newShoe,
+                                variantLabel: e.target.value,
+                              })
                             }
                             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
                           />
@@ -554,7 +570,9 @@ export default function AdminDashboard() {
                             onChange={(e) =>
                               setNewShoe({
                                 ...newShoe,
-                                brandAggressiveness: e.target.value ? Number(e.target.value) : undefined,
+                                brandAggressiveness: e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined,
                               })
                             }
                             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
@@ -574,7 +592,9 @@ export default function AdminDashboard() {
                             onChange={(e) =>
                               setNewShoe({
                                 ...newShoe,
-                                brandStiffness: e.target.value ? Number(e.target.value) : undefined,
+                                brandStiffness: e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined,
                               })
                             }
                             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
@@ -820,21 +840,21 @@ export default function AdminDashboard() {
                                 quality: 80,
                               },
                             ]}
-                            {...(shoe.imageUrl ? { imageUrl: shoe.imageUrl } : {})}
+                            {...(shoe.imageUrl
+                              ? { imageUrl: shoe.imageUrl }
+                              : {})}
                             {...(shoe.slug ? { slug: shoe.slug } : {})}
-                            {...(
-                              ["men", "women", "kids", "unisex"].includes(
-                                (shoe.gender ?? "").toLowerCase(),
-                              )
-                                ? {
+                            {...(["men", "women", "kids", "unisex"].includes(
+                              (shoe.gender ?? "").toLowerCase(),
+                            )
+                              ? {
                                   gender: shoe.gender?.toLowerCase() as
                                     | "men"
                                     | "women"
                                     | "kids"
                                     | "unisex",
                                 }
-                                : {}
-                            )}
+                              : {})}
                           />
                         </div>
 
@@ -904,7 +924,9 @@ export default function AdminDashboard() {
                                 className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
                               />
                             ) : (
-                              <div className="text-white/70">{shoe.modelName}</div>
+                              <div className="text-white/70">
+                                {shoe.modelName}
+                              </div>
                             )}
                           </div>
 
@@ -919,14 +941,19 @@ export default function AdminDashboard() {
                                 onChange={(e) =>
                                   setEditForm((prev) =>
                                     prev
-                                      ? { ...prev, variantLabel: e.target.value }
+                                      ? {
+                                          ...prev,
+                                          variantLabel: e.target.value,
+                                        }
                                       : prev,
                                   )
                                 }
                                 className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
                               />
                             ) : (
-                              <div className="text-white/70">{shoe.variantLabel}</div>
+                              <div className="text-white/70">
+                                {shoe.variantLabel}
+                              </div>
                             )}
                           </div>
 
@@ -966,12 +993,16 @@ export default function AdminDashboard() {
                                     if (!prev) return prev;
 
                                     const nextGender = e.target.value
-                                      ? (e.target.value as NonNullable<Shoe["gender"]>)
+                                      ? (e.target.value as NonNullable<
+                                          Shoe["gender"]
+                                        >)
                                       : undefined;
 
                                     return {
                                       ...prev,
-                                      ...(nextGender ? { gender: nextGender } : {}),
+                                      ...(nextGender
+                                        ? { gender: nextGender }
+                                        : {}),
                                     };
                                   })
                                 }
@@ -1000,9 +1031,9 @@ export default function AdminDashboard() {
                                   setEditForm((prev) =>
                                     prev
                                       ? {
-                                        ...prev,
-                                        aggressiveness: e.target.value,
-                                      }
+                                          ...prev,
+                                          aggressiveness: e.target.value,
+                                        }
                                       : prev,
                                   )
                                 }
@@ -1051,9 +1082,9 @@ export default function AdminDashboard() {
                                   setEditForm((prev) =>
                                     prev
                                       ? {
-                                        ...prev,
-                                        climbingDiscipline: e.target.value,
-                                      }
+                                          ...prev,
+                                          climbingDiscipline: e.target.value,
+                                        }
                                       : prev,
                                   )
                                 }
@@ -1099,14 +1130,19 @@ export default function AdminDashboard() {
                                   setEditForm((prev) => {
                                     if (!prev) return prev;
 
-                                    const nextRubberTechnologyId = e.target.value
-                                      ? (e.target.value as Id<"rubberTechnologies">)
+                                    const nextRubberTechnologyId = e.target
+                                      .value
+                                      ? (e.target
+                                          .value as Id<"rubberTechnologies">)
                                       : undefined;
 
                                     return {
                                       ...prev,
                                       ...(nextRubberTechnologyId
-                                        ? { rubberTechnologyId: nextRubberTechnologyId }
+                                        ? {
+                                            rubberTechnologyId:
+                                              nextRubberTechnologyId,
+                                          }
                                         : {}),
                                     };
                                   })
@@ -1136,7 +1172,9 @@ export default function AdminDashboard() {
                                   <button
                                     onClick={async () => {
                                       if (!currentEditForm.rubberTechnologyId) {
-                                        alert("Please select a rubber technology before saving.");
+                                        alert(
+                                          "Please select a rubber technology before saving.",
+                                        );
                                         return;
                                       }
 

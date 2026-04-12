@@ -1,5 +1,12 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import FootModelViewer from "@/components/FootModelViewer";
+
+const FootModelViewer = dynamic(
+  () => import("@/components/FootModelViewer"),
+  { ssr: false },
+);
 
 const baseModels = [
   {
@@ -33,100 +40,31 @@ const shapeModels = [
     shape: "greek",
     volume: "medium",
   },
-  {
-    label: "Germanic",
-    description: "Shape-specific optimized foot model.",
-    modelPath: "/glb/foot.germanic.optimized.glb",
-    shape: "germanic",
-    volume: "medium",
-  },
-  {
-    label: "Celtic",
-    description: "Shape-specific optimized foot model.",
-    modelPath: "/glb/foot.celtic.optimized.glb",
-    shape: "celtic",
-    volume: "medium",
-  },
 ];
 
 const volumeModels = [
   {
-    label: "Low volume",
-    description: "Volume-specific optimized foot model.",
-    modelPath: "/glb/foot.low.optimized.glb",
+    label: "Low Volume",
+    description: "Low volume foot model.",
+    modelPath: "/glb/foot.roman.low.glb",
     shape: "roman",
     volume: "low",
   },
   {
-    label: "Medium volume",
-    description: "Volume-specific optimized foot model.",
-    modelPath: "/glb/foot.medium.optimized.glb",
+    label: "Medium Volume",
+    description: "Medium volume foot model.",
+    modelPath: "/glb/foot.roman.medium.glb",
     shape: "roman",
     volume: "medium",
   },
   {
-    label: "High volume",
-    description: "Volume-specific optimized foot model.",
-    modelPath: "/glb/foot.high.optimized.glb",
+    label: "High Volume",
+    description: "High volume foot model.",
+    modelPath: "/glb/foot.roman.high.glb",
     shape: "roman",
     volume: "high",
   },
 ];
-
-type ModelCard = {
-  label: string;
-  description: string;
-  modelPath: string;
-  shape: string;
-  volume: string;
-};
-
-function ModelSection({
-  title,
-  subtitle,
-  items,
-}: {
-  title: string;
-  subtitle: string;
-  items: ModelCard[];
-}) {
-  return (
-    <section className="space-y-6">
-      <div className="space-y-2">
-        <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">
-          {title}
-        </p>
-        <h2 className="font-tanker text-3xl text-white">{subtitle}</h2>
-      </div>
-      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        {items.map((item) => (
-          <article
-            key={item.modelPath}
-            className="overflow-hidden rounded-3xl border border-white/10 bg-neutral-950"
-          >
-            <div className="border-b border-white/10 px-5 py-4">
-              <h3 className="font-tanker text-2xl text-white">{item.label}</h3>
-              <p className="mt-2 font-sora text-sm text-neutral-400">
-                {item.description}
-              </p>
-              <p className="mt-3 font-mono text-xs text-neutral-500">
-                {item.modelPath}
-              </p>
-            </div>
-            <FootModelViewer
-              shape={item.shape}
-              volume={item.volume}
-              modelPath={item.modelPath}
-              showControls={false}
-              scale={1.2}
-              containerClassName="relative h-[360px] w-full bg-slate-950"
-            />
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 export default function FootModelPage() {
   return (
@@ -141,49 +79,74 @@ export default function FootModelPage() {
               VIEW <span className="text-brand-red">EVERY</span> MODEL
             </h1>
             <p className="max-w-2xl font-sora text-base text-neutral-400 md:text-lg">
-              Use the interactive viewer to test shape and volume switching, then compare the shipped GLB variants side by side below.
+              Use the interactive viewer to test shape and volume switching,
+              then compare the shipped GLB variants side by side below.
             </p>
           </div>
           <Link
             href="/footscan"
-            className="inline-flex items-center rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-sora text-sm text-white transition-colors hover:border-white/20 hover:bg-white/10"
+            className="inline-flex items-center justify-center rounded-2xl bg-brand-red px-8 py-3 font-tanker text-lg text-black transition-colors hover:bg-brand-red/80"
           >
-            Back to Foot Lab
+            BACK TO FOOT LAB
           </Link>
         </div>
 
-        <section className="space-y-5">
-          <div className="space-y-2">
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">
-              Interactive Tester
-            </p>
-            <h2 className="font-tanker text-3xl text-white">
-              Switch morph targets live
-            </h2>
-          </div>
-          <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-neutral-950">
-            <FootModelViewer containerClassName="relative h-[780px] w-full bg-slate-950" />
-          </div>
-        </section>
+        <div className="h-[60vh] w-full overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900">
+          <FootModelViewer
+            modelPath="/glb/foot.optimized.glb"
+            shape="roman"
+            volume="medium"
+            showControls
+          />
+        </div>
 
-        <ModelSection
-          title="Baseline"
-          subtitle="Reference model"
-          items={baseModels}
-        />
-
-        <ModelSection
-          title="Shape models"
-          subtitle="All toe-shape variants"
-          items={shapeModels}
-        />
-
-        <ModelSection
-          title="Volume models"
-          subtitle="All fullness variants"
-          items={volumeModels}
-        />
+        <div className="space-y-8">
+          <ModelSection title="BASE MODELS" models={baseModels} />
+          <ModelSection title="SHAPE MODELS" models={shapeModels} />
+          <ModelSection title="VOLUME MODELS" models={volumeModels} />
+        </div>
       </div>
     </main>
+  );
+}
+
+function ModelSection({
+  title,
+  models,
+}: {
+  title: string;
+  models: { label: string; description: string; modelPath: string; shape: string; volume: string }[];
+}) {
+  return (
+    <div>
+      <h2 className="font-tanker text-2xl mb-4">{title}</h2>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {models.map((model) => (
+          <ModelCard key={model.modelPath} model={model} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ModelCard({
+  model,
+}: {
+  model: { label: string; description: string; modelPath: string; shape: string; volume: string };
+}) {
+  return (
+    <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-4">
+      <div className="mb-2 h-32 w-full overflow-hidden rounded-xl border border-neutral-700">
+        <FootModelViewer
+          modelPath={model.modelPath}
+          shape={model.shape}
+          volume={model.volume}
+          showControls={false}
+        />
+      </div>
+      <h3 className="font-tanker text-lg">{model.label}</h3>
+      <p className="text-sm text-neutral-500">{model.description}</p>
+      <p className="mt-1 font-mono text-xs text-neutral-600">{model.modelPath}</p>
+    </div>
   );
 }

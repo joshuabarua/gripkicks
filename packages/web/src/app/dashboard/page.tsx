@@ -77,15 +77,15 @@ export default function DashboardPage() {
   );
 
   const isLoadingData = userStashData === undefined || userData === undefined;
-  
+
   // Move useMemo before early returns to satisfy Rules of Hooks
   const userShoes = useMemo(() => userStashData ?? [], [userStashData]);
 
   useEffect(() => {
     if ((isPending && !sessionTimedOut) || isLoadingData) {
-      showLoader('dashboard');
+      showLoader("dashboard");
     } else {
-      hideLoader('dashboard');
+      hideLoader("dashboard");
     }
   }, [isPending, sessionTimedOut, isLoadingData, showLoader, hideLoader]);
 
