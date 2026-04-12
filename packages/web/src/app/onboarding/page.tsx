@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth";
+import { fetchApi } from "@/lib/api-client";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Footprints,
