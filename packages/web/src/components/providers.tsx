@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
+import { LoadingProvider } from "@/contexts/LoadingContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,17 +35,19 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <PostHogProvider client={posthog}>
-      {convex ? (
-        <ConvexProvider client={convex}>
+      <LoadingProvider>
+        {convex ? (
+          <ConvexProvider client={convex}>
+            <QueryClientProvider client={queryClient}>
+              {children}
+            </QueryClientProvider>
+          </ConvexProvider>
+        ) : (
           <QueryClientProvider client={queryClient}>
             {children}
           </QueryClientProvider>
-        </ConvexProvider>
-      ) : (
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
-      )}
+        )}
+      </LoadingProvider>
     </PostHogProvider>
   );
 }

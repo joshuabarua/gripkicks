@@ -1,10 +1,10 @@
-
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import { useSession } from '@/lib/auth'
 import { fetchApi } from '@/lib/api-client'
+import { useLoading } from '@/contexts/LoadingContext'
 
 interface OnboardingGuardProps {
   children: React.ReactNode
@@ -24,8 +24,8 @@ const SESSION_TIMEOUT_MS = 5_000
 export function OnboardingGuard({ children }: OnboardingGuardProps) {
   const pathname = usePathname()
   const { data: session, isPending: sessionLoading } = useSession()
-  const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true)
   const [sessionTimedOut, setSessionTimedOut] = useState(false)
+  const { showLoader, hideLoader } = useLoading()
 
   // Public pages render immediately — no session/onboarding gate
   const isPublic = isPublicPath(pathname)
@@ -44,10 +44,10 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
 
   const checkOnboarding = useCallback(async () => {
     if (!session?.user || isPublic) {
-      setIsCheckingOnboarding(false)
       return
     }
 
+    showLoader('onboarding')
     try {
       const result = await fetchApi('/api/v1/profile');
       if (result.isOk()) {
@@ -59,32 +59,27 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
     } catch (error) {
       console.error('Failed to check onboarding status:', error)
     } finally {
-      setIsCheckingOnboarding(false)
+      hideLoader('onboarding')
     }
-  }, [session?.user, isPublic])
+  }, [session?.user, isPublic, showLoader, hideLoader])
 
   useEffect(() => {
     // Wait for session to resolve (or time out) before checking onboarding
-    if (sessionLoading && !sessionTimedOut) return
-
+    if (sessionLoading && !sessionTimedOut) {
+      showLoader('session')
+      return
+    }
+    
+    if (sessionLoading) return
+    hideLoader('session')
     checkOnboarding()
-  }, [sessionLoading, sessionTimedOut, checkOnboarding])
+  }, [sessionLoading, sessionTimedOut, checkOnboarding, showLoader, hideLoader])
 
   // Public pages: always render immediately
   if (isPublic) {
     return <>{children}</>
   }
 
-  // Protected pages: show spinner only while genuinely waiting
-  const stillWaiting = (sessionLoading && !sessionTimedOut) || isCheckingOnboarding
-  if (stillWaiting) {
-    return (
-      <div className="flex min-h-svh w-full items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
-  // Render children after checking
+  // Always render children - loading is handled by PageTransition overlay
   return <>{children}</>
 }

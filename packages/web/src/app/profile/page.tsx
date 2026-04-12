@@ -17,7 +17,7 @@ import { ProfileForm } from "@/components/ProfileForm";
 import { PasswordChangeForm } from "@/components/PasswordChangeForm";
 import { EmailChangeForm } from "@/components/EmailChangeForm";
 import { AccountDeletion } from "@/components/AccountDeletion";
-import { FullPageLoading } from "@/components/ui/loading";
+import { useLoading } from "@/contexts/LoadingContext";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { Button } from "@/components/ui/button";
 
@@ -47,8 +47,8 @@ const footShapeLabels: Record<string, string> = {
 export default function ProfilePage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { showLoader, hideLoader } = useLoading();
   const displayName = profile?.name || session?.user?.name || "User";
   const displayEmail = profile?.email || session?.user?.email || "";
   const displayUserId = profile?.id ?? session?.user?.id ?? null;
@@ -104,9 +104,13 @@ export default function ProfilePage() {
     }
   }, [session, sessionLoading]);
 
-  if (sessionLoading || loading) {
-    return <FullPageLoading text="Loading Profile" />;
-  }
+  useEffect(() => {
+    if (sessionLoading || isLoading) {
+      showLoader('profile');
+    } else {
+      hideLoader('profile');
+    }
+  }, [sessionLoading, isLoading, showLoader, hideLoader]);
 
   if (!session?.user) {
     return (

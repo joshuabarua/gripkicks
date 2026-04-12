@@ -15,7 +15,7 @@ import {
 import { motion } from "framer-motion";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
-import { FullPageLoading } from "@/components/ui/loading";
+import { useLoading } from "@/contexts/LoadingContext";
 import ShoeImage from "@/components/ShoeImage";
 import { useFootProfileStore } from "@/stores/footProfileStore";
 
@@ -44,11 +44,12 @@ const MarqueeText = ({
   </motion.div>
 );
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [sessionTimedOut, setSessionTimedOut] = useState(false);
   const { profile: footProfile } = useFootProfileStore();
+  const { showLoader, hideLoader } = useLoading();
 
   useEffect(() => {
     if (!isPending) return;
@@ -76,15 +77,23 @@ export default function Dashboard() {
   );
 
   const isLoadingData = userStashData === undefined || userData === undefined;
+  
+  // Move useMemo before early returns to satisfy Rules of Hooks
+  const userShoes = useMemo(() => userStashData ?? [], [userStashData]);
+
+  useEffect(() => {
+    if ((isPending && !sessionTimedOut) || isLoadingData) {
+      showLoader('dashboard');
+    } else {
+      hideLoader('dashboard');
+    }
+  }, [isPending, sessionTimedOut, isLoadingData, showLoader, hideLoader]);
 
   if (!isPending && !session?.user) return null;
-  if ((isPending && !sessionTimedOut) || isLoadingData)
-    return <FullPageLoading />;
 
   const firstName = (userData?.name || session?.user?.name || "Climber").split(
     " ",
   )[0];
-  const userShoes = useMemo(() => userStashData ?? [], [userStashData]);
   const avgComfort =
     userShoes.length > 0
       ? (

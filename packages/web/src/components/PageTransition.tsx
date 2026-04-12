@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLoading } from "@/contexts/LoadingContext";
 
 const transitionImages = [
   "/imgs/transition/blue_hold.png",
@@ -36,47 +36,14 @@ const MarqueeText = ({
 );
 
 export function PageTransition({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const { isLoading } = useLoading();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [prevPathname, setPrevPathname] = useState(pathname);
   const [imageCounter, setImageCounter] = useState(1);
-  const [showContent, setShowContent] = useState(true);
-
-  const shouldRunTransition = (nextPath: string, previousPath: string) => {
-    if (typeof window === "undefined") return false;
-
-    const nextTopLevel = nextPath.split("/")[1] || "home";
-    const prevTopLevel = previousPath.split("/")[1] || "home";
-
-    if (nextTopLevel === prevTopLevel) {
-      return false;
-    }
-
-    const now = Date.now();
-    const lastTransitionAt = Number(
-      window.sessionStorage.getItem("gk:lastTransitionAt") || 0,
-    );
-
-    if (now - lastTransitionAt < 10000) {
-      return false;
-    }
-
-    window.sessionStorage.setItem("gk:lastTransitionAt", String(now));
-    return true;
-  };
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
-    if (pathname !== prevPathname) {
-      if (!shouldRunTransition(pathname, prevPathname)) {
-        setPrevPathname(pathname);
-        setShowContent(true);
-        setIsTransitioning(false);
-        return;
-      }
-
-      setShowContent(false);
-      setIsTransitioning(true);
+    if (isLoading && !isAnimating) {
+      setIsAnimating(true);
       setCurrentImageIndex(0);
       setImageCounter(1);
 
@@ -91,26 +58,18 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
         setImageCounter((prev) => Math.min(prev + 1, transitionImages.length));
       }, 180);
 
-      const transitionTimeout = setTimeout(
-        () => {
-          setIsTransitioning(false);
-          setPrevPathname(pathname);
-          setShowContent(true);
-        },
-        transitionImages.length * 180 + 400,
-      );
-
       return () => {
         clearInterval(imageInterval);
-        clearTimeout(transitionTimeout);
       };
+    } else if (!isLoading) {
+      setIsAnimating(false);
     }
-  }, [pathname, prevPathname]);
+  }, [isLoading, isAnimating]);
 
   return (
     <>
       <AnimatePresence mode="wait">
-        {isTransitioning && (
+        {isLoading && (
           <motion.div
             key="transition"
             initial={{ opacity: 0 }}
@@ -237,15 +196,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
         )}
       </AnimatePresence>
 
-      <motion.div
-        key={pathname}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: showContent ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        style={{ visibility: showContent ? "visible" : "hidden" }}
-      >
-        {children}
-      </motion.div>
+      {children}
     </>
   );
 }

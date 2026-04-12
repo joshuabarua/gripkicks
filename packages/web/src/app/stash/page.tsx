@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Footprints } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSession } from "@/lib/auth";
@@ -11,7 +11,8 @@ import { editFormSchema, type EditFormData } from "@/schemas/shoe-schema";
 import EditShoeDialog from "@/components/EditShoeDialog";
 import ShoeStatsModal from "@/components/ShoeStatsModal";
 import CloudBackground from "@/components/CloudBackground";
-import { FullPageLoading, LoadingBar } from "@/components/ui/loading";
+import { LoadingBar } from "@/components/ui/loading";
+import { useLoading } from "@/contexts/LoadingContext";
 import { ShoeCardSkeleton, StatsStripSkeleton } from "@/components/ui/skeleton";
 import {
   addShoeToStash,
@@ -34,6 +35,7 @@ import { getEffectiveShoeStats } from "@/components/ShoeStatsModal/utils";
 export default function ShoeSanctuaryPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const toast = useToast();
+  const { showLoader, hideLoader } = useLoading();
   const [selectedShoe, setSelectedShoe] = useState<UserShoe | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
@@ -292,9 +294,13 @@ export default function ShoeSanctuaryPage() {
     };
   }, [selectedShoe, allShoes, popularityMap, totalShoesInDatabase]);
 
-  if (sessionLoading) {
-    return <FullPageLoading text="Loading Sanctuary" />;
-  }
+  useEffect(() => {
+    if (sessionLoading) {
+      showLoader('stash-session');
+    } else {
+      hideLoader('stash-session');
+    }
+  }, [sessionLoading, showLoader, hideLoader]);
 
   if (!session?.user) {
     return (
