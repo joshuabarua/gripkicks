@@ -2,40 +2,17 @@
 
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import { Suspense, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
-// Performance optimization: Throttle updates
 const useThrottle = <T,>(value: T, delay: number): T => {
   const [throttledValue, setThrottledValue] = useState(value);
-
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setThrottledValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
+    const handler = setTimeout(() => setThrottledValue(value), delay);
+    return () => clearTimeout(handler);
   }, [value, delay]);
-
   return throttledValue;
-};
-
-// Morph target configuration
-const MORPH_CONFIG = {
-  // Toe shape morphs (0-1 range)
-  egyptian: { bigToe: 1.0, otherToes: 0.3 },
-  roman: { bigToe: 0.5, otherToes: 0.5 },
-  greek: { bigToe: 0.3, otherToes: 1.0 },
-  germanic: { bigToe: 0.7, otherToes: 0.7 },
-  celtic: { bigToe: 0.6, otherToes: 0.8 },
-
-  // Volume morphs (0-1 range)
-  low: { width: 0.3, height: 0.3, instep: 0.2 },
-  medium: { width: 0.6, height: 0.6, instep: 0.5 },
-  high: { width: 1.0, height: 1.0, instep: 0.8 },
 };
 
 function FootModel({
@@ -172,181 +149,27 @@ function FootModel({
   );
 }
 
-// LOD component for mobile optimization
-function LODFootModel(props: {
-  modelPath?: string;
-  shape?: string;
-  volume?: string;
-  scale?: number;
-}) {
-  const modelPath = props.modelPath ?? "/glb/foot.optimized.glb";
-
-  return <FootModel {...props} modelPath={modelPath} />;
-}
-
 interface FootModelViewerProps {
-  shape?: string;
-  volume?: string;
-  onShapeChange?: (shape: string) => void;
-  onVolumeChange?: (volume: string) => void;
   modelPath?: string;
-  showControls?: boolean;
   containerClassName?: string;
-  scale?: number;
 }
 
 export default function FootModelViewer({
-  shape = "roman",
-  volume = "medium",
-  onShapeChange,
-  onVolumeChange,
-  modelPath,
-  showControls = true,
+  modelPath = "/glb/foot.optimized.glb",
   containerClassName,
-  scale = 1.5,
 }: FootModelViewerProps) {
-  const [currentShape, setCurrentShape] = useState(shape);
-  const [currentVolume, setCurrentVolume] = useState(volume);
-  const [resolvedModelPath, setResolvedModelPath] = useState(
-    modelPath ?? "/glb/foot.optimized.glb",
-  );
-
-  const handleShapeChange = (newShape: string) => {
-    setCurrentShape(newShape);
-    onShapeChange?.(newShape);
-  };
-
-  const handleVolumeChange = (newVolume: string) => {
-    setCurrentVolume(newVolume);
-    onVolumeChange?.(newVolume);
-  };
-
-  useEffect(() => {
-    if (modelPath) {
-      setResolvedModelPath(modelPath);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    async function resolveModelPath() {
-      try {
-        const response = await fetch(
-          `/api/foot-model?shape=${currentShape}&volume=${currentVolume}`,
-          {
-            signal: controller.signal,
-          },
-        );
-        if (!response.ok) return;
-
-        const data = (await response.json()) as { modelPath?: string };
-        if (data.modelPath) {
-          setResolvedModelPath(data.modelPath);
-        }
-      } catch {
-        // Keep the last known model path on transient errors.
-      }
-    }
-
-    resolveModelPath();
-    return () => controller.abort();
-  }, [currentShape, currentVolume, modelPath]);
-
   return (
-    <div className={containerClassName ?? "w-full h-screen bg-slate-950 relative"}>
-      {/* Controls Panel */}
-      {showControls && (
-        <div className="absolute top-4 left-4 z-[100] bg-black/90 backdrop-blur-md rounded-xl p-6 text-white w-80 border border-white/30 shadow-2xl">
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <span className="text-3xl">🦶</span>
-            3D Foot Model
-          </h2>
-
-          {/* Shape Selector */}
-          <div className="space-y-3 mb-6">
-            <label className="text-sm font-medium text-gray-300">
-              Foot Shape
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.keys(MORPH_CONFIG)
-                .filter((key) => !["low", "medium", "high"].includes(key))
-                .map((shapeName) => (
-                  <button
-                    key={shapeName}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleShapeChange(shapeName);
-                    }}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${
-                      currentShape === shapeName
-                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400"
-                        : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                    }`}
-                  >
-                    {shapeName.charAt(0).toUpperCase() + shapeName.slice(1)}
-                  </button>
-                ))}
-            </div>
-          </div>
-
-          {/* Volume Selector */}
-          <div className="space-y-3 mb-6">
-            <label className="text-sm font-medium text-gray-300">
-              Foot Volume
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {["low", "medium", "high"].map((volumeName) => (
-                <button
-                  key={volumeName}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleVolumeChange(volumeName);
-                  }}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 relative ${
-                    currentVolume === volumeName
-                      ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 ring-2 ring-purple-400"
-                      : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                  }`}
-                >
-                  {volumeName.charAt(0).toUpperCase() + volumeName.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Info */}
-          <div className="text-xs text-gray-400 space-y-1 border-t border-gray-700 pt-4">
-            <p>🖱️ Drag to rotate</p>
-            <p>📚 Scroll to zoom</p>
-            <p>📱 Touch enabled</p>
-            <p className="text-green-400">✨ Real-time morphing</p>
-          </div>
-        </div>
-      )}
-
-      {/* 3D Canvas with performance optimizations */}
+    <div className={containerClassName ?? "w-full h-full bg-slate-950 relative"}>
       <Canvas
         camera={{ position: [0, 0, 5], fov: 50 }}
-        gl={{
-          antialias: true,
-          alpha: false,
-          powerPreference: "high-performance",
-        }}
-        dpr={window.devicePixelRatio > 2 ? 2 : window.devicePixelRatio}
-        style={{ background: "rgb(15 23 42)" }} // slate-950
+        gl={{ antialias: true, alpha: false }}
+        style={{ background: "rgb(15 23 42)" }}
         className="absolute inset-0"
       >
-        <Suspense fallback={null}>
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[10, 10, 5]} intensity={1} />
-          <directionalLight position={[-10, -10, -5]} intensity={0.5} />
-          <LODFootModel
-            modelPath={resolvedModelPath}
-            shape={currentShape}
-            volume={currentVolume}
-            scale={scale}
-          />
-        </Suspense>
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 10, 5]} intensity={1} />
+        <directionalLight position={[-10, -10, -5]} intensity={0.5} />
+        <FootModel modelPath={modelPath} />
       </Canvas>
     </div>
   );
