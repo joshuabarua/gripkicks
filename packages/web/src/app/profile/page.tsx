@@ -48,6 +48,7 @@ export default function ProfilePage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
   const displayName = profile?.name || session?.user?.name || "User";
   const displayEmail = profile?.email || session?.user?.email || "";
@@ -91,7 +92,7 @@ export default function ProfilePage() {
       } catch (err) {
         console.error("Failed to load profile:", err);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     }
 
@@ -99,7 +100,7 @@ export default function ProfilePage() {
       if (session?.user) {
         loadProfile();
       } else {
-        setLoading(false);
+        setIsLoading(false);
       }
     }
   }, [session, sessionLoading]);

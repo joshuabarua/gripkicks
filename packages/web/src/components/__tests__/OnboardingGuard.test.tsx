@@ -1,6 +1,8 @@
+import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { OnboardingGuard } from "@/components/OnboardingGuard";
+import { LoadingProvider } from "@/contexts/LoadingContext";
 
 const mockPush = vi.fn();
 
@@ -25,6 +27,10 @@ vi.mocked(await import("next/navigation")).usePathname = mockUsePathname;
 vi.mocked(await import("@/lib/auth")).useSession = mockUseSession;
 vi.mocked(await import("@/lib/api-client")).fetchApi = mockFetchApi;
 
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <LoadingProvider>{children}</LoadingProvider>
+  );
+
 describe("OnboardingGuard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -43,6 +49,7 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Public Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
     expect(screen.getByTestId("protected-content")).toBeInTheDocument();
@@ -57,6 +64,7 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Auth Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
     expect(screen.getByTestId("protected-content")).toBeInTheDocument();
@@ -71,13 +79,14 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Onboarding Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
     expect(screen.getByTestId("protected-content")).toBeInTheDocument();
     expect(mockFetchApi).not.toHaveBeenCalled();
   });
 
-  it("shows loading spinner while session is loading", () => {
+  it("renders children while session is loading (loading shown via global overlay)", () => {
     mockUsePathname.mockReturnValue("/dashboard");
     mockUseSession.mockReturnValue({ data: null, isPending: true });
 
@@ -85,9 +94,11 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
-    expect(screen.queryByTestId("protected-content")).not.toBeInTheDocument();
+    // With global loading, children are always rendered
+    expect(screen.getByTestId("protected-content")).toBeInTheDocument();
   });
 
   it("renders children for unauthenticated users on protected paths", async () => {
@@ -98,6 +109,7 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
     await waitFor(() => {
@@ -123,6 +135,7 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
     await waitFor(() => {
@@ -148,6 +161,7 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
     await waitFor(() => {
@@ -171,6 +185,7 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
     await waitFor(() => {
@@ -201,6 +216,7 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Foot Lab Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
     await waitFor(() => {
@@ -227,6 +243,7 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Foot Lab Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
     await waitFor(() => {
@@ -241,7 +258,7 @@ describe("OnboardingGuard", () => {
     consoleSpy.mockRestore();
   });
 
-  it("times out session loading after 5 seconds and renders children", async () => {
+  it("times out session loading after 5 seconds and logs warning", async () => {
     mockUsePathname.mockReturnValue("/dashboard");
     mockUseSession.mockReturnValue({ data: null, isPending: true });
 
@@ -251,15 +268,13 @@ describe("OnboardingGuard", () => {
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
       </OnboardingGuard>,
+      { wrapper }
     );
 
-    expect(screen.queryByTestId("protected-content")).not.toBeInTheDocument();
+    // Children are always rendered with global loading
+    expect(screen.getByTestId("protected-content")).toBeInTheDocument();
 
     vi.advanceTimersByTime(5001);
-
-    await waitFor(() => {
-      expect(screen.getByTestId("protected-content")).toBeInTheDocument();
-    });
 
     expect(consoleSpy).toHaveBeenCalledWith(
       "[OnboardingGuard] Session loading timed out — rendering anyway",
@@ -287,6 +302,7 @@ describe("OnboardingGuard", () => {
         <OnboardingGuard>
           <div data-testid="protected-content">Content for {path}</div>
         </OnboardingGuard>,
+        { wrapper }
       );
 
       await waitFor(() => {
