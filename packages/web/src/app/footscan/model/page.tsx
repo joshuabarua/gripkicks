@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const FootModelViewer = dynamic(
   () => import("@/components/FootModelViewer"),
@@ -25,6 +27,8 @@ const volumeModels = [
 ];
 
 export default function FootModelPage() {
+  const [selectedModel, setSelectedModel] = useState("/glb/foot.optimized.glb");
+
   return (
     <main className="min-h-screen bg-black px-6 py-10 text-white md:px-10 lg:px-12">
       <div className="mx-auto flex max-w-7xl flex-col gap-10">
@@ -43,13 +47,13 @@ export default function FootModelPage() {
         </div>
 
         <div className="h-[60vh] w-full overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900">
-          <FootModelViewer modelPath="/glb/foot.optimized.glb" />
+          <FootModelViewer key={selectedModel} modelPath={selectedModel} />
         </div>
 
         <div className="space-y-8">
-          <ModelSection title="BASE MODELS" models={baseModels} />
-          <ModelSection title="SHAPE MODELS" models={shapeModels} />
-          <ModelSection title="VOLUME MODELS" models={volumeModels} />
+          <ModelSection title="BASE MODELS" models={baseModels} selectedModel={selectedModel} onSelect={setSelectedModel} />
+          <ModelSection title="SHAPE MODELS" models={shapeModels} selectedModel={selectedModel} onSelect={setSelectedModel} />
+          <ModelSection title="VOLUME MODELS" models={volumeModels} selectedModel={selectedModel} onSelect={setSelectedModel} />
         </div>
       </div>
     </main>
@@ -59,16 +63,20 @@ export default function FootModelPage() {
 function ModelSection({
   title,
   models,
+  selectedModel,
+  onSelect,
 }: {
   title: string;
   models: { label: string; description: string; modelPath: string }[];
+  selectedModel: string;
+  onSelect: (path: string) => void;
 }) {
   return (
     <div>
       <h2 className="font-tanker text-2xl mb-4">{title}</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {models.map((model) => (
-          <ModelCard key={model.modelPath} model={model} />
+          <ModelCard key={model.modelPath} model={model} isSelected={selectedModel === model.modelPath} onSelect={onSelect} />
         ))}
       </div>
     </div>
@@ -77,16 +85,28 @@ function ModelSection({
 
 function ModelCard({
   model,
+  isSelected,
+  onSelect,
 }: {
   model: { label: string; description: string; modelPath: string };
+  isSelected: boolean;
+  onSelect: (path: string) => void;
 }) {
   return (
-    <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-4">
+    <button
+      onClick={() => onSelect(model.modelPath)}
+      className={cn(
+        "rounded-2xl border p-4 text-left transition-colors",
+        isSelected
+          ? "border-white/40 bg-neutral-800"
+          : "border-neutral-800 bg-neutral-900 hover:border-neutral-700"
+      )}
+    >
       <div className="mb-2 h-32 w-full overflow-hidden rounded-xl border border-neutral-700">
         <FootModelViewer modelPath={model.modelPath} containerClassName="w-full h-full" />
       </div>
       <h3 className="font-tanker text-lg">{model.label}</h3>
       <p className="text-sm text-neutral-500">{model.description}</p>
-    </div>
+    </button>
   );
 }

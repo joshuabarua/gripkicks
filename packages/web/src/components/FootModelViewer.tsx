@@ -1,8 +1,8 @@
 "use client";
 
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
-import { useState, useEffect, useRef } from "react";
+import { OrbitControls, useGLTF, Html } from "@react-three/drei";
+import { useState, useEffect, useRef, Suspense } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
@@ -120,16 +120,6 @@ function FootModel({
     });
   }, [gltf.scene, throttledShape, throttledVolume]);
 
-  // Performance: Disable auto-rotate on mobile
-  const [autoRotate, setAutoRotate] = useState(true);
-  useEffect(() => {
-    const checkMobile = () => {
-      setAutoRotate(window.innerWidth > 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   return (
     <>
@@ -139,8 +129,7 @@ function FootModel({
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
-        autoRotate={autoRotate}
-        autoRotateSpeed={1}
+        autoRotate={false}
         target={[0, 0, 0]}
         enableDamping={true}
         dampingFactor={0.05}
@@ -152,6 +141,14 @@ function FootModel({
 interface FootModelViewerProps {
   modelPath?: string;
   containerClassName?: string;
+}
+
+function Loader() {
+  return (
+    <Html center>
+      <div className="w-4 h-4 rounded-full bg-white/30 animate-pulse" />
+    </Html>
+  );
 }
 
 export default function FootModelViewer({
@@ -166,10 +163,12 @@ export default function FootModelViewer({
         style={{ background: "rgb(15 23 42)" }}
         className="absolute inset-0"
       >
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} />
-        <directionalLight position={[-10, -10, -5]} intensity={0.5} />
-        <FootModel modelPath={modelPath} />
+        <ambientLight intensity={1} />
+        <directionalLight position={[5, 5, 5]} intensity={2} />
+        <directionalLight position={[-5, -5, -5]} intensity={0.5} />
+        <Suspense fallback={<Loader />}>
+          <FootModel modelPath={modelPath} />
+        </Suspense>
       </Canvas>
     </div>
   );

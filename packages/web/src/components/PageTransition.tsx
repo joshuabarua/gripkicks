@@ -22,8 +22,8 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 
     setCurrentImageIndex(0);
     const imageInterval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev >= transitionImages.length - 1 ? prev : prev + 1));
-    }, 180);
+      setCurrentImageIndex((prev) => (prev + 1) % transitionImages.length);
+    }, 120);
 
     return () => clearInterval(imageInterval);
   }, [isLoading]);
@@ -37,6 +37,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             className="fixed inset-0 z-[9999] flex items-center justify-center bg-neutral-950"
           >
             <AnimatePresence mode="popLayout">
