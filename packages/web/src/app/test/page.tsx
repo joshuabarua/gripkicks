@@ -8,8 +8,7 @@ const VARIATIONS = [
   { href: "/", label: "Original", desc: "Current dashboard look" },
   { href: "/test/editorial-japanese", label: "Editorial · Japanese", desc: "Cream paper, hinomaru disc, kanji accents, halftone grain" },
   { href: "/test/editorial-retro", label: "Editorial · Retro", desc: "The GripKicks Gazette — sepia studio plate, serif swashes" },
-  { href: "/test/editorial-scifi", label: "Editorial · Sci-Fi", desc: "Lab report, cyan instrumentation, grid overlay, telemetry" },
-  { href: "/test/editorial-gorp", label: "Editorial · Gorpcore", desc: "Field journal, topo lines, coordinates, safety orange" },
+  { href: "/test/editorial-gorp", label: "Editorial · Gorpcore", desc: "Field journal, topo lines, coordinates, field-verified stamp" },
 ];
 
 export default function HomeDesignsIndex() {

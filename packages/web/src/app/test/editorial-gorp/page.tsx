@@ -7,19 +7,22 @@ import { ArrowLeft } from "lucide-react";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
-  loading: () => null,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center font-mono text-[10px] uppercase tracking-widest opacity-40">
+      loading specimen…
+    </div>
+  ),
 });
 
 const GRAIN =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.14 0 0 0 0 0.08 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.14 0 0 0 0 0.08 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
 const TOPO =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%235a4a2a' stroke-width='0.6' opacity='0.35'%3E%3Cpath d='M0 60 Q100 40 200 80 T400 60'/%3E%3Cpath d='M0 120 Q100 100 200 140 T400 120'/%3E%3Cpath d='M0 180 Q100 160 200 200 T400 180'/%3E%3Cpath d='M0 240 Q100 220 200 260 T400 240'/%3E%3Cpath d='M0 300 Q100 280 200 320 T400 300'/%3E%3Cpath d='M0 360 Q100 340 200 380 T400 360'/%3E%3C/g%3E%3C/svg%3E\")";
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%23463622' stroke-width='0.6' opacity='0.3'%3E%3Cpath d='M0 60 Q100 40 200 80 T400 60'/%3E%3Cpath d='M0 120 Q100 100 200 140 T400 120'/%3E%3Cpath d='M0 180 Q100 160 200 200 T400 180'/%3E%3Cpath d='M0 240 Q100 220 200 260 T400 240'/%3E%3Cpath d='M0 300 Q100 280 200 320 T400 300'/%3E%3Cpath d='M0 360 Q100 340 200 380 T400 360'/%3E%3C/g%3E%3C/svg%3E\")";
 
-const PAPER = "#e9dfc4";
-const INK = "#2a2418";
+const PAPER = "#e4d9ba";
+const INK = "#231c10";
 const ORANGE = "#d2571b";
-const OLIVE = "#5e5a3a";
 
 export default function EditorialGorp() {
   return (
@@ -28,120 +31,134 @@ export default function EditorialGorp() {
       style={{ background: PAPER, color: INK }}
     >
       <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-70"
+        className="pointer-events-none fixed inset-0 z-0 opacity-60"
         style={{ backgroundImage: TOPO, backgroundSize: "400px 400px" }}
       />
       <div
-        className="pointer-events-none fixed inset-0 z-[60] mix-blend-multiply opacity-50"
+        className="pointer-events-none fixed inset-0 z-[60] mix-blend-multiply opacity-45"
         style={{ backgroundImage: GRAIN, backgroundSize: "240px 240px" }}
       />
 
       <Link
         href="/test"
         className="fixed top-24 left-6 z-[70] inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest px-3 py-1.5 border"
-        style={{ borderColor: INK, background: PAPER }}
+        style={{ borderColor: INK, background: PAPER, color: INK }}
       >
         <ArrowLeft className="w-3 h-3" /> back
       </Link>
 
-      <section className="relative grid grid-cols-12 grid-rows-12 min-h-screen" style={{ borderBottom: `1px solid ${INK}` }}>
+      <header
+        className="relative px-6 py-3 flex items-center justify-between gap-4 flex-wrap font-mono text-[10px] uppercase tracking-widest"
+        style={{ borderBottom: `1px solid ${INK}`, background: PAPER }}
+      >
+        <span>field journal · vol. i</span>
+        <span className="hidden md:inline">N 47°16′ · E 11°23′</span>
+        <span>elev. 2340m</span>
+        <span>04°C</span>
+      </header>
+
+      <section
+        className="relative h-[80vh] w-full overflow-hidden"
+        style={{ borderBottom: `1px solid ${INK}`, background: PAPER }}
+      >
+        <div className="absolute inset-0 z-10">
+          <Scene />
+        </div>
+
         <div
-          className="col-span-12 row-span-1 flex items-center justify-between px-6 font-mono text-[10px] uppercase tracking-widest"
-          style={{ borderBottom: `1px solid ${INK}`, background: PAPER }}
+          className="absolute top-6 right-6 z-20 px-3 py-2 border font-mono text-[10px] uppercase tracking-widest text-right space-y-1"
+          style={{ borderColor: INK, background: PAPER }}
         >
-          <span>field journal · vol. i</span>
-          <span className="hidden md:inline">N 47°16′ · E 11°23′</span>
-          <span>elev. 2340m</span>
-          <span>04°C</span>
+          <div>specimen · solutions 40.5eu</div>
+          <div>observed · t+00:42</div>
+          <div>surface · granite / t2</div>
         </div>
 
-        <div className="col-span-12 md:col-span-7 row-span-10 relative" style={{ borderRight: `1px solid ${INK}` }}>
-          <div className="absolute inset-0 z-10">
-            <Scene />
-          </div>
-          <div
-            className="absolute top-4 right-4 font-mono text-[9px] uppercase tracking-widest text-right space-y-1 px-2 py-1 border"
-            style={{ borderColor: INK, background: PAPER, color: INK }}
-          >
-            <div>specimen · solutions 40.5eu</div>
-            <div>observed · t+00:42</div>
-            <div>surface · granite / t2</div>
-          </div>
-          <div className="absolute bottom-4 left-6 right-6 flex justify-between font-mono text-[9px] uppercase tracking-widest">
-            <span>fig. 01 — fit scan, in the field</span>
-            <span style={{ color: ORANGE }}>◆ active signal</span>
-          </div>
+        <div
+          className="absolute bottom-6 left-6 z-20 w-20 h-20 rounded-full flex items-center justify-center font-mono text-[9px] uppercase tracking-widest text-center leading-tight rotate-[-8deg]"
+          style={{
+            background: ORANGE,
+            color: PAPER,
+            border: `2px solid ${INK}`,
+          }}
+          aria-hidden
+        >
+          field<br />verified<br />001
         </div>
 
-        <div className="col-span-12 md:col-span-5 row-span-10 flex flex-col justify-between p-8 md:p-10" style={{ background: PAPER }}>
-          <div className="space-y-6">
-            <div className="font-mono text-[10px] uppercase tracking-[0.3em]" style={{ color: ORANGE }}>
-              § field report · entry 001
+        <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-end font-mono text-[9px] uppercase tracking-widest">
+          <span>fig. 01 — fit scan, in the field</span>
+        </div>
+      </section>
+
+      <section className="relative px-6 md:px-16 py-20" style={{ background: PAPER }}>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-10">
+          <aside className="md:col-span-3 space-y-2 font-mono text-[10px] uppercase tracking-widest">
+            <div>§ 1</div>
+            <div className="font-serif italic text-base normal-case tracking-normal">
+              A field note.
             </div>
+            <div className="pt-4">entry 001</div>
+          </aside>
+
+          <div className="md:col-span-9 space-y-6">
             <h1 className="font-serif italic text-5xl md:text-7xl leading-[0.95] tracking-tight">
               Built for the ground
-              <span className="not-italic font-tanker" style={{ color: ORANGE }}> under your foot.</span>
+              <span className="not-italic font-tanker"> under your foot.</span>
             </h1>
+
             <div className="h-px w-24" style={{ background: INK }} />
-            <p className="font-mono text-xs leading-relaxed max-w-sm" style={{ color: OLIVE }}>
-              A fit system engineered like a topo map — precise, layered, and honest about the
-              terrain. Shape. Volume. Rubber. Surface.
+
+            <p className="font-serif text-xl md:text-2xl leading-snug max-w-2xl">
+              A fit system engineered like a topographic map — precise, layered, and honest
+              about the terrain. Shape. Volume. Rubber. Surface.
+            </p>
+
+            <p className="font-mono text-xs leading-relaxed max-w-lg">
+              Logged from the crag, not the lab. Every reading earns its place in the record.
+              No hype. No house brand. Just measurements you can trust at the base of a route.
             </p>
           </div>
-
-          <div className="mt-10 space-y-0">
-            {[
-              { code: "FL-01", en: "Foot Lab", spec: "morphology" },
-              { code: "SM-02", en: "Sole Mate", spec: "rubber match" },
-              { code: "SC-03", en: "Sanctuary", spec: "archive" },
-            ].map((row) => (
-              <div
-                key={row.code}
-                className="flex justify-between items-baseline py-3"
-                style={{ borderTop: `1px solid ${INK}` }}
-              >
-                <span className="font-mono text-[10px] tracking-widest" style={{ color: ORANGE }}>
-                  {row.code}
-                </span>
-                <span className="font-serif italic text-sm">{row.en}</span>
-                <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: OLIVE }}>
-                  {row.spec}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div
-          className="col-span-12 row-span-1 flex items-center justify-between px-6 font-mono text-[10px] uppercase tracking-widest"
-          style={{ borderTop: `1px solid ${INK}`, background: PAPER }}
-        >
-          <span>↓ descend</span>
-          <span className="font-serif italic normal-case tracking-normal">continue the route</span>
-          <span>p. 01 / 12</span>
         </div>
       </section>
 
-      <section className="py-24 px-6 md:px-16 relative" style={{ background: PAPER }}>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-8">
-          <div className="md:col-span-3 font-mono text-[10px] uppercase tracking-widest" style={{ color: OLIVE }}>
-            § 1.1
-            <div className="mt-1 font-serif italic text-sm normal-case tracking-normal" style={{ color: ORANGE }}>
-              Method
+      <section
+        className="relative px-6 md:px-16 py-14"
+        style={{ background: PAPER, borderTop: `1px solid ${INK}`, borderBottom: `1px solid ${INK}` }}
+      >
+        <div className="max-w-5xl mx-auto space-y-0">
+          {[
+            { code: "FL-01", en: "Foot Lab", desc: "morphology" },
+            { code: "SM-02", en: "Sole Mate", desc: "rubber match" },
+            { code: "SC-03", en: "Sanctuary", desc: "archive" },
+          ].map((row, i) => (
+            <div
+              key={row.code}
+              className="grid grid-cols-12 items-baseline py-5 gap-4"
+              style={{ borderTop: i === 0 ? "none" : `1px dashed ${INK}` }}
+            >
+              <span className="col-span-3 font-mono text-[11px] tracking-widest">
+                {row.code}
+              </span>
+              <span className="col-span-5 font-tanker text-xl md:text-3xl uppercase">
+                {row.en}
+              </span>
+              <span className="col-span-4 text-right font-serif italic text-base md:text-lg">
+                {row.desc}
+              </span>
             </div>
-          </div>
-          <div className="md:col-span-9 space-y-4">
-            <p className="font-serif italic text-2xl md:text-4xl leading-snug">
-              Read the foot like you read a slab —
-              <span className="not-italic font-tanker"> with respect for every feature.</span>
-            </p>
-            <p className="font-mono text-xs leading-relaxed max-w-lg" style={{ color: OLIVE }}>
-              GripKicks logs morphology, matches rubber to surface, and keeps a field record.
-              No hype. Just data that earns your trust.
-            </p>
-          </div>
+          ))}
         </div>
       </section>
+
+      <footer
+        className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between"
+        style={{ background: PAPER }}
+      >
+        <span>gripkicks · field edition</span>
+        <span className="hidden md:inline">printed on kraft</span>
+        <span>entry 001 / 012</span>
+      </footer>
     </main>
   );
 }
