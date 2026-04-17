@@ -6,13 +6,10 @@ import { ArrowUpRight } from "lucide-react";
 
 const VARIATIONS = [
   { href: "/", label: "Original", desc: "Current dashboard look" },
-  { href: "/test/home-japanese", label: "Shōwa Pop Art", desc: "Japanese retro ad posters — halftones, burst shapes, kirakira" },
-  { href: "/test/home-y2k", label: "Frutiger Aero", desc: "Glossy bubbles, chrome, aqua gradients, translucent glass" },
-  { href: "/test/home-brutalist", label: "Brutalist Editorial", desc: "Huge type, raw grids, mono + serif clash" },
-  { href: "/test/home-riso", label: "Risograph Zine", desc: "2-ink overprint, paper grain, fluoro pink + blue" },
-  { href: "/test/home-skate", label: "90s Skate Mag", desc: "Collage, xerox, sticker bomb, marker scribble" },
-  { href: "/test/home-gorp", label: "Gorpcore Trail", desc: "Topo maps, spec sheets, safety orange" },
-  { href: "/test/home-memphis", label: "Memphis 80s", desc: "Geometric squiggles, checkerboard, pastel neon" },
+  { href: "/test/editorial-japanese", label: "Editorial · Japanese", desc: "Cream paper, hinomaru disc, kanji accents, halftone grain" },
+  { href: "/test/editorial-retro", label: "Editorial · Retro", desc: "The GripKicks Gazette — sepia studio plate, serif swashes" },
+  { href: "/test/editorial-scifi", label: "Editorial · Sci-Fi", desc: "Lab report, cyan instrumentation, grid overlay, telemetry" },
+  { href: "/test/editorial-gorp", label: "Editorial · Gorpcore", desc: "Field journal, topo lines, coordinates, safety orange" },
 ];
 
 export default function HomeDesignsIndex() {
