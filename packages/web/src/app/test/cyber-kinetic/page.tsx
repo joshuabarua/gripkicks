@@ -62,7 +62,7 @@ export default function CyberKinetic() {
       <section className="relative px-8 py-32 z-10 w-full border-t border-[#333] bg-[#050505]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 max-w-[1800px] mx-auto">
              <div className="col-span-1 lg:col-span-3 text-[#00FF41] text-xl font-tanker uppercase flex lg:items-start lg:justify-end">
-                // SYSTEM_MODULES
+                {"// SYSTEM_MODULES"}
              </div>
              
              <div className="col-span-1 lg:col-span-9 flex flex-col gap-4">
