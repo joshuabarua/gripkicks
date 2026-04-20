@@ -6,9 +6,11 @@ import { ArrowUpRight } from "lucide-react";
 
 const VARIATIONS = [
   { href: "/", id: "00", label: "Production", desc: "The current system, live and operational.", type: "CORE" },
-  { href: "/test/editorial-japanese", id: "01", label: "Japanese", desc: "Cream paper, hinomaru disc, kanji accents, halftone grain.", type: "CONCEPT" },
-  { href: "/test/editorial-retro", id: "02", label: "Retro", desc: "The GripKicks Gazette — sepia studio plate, serif swashes.", type: "CONCEPT" },
-  { href: "/test/editorial-gorp", id: "03", label: "Gorpcore", desc: "Field journal, topo lines, coordinates, field-verified stamp.", type: "CONCEPT" },
+  { href: "/test/cyber-kinetic", id: "01", label: "Cyber-Kinetic", desc: "Neo-brutalist tech. Loud, dark, neon, moving.", type: "CONCEPT" },
+  { href: "/test/soft-minimal", id: "02", label: "Soft Minimal", desc: "Quiet luxury. Space, elegant typography, refined.", type: "CONCEPT" },
+  { href: "/test/editorial-japanese", id: "03", label: "Japanese", desc: "Cream paper, hinomaru disc, kanji accents, halftone grain.", type: "CONCEPT" },
+  { href: "/test/editorial-retro", id: "04", label: "Retro", desc: "The GripKicks Gazette — sepia studio plate, serif swashes.", type: "CONCEPT" },
+  { href: "/test/editorial-gorp", id: "05", label: "Gorpcore", desc: "Field journal, topo lines, coordinates, field-verified stamp.", type: "CONCEPT" },
 ];
 
 export default function HomeDesignsIndex() {
