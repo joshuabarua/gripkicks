@@ -7,11 +7,7 @@ import { ArrowLeft } from "lucide-react";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center font-mono text-[10px] uppercase tracking-widest opacity-40">
-      loading specimen…
-    </div>
-  ),
+  loading: () => null,
 });
 
 const GRAIN =
@@ -26,10 +22,7 @@ const ORANGE = "#d2571b";
 
 export default function EditorialGorp() {
   return (
-    <main
-      className="min-h-screen overflow-x-hidden relative"
-      style={{ background: PAPER, color: INK }}
-    >
+    <main className="min-h-screen overflow-x-hidden relative" style={{ background: PAPER, color: INK }}>
       <div
         className="pointer-events-none fixed inset-0 z-0 opacity-60"
         style={{ backgroundImage: TOPO, backgroundSize: "400px 400px" }}
@@ -57,16 +50,15 @@ export default function EditorialGorp() {
         <span>04°C</span>
       </header>
 
-      <section
-        className="relative h-[80vh] w-full overflow-hidden"
-        style={{ borderBottom: `1px solid ${INK}`, background: PAPER }}
-      >
-        <div className="absolute inset-0 z-10">
+      {/* HERO: exact Scene integration from HomeCreative */}
+      <section className="relative h-svh overflow-hidden" style={{ borderBottom: `1px solid ${INK}`, background: PAPER }}>
+        {/* EXACT pattern from HomeCreative */}
+        <div className="absolute inset-0 z-0">
           <Scene />
         </div>
 
         <div
-          className="absolute top-6 right-6 z-20 px-3 py-2 border font-mono text-[10px] uppercase tracking-widest text-right space-y-1"
+          className="absolute top-6 right-6 z-10 px-3 py-2 border font-mono text-[10px] uppercase tracking-widest text-right space-y-1"
           style={{ borderColor: INK, background: PAPER }}
         >
           <div>specimen · solutions 40.5eu</div>
@@ -75,18 +67,14 @@ export default function EditorialGorp() {
         </div>
 
         <div
-          className="absolute bottom-6 left-6 z-20 w-20 h-20 rounded-full flex items-center justify-center font-mono text-[9px] uppercase tracking-widest text-center leading-tight rotate-[-8deg]"
-          style={{
-            background: ORANGE,
-            color: PAPER,
-            border: `2px solid ${INK}`,
-          }}
+          className="absolute bottom-6 left-6 z-10 w-20 h-20 rounded-full flex items-center justify-center font-mono text-[9px] uppercase tracking-widest text-center leading-tight rotate-[-8deg]"
+          style={{ background: ORANGE, color: PAPER, border: `2px solid ${INK}` }}
           aria-hidden
         >
           field<br />verified<br />001
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-end font-mono text-[9px] uppercase tracking-widest">
+        <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-end font-mono text-[9px] uppercase tracking-widest z-10">
           <span>fig. 01 — fit scan, in the field</span>
         </div>
       </section>
@@ -95,9 +83,7 @@ export default function EditorialGorp() {
         <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-10">
           <aside className="md:col-span-3 space-y-2 font-mono text-[10px] uppercase tracking-widest">
             <div>§ 1</div>
-            <div className="font-serif italic text-base normal-case tracking-normal">
-              A field note.
-            </div>
+            <div className="font-serif italic text-base normal-case tracking-normal">A field note.</div>
             <div className="pt-4">entry 001</div>
           </aside>
 
@@ -110,13 +96,11 @@ export default function EditorialGorp() {
             <div className="h-px w-24" style={{ background: INK }} />
 
             <p className="font-serif text-xl md:text-2xl leading-snug max-w-2xl">
-              A fit system engineered like a topographic map — precise, layered, and honest
-              about the terrain. Shape. Volume. Rubber. Surface.
+              A fit system engineered like a topographic map — precise, layered, and honest about the terrain.
             </p>
 
             <p className="font-mono text-xs leading-relaxed max-w-lg">
-              Logged from the crag, not the lab. Every reading earns its place in the record.
-              No hype. No house brand. Just measurements you can trust at the base of a route.
+              Logged from the crag, not the lab. Every reading earns its place in the record. No hype. Just measurements you can trust at the base of a route.
             </p>
           </div>
         </div>
@@ -137,24 +121,15 @@ export default function EditorialGorp() {
               className="grid grid-cols-12 items-baseline py-5 gap-4"
               style={{ borderTop: i === 0 ? "none" : `1px dashed ${INK}` }}
             >
-              <span className="col-span-3 font-mono text-[11px] tracking-widest">
-                {row.code}
-              </span>
-              <span className="col-span-5 font-tanker text-xl md:text-3xl uppercase">
-                {row.en}
-              </span>
-              <span className="col-span-4 text-right font-serif italic text-base md:text-lg">
-                {row.desc}
-              </span>
+              <span className="col-span-3 font-mono text-[11px] tracking-widest">{row.code}</span>
+              <span className="col-span-5 font-tanker text-xl md:text-3xl uppercase">{row.en}</span>
+              <span className="col-span-4 text-right font-serif italic text-base md:text-lg">{row.desc}</span>
             </div>
           ))}
         </div>
       </section>
 
-      <footer
-        className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between"
-        style={{ background: PAPER }}
-      >
+      <footer className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between" style={{ background: PAPER }}>
         <span>gripkicks · field edition</span>
         <span className="hidden md:inline">printed on kraft</span>
         <span>entry 001 / 012</span>

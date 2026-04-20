@@ -7,11 +7,7 @@ import { ArrowLeft } from "lucide-react";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center font-mono text-[10px] uppercase tracking-widest opacity-40">
-      loading plate…
-    </div>
-  ),
+  loading: () => null,
 });
 
 const GRAIN =
@@ -22,10 +18,7 @@ const INK = "#26190d";
 
 export default function EditorialRetro() {
   return (
-    <main
-      className="min-h-screen overflow-x-hidden relative"
-      style={{ background: PAPER, color: INK }}
-    >
+    <main className="min-h-screen overflow-x-hidden relative" style={{ background: PAPER, color: INK }}>
       <div
         className="pointer-events-none fixed inset-0 z-[60] mix-blend-multiply opacity-55"
         style={{ backgroundImage: GRAIN, backgroundSize: "240px 240px" }}
@@ -41,49 +34,37 @@ export default function EditorialRetro() {
 
       <header className="relative px-6 py-5" style={{ borderBottom: `3px double ${INK}` }}>
         <div className="max-w-6xl mx-auto flex items-end justify-between gap-6 flex-wrap">
-          <div className="font-serif italic text-xl md:text-2xl">
-            The GripKicks Gazette
-          </div>
-          <div className="font-mono text-[10px] uppercase tracking-widest hidden md:block">
-            all the fit that&apos;s fit to print
-          </div>
-          <div className="font-mono text-[10px] uppercase tracking-widest">
-            vol. i · no. 01 · mmxxvi
-          </div>
+          <div className="font-serif italic text-xl md:text-2xl">The GripKicks Gazette</div>
+          <div className="font-mono text-[10px] uppercase tracking-widest hidden md:block">all the fit that&apos;s fit to print</div>
+          <div className="font-mono text-[10px] uppercase tracking-widest">vol. i · no. 01 · mmxxvi</div>
         </div>
       </header>
 
-      <section
-        className="relative h-[78vh] w-full overflow-hidden"
-        style={{ background: "#d9c79f", borderBottom: `1px solid ${INK}` }}
-      >
-        <div
-          className="absolute inset-0 z-10"
-          style={{ filter: "sepia(0.25) contrast(1.05) saturate(0.9)" }}
-        >
+      {/* HERO: exact Scene integration from HomeCreative */}
+      <section className="relative h-svh overflow-hidden" style={{ background: "#d9c79f", borderBottom: `1px solid ${INK}` }}>
+        {/* EXACT pattern from HomeCreative */}
+        <div className="absolute inset-0 z-0" style={{ filter: "sepia(0.25) contrast(1.05) saturate(0.9)" }}>
           <Scene />
         </div>
 
-        <div className="absolute inset-x-0 top-0 h-20 pointer-events-none"
+        <div
+          className="absolute inset-x-0 top-0 h-20 pointer-events-none z-10"
           style={{ background: `linear-gradient(180deg, ${PAPER}cc 0%, transparent 100%)` }}
         />
-        <div className="absolute inset-x-0 bottom-0 h-20 pointer-events-none"
+        <div
+          className="absolute inset-x-0 bottom-0 h-20 pointer-events-none z-10"
           style={{ background: `linear-gradient(0deg, ${PAPER}cc 0%, transparent 100%)` }}
         />
 
-        <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-between font-mono text-[10px] uppercase tracking-widest">
-          <span className="font-serif italic normal-case tracking-normal text-xs md:text-sm">
-            Plate I. — &ldquo;The Solutions, in studio.&rdquo;
-          </span>
+        <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-between font-mono text-[10px] uppercase tracking-widest z-10">
+          <span className="font-serif italic normal-case tracking-normal text-xs md:text-sm">Plate I. — &ldquo;The Solutions, in studio.&rdquo;</span>
           <span className="hidden md:inline">photographed on tri-x</span>
         </div>
       </section>
 
       <section className="relative px-6 md:px-16 py-16" style={{ background: PAPER }}>
         <div className="max-w-6xl mx-auto">
-          <div className="font-mono text-[10px] uppercase tracking-[0.3em] mb-4">
-            · featured story ·
-          </div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em] mb-4">· featured story ·</div>
           <h1 className="font-serif text-5xl md:text-7xl leading-[0.95] tracking-tight max-w-4xl">
             A quiet revolution
             <br />
@@ -95,20 +76,14 @@ export default function EditorialRetro() {
 
           <div className="grid md:grid-cols-3 gap-10">
             <p className="font-serif text-base md:text-lg leading-relaxed italic">
-              For a hundred years, the climbing shoe came in one of three widths and the
-              climber was told to suffer. Suffering was part of the sport. One apprenticed to
-              a shoe the way one apprenticed to a route.
+              For a hundred years, the climbing shoe came in one of three widths and the climber was told to suffer. Suffering was part of the sport.
             </p>
             <p className="font-serif text-base md:text-lg leading-relaxed">
               <span className="font-tanker text-4xl leading-none float-left mr-1">G</span>
-              ripKicks does what cobblers used to do — it looks at your foot first, and the
-              catalog second. Shape, volume, history. The shoe wall is no longer a
-              guessing game.
+              ripKicks does what cobblers used to do — it looks at your foot first, and the catalog second.
             </p>
             <p className="font-mono text-xs leading-relaxed uppercase tracking-widest">
-              Filed from chamonix. Dispatch received 0600h.
-              A correspondent observed the apparatus in use for three days.
-              She did not go back to her old shoes.
+              Filed from chamonix. Dispatch received 0600h. She did not go back to her old shoes.
             </p>
           </div>
         </div>
@@ -124,17 +99,13 @@ export default function EditorialRetro() {
             <div key={x.n} className="space-y-2">
               <div className="font-serif italic text-2xl">{x.n}</div>
               <div className="font-tanker text-2xl md:text-3xl uppercase">{x.s}</div>
-              <div className="font-mono text-[10px] uppercase tracking-widest">
-                {x.desc}
-              </div>
+              <div className="font-mono text-[10px] uppercase tracking-widest">{x.desc}</div>
             </div>
           ))}
         </div>
       </section>
 
-      <footer className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between"
-        style={{ background: PAPER }}
-      >
+      <footer className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between" style={{ background: PAPER }}>
         <span>gripkicks.co</span>
         <span className="hidden md:inline">est. mmxxvi</span>
         <span>p. 01 / 16</span>

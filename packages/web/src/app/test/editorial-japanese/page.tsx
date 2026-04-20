@@ -7,11 +7,7 @@ import { ArrowLeft } from "lucide-react";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center font-mono text-[10px] uppercase tracking-widest opacity-40">
-      loading specimen…
-    </div>
-  ),
+  loading: () => null,
 });
 
 const GRAIN =
@@ -23,10 +19,7 @@ const RED = "#c8102e";
 
 export default function EditorialJapanese() {
   return (
-    <main
-      className="min-h-screen overflow-x-hidden relative"
-      style={{ background: PAPER, color: INK }}
-    >
+    <main className="min-h-screen overflow-x-hidden relative" style={{ background: PAPER, color: INK }}>
       <div
         className="pointer-events-none fixed inset-0 z-[60] mix-blend-multiply opacity-45"
         style={{ backgroundImage: GRAIN, backgroundSize: "240px 240px" }}
@@ -49,21 +42,20 @@ export default function EditorialJapanese() {
         <span>東京 mmxxvi</span>
       </header>
 
-      <section
-        className="relative h-[80vh] w-full overflow-hidden"
-        style={{ background: PAPER, borderBottom: `1px solid ${INK}` }}
-      >
+      {/* HERO: exact Scene integration from HomeCreative */}
+      <section className="relative h-svh overflow-hidden" style={{ background: PAPER, borderBottom: `1px solid ${INK}` }}>
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[56vh] h-[56vh] rounded-full pointer-events-none"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vh] h-[50vh] rounded-full pointer-events-none"
           style={{ background: RED }}
           aria-hidden
         />
 
-        <div className="absolute inset-0 z-10">
+        {/* EXACT pattern from HomeCreative */}
+        <div className="absolute inset-0 z-0">
           <Scene />
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-between font-mono text-[9px] uppercase tracking-widest">
+        <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-between font-mono text-[9px] uppercase tracking-widest z-10">
           <span>fig. 01 — specimen · solutions 40.5eu</span>
           <span className="hidden md:inline">scale 1:1 · morphology</span>
           <span>t+00:42</span>
@@ -74,9 +66,7 @@ export default function EditorialJapanese() {
         <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-10">
           <aside className="md:col-span-3 space-y-2 font-mono text-[10px] uppercase tracking-widest">
             <div>§ 1</div>
-            <div className="font-serif italic text-base normal-case tracking-normal">
-              On reading a foot.
-            </div>
+            <div className="font-serif italic text-base normal-case tracking-normal">On reading a foot.</div>
             <div className="pt-4">by a fit quarterly</div>
           </aside>
 
@@ -89,19 +79,17 @@ export default function EditorialJapanese() {
             <div className="h-px w-24" style={{ background: INK }} />
 
             <p className="font-serif text-xl md:text-2xl leading-snug max-w-2xl">
-              GripKicks reads the body the way a tailor reads a back: in three dimensions,
-              with patience, without pretending that one number is enough.
+              GripKicks reads the body the way a tailor reads a back: in three dimensions, with patience, without pretending that one number is enough.
             </p>
 
             <p className="font-mono text-xs leading-relaxed max-w-lg">
-              Shape. Volume. Ritual. Measured once, carried forever. A quiet standard against
-              the noise of the shoe wall.
+              Shape. Volume. Ritual. Measured once, carried forever. A quiet standard against the noise of the shoe wall.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="relative px-6 md:px-16 py-16" style={{ background: PAPER, borderTop: `1px solid ${INK}` }}>
+      <section className="relative px-6 md:px-16 py-16" style={{ background: PAPER, borderTop: `1px solid ${INK}`, borderBottom: `1px solid ${INK}` }}>
         <div className="max-w-5xl mx-auto space-y-0">
           {[
             { num: "01", ja: "足の研究所", en: "Foot Lab", desc: "morphology" },
@@ -117,24 +105,15 @@ export default function EditorialJapanese() {
               }}
             >
               <span className="col-span-2 font-mono text-[11px] tracking-widest">§{row.num}</span>
-              <span className="col-span-4 font-serif italic text-xl md:text-2xl">
-                {row.ja}
-              </span>
-              <span className="col-span-3 font-tanker text-xl md:text-3xl uppercase">
-                {row.en}
-              </span>
-              <span className="col-span-3 text-right font-mono text-[11px] uppercase tracking-widest">
-                {row.desc} →
-              </span>
+              <span className="col-span-4 font-serif italic text-xl md:text-2xl">{row.ja}</span>
+              <span className="col-span-3 font-tanker text-xl md:text-3xl uppercase">{row.en}</span>
+              <span className="col-span-3 text-right font-mono text-[11px] uppercase tracking-widest">{row.desc} →</span>
             </div>
           ))}
         </div>
       </section>
 
-      <footer
-        className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between"
-        style={{ borderTop: `1px solid ${INK}`, background: PAPER }}
-      >
+      <footer className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between" style={{ background: PAPER }}>
         <span>gripkicks.co</span>
         <span className="hidden md:inline">printed on recycled paper</span>
         <span>p. 01 / 12</span>
