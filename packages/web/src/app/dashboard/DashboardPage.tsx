@@ -19,31 +19,6 @@ import { useLoading } from "@/contexts/LoadingContext";
 import ShoeImage from "@/components/ShoeImage";
 import { useFootProfileStore } from "@/stores/footProfileStore";
 
-const MarqueeText = ({
-  children,
-  reverse = false,
-}: {
-  children: React.ReactNode;
-  reverse?: boolean;
-}) => (
-  <motion.div
-    animate={{ x: reverse ? [0, 500] : [0, -500] }}
-    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-    className="flex gap-8 whitespace-nowrap"
-  >
-    {Array(20)
-      .fill(null)
-      .map((_, i) => (
-        <span
-          key={i}
-          className="font-sora text-[10px] uppercase tracking-[0.4em] text-brand-putty/15"
-        >
-          {children}
-        </span>
-      ))}
-  </motion.div>
-);
-
 export default function DashboardPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
@@ -97,9 +72,9 @@ export default function DashboardPage() {
   const avgComfort =
     userShoes.length > 0
       ? (
-          userShoes.reduce((acc, s) => acc + (s.comfortScore || 0), 0) /
-          userShoes.length
-        ).toFixed(1)
+        userShoes.reduce((acc, s) => acc + (s.comfortScore || 0), 0) /
+        userShoes.length
+      ).toFixed(1)
       : "—";
   const favCount = userShoes.filter((s) => s.isFavourite).length;
   const footShape = footProfile?.shape || userData?.footShape;
@@ -108,14 +83,6 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-black text-brand-chalk overflow-x-hidden">
-      <div className="scanline-overlay" />
-
-      <section className="py-3 border-b border-white/[0.06] overflow-hidden">
-        <MarqueeText>
-          YOUR GEAR &mdash; YOUR STATS &mdash; GRIP KICKS &mdash;{" "}
-        </MarqueeText>
-      </section>
-
       <section className="px-6 md:px-12 lg:px-16 py-12 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -472,25 +439,6 @@ export default function DashboardPage() {
           </motion.div>
         )}
       </section>
-
-      <div className="mt-16 py-3 border-y border-white/[0.06] overflow-hidden">
-        <motion.div
-          animate={{ x: [0, -1000] }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          className="flex gap-8 whitespace-nowrap"
-        >
-          {Array(10)
-            .fill(null)
-            .map((_, i) => (
-              <span
-                key={i}
-                className="font-sora text-[10px] uppercase tracking-[0.4em] text-brand-putty/15"
-              >
-                SCAN &mdash; MATCH &mdash; CLIMB &mdash; REPEAT &mdash;
-              </span>
-            ))}
-        </motion.div>
-      </div>
     </main>
   );
 }

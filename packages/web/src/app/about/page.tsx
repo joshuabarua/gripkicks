@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { Heart, Mountain, Users, Footprints, ArrowUpRight } from 'lucide-react';
-import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import Link from 'next/link';
 
 const fadeUp = {
@@ -45,27 +44,27 @@ export default function AboutPage() {
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">The Story</p>
             <div className="space-y-8 font-sora text-lg text-neutral-300 leading-relaxed">
               <p>
-                I have extremely weird climbing feet. Low volume, narrow, but big. 
-                Every shoe I tried was a compromise — too wide here, too tight there, 
-                never quite right. I spent years and hundreds of euros trying shoes 
-                that other people swore by, only to find they were built for completely 
+                I have extremely weird climbing feet. Low volume, narrow, but big.
+                Every shoe I tried was a compromise — too wide here, too tight there,
+                never quite right. I spent years and hundreds of euros trying shoes
+                that other people swore by, only to find they were built for completely
                 different feet.
               </p>
               <p>
-                The problem wasn&apos;t the shoes. The problem was that there was no way 
+                The problem wasn&apos;t the shoes. The problem was that there was no way
                 to find people with feet like mine and learn what actually worked for them.
               </p>
               <p className="text-white text-xl font-medium">
                 So I built GripKicks.
               </p>
               <p>
-                The idea is simple: <span className="text-brand-red">why not democratize the shoe-finding process?</span> Instead 
-                of relying on marketing, brand loyalty, or one person&apos;s review — what if we 
-                could match climbers by their actual foot shape and volume, and share real 
+                The idea is simple: <span className="text-brand-red">why not democratize the shoe-finding process?</span> Instead
+                of relying on marketing, brand loyalty, or one person&apos;s review — what if we
+                could match climbers by their actual foot shape and volume, and share real
                 comfort and performance data across the community?
               </p>
               <p>
-                No AI gimmicks. No foot-scanning hardware. Just real climbers helping 
+                No AI gimmicks. No foot-scanning hardware. Just real climbers helping
                 real climbers find shoes that actually fit.
               </p>
             </div>
@@ -113,11 +112,9 @@ export default function AboutPage() {
                 viewport={{ once: true }}
                 className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 group hover:border-brand-red/20 transition-colors"
               >
-                <AnimatedIcon animation="pop" trigger="scroll" delay={i * 0.1}>
-                  <div className="w-12 h-12 bg-brand-red/10 rounded-2xl flex items-center justify-center mb-6">
-                    <card.icon className="w-6 h-6 text-brand-red" />
-                  </div>
-                </AnimatedIcon>
+                <div className="w-12 h-12 bg-brand-red/10 rounded-2xl flex items-center justify-center mb-6">
+                  <card.icon className="w-6 h-6 text-brand-red" />
+                </div>
                 <h3 className="font-tanker text-xl mb-3">{card.title}</h3>
                 <p className="font-sora text-sm text-neutral-500 leading-relaxed">{card.body}</p>
               </motion.div>
@@ -210,20 +207,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Marquee */}
-      <section className="py-6 bg-brand-red overflow-hidden">
-        <motion.div
-          animate={{ x: [0, -1000] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="flex gap-8 whitespace-nowrap"
-        >
-          {Array(10).fill(null).map((_, i) => (
-            <span key={i} className="font-tanker text-xl text-black/80">
-              BY CLIMBERS • FOR CLIMBERS • NO AI • NO GIMMICKS • YOUR DATA IS YOURS •
-            </span>
-          ))}
-        </motion.div>
-      </section>
     </main>
   );
 }

@@ -20,7 +20,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
 import { FullPageLoading } from "@/components/ui/loading";
 import { Button } from "@/components/ui/button";
 
@@ -198,11 +197,10 @@ export default function SoleMatePage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedCategory(cat.key)}
-                    className={`px-5 py-3 rounded-xl font-sora text-sm whitespace-nowrap transition-all ${
-                      selectedCategory === cat.key
+                    className={`px-5 py-3 rounded-xl font-sora text-sm whitespace-nowrap transition-all ${selectedCategory === cat.key
                         ? "bg-brand-red text-black font-medium"
                         : "bg-neutral-800 border border-neutral-700 text-neutral-400 hover:border-brand-red/30"
-                    }`}
+                      }`}
                   >
                     {cat.label}
                   </motion.button>
@@ -220,11 +218,9 @@ export default function SoleMatePage() {
             >
               <div className="bg-gradient-to-br from-brand-red/10 to-brand-red/5 border border-brand-red/20 rounded-3xl p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <AnimatedIcon animation="pulse" trigger="scroll">
-                    <div className="w-10 h-10 bg-brand-red/20 rounded-xl flex items-center justify-center">
-                      <Users className="w-5 h-5 text-brand-red" />
-                    </div>
-                  </AnimatedIcon>
+                  <div className="w-10 h-10 bg-brand-red/20 rounded-xl flex items-center justify-center">
+                    <Users className="w-5 h-5 text-brand-red" />
+                  </div>
                   <div>
                     <h2 className="font-tanker text-xl text-white">
                       SOLE MATE SPOTLIGHT
@@ -250,11 +246,9 @@ export default function SoleMatePage() {
           >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <AnimatedIcon animation="float" trigger="scroll">
-                  <div className="w-10 h-10 bg-brand-red/10 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-brand-red" />
-                  </div>
-                </AnimatedIcon>
+                <div className="w-10 h-10 bg-brand-red/10 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-brand-red" />
+                </div>
                 <h2 className="font-tanker text-2xl text-white">
                   ALL RECOMMENDATIONS
                   {pagination.totalCount > 0 && (
@@ -394,19 +388,17 @@ function ShoeCard({
 }) {
   return (
     <div
-      className={`flex items-center justify-between p-4 ${
-        isSpotlight
+      className={`flex items-center justify-between p-4 ${isSpotlight
           ? "bg-neutral-900/80 rounded-2xl border border-neutral-800"
           : "bg-neutral-900 border border-neutral-800 rounded-2xl hover:border-brand-red/20 transition-all group cursor-pointer"
-      }`}
+        }`}
     >
       <div className="flex items-center gap-4">
         <div
-          className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-            isSpotlight
+          className={`w-14 h-14 rounded-xl flex items-center justify-center ${isSpotlight
               ? "bg-neutral-800"
               : "bg-neutral-800 group-hover:bg-neutral-700 transition-colors"
-          }`}
+            }`}
         >
           {rating.shoe.imageUrl ? (
             <Image
@@ -418,19 +410,17 @@ function ShoeCard({
             />
           ) : (
             <Footprints
-              className={`w-7 h-7 ${
-                isSpotlight
+              className={`w-7 h-7 ${isSpotlight
                   ? "text-brand-red"
                   : "text-neutral-600 group-hover:text-brand-red transition-colors"
-              }`}
+                }`}
             />
           )}
         </div>
         <div>
           <h3
-            className={`font-sora font-semibold text-white ${
-              !isSpotlight && "group-hover:text-brand-red transition-colors"
-            }`}
+            className={`font-sora font-semibold text-white ${!isSpotlight && "group-hover:text-brand-red transition-colors"
+              }`}
           >
             {rating.shoe.name}
           </h3>
@@ -439,11 +429,10 @@ function ShoeCard({
           </p>
           <div className="flex items-center gap-2 mt-1">
             <span
-              className={`font-sora text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                isSpotlight
+              className={`font-sora text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${isSpotlight
                   ? "bg-brand-red/20 text-brand-red"
                   : "bg-neutral-800 text-neutral-400"
-              }`}
+                }`}
             >
               <Star
                 className={`w-3 h-3 ${isSpotlight ? "fill-brand-red" : ""}`}

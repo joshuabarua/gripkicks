@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Check, ArrowUpRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "@/lib/auth";
-import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
@@ -239,13 +238,7 @@ export default function PricingPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <AnimatedIcon
-              animation="float"
-              trigger="scroll"
-              className="mx-auto mb-6"
-            >
-              <Sparkles className="w-8 h-8 text-brand-red" />
-            </AnimatedIcon>
+            <Sparkles className="w-8 h-8 text-brand-red mx-auto mb-6" />
             <h2 className="font-tanker text-5xl md:text-7xl mb-6">
               FIND YOUR
               <br />

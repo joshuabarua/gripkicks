@@ -146,13 +146,8 @@ export default function HomeCreative() {
     () => [...ACTIVITY_FEED, ...ACTIVITY_FEED, ...ACTIVITY_FEED],
     [],
   );
-  const marqueeItems = useMemo(() => Array(5).fill(null), []);
-
   return (
     <main className="min-h-screen bg-black text-brand-chalk selection:bg-brand-red selection:text-black antialiased relative">
-      <div className="scanline-overlay" />
-
-      {/* Hero: Immersive 3D Hook — PRESERVED */}
       <HeroSection isReducedEffects={isReducedEffects} />
 
       {/* Journey — Monolithic layout */}
@@ -428,28 +423,6 @@ export default function HomeCreative() {
         </div>
       </section>
 
-      {/* Ticker — Thin red line */}
-      <div className="py-fluid-sm border-y border-white/[0.06] overflow-hidden select-none relative z-10">
-        <motion.div
-          {...(!isReducedEffects
-            ? {
-              animate: { x: [0, -1000] },
-              transition: { duration: 50, repeat: Infinity, ease: "linear" },
-            }
-            : {})}
-          className="flex gap-fluid-3xl whitespace-nowrap items-center"
-        >
-          {marqueeItems.map((_, i) => (
-            <span
-              key={i}
-              className="font-sora text-[10px] uppercase tracking-[0.4em] text-brand-putty/20 leading-none py-2"
-            >
-              GRIPKICKS &mdash; COMMUNITY POWERED &mdash; PRECISION FIT &mdash;
-              BETTER RUBBER &mdash; BETTER CLIMBING &mdash;
-            </span>
-          ))}
-        </motion.div>
-      </div>
     </main>
   );
 }
