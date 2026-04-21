@@ -20,21 +20,9 @@ function HeroSection({
   isReducedEffects: boolean;
 }) {
   const heroRef = useRef<HTMLElement>(null);
-  const [isInView, setIsInView] = useState(true);
   const { scrollY } = useScroll({ layoutEffect: false });
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 400], [1, 0.95]);
-
-  useEffect(() => {
-    const target = heroRef.current;
-    if (!target) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsInView(entry?.isIntersecting ?? true),
-      { rootMargin: "100px" },
-    );
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <section
@@ -45,7 +33,7 @@ function HeroSection({
         style={{ opacity: heroOpacity, scale: heroScale }}
         className="absolute inset-0 z-0 will-change-transform"
       >
-        <Scene active={isInView} />
+        <Scene />
       </motion.div>
 
       <div className="absolute inset-0 z-10 flex items-end pointer-events-none">

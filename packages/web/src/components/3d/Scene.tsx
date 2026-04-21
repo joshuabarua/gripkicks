@@ -1,44 +1,20 @@
 "use client";
 
-import React, { Suspense, useState, useCallback, useEffect, useMemo } from "react";
+import React, { Suspense, useState, useCallback, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import ShoeModel from "./ShoeModel";
 
-type SceneProps = {
-  active?: boolean;
-};
-
-const Scene = ({ active = true }: SceneProps) => {
+const Scene = () => {
   const [contextLost, setContextLost] = useState(false);
   const [canvasKey, setCanvasKey] = useState(0);
-  const [isLowPerformance, setIsLowPerformance] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const prefersReducedMotion =
-      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    const lowCoreCount = (navigator.hardwareConcurrency ?? 8) <= 4;
-    const lowMemory =
-      ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8) <= 4;
-    const smallViewport = window.innerWidth < 1024;
-
-    setIsLowPerformance(
-      Boolean(prefersReducedMotion || lowCoreCount || lowMemory || smallViewport),
-    );
-  }, []);
-
   const canvasConfig = useMemo(
     () => ({
       gl: {
-        powerPreference: isLowPerformance ? "low-power" as const : "high-performance" as const,
-        antialias: !isLowPerformance,
         preserveDrawingBuffer: false,
-        failIfMajorPerformanceCaveat: isLowPerformance,
       },
-      dpr: isLowPerformance ? 1 : ([1, 1.5] as [number, number]),
+      dpr: [1, 1.5] as [number, number],
     }),
-    [isLowPerformance],
+    [],
   );
 
   const handleContextLost = useCallback((event: WebGLContextEvent) => {
@@ -66,7 +42,6 @@ const Scene = ({ active = true }: SceneProps) => {
     <Suspense fallback={null}>
       <Canvas
         key={canvasKey}
-        frameloop={active ? "always" : "never"}
         style={{
           backgroundColor: "transparent",
           pointerEvents: "none",
@@ -75,7 +50,6 @@ const Scene = ({ active = true }: SceneProps) => {
         gl={canvasConfig.gl}
         dpr={canvasConfig.dpr}
         onCreated={({ gl }) => {
-          // Only add event listeners here, not in useEffect
           gl.domElement.addEventListener(
             "webglcontextlost",
             handleContextLost as EventListener,
@@ -88,7 +62,7 @@ const Scene = ({ active = true }: SceneProps) => {
       >
         <directionalLight intensity={2} position={[0, 3, 4]} />
         <ambientLight intensity={1} />
-        <ShoeModel isLowPerformance={isLowPerformance} />
+        <ShoeModel />
       </Canvas>
     </Suspense>
   );

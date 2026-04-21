@@ -7,11 +7,7 @@ import { useHighPerformanceMode, useAnimationsEnabled } from "@/stores/useAppSto
 // Preload the model for better performance
 useGLTF.preload("/glb/HeroShoe.glb");
 
-type ShoeModelProps = {
-  isLowPerformance?: boolean;
-};
-
-export default function ShoeModel({ isLowPerformance = false }: ShoeModelProps) {
+export default function ShoeModel() {
   const { nodes } = useGLTF("/glb/HeroShoe.glb");
   const { viewport } = useThree();
 
@@ -34,13 +30,6 @@ export default function ShoeModel({ isLowPerformance = false }: ShoeModelProps) 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mesh = useRef<any>({});
-  const lowPerformanceGroupProps = isLowPerformance
-    ? {
-      position: [0, 0.02, 0] as [number, number, number],
-      rotation: [0, 0.6, 0.26] as [number, number, number],
-    }
-    : {};
-
   const shoeNode = nodes["CimbingShoe"] as Mesh | undefined;
 
   // Reduce or disable animations based on settings
@@ -58,7 +47,7 @@ export default function ShoeModel({ isLowPerformance = false }: ShoeModelProps) 
   }, [animationsEnabled, highPerformanceMode]);
 
   useFrame((state) => {
-    if (animationsEnabled && !highPerformanceMode && !isLowPerformance) {
+    if (animationsEnabled && !highPerformanceMode) {
       animateFrame(state.clock.getElapsedTime());
     }
   });
@@ -86,7 +75,6 @@ export default function ShoeModel({ isLowPerformance = false }: ShoeModelProps) 
 
         <group
           ref={mesh}
-          {...lowPerformanceGroupProps}
         >
           {!shoeNode ? null : (
             <mesh
@@ -94,17 +82,7 @@ export default function ShoeModel({ isLowPerformance = false }: ShoeModelProps) 
               position={[0, -0.4, 0]}
               geometry={shoeNode.geometry}
             >
-              {isLowPerformance ? (
-                <meshPhysicalMaterial
-                  transmission={0.9}
-                  thickness={0.2}
-                  roughness={0.25}
-                  ior={1.2}
-                  transparent
-                />
-              ) : (
-                <MeshTransmissionMaterial {...materialSettings} />
-              )}
+              <MeshTransmissionMaterial {...materialSettings} />
             </mesh>
           )}
         </group>
