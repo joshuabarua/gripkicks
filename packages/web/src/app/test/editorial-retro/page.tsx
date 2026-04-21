@@ -64,44 +64,15 @@ export default function EditorialRetro() {
 
       <section className="relative px-6 md:px-16 py-16" style={{ background: PAPER }}>
         <div className="max-w-6xl mx-auto">
-          <div className="font-mono text-[10px] uppercase tracking-[0.3em] mb-4">· featured story ·</div>
-          <h1 className="font-serif text-5xl md:text-7xl leading-[0.95] tracking-tight max-w-4xl">
-            A quiet revolution
-            <br />
-            <span className="italic">in how we fit </span>
-            <span className="font-tanker uppercase">the climber&apos;s foot.</span>
+          <h1 className="font-serif text-5xl md:text-7xl leading-[0.95] tracking-tight max-w-4xl italic">
+            Gazette test layout.
           </h1>
 
-          <div className="h-px w-40 mt-10 mb-10" style={{ background: INK }} />
+          <div className="h-px w-40 mt-10" style={{ background: INK }} />
 
-          <div className="grid md:grid-cols-3 gap-10">
-            <p className="font-serif text-base md:text-lg leading-relaxed italic">
-              For a hundred years, the climbing shoe came in one of three widths and the climber was told to suffer. Suffering was part of the sport.
-            </p>
-            <p className="font-serif text-base md:text-lg leading-relaxed">
-              <span className="font-tanker text-4xl leading-none float-left mr-1">G</span>
-              ripKicks does what cobblers used to do — it looks at your foot first, and the catalog second.
-            </p>
-            <p className="font-mono text-xs leading-relaxed uppercase tracking-widest">
-              Filed from chamonix. Dispatch received 0600h. She did not go back to her old shoes.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative px-6 md:px-16 py-14" style={{ background: PAPER, borderTop: `1px solid ${INK}`, borderBottom: `1px solid ${INK}` }}>
-        <div className="max-w-6xl mx-auto grid grid-cols-3 gap-6 text-center">
-          {[
-            { n: "i.", s: "Foot Lab", desc: "the measuring room" },
-            { n: "ii.", s: "Sole Mate", desc: "the matchmaker" },
-            { n: "iii.", s: "Sanctuary", desc: "the archive" },
-          ].map((x) => (
-            <div key={x.n} className="space-y-2">
-              <div className="font-serif italic text-2xl">{x.n}</div>
-              <div className="font-tanker text-2xl md:text-3xl uppercase">{x.s}</div>
-              <div className="font-mono text-[10px] uppercase tracking-widest">{x.desc}</div>
-            </div>
-          ))}
+          <p className="font-mono text-xs leading-relaxed uppercase tracking-widest mt-6 max-w-lg">
+            Typography and composition test. No marketing copy.
+          </p>
         </div>
       </section>
 

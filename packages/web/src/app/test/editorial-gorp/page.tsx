@@ -83,49 +83,20 @@ export default function EditorialGorp() {
         <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-10">
           <aside className="md:col-span-3 space-y-2 font-mono text-[10px] uppercase tracking-widest">
             <div>§ 1</div>
-            <div className="font-serif italic text-base normal-case tracking-normal">A field note.</div>
             <div className="pt-4">entry 001</div>
           </aside>
 
           <div className="md:col-span-9 space-y-6">
             <h1 className="font-serif italic text-5xl md:text-7xl leading-[0.95] tracking-tight">
-              Built for the ground
-              <span className="not-italic font-tanker"> under your foot.</span>
+              Field journal test.
             </h1>
 
             <div className="h-px w-24" style={{ background: INK }} />
 
-            <p className="font-serif text-xl md:text-2xl leading-snug max-w-2xl">
-              A fit system engineered like a topographic map — precise, layered, and honest about the terrain.
-            </p>
-
             <p className="font-mono text-xs leading-relaxed max-w-lg">
-              Logged from the crag, not the lab. Every reading earns its place in the record. No hype. Just measurements you can trust at the base of a route.
+              Layout and composition test. No marketing copy.
             </p>
           </div>
-        </div>
-      </section>
-
-      <section
-        className="relative px-6 md:px-16 py-14"
-        style={{ background: PAPER, borderTop: `1px solid ${INK}`, borderBottom: `1px solid ${INK}` }}
-      >
-        <div className="max-w-5xl mx-auto space-y-0">
-          {[
-            { code: "FL-01", en: "Foot Lab", desc: "morphology" },
-            { code: "SM-02", en: "Sole Mate", desc: "rubber match" },
-            { code: "SC-03", en: "Sanctuary", desc: "archive" },
-          ].map((row, i) => (
-            <div
-              key={row.code}
-              className="grid grid-cols-12 items-baseline py-5 gap-4"
-              style={{ borderTop: i === 0 ? "none" : `1px dashed ${INK}` }}
-            >
-              <span className="col-span-3 font-mono text-[11px] tracking-widest">{row.code}</span>
-              <span className="col-span-5 font-tanker text-xl md:text-3xl uppercase">{row.en}</span>
-              <span className="col-span-4 text-right font-serif italic text-base md:text-lg">{row.desc}</span>
-            </div>
-          ))}
         </div>
       </section>
 

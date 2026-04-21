@@ -29,10 +29,6 @@ export default function Footer() {
                 GRIP <span className="text-brand-red">KICKS</span>
               </h2>
             </Link>
-            <p className="font-sora text-sm text-brand-putty/40 max-w-xs leading-relaxed">
-              Community-driven climbing shoe recommendations. Built by climbers,
-              for climbers. No AI, no gimmicks.
-            </p>
           </div>
 
           <div>

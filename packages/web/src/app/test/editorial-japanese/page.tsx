@@ -66,50 +66,20 @@ export default function EditorialJapanese() {
         <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-10">
           <aside className="md:col-span-3 space-y-2 font-mono text-[10px] uppercase tracking-widest">
             <div>§ 1</div>
-            <div className="font-serif italic text-base normal-case tracking-normal">On reading a foot.</div>
             <div className="pt-4">by a fit quarterly</div>
           </aside>
 
           <div className="md:col-span-9 space-y-6">
             <h1 className="font-serif text-5xl md:text-7xl leading-[0.95] tracking-tight italic">
-              Every foot has its own
-              <span className="not-italic font-tanker"> honne.</span>
+              Issue one.
             </h1>
 
             <div className="h-px w-24" style={{ background: INK }} />
 
-            <p className="font-serif text-xl md:text-2xl leading-snug max-w-2xl">
-              GripKicks reads the body the way a tailor reads a back: in three dimensions, with patience, without pretending that one number is enough.
-            </p>
-
             <p className="font-mono text-xs leading-relaxed max-w-lg">
-              Shape. Volume. Ritual. Measured once, carried forever. A quiet standard against the noise of the shoe wall.
+              Layout and typography test. No marketing copy.
             </p>
           </div>
-        </div>
-      </section>
-
-      <section className="relative px-6 md:px-16 py-16" style={{ background: PAPER, borderTop: `1px solid ${INK}`, borderBottom: `1px solid ${INK}` }}>
-        <div className="max-w-5xl mx-auto space-y-0">
-          {[
-            { num: "01", ja: "足の研究所", en: "Foot Lab", desc: "morphology" },
-            { num: "02", ja: "相棒探し", en: "Sole Mate", desc: "rubber match" },
-            { num: "03", ja: "聖域", en: "Sanctuary", desc: "archive" },
-          ].map((row, i) => (
-            <div
-              key={row.num}
-              className="grid grid-cols-12 items-baseline py-6 gap-4"
-              style={{
-                borderBottom: i === 2 ? `1px solid ${INK}` : `1px solid ${INK}`,
-                borderTop: i === 0 ? `1px solid ${INK}` : "none",
-              }}
-            >
-              <span className="col-span-2 font-mono text-[11px] tracking-widest">§{row.num}</span>
-              <span className="col-span-4 font-serif italic text-xl md:text-2xl">{row.ja}</span>
-              <span className="col-span-3 font-tanker text-xl md:text-3xl uppercase">{row.en}</span>
-              <span className="col-span-3 text-right font-mono text-[11px] uppercase tracking-widest">{row.desc} →</span>
-            </div>
-          ))}
         </div>
       </section>
 
