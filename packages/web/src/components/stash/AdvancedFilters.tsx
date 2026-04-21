@@ -81,6 +81,42 @@ const genderOptions = [
   { label: 'Unisex', value: 'unisex' },
 ];
 
+function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-3">
+      <h4 className="text-sm font-medium text-white">{title}</h4>
+      {children}
+    </div>
+  );
+}
+
+interface FilterButtonGroupProps {
+  options: { label: string; value: string }[];
+  selectedValue: string;
+  onChange: (value: string) => void;
+  layout?: 'grid' | 'flex';
+}
+
+function FilterButtonGroup({ options, selectedValue, onChange, layout = 'grid' }: FilterButtonGroupProps) {
+  return (
+    <div className={layout === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-2' : 'flex flex-wrap gap-2'}>
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() => onChange(option.value)}
+          className={`px-3 py-1.5 rounded-full text-xs font-sora transition-all border ${selectedValue === option.value
+            ? 'bg-brand-red text-black border-brand-red shadow-lg shadow-brand-red/20'
+            : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-brand-red/40 hover:text-white'
+            }`}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function AdvancedFilters({
   selectedBrand,
   onBrandChange,
@@ -103,42 +139,6 @@ export function AdvancedFilters({
   activeFiltersCount,
 }: AdvancedFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="space-y-3">
-      <h4 className="text-sm font-medium text-white">{title}</h4>
-      {children}
-    </div>
-  );
-
-  const FilterButtonGroup = ({ 
-    options, 
-    selectedValue, 
-    onChange, 
-    layout = 'grid' 
-  }: { 
-    options: { label: string; value: string }[];
-    selectedValue: string;
-    onChange: (value: string) => void;
-    layout?: 'grid' | 'flex';
-  }) => (
-    <div className={layout === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-2' : 'flex flex-wrap gap-2'}>
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          onClick={() => onChange(option.value)}
-          className={`px-3 py-1.5 rounded-full text-xs font-sora transition-all border ${
-            selectedValue === option.value
-              ? 'bg-brand-red text-black border-brand-red shadow-lg shadow-brand-red/20'
-              : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-brand-red/40 hover:text-white'
-          }`}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
-  );
 
   return (
     <Card className="bg-neutral-950 border-neutral-800">

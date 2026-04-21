@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState, useRef } from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -13,6 +13,83 @@ const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
   loading: () => null,
 });
+
+function HeroSection({
+  isReducedEffects,
+}: {
+  isReducedEffects: boolean;
+}) {
+  const heroRef = useRef<HTMLElement>(null);
+  const [isInView, setIsInView] = useState(true);
+  const { scrollY } = useScroll({ layoutEffect: false });
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 400], [1, 0.95]);
+
+  useEffect(() => {
+    const target = heroRef.current;
+    if (!target) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry?.isIntersecting ?? true),
+      { rootMargin: "100px" },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section
+      ref={heroRef}
+      className="relative flex items-center justify-center h-svh overflow-hidden"
+    >
+      <motion.div
+        style={{ opacity: heroOpacity, scale: heroScale }}
+        className="absolute inset-0 z-0 will-change-transform"
+      >
+        <Scene active={isInView} />
+      </motion.div>
+
+      <div className="absolute inset-0 z-10 flex items-end pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, delay: 0.6 }}
+          className="px-6 md:px-12 lg:px-16 pb-28 md:pb-20 max-w-3xl pointer-events-auto"
+        >
+          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">
+            Precision fit system
+          </p>
+          <h1 className="font-tanker text-4xl md:text-6xl lg:text-7xl leading-[0.85] tracking-tight mb-4">
+            Find the shoe that fits{" "}
+            <span className="text-brand-red italic">your</span> foot.
+          </h1>
+          <p className="font-sora text-brand-putty text-base md:text-lg max-w-md leading-snug tracking-tight">
+            A precise fit system for climbers who care about detail. Free for
+            everyone.
+          </p>
+        </motion.div>
+      </div>
+
+      <motion.div
+        className="absolute bottom-12 right-8 md:right-16 z-10 flex flex-col items-center gap-4 opacity-30"
+        {...(!isReducedEffects
+          ? {
+            animate: { y: [0, 10, 0] },
+            transition: {
+              duration: 2.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            },
+          }
+          : {})}
+      >
+        <span className="text-[9px] font-sora tracking-[0.5em] uppercase">
+          Explore
+        </span>
+        <div className="w-px h-16 bg-gradient-to-b from-white to-transparent" />
+      </motion.div>
+    </section>
+  );
+}
 
 const ACTIVITY_FEED = [
   { user: "Mika", action: "fit note", shoe: "Solutions" },
@@ -31,10 +108,6 @@ export default function HomeCreative() {
   const router = useRouter();
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
   const isReducedEffects = useReducedEffects();
-  const { scrollY } = useScroll();
-
-  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
-  const heroScale = useTransform(scrollY, [0, 400], [1, 0.95]);
 
   useEffect(() => {
     let mounted = true;
@@ -73,61 +146,14 @@ export default function HomeCreative() {
     () => [...ACTIVITY_FEED, ...ACTIVITY_FEED, ...ACTIVITY_FEED],
     [],
   );
-  const marqueeItems = useMemo(() => Array(10).fill(null), []);
+  const marqueeItems = useMemo(() => Array(5).fill(null), []);
 
   return (
     <main className="min-h-screen bg-black text-brand-chalk selection:bg-brand-red selection:text-black antialiased relative">
       <div className="scanline-overlay" />
 
       {/* Hero: Immersive 3D Hook — PRESERVED */}
-      <section className="relative flex items-center justify-center h-svh overflow-hidden">
-        <motion.div
-          style={{ opacity: heroOpacity, scale: heroScale }}
-          className="absolute inset-0 z-0 will-change-transform"
-        >
-          <Scene />
-        </motion.div>
-
-        <div className="absolute inset-0 z-10 flex items-end pointer-events-none">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.6 }}
-            className="px-6 md:px-12 lg:px-16 pb-28 md:pb-20 max-w-3xl pointer-events-auto"
-          >
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">
-              Precision fit system
-            </p>
-            <h1 className="font-tanker text-4xl md:text-6xl lg:text-7xl leading-[0.85] tracking-tight mb-4">
-              Find the shoe that fits{" "}
-              <span className="text-brand-red italic">your</span> foot.
-            </h1>
-            <p className="font-sora text-brand-putty text-base md:text-lg max-w-md leading-snug tracking-tight">
-              A precise fit system for climbers who care about detail. Free for
-              everyone.
-            </p>
-          </motion.div>
-        </div>
-
-        <motion.div
-          className="absolute bottom-12 right-8 md:right-16 z-10 flex flex-col items-center gap-4 opacity-30 will-change-transform"
-          {...(!isReducedEffects
-            ? {
-                animate: { y: [0, 10, 0] },
-                transition: {
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                },
-              }
-            : {})}
-        >
-          <span className="text-[9px] font-sora tracking-[0.5em] uppercase">
-            Explore
-          </span>
-          <div className="w-px h-16 bg-gradient-to-b from-white to-transparent" />
-        </motion.div>
-      </section>
+      <HeroSection isReducedEffects={isReducedEffects} />
 
       {/* Journey — Monolithic layout */}
       <section className="bg-black py-fluid-3xl px-fluid-md relative contain-content">
@@ -159,7 +185,7 @@ export default function HomeCreative() {
             >
               {isAuthenticated ? "Go to Dashboard" : "Join the Labs"}
               <div className="w-fluid-xl h-fluid-xl rounded-full border border-white/10 flex items-center justify-center group-hover:border-brand-red transition-colors duration-500">
-                <ArrowUpRight className="group-hover:rotate-45 transition-transform duration-700 will-change-transform" />
+                <ArrowUpRight className="group-hover:rotate-45 transition-transform duration-700" />
               </div>
             </button>
           </motion.div>
@@ -252,7 +278,7 @@ export default function HomeCreative() {
                     repeat: Infinity,
                     ease: "linear",
                   }}
-                  className="space-y-fluid-sm will-change-transform"
+                  className="space-y-fluid-sm"
                 >
                   {activityLoop.map((activity, i) => (
                     <div
@@ -389,11 +415,11 @@ export default function HomeCreative() {
               onClick={() =>
                 router.push(isAuthenticated ? "/dashboard" : "/auth/signup")
               }
-              className="group relative inline-flex items-center gap-fluid-md border border-white/10 text-brand-chalk font-tanker text-fluid-2xl px-fluid-3xl py-fluid-md hover:border-brand-red hover:text-brand-red transition-all duration-700 will-change-transform"
+              className="group relative inline-flex items-center gap-fluid-md border border-white/10 text-brand-chalk font-tanker text-fluid-2xl px-fluid-3xl py-fluid-md hover:border-brand-red hover:text-brand-red transition-all duration-700"
             >
               <span className="relative z-10 flex items-center gap-fluid-md">
                 {isAuthenticated ? "Go to dashboard" : "Join the crew"}
-                <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-700 will-change-transform" />
+                <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-700" />
               </span>
             </button>
 
@@ -407,11 +433,11 @@ export default function HomeCreative() {
         <motion.div
           {...(!isReducedEffects
             ? {
-                animate: { x: [0, -1000] },
-                transition: { duration: 50, repeat: Infinity, ease: "linear" },
-              }
+              animate: { x: [0, -1000] },
+              transition: { duration: 50, repeat: Infinity, ease: "linear" },
+            }
             : {})}
-          className="flex gap-fluid-3xl whitespace-nowrap items-center will-change-transform"
+          className="flex gap-fluid-3xl whitespace-nowrap items-center"
         >
           {marqueeItems.map((_, i) => (
             <span

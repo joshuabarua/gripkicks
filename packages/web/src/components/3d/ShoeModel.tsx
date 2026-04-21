@@ -94,7 +94,17 @@ export default function ShoeModel({ isLowPerformance = false }: ShoeModelProps) 
               position={[0, -0.4, 0]}
               geometry={shoeNode.geometry}
             >
-              <MeshTransmissionMaterial {...materialSettings} />
+              {isLowPerformance ? (
+                <meshPhysicalMaterial
+                  transmission={0.9}
+                  thickness={0.2}
+                  roughness={0.25}
+                  ior={1.2}
+                  transparent
+                />
+              ) : (
+                <MeshTransmissionMaterial {...materialSettings} />
+              )}
             </mesh>
           )}
         </group>

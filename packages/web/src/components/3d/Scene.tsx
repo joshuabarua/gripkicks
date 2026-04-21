@@ -4,7 +4,11 @@ import React, { Suspense, useState, useCallback, useEffect, useMemo } from "reac
 import { Canvas } from "@react-three/fiber";
 import ShoeModel from "./ShoeModel";
 
-const Scene = () => {
+type SceneProps = {
+  active?: boolean;
+};
+
+const Scene = ({ active = true }: SceneProps) => {
   const [contextLost, setContextLost] = useState(false);
   const [canvasKey, setCanvasKey] = useState(0);
   const [isLowPerformance, setIsLowPerformance] = useState(false);
@@ -62,6 +66,7 @@ const Scene = () => {
     <Suspense fallback={null}>
       <Canvas
         key={canvasKey}
+        frameloop={active ? "always" : "never"}
         style={{
           backgroundColor: "transparent",
           pointerEvents: "none",

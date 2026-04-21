@@ -8,6 +8,7 @@ import { Id } from "convex/_generated/dataModel";
 
 interface UseStashDataOptions {
   enabled?: boolean;
+  loadAllShoes?: boolean;
   onError?: (message: string) => void;
 }
 
@@ -54,7 +55,7 @@ export function useStashData(
   const hasAttemptedFallbackRef = useRef(false);
   const onErrorRef = useRef<UseStashDataOptions["onError"]>(undefined);
 
-  const { enabled = true, onError } = options ?? {};
+  const { enabled = true, loadAllShoes = false, onError } = options ?? {};
 
   useEffect(() => {
     onErrorRef.current = onError;
@@ -80,8 +81,8 @@ export function useStashData(
   // Only fetch popularity data if we have user shoes (cached for 10 minutes)
   const popularityData = useQuery(api.popularity.getAllShoesPopularity);
 
-  // Only fetch all shoes when needed for search/add functionality (uses non-paginated version)
-  const shoesData = useQuery(api.shoes.listAll);
+  // Only fetch all shoes when explicitly requested (e.g. Add dialog open)
+  const shoesData = useQuery(api.shoes.listAll, loadAllShoes ? {} : "skip");
 
   const allShoes = useMemo(() => shoesData ?? [], [shoesData]);
   const popularityMap = useMemo(

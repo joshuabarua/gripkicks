@@ -1,9 +1,7 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import Link from "next/link";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Footprints } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSession } from "@/lib/auth";
@@ -90,65 +88,34 @@ export default function ShoeSanctuaryPage() {
     totalShoesInDatabase,
     uniqueBrands,
   } = useStashData(session?.user?.id, {
+    loadAllShoes: isAddDialogOpen,
     onError: (message) => toast.error(message),
   });
 
   const shoeRankings = useMemo(() => {
-    const ranked = [...userShoes].sort((a, b) => {
-      const aCharacteristics = {
-        ...(a.shoe?.aggressiveness
-          ? { aggressiveness: a.shoe.aggressiveness }
-          : {}),
-        ...(a.shoe?.climbingDiscipline
-          ? { climbingDiscipline: a.shoe.climbingDiscipline }
-          : {}),
-        ...(a.shoe?.stiffness ? { stiffness: a.shoe.stiffness } : {}),
+    const withStats = userShoes.map((shoe) => {
+      const characteristics = {
+        ...(shoe.shoe?.aggressiveness ? { aggressiveness: shoe.shoe.aggressiveness } : {}),
+        ...(shoe.shoe?.climbingDiscipline ? { climbingDiscipline: shoe.shoe.climbingDiscipline } : {}),
+        ...(shoe.shoe?.stiffness ? { stiffness: shoe.shoe.stiffness } : {}),
       };
-      const bCharacteristics = {
-        ...(b.shoe?.aggressiveness
-          ? { aggressiveness: b.shoe.aggressiveness }
-          : {}),
-        ...(b.shoe?.climbingDiscipline
-          ? { climbingDiscipline: b.shoe.climbingDiscipline }
-          : {}),
-        ...(b.shoe?.stiffness ? { stiffness: b.shoe.stiffness } : {}),
-      };
-
-      const aStats = getEffectiveShoeStats(aCharacteristics, {
-        ...(a.comfortScore !== undefined
-          ? { comfortScore: a.comfortScore }
-          : {}),
-        ...(a.performanceRating !== undefined
-          ? { performanceRating: a.performanceRating }
-          : {}),
-        ...(a.durabilityRating !== undefined
-          ? { durabilityRating: a.durabilityRating }
-          : {}),
+      const stats = getEffectiveShoeStats(characteristics, {
+        ...(shoe.comfortScore !== undefined ? { comfortScore: shoe.comfortScore } : {}),
+        ...(shoe.performanceRating !== undefined ? { performanceRating: shoe.performanceRating } : {}),
+        ...(shoe.durabilityRating !== undefined ? { durabilityRating: shoe.durabilityRating } : {}),
       });
-      const bStats = getEffectiveShoeStats(bCharacteristics, {
-        ...(b.comfortScore !== undefined
-          ? { comfortScore: b.comfortScore }
-          : {}),
-        ...(b.performanceRating !== undefined
-          ? { performanceRating: b.performanceRating }
-          : {}),
-        ...(b.durabilityRating !== undefined
-          ? { durabilityRating: b.durabilityRating }
-          : {}),
-      });
-
-      const comfortDiff = bStats.comfort - aStats.comfort;
-      if (comfortDiff !== 0) return comfortDiff;
-
-      const perfDiff = bStats.performance - aStats.performance;
-      if (perfDiff !== 0) return perfDiff;
-
-      return bStats.durability - aStats.durability;
+      return { id: shoe._id, stats };
     });
 
+    withStats.sort((a, b) =>
+      b.stats.comfort - a.stats.comfort ||
+      b.stats.performance - a.stats.performance ||
+      b.stats.durability - a.stats.durability,
+    );
+
     const rankings = new Map<string, number>();
-    ranked.forEach((shoe, index) => {
-      rankings.set(shoe._id, index + 1);
+    withStats.forEach((entry, index) => {
+      rankings.set(entry.id, index + 1);
     });
 
     return rankings;
@@ -219,8 +186,7 @@ export default function ShoeSanctuaryPage() {
     selectedPerformanceRating,
   ]);
 
-  // Reset all filters
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setSelectedBrand("all");
     setSelectedGender("all");
     setSelectedAggressiveness("all");
@@ -229,7 +195,12 @@ export default function ShoeSanctuaryPage() {
     setSelectedVolume("all");
     setSelectedComfortRating("all");
     setSelectedPerformanceRating("all");
-  };
+  }, []);
+
+  const handleSelectShoe = useCallback((shoe: UserShoe) => {
+    setSelectedShoe(shoe);
+    setIsStatsModalOpen(true);
+  }, []);
 
   const addShoeToSanctuary = async (shoeId: string) => {
     const result = await addShoeToStash(shoeId);
@@ -478,10 +449,7 @@ export default function ShoeSanctuaryPage() {
               <BrandSections
                 groups={brandGroups}
                 specialLabels={specialLabels}
-                onSelect={(shoe) => {
-                  setSelectedShoe(shoe);
-                  setIsStatsModalOpen(true);
-                }}
+                onSelect={handleSelectShoe}
               />
             )}
           </div>
@@ -501,109 +469,109 @@ export default function ShoeSanctuaryPage() {
         onToggleFavourite={
           selectedShoe
             ? async () => {
-                const result = await toggleFavouriteInStash(selectedShoe._id);
-                result.match(
-                  () => {
-                    const newFavStatus = !selectedShoe.isFavourite;
-                    void fetchApi("/api/v1/profile", {
-                      method: "PUT",
-                      body: JSON.stringify({
-                        favoriteShoeId: newFavStatus
-                          ? selectedShoe.shoeId
-                          : null,
-                      }),
-                    });
-                    setSelectedShoe((prev) =>
-                      prev ? { ...prev, isFavourite: newFavStatus } : null,
-                    );
-                    setUserShoes((prev) =>
-                      prev.map((shoe) =>
-                        shoe._id === selectedShoe._id
-                          ? { ...shoe, isFavourite: newFavStatus }
-                          : shoe,
-                      ),
-                    );
-                    fetchUserStash();
-                    toast.success(
-                      newFavStatus
-                        ? "Added to favorites!"
-                        : "Removed from favorites",
-                    );
-                    track(analyticsEvents.stashFavouriteToggled, {
-                      shoe_id: selectedShoe._id,
-                      is_favourite: newFavStatus,
-                    });
-                  },
-                  (error) => {
-                    console.error("Failed to update favourite status:", error);
-                    toast.error("Failed to update favourite status");
-                    captureError(error, {
-                      source: "stash_toggle_favourite",
-                      shoe_id: selectedShoe._id,
-                    });
-                  },
-                );
-              }
+              const result = await toggleFavouriteInStash(selectedShoe._id);
+              result.match(
+                () => {
+                  const newFavStatus = !selectedShoe.isFavourite;
+                  void fetchApi("/api/v1/profile", {
+                    method: "PUT",
+                    body: JSON.stringify({
+                      favoriteShoeId: newFavStatus
+                        ? selectedShoe.shoeId
+                        : null,
+                    }),
+                  });
+                  setSelectedShoe((prev) =>
+                    prev ? { ...prev, isFavourite: newFavStatus } : null,
+                  );
+                  setUserShoes((prev) =>
+                    prev.map((shoe) =>
+                      shoe._id === selectedShoe._id
+                        ? { ...shoe, isFavourite: newFavStatus }
+                        : shoe,
+                    ),
+                  );
+                  fetchUserStash();
+                  toast.success(
+                    newFavStatus
+                      ? "Added to favorites!"
+                      : "Removed from favorites",
+                  );
+                  track(analyticsEvents.stashFavouriteToggled, {
+                    shoe_id: selectedShoe._id,
+                    is_favourite: newFavStatus,
+                  });
+                },
+                (error) => {
+                  console.error("Failed to update favourite status:", error);
+                  toast.error("Failed to update favourite status");
+                  captureError(error, {
+                    source: "stash_toggle_favourite",
+                    shoe_id: selectedShoe._id,
+                  });
+                },
+              );
+            }
             : undefined
         }
         onEditShoe={
           selectedShoe
             ? () => {
-                const defaultCharacteristics = {
-                  ...(selectedShoe.shoe?.aggressiveness
-                    ? { aggressiveness: selectedShoe.shoe.aggressiveness }
-                    : {}),
-                  ...(selectedShoe.shoe?.climbingDiscipline
-                    ? {
-                        climbingDiscipline:
-                          selectedShoe.shoe.climbingDiscipline,
-                      }
-                    : {}),
-                  ...(selectedShoe.shoe?.stiffness
-                    ? { stiffness: selectedShoe.shoe.stiffness }
-                    : {}),
-                };
+              const defaultCharacteristics = {
+                ...(selectedShoe.shoe?.aggressiveness
+                  ? { aggressiveness: selectedShoe.shoe.aggressiveness }
+                  : {}),
+                ...(selectedShoe.shoe?.climbingDiscipline
+                  ? {
+                    climbingDiscipline:
+                      selectedShoe.shoe.climbingDiscipline,
+                  }
+                  : {}),
+                ...(selectedShoe.shoe?.stiffness
+                  ? { stiffness: selectedShoe.shoe.stiffness }
+                  : {}),
+              };
 
-                const defaultStats = getEffectiveShoeStats(
-                  defaultCharacteristics,
-                  {
-                    ...(selectedShoe.comfortScore !== undefined
-                      ? { comfortScore: selectedShoe.comfortScore }
-                      : {}),
-                    ...(selectedShoe.performanceRating !== undefined
-                      ? { performanceRating: selectedShoe.performanceRating }
-                      : {}),
-                    ...(selectedShoe.durabilityRating !== undefined
-                      ? { durabilityRating: selectedShoe.durabilityRating }
-                      : {}),
-                  },
-                );
-                setEditingShoe(selectedShoe);
-                setEditForm({
-                  size: selectedShoe.size || undefined,
-                  purchaseDate: selectedShoe.purchaseDate || undefined,
-                  condition: selectedShoe.condition || undefined,
-                  notes: selectedShoe.notes || undefined,
-                  showNotes: false,
-                  comfortScore: defaultStats.comfort,
-                  performanceRating: defaultStats.performance,
-                  durabilityRating: defaultStats.durability,
-                });
-                setIsStatsModalOpen(false);
-              }
+              const defaultStats = getEffectiveShoeStats(
+                defaultCharacteristics,
+                {
+                  ...(selectedShoe.comfortScore !== undefined
+                    ? { comfortScore: selectedShoe.comfortScore }
+                    : {}),
+                  ...(selectedShoe.performanceRating !== undefined
+                    ? { performanceRating: selectedShoe.performanceRating }
+                    : {}),
+                  ...(selectedShoe.durabilityRating !== undefined
+                    ? { durabilityRating: selectedShoe.durabilityRating }
+                    : {}),
+                },
+              );
+              setEditingShoe(selectedShoe);
+              setEditForm({
+                size: selectedShoe.size || undefined,
+                purchaseDate: selectedShoe.purchaseDate || undefined,
+                condition: selectedShoe.condition || undefined,
+                notes: selectedShoe.notes || undefined,
+                showNotes: false,
+                comfortScore: defaultStats.comfort,
+                performanceRating: defaultStats.performance,
+                durabilityRating: defaultStats.durability,
+              });
+              setIsStatsModalOpen(false);
+            }
             : undefined
         }
         onRemoveShoe={
           selectedShoe
             ? () => {
-                if (
-                  confirm(
-                    "Are you sure you want to remove this shoe from your sanctuary?",
-                  )
-                ) {
-                  removeShoeFromStash(selectedShoe._id);
-                }
+              if (
+                confirm(
+                  "Are you sure you want to remove this shoe from your sanctuary?",
+                )
+              ) {
+                removeShoeFromStash(selectedShoe._id);
               }
+            }
             : undefined
         }
       />
@@ -617,15 +585,15 @@ export default function ShoeSanctuaryPage() {
         removeShoe={
           editingShoe
             ? () => {
-                if (
-                  confirm(
-                    "Are you sure you want to remove this shoe from your sanctuary?",
-                  )
-                ) {
-                  removeShoeFromStash(editingShoe._id);
-                  setEditingShoe(null);
-                }
+              if (
+                confirm(
+                  "Are you sure you want to remove this shoe from your sanctuary?",
+                )
+              ) {
+                removeShoeFromStash(editingShoe._id);
+                setEditingShoe(null);
               }
+            }
             : undefined
         }
       />

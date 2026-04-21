@@ -1,90 +1,57 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useReducedEffects } from '@/hooks/useReducedEffects';
+
+const CLOUDS = [
+  { src: '/imgs/clouds/cloud1.png', size: 400, duration: 60, delay: 0, top: '10%', direction: 'left' as const },
+  { src: '/imgs/clouds/cloud3.png', size: 380, duration: 55, delay: 15, top: '45%', direction: 'right' as const },
+  { src: '/imgs/clouds/cloud4.png', size: 420, duration: 50, delay: 8, top: '75%', direction: 'left' as const },
+];
 
 export default function CloudBackground() {
-  const [windowWidth, setWindowWidth] = useState(0);
-
-  // Debounce function to limit resize events
-  const debounce = useCallback(<T extends (...args: unknown[]) => unknown>(func: T, wait: number) => {
-    let timeout: NodeJS.Timeout;
-    return function executedFunction(...args: Parameters<T>) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  }, []);
+  const [mounted, setMounted] = useState(false);
+  const isReducedEffects = useReducedEffects();
 
   useEffect(() => {
-    setWindowWidth(window.innerWidth);
+    setMounted(true);
+  }, []);
 
-    const handleResize = debounce(() => {
-      setWindowWidth(window.innerWidth);
-    }, 250); // 250ms debounce
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [debounce]);
-
-  if (windowWidth === 0) return null;
-
-  // Generate random positions for clouds
-  const clouds = [
-    { src: "/imgs/clouds/cloud1.png", size: 400, opacity: 1, duration: 60, delay: 0 },
-    { src: "/imgs/clouds/cloud2.png", size: 350, opacity: 1, duration: 45, delay: 8 },
-    { src: "/imgs/clouds/cloud3.png", size: 380, opacity: 1, duration: 55, delay: 15 },
-    { src: "/imgs/clouds/cloud4.png", size: 420, opacity: 1, duration: 50, delay: 22 },
-    { src: "/imgs/clouds/cloud5.png", size: 360, opacity: 1, duration: 48, delay: 5 },
-    { src: "/imgs/clouds/cloud1.png", size: 450, opacity: 1, duration: 65, delay: 12 },
-    { src: "/imgs/clouds/cloud3.png", size: 330, opacity: 1, duration: 40, delay: 18 }
-  ];
-
-  // Vertical positions spread out to prevent overlap
-  const verticalPositions = [
-    "-top-12", "top-10", "top-1/4", "top-1/2", "top-3/4", "bottom-10", "-bottom-8"
-  ];
+  if (!mounted || isReducedEffects) return null;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {clouds.map((cloud, index) => {
-        // Alternate direction for each cloud
-        const direction = index % 2 === 0 ? 'left' : 'right';
-        const initialX = direction === 'left' ? -600 : windowWidth + 600;
-        const finalX = direction === 'left' ? windowWidth + 600 : -600;
-
-        // Assign unique vertical position from our array
-        const verticalPos = verticalPositions[index % verticalPositions.length];
-
-        return (
-          <motion.div
-            key={index}
-            className={`absolute ${verticalPos}`}
-            style={{ width: cloud.size }}
-            initial={{ x: initialX }}
-            animate={{ x: finalX, opacity: cloud.opacity }}
-            transition={{
-              duration: cloud.duration,
-              ease: "linear",
-              repeat: Infinity,
-              delay: cloud.delay,
-            }}
-          >
-            <Image
-              src={cloud.src}
-              alt="Cloud"
-              width={cloud.size}
-              height={cloud.size * 0.6} // Maintain aspect ratio
-              style={{ maxHeight: '400px', width: 'auto', height: 'auto' }}
-              priority={false}
-            />
-          </motion.div>
-        );
-      })}
+      {CLOUDS.map((cloud, index) => (
+        <div
+          key={index}
+          className="absolute"
+          style={{
+            width: cloud.size,
+            top: cloud.top,
+            animation: `cloud-drift-${cloud.direction} ${cloud.duration}s linear ${cloud.delay}s infinite`,
+          }}
+        >
+          <Image
+            src={cloud.src}
+            alt=""
+            width={cloud.size}
+            height={cloud.size * 0.6}
+            loading="lazy"
+            style={{ maxHeight: '400px', width: 'auto', height: 'auto' }}
+          />
+        </div>
+      ))}
+      <style jsx>{`
+        @keyframes cloud-drift-left {
+          from { transform: translateX(-100vw); }
+          to { transform: translateX(110vw); }
+        }
+        @keyframes cloud-drift-right {
+          from { transform: translateX(110vw); }
+          to { transform: translateX(-100vw); }
+        }
+      `}</style>
     </div>
   );
 }
