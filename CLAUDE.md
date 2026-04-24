@@ -17,3 +17,9 @@ The UI leverages an orientation-based fluid responsive design system, avoiding r
 3. **Technical Elegance**: Present complex, precise data (shoe aggressiveness, stiffness, volume) cleanly and clearly, maintaining a slick and modern aesthetic that feels like a premium tool rather than a basic spreadsheet.
 4. **Bold Contrast**: Leverage the dark/light mode foundations, ensuring the primary orange accent pops and draws attention to key interactions, while letting the 3D models and shoe imagery take center stage.
 5. **Distinctive Typography**: Thoughtfully apply the custom font stack (`sora` for readability, `basteleur`/`tanker`/`so-cloudy` for distinct headers) to maintain the brand's unique personality.
+
+### Constraints
+1. **No Marketing Fluff**: No numbered feature lists (01/02/03), no "Precision fit system", no "Smart Match", no promotional copy. Use minimal placeholder text like "Layout test. No marketing copy."
+2. **No Accent-Colored Text**: The orange/red accent (`brand-red`) is for shapes, borders, buttons only. Never use it on body text, headings, or marketing copy.
+3. **Minimal Copy**: Strip all "weird ass fluff" — mission statements, value propositions, founder stories, FAQ sections. Keep only functional UI labels.
+4. **Editorial Test Themes**: Homepage variations follow editorial hybrid aesthetic (japanese, retro, gorp) with grain overlays, halftone patterns, serif italic typography hierarchy.
