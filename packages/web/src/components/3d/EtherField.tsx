@@ -16,6 +16,8 @@ uniform vec2 iResolution;
 uniform float iTime;
 uniform vec3 uAmbient;
 uniform vec3 uAccent;
+uniform vec2 uMouse;
+uniform float uMouseStrength;
 
 out vec4 outColor;
 
@@ -37,8 +39,14 @@ float density(vec3 p) {
 
 void mainImage(out vec4 fragColor, vec2 fragCoord) {
   vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
+
+  vec2 mouseNorm = (uMouse - 0.5 * iResolution.xy) / iResolution.y;
+  float md = distance(mouseNorm, uv);
+  float ripple = smoothstep(0.55, 0.0, md) * uMouseStrength;
+  uv += (uv - mouseNorm) * ripple * 0.18;
+
   vec3 ro = vec3(0.0, 0.0, 4.6);
-  vec3 rd = normalize(vec3(uv, -1.0));
+  vec3 rd = normalize(vec3(uv, -1.0 + ripple * 0.25));
 
   vec3 col = vec3(0.0);
   float dist = 2.0;
@@ -98,6 +106,14 @@ export default function EtherField({
 }: EtherFieldProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const propsRef = useRef({ paused, speed, ambientColor, accentColor });
+  const mouseRef = useRef({
+    targetX: 0,
+    targetY: 0,
+    smoothX: 0,
+    smoothY: 0,
+    targetStrength: 0,
+    smoothStrength: 0,
+  });
 
   useEffect(() => {
     propsRef.current = { paused, speed, ambientColor, accentColor };
@@ -135,6 +151,8 @@ export default function EtherField({
     const uTime = gl.getUniformLocation(program, "iTime");
     const uAmbient = gl.getUniformLocation(program, "uAmbient");
     const uAccent = gl.getUniformLocation(program, "uAccent");
+    const uMouse = gl.getUniformLocation(program, "uMouse");
+    const uMouseStrength = gl.getUniformLocation(program, "uMouseStrength");
 
     const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
 
@@ -153,6 +171,30 @@ export default function EtherField({
     ro.observe(canvas);
     resize();
 
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const inside =
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom;
+      const m = mouseRef.current;
+      if (inside) {
+        m.targetX = (e.clientX - rect.left) * dpr;
+        m.targetY = (rect.height - (e.clientY - rect.top)) * dpr;
+        m.targetStrength = 1;
+      } else {
+        m.targetStrength = 0;
+      }
+    };
+    const handlePointerLeave = () => {
+      mouseRef.current.targetStrength = 0;
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerleave", handlePointerLeave, { passive: true });
+    window.addEventListener("blur", handlePointerLeave);
+
     let raf = 0;
     let elapsed = 0;
     let last = performance.now();
@@ -164,6 +206,12 @@ export default function EtherField({
       const p = propsRef.current;
       if (!p.paused) elapsed += dt * p.speed;
 
+      const m = mouseRef.current;
+      const ease = 1 - Math.pow(0.001, dt);
+      m.smoothX += (m.targetX - m.smoothX) * ease;
+      m.smoothY += (m.targetY - m.smoothY) * ease;
+      m.smoothStrength += (m.targetStrength - m.smoothStrength) * ease;
+
       const [ar, ag, ab] = parseHex(p.ambientColor);
       const [cr, cg, cb] = parseHex(p.accentColor);
 
@@ -171,6 +219,8 @@ export default function EtherField({
       gl.uniform1f(uTime, elapsed);
       gl.uniform3f(uAmbient, ar, ag, ab);
       gl.uniform3f(uAccent, cr, cg, cb);
+      gl.uniform2f(uMouse, m.smoothX, m.smoothY);
+      gl.uniform1f(uMouseStrength, m.smoothStrength);
 
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
@@ -179,6 +229,9 @@ export default function EtherField({
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("blur", handlePointerLeave);
       gl.deleteProgram(program);
       gl.deleteShader(vertexShader);
       gl.deleteShader(fragmentShader);

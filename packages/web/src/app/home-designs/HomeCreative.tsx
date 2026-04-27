@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { ArrowUpRight, Footprints, Target, Users, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
 
@@ -197,25 +196,21 @@ function HowItWorksSection() {
 function FeaturesSection() {
   const features = [
     {
-      icon: Footprints,
       title: "Foot Lab",
       copy: "Lock in your foot shape and volume. Everything else flows from this.",
       href: "/footscan",
     },
     {
-      icon: Star,
       title: "Sanctuary",
       copy: "Your shoe wall, digitised. Track every pair, every rating, every retirement.",
       href: "/stash",
     },
     {
-      icon: Target,
       title: "Matcher",
       copy: "Visual radar map of shoes ranked for your style. Comfort to competition.",
       href: "/matcher",
     },
     {
-      icon: Users,
       title: "Sole Mate",
       copy: "Climbers with your exact foot profile. See what they’re rating high.",
       href: "/matcher?tab=mate",
@@ -252,18 +247,21 @@ function FeaturesSection() {
             >
               <Link
                 href={feature.href}
-                className="group flex items-start justify-between gap-6 p-8 md:p-10 hover:bg-brand-surface transition-colors duration-500 min-h-[200px]"
+                className="group relative flex flex-col justify-between gap-8 p-8 md:p-10 hover:bg-brand-surface transition-colors duration-500 min-h-[220px] overflow-hidden"
               >
-                <div className="flex flex-col gap-5">
-                  <feature.icon className="w-6 h-6 text-brand-red" strokeWidth={1.5} />
-                  <div>
-                    <h3 className="font-ball-pill text-3xl text-brand-chalk mb-2">{feature.title}</h3>
-                    <p className="font-sora text-sm text-brand-putty/60 leading-relaxed max-w-sm">
-                      {feature.copy}
-                    </p>
-                  </div>
+                <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-red origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 ease-out" />
+                <div>
+                  <h3 className="font-ball-pill text-3xl text-brand-chalk mb-3 group-hover:text-brand-red transition-colors duration-500">
+                    {feature.title}
+                  </h3>
+                  <p className="font-sora text-sm text-brand-putty/60 leading-relaxed max-w-sm">
+                    {feature.copy}
+                  </p>
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500 shrink-0" />
+                <span className="relative font-sora text-[10px] uppercase tracking-[0.35em] text-brand-putty/40 group-hover:text-brand-red transition-colors duration-500 w-fit">
+                  Open
+                  <span className="absolute left-0 -bottom-1 h-px w-full origin-left scale-x-0 bg-brand-red group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+                </span>
               </Link>
             </motion.div>
           ))}
@@ -289,12 +287,12 @@ function FinalCtaSection({ isAuthenticated, onEnter }: { isAuthenticated: boolea
           </h2>
           <button
             onClick={onEnter}
-            className="group flex items-center gap-fluid-sm font-ball-pill text-fluid-3xl text-white hover:text-brand-red transition-colors duration-500 shrink-0"
+            className="group relative font-ball-pill text-fluid-3xl text-white hover:text-brand-red transition-colors duration-500 shrink-0 self-start md:self-end"
           >
-            {isAuthenticated ? "Dashboard" : "Get started"}
-            <div className="w-fluid-xl h-fluid-xl rounded-full border border-white/10 flex items-center justify-center group-hover:border-brand-red transition-colors duration-500">
-              <ArrowUpRight className="group-hover:rotate-45 transition-transform duration-700" />
-            </div>
+            <span className="relative">
+              {isAuthenticated ? "Dashboard" : "Get started"}
+              <span className="absolute left-0 -bottom-2 h-[2px] w-full origin-left scale-x-0 bg-brand-red group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+            </span>
           </button>
         </motion.div>
       </div>

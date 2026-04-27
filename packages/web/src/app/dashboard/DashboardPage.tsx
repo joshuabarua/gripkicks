@@ -3,15 +3,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
-import {
-  Footprints,
-  Plus,
-  Star,
-  ArrowUpRight,
-  TrendingUp,
-  Heart,
-  Target,
-} from "lucide-react";
+import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
@@ -106,12 +98,12 @@ export default function DashboardPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => router.push("/stash")}
-            className="group flex items-center gap-3 font-ball-pill text-2xl text-brand-red hover:text-white transition-colors duration-500 shrink-0"
+            className="group relative font-ball-pill text-2xl text-brand-red hover:text-white transition-colors duration-500 shrink-0"
           >
-            View Collection
-            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-brand-red transition-colors duration-500">
-              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-700" />
-            </div>
+            <span className="relative">
+              View Collection
+              <span className="absolute left-0 -bottom-1 h-px w-full origin-left scale-x-0 bg-brand-red group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+            </span>
           </motion.button>
         </motion.div>
 
@@ -124,7 +116,6 @@ export default function DashboardPage() {
             transition={{ duration: 0.5 }}
             className="col-span-12 md:col-span-4 row-span-2 bg-black p-8 flex flex-col justify-between min-h-[280px]"
           >
-            <Plus className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
             <div>
               <div className="font-ball-pill text-7xl text-brand-chalk leading-none">
                 {userShoes.length}
@@ -139,34 +130,28 @@ export default function DashboardPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.08 }}
-            className="col-span-6 md:col-span-4 bg-black p-8 flex items-center justify-between min-h-[140px]"
+            className="col-span-6 md:col-span-4 bg-black p-8 flex flex-col justify-between min-h-[140px]"
           >
-            <div>
-              <div className="font-ball-pill text-4xl text-brand-chalk">
-                {favCount}
-              </div>
-              <p className="font-sora text-brand-putty/40 text-xs mt-1">
-                Favorites
-              </p>
+            <div className="font-ball-pill text-4xl text-brand-chalk">
+              {favCount}
             </div>
-            <Heart className="w-6 h-6 text-brand-red" strokeWidth={1.5} />
+            <p className="font-sora text-brand-putty/40 text-xs mt-1">
+              Favorites
+            </p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.12 }}
-            className="col-span-6 md:col-span-4 bg-black p-8 flex items-center justify-between min-h-[140px]"
+            className="col-span-6 md:col-span-4 bg-black p-8 flex flex-col justify-between min-h-[140px]"
           >
-            <div>
-              <div className="font-ball-pill text-4xl text-brand-chalk">
-                {avgComfort}
-              </div>
-              <p className="font-sora text-brand-putty/40 text-xs mt-1">
-                Avg Comfort
-              </p>
+            <div className="font-ball-pill text-4xl text-brand-chalk">
+              {avgComfort}
             </div>
-            <Star className="w-6 h-6 text-brand-red" strokeWidth={1.5} />
+            <p className="font-sora text-brand-putty/40 text-xs mt-1">
+              Avg Comfort
+            </p>
           </motion.div>
 
           <motion.div
@@ -174,37 +159,35 @@ export default function DashboardPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.16 }}
             onClick={() => router.push("/footscan")}
-            className="col-span-12 md:col-span-8 bg-black p-8 flex items-center justify-between cursor-pointer hover:bg-brand-surface transition-colors duration-500 group min-h-[140px]"
+            className="col-span-12 md:col-span-8 bg-black p-8 flex items-center justify-between cursor-pointer hover:bg-brand-surface transition-colors duration-500 group relative overflow-hidden min-h-[140px]"
           >
-            <div className="flex items-center gap-5">
-              <Footprints
-                className="w-6 h-6 text-brand-red flex-shrink-0"
-                strokeWidth={1.5}
-              />
-              <div>
-                {hasFootProfile ? (
-                  <>
-                    <div className="font-ball-pill text-2xl text-brand-chalk capitalize">
-                      {footShape} <span className="text-brand-putty/30">/</span>{" "}
-                      {footVolume} volume
-                    </div>
-                    <p className="font-sora text-brand-putty/40 text-xs mt-0.5">
-                      Your foot profile — tap to update
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className="font-ball-pill text-xl text-brand-red">
-                      Set up your foot profile
-                    </div>
-                    <p className="font-sora text-brand-putty/40 text-xs mt-0.5">
-                      Takes 30 seconds — unlocks better matches
-                    </p>
-                  </>
-                )}
-              </div>
+            <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-red origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 ease-out" />
+            <div className="relative">
+              {hasFootProfile ? (
+                <>
+                  <div className="font-ball-pill text-2xl text-brand-chalk group-hover:text-brand-red transition-colors duration-500 capitalize">
+                    {footShape} <span className="text-brand-putty/30">/</span>{" "}
+                    {footVolume} volume
+                  </div>
+                  <p className="font-sora text-brand-putty/40 text-xs mt-0.5">
+                    Your foot profile — tap to update
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="font-ball-pill text-xl text-brand-red">
+                    Set up your foot profile
+                  </div>
+                  <p className="font-sora text-brand-putty/40 text-xs mt-0.5">
+                    Takes 30 seconds — unlocks better matches
+                  </p>
+                </>
+              )}
             </div>
-            <ArrowUpRight className="w-5 h-5 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500 flex-shrink-0" />
+            <span className="relative font-sora text-[10px] uppercase tracking-[0.35em] text-brand-putty/40 group-hover:text-brand-red transition-colors duration-500 w-fit">
+              Open
+              <span className="absolute left-0 -bottom-1 h-px w-full origin-left scale-x-0 bg-brand-red group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+            </span>
           </motion.div>
         </div>
 
@@ -222,10 +205,12 @@ export default function DashboardPage() {
             </h2>
             <button
               onClick={() => router.push("/matcher")}
-              className="group flex items-center gap-2 font-ball-pill text-xl text-brand-red hover:text-white transition-colors duration-500"
+              className="group relative font-ball-pill text-xl text-brand-red hover:text-white transition-colors duration-500"
             >
-              Find my shoe
-              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
+              <span className="relative">
+                Find my shoe
+                <span className="absolute left-0 -bottom-1 h-px w-full origin-left scale-x-0 bg-brand-red group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+              </span>
             </button>
           </div>
 
@@ -236,14 +221,10 @@ export default function DashboardPage() {
               onClick={() => router.push("/stash")}
               className="col-span-12 md:col-span-8 bg-brand-red p-8 flex flex-col justify-between cursor-pointer group relative overflow-hidden min-h-[180px]"
             >
-              <div className="relative flex justify-between items-start">
-                <h3 className="font-ball-pill text-4xl md:text-5xl text-black">
-                  Shoe Sanctuary
-                </h3>
-                <div className="w-10 h-10 border border-black/20 flex items-center justify-center group-hover:border-black/40 transition-colors">
-                  <ArrowUpRight className="w-5 h-5 text-black group-hover:rotate-45 transition-transform duration-500" />
-                </div>
-              </div>
+              <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-black origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 ease-out" />
+              <h3 className="font-ball-pill text-4xl md:text-5xl text-black group-hover:text-white transition-colors duration-500">
+                Shoe Sanctuary
+              </h3>
               <p className="relative font-sora text-black/60 max-w-md text-sm">
                 Your full climbing shoe collection
               </p>
@@ -252,17 +233,11 @@ export default function DashboardPage() {
             <motion.div
               whileHover={{ backgroundColor: "rgba(26,26,26,1)" }}
               onClick={() => router.push("/matcher?tab=mate")}
-              className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
+              className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-colors duration-500 min-h-[180px]"
             >
-              <div className="flex justify-between items-start">
-                <TrendingUp
-                  className="w-5 h-5 text-brand-red"
-                  strokeWidth={1.5}
-                />
-                <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
-              </div>
-              <div>
-                <h4 className="font-ball-pill text-xl text-brand-chalk mb-1">
+              <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-red origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 ease-out" />
+              <div className="relative">
+                <h4 className="font-ball-pill text-xl text-brand-chalk mb-1 group-hover:text-brand-red transition-colors duration-500">
                   Sole Mate
                 </h4>
                 <p className="font-sora text-brand-putty/40 text-xs">
@@ -274,17 +249,11 @@ export default function DashboardPage() {
             <motion.div
               whileHover={{ backgroundColor: "rgba(26,26,26,1)" }}
               onClick={() => router.push("/footscan")}
-              className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
+              className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-colors duration-500 min-h-[180px]"
             >
-              <div className="flex justify-between items-start">
-                <Footprints
-                  className="w-5 h-5 text-brand-red"
-                  strokeWidth={1.5}
-                />
-                <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
-              </div>
-              <div>
-                <h4 className="font-ball-pill text-xl text-brand-chalk mb-1">
+              <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-red origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 ease-out" />
+              <div className="relative">
+                <h4 className="font-ball-pill text-xl text-brand-chalk mb-1 group-hover:text-brand-red transition-colors duration-500">
                   Foot Lab
                 </h4>
                 <p className="font-sora text-brand-putty/40 text-xs">
@@ -296,14 +265,11 @@ export default function DashboardPage() {
             <motion.div
               whileHover={{ backgroundColor: "rgba(26,26,26,1)" }}
               onClick={() => router.push("/matcher")}
-              className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
+              className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-colors duration-500 min-h-[180px]"
             >
-              <div className="flex justify-between items-start">
-                <Target className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
-                <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
-              </div>
-              <div>
-                <h4 className="font-ball-pill text-xl text-brand-chalk mb-1">
+              <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-red origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 ease-out" />
+              <div className="relative">
+                <h4 className="font-ball-pill text-xl text-brand-chalk mb-1 group-hover:text-brand-red transition-colors duration-500">
                   Matcher
                 </h4>
                 <p className="font-sora text-brand-putty/40 text-xs">
@@ -329,10 +295,12 @@ export default function DashboardPage() {
               {userShoes.length > 3 && (
                 <button
                   onClick={() => router.push("/stash")}
-                  className="group flex items-center gap-2 font-ball-pill text-xl text-brand-red hover:text-white transition-colors duration-500"
+                  className="group relative font-ball-pill text-xl text-brand-red hover:text-white transition-colors duration-500"
                 >
-                  View all
-                  <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
+                  <span className="relative">
+                    View all
+                    <span className="absolute left-0 -bottom-1 h-px w-full origin-left scale-x-0 bg-brand-red group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+                  </span>
                 </button>
               )}
             </div>
@@ -398,7 +366,6 @@ export default function DashboardPage() {
                             Comfort
                           </span>
                         </div>
-                        <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
                       </div>
                     </motion.div>
                   );
