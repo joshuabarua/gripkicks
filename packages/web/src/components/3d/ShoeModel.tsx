@@ -57,10 +57,10 @@ export default function ShoeModel() {
       <group dispose={null} scale={viewport.width / 3.5}>
         <Text
           fontSize={0.7}
-          position={[0.01, 0.5, 0]}
+          position={[0.01, 0.4, 0]}
           font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
-          letterSpacing={-0.05}
+          letterSpacing={-0.08}
         >
           GRIP
         </Text>
@@ -70,7 +70,7 @@ export default function ShoeModel() {
           position={[0, -0.2, 0]}
           font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
-          letterSpacing={-0.05}
+          letterSpacing={-0.08}
         >
           KICKS
         </Text>
