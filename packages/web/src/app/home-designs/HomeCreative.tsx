@@ -14,7 +14,7 @@ const Scene = dynamic(() => import("@/components/3d/Scene"), {
   loading: () => null,
 });
 
-const SilkWaves = dynamic(() => import("@/components/3d/SilkWaves"), {
+const EtherField = dynamic(() => import("@/components/3d/EtherField"), {
   ssr: false,
   loading: () => null,
 });
@@ -32,10 +32,12 @@ function HeroSection({
         transition={{ duration: 1.6 }}
         className="absolute inset-0 z-0"
       >
-        <SilkWaves
+        <EtherField
           className="absolute inset-0 w-full h-full"
           paused={isReducedEffects}
-          speed={isReducedEffects ? 0 : 0.6}
+          speed={isReducedEffects ? 0 : 0.7}
+          ambientColor="#0a0d18"
+          accentColor="#ff5a3d"
         />
       </motion.div>
       <motion.div

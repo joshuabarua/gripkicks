@@ -10,7 +10,12 @@ import type { UserShoe } from "@/types/api";
 import { editFormSchema, type EditFormData } from "@/schemas/shoe-schema";
 import EditShoeDialog from "@/components/EditShoeDialog";
 import ShoeStatsModal from "@/components/ShoeStatsModal";
-import CloudBackground from "@/components/CloudBackground";
+import dynamic from "next/dynamic";
+
+const CloudShader = dynamic(() => import("@/components/3d/CloudShader"), {
+  ssr: false,
+  loading: () => null,
+});
 import { LoadingBar } from "@/components/ui/loading";
 import { useLoading } from "@/contexts/LoadingContext";
 import { ShoeCardSkeleton, StatsStripSkeleton } from "@/components/ui/skeleton";
@@ -310,19 +315,18 @@ export default function ShoeSanctuaryPage() {
 
   return (
     <div className="relative min-h-svh w-full bg-black overflow-x-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
-          style={{
-            backgroundImage: 'url("/imgs/clouds/clouds 4.png")',
-            filter: "brightness(0.5)",
-          }}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <CloudShader
+          className="absolute inset-0 w-full h-full"
+          density={5}
+          speed={0.6}
+          layers={3}
+          skyColor="#1a2740"
+          cloudColor="#e6dccb"
         />
       </div>
 
-      <CloudBackground />
-
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 pointer-events-none" />
+      <div className="fixed inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/85 pointer-events-none z-0" />
 
       <div className="relative z-20">
         <section className="px-fluid-lg md:px-fluid-xl pt-fluid-xl pb-fluid-lg">

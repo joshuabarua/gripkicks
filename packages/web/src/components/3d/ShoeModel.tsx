@@ -58,7 +58,7 @@ export default function ShoeModel() {
         <Text
           fontSize={0.8}
           position={[0.01, .5, 0]}
-          font="fonts/BallPill-Regular.ttf"
+          font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
         >
           Grip
@@ -67,7 +67,7 @@ export default function ShoeModel() {
         <Text
           fontSize={0.8}
           position={[0, -.2, 0]}
-          font="fonts/BallPill-Regular.ttf"
+          font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
         >
           Kicks
