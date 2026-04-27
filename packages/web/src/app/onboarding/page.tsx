@@ -30,6 +30,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { FullPageLoading } from "@/components/ui/loading";
 import type { Shoe } from "@/types/api";
+import {
+  useFootProfileStore,
+  normalizeBackendFootProfile,
+} from "@/stores/footProfileStore";
 
 type ShoeSizeOption = { value: string; label: string };
 const isShoeSizeOption = (
@@ -59,7 +63,7 @@ export default function OnboardingPage() {
     notes: "",
   });
 
-  // Foot data
+  const setFootProfile = useFootProfileStore((s) => s.setProfile);
   const [footShape, setFootShape] = useState("");
   const [footVolume, setFootVolume] = useState("");
 
@@ -104,13 +108,14 @@ export default function OnboardingPage() {
   const handleNext = async () => {
     if (currentStep === "welcome") setCurrentStep("foot-data");
     else if (currentStep === "foot-data") {
-      // Save foot data
       setIsLoading(true);
       try {
         await fetchApi("/api/v1/profile", {
           method: "PUT",
           body: JSON.stringify({ footShape, footVolume }),
         });
+        const normalized = normalizeBackendFootProfile({ footShape, footVolume });
+        if (normalized) setFootProfile(normalized);
       } catch (error) {
         console.error("Failed to save foot data:", error);
       } finally {
@@ -657,7 +662,7 @@ export default function OnboardingPage() {
                         label: "Foot Lab",
                       },
                       { href: "/stash", icon: Plus, label: "My Shoes" },
-                      { href: "/findmyshoe", icon: Star, label: "Find Shoes" },
+                      { href: "/matcher", icon: Star, label: "Matcher" },
                     ].map((item) => (
                       <Link key={item.href} href={item.href}>
                         <motion.div

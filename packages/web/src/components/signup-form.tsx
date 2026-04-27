@@ -225,6 +225,7 @@ export function SignupForm() {
             await signIn.social({
               provider: "google",
               callbackURL: callbackUrl,
+              errorCallbackURL: "/auth/signup?error=oauth",
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);

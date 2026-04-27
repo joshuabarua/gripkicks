@@ -130,6 +130,7 @@ export function LoginForm() {
             await signIn.social({
               provider: "google",
               callbackURL: callbackUrl,
+              errorCallbackURL: "/auth/login?error=oauth",
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);

@@ -10,7 +10,6 @@ const footerLinks = {
     { title: "Foot Lab", href: "/footscan" },
     { title: "Sanctuary", href: "/stash" },
     { title: "Matcher", href: "/matcher" },
-    { title: "Sole Mate", href: "/findmyshoe" },
   ],
   company: [
     { title: "About", href: "/about" },

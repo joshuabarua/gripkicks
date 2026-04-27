@@ -54,7 +54,7 @@ export const auth = betterAuth({
   advanced: {
     crossSubDomainCookies: {
       enabled: true,
-      domain: process.env.NODE_ENV === "production" ? ".grip-kicks.com" : undefined,
+      domain: process.env.NODE_ENV === "production" ? "grip-kicks.com" : undefined,
     }
   },
   trustedOrigins: [

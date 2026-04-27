@@ -6,6 +6,7 @@ import { ConvexProvider, ConvexReactClient } from "convex/react";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { LoadingProvider } from "@/contexts/LoadingContext";
+import FootProfileSync from "@/components/FootProfileSync";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +40,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         {convex ? (
           <ConvexProvider client={convex}>
             <QueryClientProvider client={queryClient}>
+              <FootProfileSync />
               {children}
             </QueryClientProvider>
           </ConvexProvider>

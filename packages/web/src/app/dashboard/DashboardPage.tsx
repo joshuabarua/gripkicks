@@ -221,7 +221,7 @@ export default function DashboardPage() {
               Where to next?
             </h2>
             <button
-              onClick={() => router.push("/findmyshoe")}
+              onClick={() => router.push("/matcher")}
               className="group flex items-center gap-2 font-tanker text-xl text-brand-red hover:text-white transition-colors duration-500"
             >
               Find my shoe
@@ -251,7 +251,7 @@ export default function DashboardPage() {
 
             <motion.div
               whileHover={{ backgroundColor: "rgba(26,26,26,1)" }}
-              onClick={() => router.push("/findmyshoe")}
+              onClick={() => router.push("/matcher?tab=mate")}
               className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group transition-colors duration-500 min-h-[180px]"
             >
               <div className="flex justify-between items-start">

@@ -31,10 +31,13 @@ export interface RadarUserPosition {
   label?: string;
 }
 
-type QuadrantKey = "daily-drivers" | "versatile-performers" | "aggressive-comfort" | "competition";
+type QuadrantKey = "comfort" | "all-rounder" | "aggressive" | "competition";
+type Corner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
 interface QuadrantInfo {
   name: string;
+  description: string;
+  corner: Corner;
   icon: React.ReactNode;
   borderColor: string;
   bgColor: string;
@@ -42,22 +45,28 @@ interface QuadrantInfo {
 }
 
 const quadrants: Record<QuadrantKey, QuadrantInfo> = {
-  "daily-drivers": {
-    name: "Daily Drivers",
+  comfort: {
+    name: "Comfort",
+    description: "Soft, forgiving shoes built for long sessions and easy climbs. Low aggression, high all-day wearability.",
+    corner: "top-left",
     icon: <Heart className="w-3 h-3" />,
     borderColor: "border-green-500/40",
     bgColor: "bg-green-500/5",
     accentClass: "text-green-400/80",
   },
-  "versatile-performers": {
-    name: "Versatile Performers",
+  "all-rounder": {
+    name: "All-Rounder",
+    description: "Versatile do-it-all shoes. Solid edging and smearing without sacrificing comfort \u2014 great daily drivers.",
+    corner: "top-right",
     icon: <Zap className="w-3 h-3" />,
     borderColor: "border-blue-500/40",
     bgColor: "bg-blue-500/5",
     accentClass: "text-blue-400/80",
   },
-  "aggressive-comfort": {
-    name: "Aggressive Comfort",
+  aggressive: {
+    name: "Aggressive",
+    description: "Downturned, asymmetric shapes for steep terrain and powerful toe hooks. Performance-focused, not all-day comfortable.",
+    corner: "bottom-left",
     icon: <Shield className="w-3 h-3" />,
     borderColor: "border-brand-red/40",
     bgColor: "bg-brand-red/5",
@@ -65,11 +74,27 @@ const quadrants: Record<QuadrantKey, QuadrantInfo> = {
   },
   competition: {
     name: "Competition",
+    description: "Race-bred specialists. Maximum precision, sensitivity, and aggression \u2014 the sharpest tools in the kit.",
+    corner: "bottom-right",
     icon: <Target className="w-3 h-3" />,
     borderColor: "border-red-500/40",
     bgColor: "bg-red-500/5",
     accentClass: "text-red-400/80",
   },
+};
+
+const cornerPositionClass: Record<Corner, string> = {
+  "top-left": "top-3 left-3",
+  "top-right": "top-3 right-3",
+  "bottom-left": "bottom-3 left-3",
+  "bottom-right": "bottom-3 right-3",
+};
+
+const tooltipPositionClass: Record<Corner, string> = {
+  "top-left": "top-full mt-2 left-0",
+  "top-right": "top-full mt-2 right-0",
+  "bottom-left": "bottom-full mb-2 left-0",
+  "bottom-right": "bottom-full mb-2 right-0",
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -89,9 +114,9 @@ function computePosition(metrics: RadarMetrics) {
 function getQuadrantKeyFromPosition(x: number, y: number): QuadrantKey {
   const isPerformanceLed = x >= 0.5;
   const isAggressiveLed = y >= 0.5;
-  if (!isPerformanceLed && !isAggressiveLed) return "daily-drivers";
-  if (isPerformanceLed && !isAggressiveLed) return "versatile-performers";
-  if (!isPerformanceLed && isAggressiveLed) return "aggressive-comfort";
+  if (!isPerformanceLed && !isAggressiveLed) return "comfort";
+  if (isPerformanceLed && !isAggressiveLed) return "all-rounder";
+  if (!isPerformanceLed && isAggressiveLed) return "aggressive";
   return "competition";
 }
 
@@ -137,7 +162,7 @@ export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confi
       counts[p.quadrantKey] += 1;
       return counts;
     },
-    { "daily-drivers": 0, "versatile-performers": 0, "aggressive-comfort": 0, competition: 0 } as Record<QuadrantKey, number>,
+    { comfort: 0, "all-rounder": 0, aggressive: 0, competition: 0 } as Record<QuadrantKey, number>,
   );
 
   const userPos = userPosition ? computePosition(userPosition.metrics) : null;
@@ -165,11 +190,19 @@ export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confi
         </div>
 
         <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 pointer-events-none z-0">
-          <QuadrantTile quadrant={quadrants["daily-drivers"]} count={quadrantCounts["daily-drivers"]} extraBorder="border-r border-b" />
-          <QuadrantTile quadrant={quadrants["versatile-performers"]} count={quadrantCounts["versatile-performers"]} extraBorder="border-b" />
-          <QuadrantTile quadrant={quadrants["aggressive-comfort"]} count={quadrantCounts["aggressive-comfort"]} extraBorder="border-r" />
-          <QuadrantTile quadrant={quadrants.competition} count={quadrantCounts.competition} extraBorder="" />
+          <QuadrantTile quadrant={quadrants.comfort} extraBorder="border-r border-b" />
+          <QuadrantTile quadrant={quadrants["all-rounder"]} extraBorder="border-b" />
+          <QuadrantTile quadrant={quadrants.aggressive} extraBorder="border-r" />
+          <QuadrantTile quadrant={quadrants.competition} extraBorder="" />
         </div>
+
+        {(Object.keys(quadrants) as QuadrantKey[]).map((key) => (
+          <QuadrantCornerLabel
+            key={key}
+            quadrant={quadrants[key]}
+            count={quadrantCounts[key]}
+          />
+        ))}
 
         {userPos ? <UserMarker x={userPos.x} y={userPos.y} label={userPosition?.label ?? "YOU"} /> : (
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-1.5 h-1.5 bg-neutral-700 rounded-full" />
@@ -410,24 +443,40 @@ function AxisLabel({ position, children }: { position: "top" | "bottom" | "left"
 
 function QuadrantTile({
   quadrant,
-  count,
   extraBorder,
 }: {
   quadrant: QuadrantInfo;
-  count: number;
   extraBorder: string;
 }) {
+  return <div className={`${quadrant.bgColor} ${quadrant.borderColor} ${extraBorder}`} />;
+}
+
+function QuadrantCornerLabel({
+  quadrant,
+  count,
+}: {
+  quadrant: QuadrantInfo;
+  count: number;
+}) {
   return (
-    <div className={`${quadrant.bgColor} ${quadrant.borderColor} ${extraBorder} p-3 flex items-start justify-start`}>
-      <Badge
-        variant="secondary"
-        className={`text-[10px] px-2 py-0.5 bg-neutral-900/80 border border-neutral-700/80 font-sora flex items-center gap-1.5 ${quadrant.accentClass}`}
-      >
-        {quadrant.icon}
-        <span>{quadrant.name}</span>
-        <span className="text-neutral-500">·</span>
-        <span className="tabular-nums">{count}</span>
-      </Badge>
+    <div className={`absolute z-20 ${cornerPositionClass[quadrant.corner]}`}>
+      <div className="group relative">
+        <Badge
+          variant="secondary"
+          className={`text-[10px] px-2 py-0.5 bg-neutral-900/90 border border-neutral-700/80 font-sora flex items-center gap-1.5 cursor-help ${quadrant.accentClass}`}
+        >
+          {quadrant.icon}
+          <span>{quadrant.name}</span>
+          <span className="text-neutral-500">·</span>
+          <span className="tabular-nums">{count}</span>
+        </Badge>
+        <div
+          className={`pointer-events-none absolute z-30 w-56 rounded-lg border border-neutral-700 bg-black/95 px-3 py-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-150 ${tooltipPositionClass[quadrant.corner]}`}
+        >
+          <p className={`font-tanker text-sm leading-tight ${quadrant.accentClass}`}>{quadrant.name}</p>
+          <p className="font-sora text-[11px] text-neutral-300 mt-1 leading-snug">{quadrant.description}</p>
+        </div>
+      </div>
     </div>
   );
 }

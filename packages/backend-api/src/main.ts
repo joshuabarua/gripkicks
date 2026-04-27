@@ -17,7 +17,6 @@ for (const envPath of envCandidates) {
 
 import { showRoutes } from "hono/dev";
 import { serve } from "@hono/node-server";
-import { cors } from "hono/cors";
 import { createRateLimit, errorHandler, notFound } from "../middleware";
 import { auth } from "../config/auth.config";
 import Users from "../routes/users.routes";
@@ -27,7 +26,6 @@ import ImageKitRoute from "../routes/imagekit";
 import PolarRoutes from "../routes/polar.routes";
 import createApp from "../lib/create-app";
 import { Context } from "hono";
-import { getAllowedOrigins } from "../config/cors-origins";
 
 // Initialize app with middleware
 const app = createApp();
@@ -78,19 +76,6 @@ app.use(`${API_BASE}/auth/delete-account`, accountMutationLimiter);
 app.use(`${API_BASE}/polar/checkout`, checkoutLimiter);
 app.use("/api/upload", imageUploadLimiter);
 app.use("/api/imagekit", imageUploadLimiter);
-
-// Add CORS middleware for Better Auth routes
-app.use(
-  "/api/auth/*",
-  cors({
-    origin: getAllowedOrigins(),
-    allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["POST", "GET", "OPTIONS"],
-    exposeHeaders: ["Content-Length"],
-    maxAge: 600,
-    credentials: true,
-  }),
-);
 
 // Health check endpoint
 app.get("/health", (c: Context) => {

@@ -55,7 +55,7 @@ function SuccessContent() {
           )}
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/findmyshoe">
+            <Link href="/matcher">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
