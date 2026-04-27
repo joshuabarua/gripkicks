@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth";
 import AuthButton from "@/components/auth-button";
-import { Glow, GlowArea } from "@/components/ui/glow";
 import NavButton from "@/components/ui/nav-button";
 import { motion, AnimatePresence } from "framer-motion";
 import NavLinks from "@/components/ui/nav-links";
@@ -108,18 +107,11 @@ const Navigation: React.FC = () => {
     >
       <ul className="flex justify-between items-center text-foreground w-full">
         <li className="flex-1">
-          <GlowArea className="w-[120px] z-4">
-            <Glow
-              color="whitesmoke"
-              className="rounded-sm flex justify-center items-center"
-            >
-              <Link href="/">
-                <h1 className="font-ball-pill text-fluid-2xl hover:scale-105 duration-1000 ease-in-out whitespace-nowrap">
-                  Grip Kicks
-                </h1>
-              </Link>
-            </Glow>
-          </GlowArea>
+          <Link href="/" className="inline-block">
+            <h1 className="font-ball-pill text-fluid-2xl whitespace-nowrap transition-transform duration-700 ease-in-out hover:scale-105">
+              Grip Kicks
+            </h1>
+          </Link>
         </li>
 
         <li className="flex items-center justify-end">

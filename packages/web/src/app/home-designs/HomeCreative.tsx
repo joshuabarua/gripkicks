@@ -54,9 +54,7 @@ function HeroSection({
           transition={{ duration: 1.2, delay: 0.6 }}
           className="px-6 md:px-12 lg:px-16 pb-28 md:pb-20 max-w-3xl pointer-events-auto"
         >
-          <h1 className="font-ball-pill text-4xl md:text-6xl lg:text-7xl leading-[0.85] tracking-tight mb-4 text-white">
-            gripkicks
-          </h1>
+       
         </motion.div>
       </div>
 

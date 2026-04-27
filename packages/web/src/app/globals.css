@@ -312,18 +312,20 @@ a {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	padding: 80px 40px 40px 40px;
+	padding: 0;
 	height: 100%;
 	z-index: 1000;
 	box-sizing: border-box;
 
 	.body {
 		display: flex;
-		gap: 6px;
+		gap: 4px;
 		flex-direction: column;
+		min-width: 0;
 		.linkContainer {
 			perspective: 150px;
 			perspective-origin: bottom;
+			min-width: 0;
 		}
 		a {
 			text-decoration: none;
@@ -336,8 +338,18 @@ a {
 			display: flex;
 			align-items: center;
 			gap: 12px;
-			font-size: 28px;
-		} 
+			font-size: 20px;
+			padding: 6px 8px;
+			border-radius: 12px;
+			transition: background-color 0.2s;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.nav-link-item:hover {
+			background-color: rgba(0, 0, 0, 0.08);
+		}
 	}
 }
 
@@ -346,10 +358,12 @@ a {
 		border-top: 1px solid rgba(0, 0, 0, 0.08);
 		width: 100%;
 		padding-top: var(--space-md);
+		margin-top: var(--space-md);
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 8px var(--space-lg);
+		gap: 8px var(--space-md);
+		min-width: 0;
 		.nav-secondary-link {
 			display: flex;
 			align-items: center;
