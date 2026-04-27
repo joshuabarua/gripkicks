@@ -14,6 +14,11 @@ const Scene = dynamic(() => import("@/components/3d/Scene"), {
   loading: () => null,
 });
 
+const SilkWaves = dynamic(() => import("@/components/3d/SilkWaves"), {
+  ssr: false,
+  loading: () => null,
+});
+
 function HeroSection({
   isReducedEffects,
 }: {
@@ -24,8 +29,20 @@ function HeroSection({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1.2 }}
-        className="absolute inset-0 z-0 will-change-transform"
+        transition={{ duration: 1.6 }}
+        className="absolute inset-0 z-0"
+      >
+        <SilkWaves
+          className="absolute inset-0 w-full h-full"
+          paused={isReducedEffects}
+          speed={isReducedEffects ? 0 : 0.6}
+        />
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, delay: 0.3 }}
+        className="absolute inset-0 z-[1] will-change-transform"
       >
         <Scene />
       </motion.div>
