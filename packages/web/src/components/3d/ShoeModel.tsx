@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, Suspense, useMemo } from "react";
+import React, { useRef, useCallback, Suspense, useMemo, useState } from "react";
 import { useGLTF, Text, MeshTransmissionMaterial } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Mesh } from "three";
@@ -10,6 +10,7 @@ useGLTF.preload("/glb/HeroShoe.glb");
 export default function ShoeModel() {
   const { nodes } = useGLTF("/glb/HeroShoe.glb");
   const { viewport } = useThree();
+  const [hoveredText, setHoveredText] = useState<string | null>(null);
 
   // Get performance settings from store
   const highPerformanceMode = useHighPerformanceMode();
@@ -61,6 +62,9 @@ export default function ShoeModel() {
           font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
           letterSpacing={-0.08}
+          scale={hoveredText === "GRIP" ? 1.1 : 1}
+          onPointerOver={() => setHoveredText("GRIP")}
+          onPointerOut={() => setHoveredText(null)}
         >
           GRIP
         </Text>
@@ -71,6 +75,9 @@ export default function ShoeModel() {
           font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
           letterSpacing={-0.08}
+          scale={hoveredText === "KICKS" ? 1.1 : 1}
+          onPointerOver={() => setHoveredText("KICKS")}
+          onPointerOut={() => setHoveredText(null)}
         >
           KICKS
         </Text>
