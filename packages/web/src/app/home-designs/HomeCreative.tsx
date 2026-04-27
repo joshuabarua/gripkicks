@@ -107,9 +107,6 @@ function PitchSection() {
           transition={{ duration: 0.9, ease: "easeOut" }}
           className="md:col-span-5"
         >
-          <p className="font-sora text-[10px] uppercase tracking-[0.35em] text-brand-putty/40 mb-6">
-            What it is
-          </p>
           <h2 className="font-ball-pill text-5xl md:text-6xl leading-[0.9] text-brand-chalk">
             The shoe wall<br />for climbers.
           </h2>
@@ -162,9 +159,6 @@ function HowItWorksSection() {
           transition={{ duration: 0.9 }}
           className="mb-fluid-2xl"
         >
-          <p className="font-sora text-[10px] uppercase tracking-[0.35em] text-brand-putty/40 mb-4">
-            How it works
-          </p>
           <h2 className="font-ball-pill text-4xl md:text-5xl leading-[0.9] text-brand-chalk max-w-2xl">
             Three steps. <span className="text-brand-red">No guesswork.</span>
           </h2>
@@ -180,7 +174,6 @@ function HowItWorksSection() {
               transition={{ duration: 0.6, delay: i * 0.1, ease: "easeOut" }}
               className="bg-black p-8 md:p-10 flex flex-col gap-6 min-h-[260px]"
             >
-              <span className="font-ball-pill text-5xl text-brand-red">{step.n}</span>
               <div>
                 <h3 className="font-ball-pill text-2xl text-brand-chalk mb-3">{step.title}</h3>
                 <p className="font-sora text-sm text-brand-putty/60 leading-relaxed">{step.copy}</p>
@@ -227,9 +220,6 @@ function FeaturesSection() {
           transition={{ duration: 0.9 }}
           className="mb-fluid-2xl"
         >
-          <p className="font-sora text-[10px] uppercase tracking-[0.35em] text-brand-putty/40 mb-4">
-            The toolkit
-          </p>
           <h2 className="font-ball-pill text-4xl md:text-5xl leading-[0.9] text-brand-chalk max-w-2xl">
             Built for the way<br />climbers actually shop.
           </h2>
@@ -258,10 +248,7 @@ function FeaturesSection() {
                     {feature.copy}
                   </p>
                 </div>
-                <span className="relative font-sora text-[10px] uppercase tracking-[0.35em] text-brand-putty/40 group-hover:text-brand-red transition-colors duration-500 w-fit">
-                  Open
-                  <span className="absolute left-0 -bottom-1 h-px w-full origin-left scale-x-0 bg-brand-red group-hover:scale-x-100 transition-transform duration-500 ease-out" />
-                </span>
+                <span className="absolute left-0 -bottom-1 h-px w-full origin-left scale-x-0 bg-brand-red group-hover:scale-x-100 transition-transform duration-500 ease-out" />
               </Link>
             </motion.div>
           ))}

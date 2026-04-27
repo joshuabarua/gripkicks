@@ -83,12 +83,6 @@ export default function DashboardPage() {
           className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-12 mb-12"
         >
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-2 h-2 rounded-full bg-brand-red animate-hal-pulse" />
-              <p className="font-sora text-[9px] uppercase tracking-[0.35em] text-brand-putty/40">
-                Your Dashboard
-              </p>
-            </div>
             <h1 className="font-ball-pill text-5xl md:text-7xl lg:text-8xl leading-[0.9] text-brand-chalk">
               Hey {firstName},<br />
               <span className="text-brand-red">ready to climb?</span>

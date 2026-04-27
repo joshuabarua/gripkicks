@@ -254,7 +254,6 @@ export default function FootLabPage() {
           transition={{ duration: 0.8 }}
           className="mb-16"
         >
-          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Foot Profile</p>
           <h1 className="font-ball-pill text-6xl md:text-8xl leading-none mb-4">
             KNOW YOUR<br /><span className="text-brand-red">FOOT</span>
           </h1>
@@ -272,7 +271,6 @@ export default function FootLabPage() {
           >
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-red/70 mb-2">Onboarding</p>
                 <h2 className="font-ball-pill text-2xl text-brand-chalk mb-2">Foot Lab is ready — finish setup when you want</h2>
                 <p className="font-sora text-sm text-brand-putty/70 max-w-2xl">
                   You can use Foot Lab right now, or jump back into onboarding to finish your guided setup and add your first shoe.
@@ -408,7 +406,6 @@ export default function FootLabPage() {
           transition={{ delay: 0.4 }}
           className="bg-brand-charcoal/50 border border-white/[0.06] rounded-lg p-6 md:p-8"
         >
-          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Why it matters</p>
           <h2 className="font-ball-pill text-2xl mb-5">Your foot shape changes everything</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {[

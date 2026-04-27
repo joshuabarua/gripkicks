@@ -338,9 +338,6 @@ export default function ShoeSanctuaryPage() {
               className="flex flex-col md:flex-row md:items-end md:justify-between gap-fluid-lg"
             >
               <div>
-                <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">
-                  Shoe Sanctuary
-                </p>
                 <h1 className="font-so-cloudy uppercase text-fluid-6xl md:text-fluid-7xl text-white leading-none">
                   Shoe
                   <br />
