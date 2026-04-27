@@ -296,7 +296,13 @@ export const getCommunityTopShoes = query({
 
     const ratingsByShoe = new Map<
       string,
-      { comfort: number[]; performance: number[]; durability: number[] }
+      {
+        comfort: number[];
+        performance: number[];
+        durability: number[];
+        aggressiveness: number[];
+        stiffness: number[];
+      }
     >();
 
     for (const userShoe of allUserShoes) {
@@ -304,10 +310,14 @@ export const getCommunityTopShoes = query({
         comfort: [],
         performance: [],
         durability: [],
+        aggressiveness: [],
+        stiffness: [],
       };
       if (userShoe.comfortScore !== undefined) bucket.comfort.push(userShoe.comfortScore);
       if (userShoe.performanceRating !== undefined) bucket.performance.push(userShoe.performanceRating);
       if (userShoe.durabilityRating !== undefined) bucket.durability.push(userShoe.durabilityRating);
+      if (userShoe.perceivedAggressiveness !== undefined) bucket.aggressiveness.push(userShoe.perceivedAggressiveness);
+      if (userShoe.perceivedStiffness !== undefined) bucket.stiffness.push(userShoe.perceivedStiffness);
       ratingsByShoe.set(userShoe.shoeId, bucket);
     }
 
@@ -323,6 +333,8 @@ export const getCommunityTopShoes = query({
         const avgComfort = avg(bucket.comfort);
         const avgPerformance = avg(bucket.performance);
         const avgDurability = avg(bucket.durability);
+        const avgAggressiveness = avg(bucket.aggressiveness);
+        const avgStiffness = avg(bucket.stiffness);
         const compositeScore = (avgComfort + avgPerformance + avgDurability) / 3;
 
         return {
@@ -332,11 +344,15 @@ export const getCommunityTopShoes = query({
           imageUrl: shoe.imageUrl,
           aggressiveness: shoe.aggressiveness,
           stiffness: shoe.stiffness,
+          brandAggressiveness: shoe.brandAggressiveness,
+          brandStiffness: shoe.brandStiffness,
           climbingDiscipline: shoe.climbingDiscipline,
           volume: shoe.volume,
           avgComfort,
           avgPerformance,
           avgDurability,
+          avgAggressiveness,
+          avgStiffness,
           compositeScore,
           totalRatings: sampleSize,
         };

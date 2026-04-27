@@ -7,11 +7,13 @@ import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import ShoeImage from "@/components/ShoeImage";
 import { useShoeScoring } from "@/hooks/useShoeScoring";
+import { useUserPreferenceLearning } from "@/hooks/useUserPreferenceLearning";
 import { useFootProfileStore } from "@/stores/footProfileStore";
 import { Badge } from "@/components/ui/badge";
 import { User } from "lucide-react";
 import { MatchScoreTooltip } from "./MatchScoreTooltip";
 import { DataContributionNudge } from "./DataContributionNudge";
+import { RadarGrid, type RadarShoe, type RadarUserPosition } from "./RadarGrid";
 
 type Mode = "personal" | "community";
 
@@ -22,10 +24,14 @@ interface DisplayShoe {
   imageUrl?: string;
   primaryScore: number;
   secondaryLabel: string;
+  brandAggressiveness?: number;
+  totalRatings?: number;
   metrics: {
     comfort: number;
     performance: number;
     durability: number;
+    aggressiveness: number;
+    versatility: number;
   };
   breakdown?: {
     footTypeCompatibility: number;
@@ -40,8 +46,10 @@ interface DisplayShoe {
 
 export function MatcherView() {
   const [mode, setMode] = useState<Mode>("personal");
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const { profile: footProfile } = useFootProfileStore();
   const { scoredShoes, isLoading: personalLoading, stashCount, ratedCount } = useShoeScoring();
+  const { userPreferenceProfile } = useUserPreferenceLearning();
   const communityShoes = useQuery(api.recommendations.getCommunityTopShoes, { limit: 10 });
 
   const personalTop5: DisplayShoe[] = useMemo(() => {
@@ -53,10 +61,13 @@ export function MatcherView() {
       ...(s.shoe.imageUrl ? { imageUrl: s.shoe.imageUrl } : {}),
       primaryScore: Math.round((s.totalScore / 5) * 100),
       secondaryLabel: "match",
+      ...(s.shoe.brandAggressiveness !== undefined ? { brandAggressiveness: s.shoe.brandAggressiveness } : {}),
       metrics: {
         comfort: s.metrics.comfort,
         performance: s.metrics.performance,
         durability: s.metrics.durability,
+        aggressiveness: s.metrics.aggressiveness,
+        versatility: s.metrics.versatility,
       },
       breakdown: s.breakdown,
     }));
@@ -71,10 +82,14 @@ export function MatcherView() {
       ...(s.imageUrl ? { imageUrl: s.imageUrl } : {}),
       primaryScore: Math.round((s.compositeScore / 5) * 100),
       secondaryLabel: `${s.totalRatings} ratings`,
+      ...(s.brandAggressiveness !== undefined ? { brandAggressiveness: s.brandAggressiveness } : {}),
+      totalRatings: s.totalRatings,
       metrics: {
         comfort: s.avgComfort,
         performance: s.avgPerformance,
         durability: s.avgDurability,
+        aggressiveness: s.avgAggressiveness,
+        versatility: Math.max(0, 5 - s.avgAggressiveness),
       },
     }));
   }, [communityShoes]);
@@ -101,7 +116,26 @@ export function MatcherView() {
           >
             <ModeHeader mode={mode} count={activeShoes.length} />
             <TileGrid shoes={activeShoes} />
-            <Leaderboard shoes={activeShoes} mode={mode} />
+            <RadarGrid
+              shoes={toRadarShoes(activeShoes, mode)}
+              hoveredId={hoveredId}
+              onHoverChange={setHoveredId}
+              confidenceLabel={mode === "personal" ? "Match strength" : "Sample size"}
+              {...(mode === "personal" && userPreferenceProfile
+                ? {
+                    userPosition: {
+                      label: "YOU",
+                      metrics: {
+                        comfort: userPreferenceProfile.comfort,
+                        performance: userPreferenceProfile.performance,
+                        aggressiveness: userPreferenceProfile.aggressiveness,
+                        versatility: userPreferenceProfile.versatility,
+                      },
+                    } satisfies RadarUserPosition,
+                  }
+                : {})}
+            />
+            <Leaderboard shoes={activeShoes} mode={mode} hoveredId={hoveredId} onHoverChange={setHoveredId} />
           </motion.div>
         </AnimatePresence>
       )}
@@ -121,6 +155,45 @@ export function MatcherView() {
       <DataContributionNudge stashCount={stashCount} ratedCount={ratedCount} />
     </div>
   );
+}
+
+function topTrait(metrics: DisplayShoe["metrics"]) {
+  const entries: Array<[string, number]> = [
+    ["Comfort", metrics.comfort],
+    ["Performance", metrics.performance],
+    ["Durability", metrics.durability],
+    ["Aggressive", metrics.aggressiveness],
+  ];
+  entries.sort((a, b) => b[1] - a[1]);
+  const winner = entries[0]!;
+  return { label: winner[0], value: winner[1] };
+}
+
+function confidenceFor(s: DisplayShoe, mode: Mode): number {
+  if (mode === "personal") return Math.min(1, s.primaryScore / 100);
+  const ratings = s.totalRatings ?? 0;
+  return Math.min(1, Math.log10(ratings + 1) / Math.log10(50));
+}
+
+function toRadarShoes(shoes: DisplayShoe[], mode: Mode): RadarShoe[] {
+  return shoes.map((s) => ({
+    id: s.id,
+    brand: s.brand,
+    name: s.name,
+    ...(s.imageUrl ? { imageUrl: s.imageUrl } : {}),
+    primaryScore: s.primaryScore,
+    primaryScoreLabel: mode === "personal" ? "Match" : "Score",
+    subtitle: s.secondaryLabel,
+    confidence: confidenceFor(s, mode),
+    ...(s.brandAggressiveness !== undefined ? { brandAggressiveness: s.brandAggressiveness } : {}),
+    topTrait: topTrait(s.metrics),
+    metrics: {
+      comfort: s.metrics.comfort,
+      performance: s.metrics.performance,
+      aggressiveness: s.metrics.aggressiveness,
+      versatility: s.metrics.versatility,
+    },
+  }));
 }
 
 function ModeToggle({
@@ -237,7 +310,17 @@ function TileGrid({ shoes }: { shoes: DisplayShoe[] }) {
   );
 }
 
-function Leaderboard({ shoes, mode }: { shoes: DisplayShoe[]; mode: Mode }) {
+function Leaderboard({
+  shoes,
+  mode,
+  hoveredId,
+  onHoverChange,
+}: {
+  shoes: DisplayShoe[];
+  mode: Mode;
+  hoveredId: string | null;
+  onHoverChange: (id: string | null) => void;
+}) {
   return (
     <div>
       <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Leaderboard</p>
@@ -254,20 +337,46 @@ function Leaderboard({ shoes, mode }: { shoes: DisplayShoe[]; mode: Mode }) {
         </div>
 
         {shoes.map((shoe, idx) => (
-          <LeaderboardRow key={shoe.id} shoe={shoe} rank={idx + 1} mode={mode} />
+          <LeaderboardRow
+            key={shoe.id}
+            shoe={shoe}
+            rank={idx + 1}
+            mode={mode}
+            isHovered={hoveredId === shoe.id}
+            isDimmed={hoveredId !== null && hoveredId !== shoe.id}
+            onHoverChange={onHoverChange}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function LeaderboardRow({ shoe, rank, mode }: { shoe: DisplayShoe; rank: number; mode: Mode }) {
+function LeaderboardRow({
+  shoe,
+  rank,
+  mode,
+  isHovered,
+  isDimmed,
+  onHoverChange,
+}: {
+  shoe: DisplayShoe;
+  rank: number;
+  mode: Mode;
+  isHovered: boolean;
+  isDimmed: boolean;
+  onHoverChange: (id: string | null) => void;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, x: -8 }}
-      animate={{ opacity: 1, x: 0 }}
+      animate={{ opacity: isDimmed ? 0.4 : 1, x: 0 }}
       transition={{ delay: rank * 0.04 }}
-      className="md:grid md:grid-cols-[60px_1fr_120px_120px_120px_100px] gap-4 px-5 py-4 border-b border-neutral-800 last:border-b-0 hover:bg-neutral-900/40 transition-colors flex flex-col"
+      onMouseEnter={() => onHoverChange(shoe.id)}
+      onMouseLeave={() => onHoverChange(null)}
+      className={`md:grid md:grid-cols-[60px_1fr_120px_120px_120px_100px] gap-4 px-5 py-4 border-b border-neutral-800 last:border-b-0 transition-colors flex flex-col ${
+        isHovered ? "bg-neutral-900/80" : "hover:bg-neutral-900/40"
+      }`}
     >
       <div className="flex items-center gap-3 md:contents">
         <span className="font-tanker text-2xl text-white/30 w-8 md:w-auto">{rank}</span>
