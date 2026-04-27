@@ -282,6 +282,76 @@ export const getTopShoesForFootShape = query({
 });
 
 
+export const getCommunityTopShoes = query({
+  args: {
+    limit: v.optional(v.number()),
+    minRatings: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const limit = args.limit ?? 10;
+    const minRatings = args.minRatings ?? 3;
+
+    const allShoes = await ctx.db.query("shoes").collect();
+    const allUserShoes = await ctx.db.query("userShoes").collect();
+
+    const ratingsByShoe = new Map<
+      string,
+      { comfort: number[]; performance: number[]; durability: number[] }
+    >();
+
+    for (const userShoe of allUserShoes) {
+      const bucket = ratingsByShoe.get(userShoe.shoeId) ?? {
+        comfort: [],
+        performance: [],
+        durability: [],
+      };
+      if (userShoe.comfortScore !== undefined) bucket.comfort.push(userShoe.comfortScore);
+      if (userShoe.performanceRating !== undefined) bucket.performance.push(userShoe.performanceRating);
+      if (userShoe.durabilityRating !== undefined) bucket.durability.push(userShoe.durabilityRating);
+      ratingsByShoe.set(userShoe.shoeId, bucket);
+    }
+
+    const avg = (values: number[]) =>
+      values.length === 0 ? 0 : values.reduce((a, b) => a + b, 0) / values.length;
+
+    const ranked = allShoes
+      .map((shoe) => {
+        const bucket = ratingsByShoe.get(shoe._id);
+        const sampleSize = bucket?.comfort.length ?? 0;
+        if (!bucket || sampleSize < minRatings) return null;
+
+        const avgComfort = avg(bucket.comfort);
+        const avgPerformance = avg(bucket.performance);
+        const avgDurability = avg(bucket.durability);
+        const compositeScore = (avgComfort + avgPerformance + avgDurability) / 3;
+
+        return {
+          _id: shoe._id,
+          brand: shoe.brand,
+          name: shoe.name,
+          imageUrl: shoe.imageUrl,
+          aggressiveness: shoe.aggressiveness,
+          stiffness: shoe.stiffness,
+          climbingDiscipline: shoe.climbingDiscipline,
+          volume: shoe.volume,
+          avgComfort,
+          avgPerformance,
+          avgDurability,
+          compositeScore,
+          totalRatings: sampleSize,
+        };
+      })
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+
+    ranked.sort((a, b) => {
+      if (b.compositeScore !== a.compositeScore) return b.compositeScore - a.compositeScore;
+      return b.totalRatings - a.totalRatings;
+    });
+
+    return ranked.slice(0, limit);
+  },
+});
+
 export const getRecommendationCount = query({
   args: {
     userId: v.id("users"),

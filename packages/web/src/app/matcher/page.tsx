@@ -3,15 +3,14 @@
 import { useState } from 'react';
 import { useSession } from '@/lib/auth';
 import { FullPageLoading } from '@/components/ui/loading';
-import { ShoeRadarMatcher } from '@/components/shoe/ShoeRadarMatcher';
-import CragRadar from '@/components/shoe/CragRadar';
+import { MatcherView } from '@/components/shoe/MatcherView';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, Zap, Activity, Clock, Users, Footprints, ArrowUpRight } from 'lucide-react';
+import { Target, Zap, Activity, Clock, Users, Footprints } from 'lucide-react';
 import { useFindMyShoe, type SoleMateClimberMatch, type AggregatedRating } from '@/hooks/useFindMyShoe';
 import Link from 'next/link';
 import Image from 'next/image';
 
-type Tab = 'seek' | 'mate' | 'crag';
+type Tab = 'seek' | 'mate';
 
 export default function SoleSeekPage() {
   const { data: session, isPending: sessionLoading } = useSession();
@@ -79,24 +78,15 @@ export default function SoleSeekPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="px-6 md:px-12 lg:px-16 pt-28 max-w-[1440px] mx-auto">
-        <div className="flex items-end justify-between gap-4 mb-8">
-          <div>
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Shoe matching</p>
-            <h1 className="font-tanker text-6xl md:text-7xl leading-none">MATCHER</h1>
-          </div>
-          <Link
-            href="/radar-lab"
-            className="font-sora inline-flex items-center gap-1.5 rounded-full border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-200 transition-colors hover:border-brand-red/40 hover:text-white mb-2"
-          >
-            Crag <ArrowUpRight className="w-3.5 h-3.5" />
-          </Link>
+        <div className="mb-8">
+          <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Shoe matching</p>
+          <h1 className="font-tanker text-6xl md:text-7xl leading-none">MATCHER</h1>
         </div>
 
         <div className="flex border-b border-neutral-800">
           {([
             ['seek', 'Matcher'],
             ['mate', 'Sole Mate'],
-            ['crag', 'Crag'],
           ] as const).map(([tab, label]) => (
             <button
               key={tab}
@@ -115,11 +105,7 @@ export default function SoleSeekPage() {
       <AnimatePresence mode="wait">
         {activeTab === 'seek' ? (
           <motion.div key="seek" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-            <ShoeRadarMatcher />
-          </motion.div>
-        ) : activeTab === 'crag' ? (
-          <motion.div key="crag" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-            <CragRadar />
+            <MatcherView />
           </motion.div>
         ) : (
           <motion.div key="mate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>

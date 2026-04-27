@@ -261,14 +261,6 @@ export default function FootLabPage() {
           <p className="font-sora text-neutral-400 text-lg max-w-lg">
             Two questions. Better shoes. Tell us about your foot and we&apos;ll match you to the right rubber.
           </p>
-          <div className="mt-6">
-            <Link
-              href="/footscan/model"
-              className="inline-flex items-center rounded-lg border border-brand-red/20 bg-brand-red/5 px-5 py-3 font-sora text-sm text-brand-red transition-all duration-500 hover:border-brand-red/40 hover:bg-brand-red/10"
-            >
-              Open 3D foot model viewer
-            </Link>
-          </div>
         </motion.div>
 
         {!onboardingComplete && (
