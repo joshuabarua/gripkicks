@@ -60,7 +60,7 @@ export default function ShoeModel() {
           position={[0.01, 0.5, 0]}
           font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
-          letterSpacing={-0.03}
+          letterSpacing={-0.05}
         >
           GRIP
         </Text>
@@ -70,7 +70,7 @@ export default function ShoeModel() {
           position={[0, -0.2, 0]}
           font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
-          letterSpacing={-0.03}
+          letterSpacing={-0.05}
         >
           KICKS
         </Text>

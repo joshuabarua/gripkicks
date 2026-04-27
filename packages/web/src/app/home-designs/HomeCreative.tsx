@@ -43,7 +43,7 @@ function HeroSection({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2, delay: 0.3 }}
-        className="absolute inset-0 z-[1] will-change-transform"
+        className="absolute left-0 right-0 top-[10px] bottom-0 z-[1] will-change-transform"
       >
         <Scene />
       </motion.div>
