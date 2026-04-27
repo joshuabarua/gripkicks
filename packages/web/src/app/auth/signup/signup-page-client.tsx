@@ -20,7 +20,7 @@ export default function SignupPageClient() {
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">
               Create account
             </p>
-            <h1 className="font-tanker text-5xl md:text-6xl">
+            <h1 className="font-ball-pill text-5xl md:text-6xl">
               JOIN THE
               <br />
               <span className="text-brand-red">CREW</span>

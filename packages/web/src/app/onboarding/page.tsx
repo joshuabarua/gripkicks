@@ -240,7 +240,7 @@ export default function OnboardingPage() {
                   >
                     <Sparkles className="w-10 h-10 text-brand-red" />
                   </motion.div>
-                  <h1 className="font-tanker text-5xl md:text-6xl mb-4">
+                  <h1 className="font-ball-pill text-5xl md:text-6xl mb-4">
                     WELCOME TO
                     <br />
                     <span className="text-brand-red">GRIPKICKS</span>
@@ -274,7 +274,7 @@ export default function OnboardingPage() {
                         <div className="w-10 h-10 bg-brand-red/10 flex items-center justify-center mb-4">
                           <item.icon className="w-5 h-5 text-brand-red" />
                         </div>
-                        <h3 className="font-tanker text-lg text-white mb-1">
+                        <h3 className="font-ball-pill text-lg text-white mb-1">
                           {item.title}
                         </h3>
                         <p className="font-sora text-neutral-500 text-xs">
@@ -288,7 +288,7 @@ export default function OnboardingPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleNext}
-                    className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
+                    className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
                   >
                     LET&apos;S GET STARTED
                     <ChevronRight className="w-5 h-5" />
@@ -301,7 +301,7 @@ export default function OnboardingPage() {
                   <div className="w-14 h-14 bg-brand-red/10 flex items-center justify-center mb-6">
                     <Footprints className="w-7 h-7 text-brand-red" />
                   </div>
-                  <h2 className="font-tanker text-3xl mb-2">FOOT SHAPE</h2>
+                  <h2 className="font-ball-pill text-3xl mb-2">FOOT SHAPE</h2>
                   <p className="font-sora text-neutral-500 text-sm mb-8">
                     This helps us recommend shoes that will fit you best
                   </p>
@@ -407,7 +407,7 @@ export default function OnboardingPage() {
                         whileTap={{ scale: 0.98 }}
                         onClick={handleNext}
                         disabled={!footShape || !footVolume || isLoading}
-                        className="bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 transition-colors duration-500 flex items-center gap-2"
+                        className="bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-ball-pill text-lg px-8 py-3 transition-colors duration-500 flex items-center gap-2"
                       >
                         {isLoading ? "SAVING..." : "NEXT"}{" "}
                         <ChevronRight className="w-4 h-4" />
@@ -422,7 +422,7 @@ export default function OnboardingPage() {
                   <div className="w-14 h-14 bg-brand-red/10 flex items-center justify-center mb-6">
                     <Plus className="w-7 h-7 text-brand-red" />
                   </div>
-                  <h2 className="font-tanker text-3xl mb-2">
+                  <h2 className="font-ball-pill text-3xl mb-2">
                     ADD YOUR FIRST SHOE
                   </h2>
                   <p className="font-sora text-neutral-500 text-sm mb-8">
@@ -548,7 +548,7 @@ export default function OnboardingPage() {
                                       comfort: rating,
                                     })
                                   }
-                                  className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-tanker text-sm transition-all ${
+                                  className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-ball-pill text-sm transition-all ${
                                     shoeFormData.comfort >= rating
                                       ? "border-brand-red bg-brand-red/20 text-brand-red"
                                       : "border-white/10 text-brand-putty/30"
@@ -575,7 +575,7 @@ export default function OnboardingPage() {
                                       performance: rating,
                                     })
                                   }
-                                  className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-tanker text-sm transition-all ${
+                                  className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-ball-pill text-sm transition-all ${
                                     shoeFormData.performance >= rating
                                       ? "border-brand-red bg-brand-red/20 text-brand-red"
                                       : "border-white/10 text-brand-putty/30"
@@ -625,7 +625,7 @@ export default function OnboardingPage() {
                         disabled={
                           !selectedShoe || !shoeFormData.size || isLoading
                         }
-                        className="bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-tanker text-lg px-8 py-3 transition-colors duration-500 flex items-center gap-2"
+                        className="bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-ball-pill text-lg px-8 py-3 transition-colors duration-500 flex items-center gap-2"
                       >
                         {isLoading ? "COMPLETING..." : "COMPLETE SETUP"}{" "}
                         <CheckCircle2 className="w-4 h-4" />
@@ -645,7 +645,7 @@ export default function OnboardingPage() {
                   >
                     <CheckCircle2 className="w-10 h-10 text-brand-red" />
                   </motion.div>
-                  <h1 className="font-tanker text-5xl md:text-6xl mb-4">
+                  <h1 className="font-ball-pill text-5xl md:text-6xl mb-4">
                     YOU&apos;RE
                     <br />
                     <span className="text-brand-red">ALL SET!</span>
@@ -671,7 +671,7 @@ export default function OnboardingPage() {
                           className="bg-brand-surface border border-white/[0.06] p-6 flex flex-col items-center gap-3 hover:border-brand-red/30 transition-colors duration-500 cursor-pointer"
                         >
                           <item.icon className="w-8 h-8 text-brand-red" />
-                          <span className="font-tanker text-lg text-white">
+                          <span className="font-ball-pill text-lg text-white">
                             {item.label}
                           </span>
                         </motion.div>
@@ -683,7 +683,7 @@ export default function OnboardingPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleFinish}
-                    className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
+                    className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
                   >
                     GO TO SHOE SANCTUARY
                     <ArrowUpRight className="w-5 h-5" />

@@ -30,7 +30,7 @@ export default function SoleSeekPage() {
             <div className="w-20 h-20 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Target className="w-10 h-10 text-brand-red" />
             </div>
-            <h1 className="font-tanker text-5xl text-white mb-2">MATCHER</h1>
+            <h1 className="font-ball-pill text-5xl text-white mb-2">MATCHER</h1>
             <p className="font-sora text-neutral-400">
               See where every shoe lands based on how it actually performs
             </p>
@@ -64,7 +64,7 @@ export default function SoleSeekPage() {
             <p className="font-sora text-sm text-neutral-400">Sign in to access Matcher</p>
             <Link
               href="/auth/login?callbackUrl=%2Fmatcher"
-              className="inline-flex items-center justify-center rounded-lg bg-brand-red px-6 py-3 font-tanker text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
+              className="inline-flex items-center justify-center rounded-lg bg-brand-red px-6 py-3 font-ball-pill text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
             >
               SIGN IN
             </Link>
@@ -78,7 +78,7 @@ export default function SoleSeekPage() {
     <div className="min-h-screen bg-black text-white">
       <div className="px-6 md:px-12 lg:px-16 pt-28 max-w-[1440px] mx-auto">
         <div className="mb-8">
-          <h1 className="font-tanker text-6xl md:text-7xl leading-none">MATCHER</h1>
+          <h1 className="font-ball-pill text-6xl md:text-7xl leading-none">MATCHER</h1>
         </div>
 
         <div className="flex border-b border-neutral-800">
@@ -137,10 +137,10 @@ function SoleMateTab() {
     return (
       <div className="px-6 md:px-12 lg:px-16 py-16 max-w-[1440px] mx-auto text-center">
         <Footprints className="w-10 h-10 text-brand-red/40 mx-auto mb-4" />
-        <h2 className="font-tanker text-2xl text-white mb-2">SET UP YOUR FOOT PROFILE</h2>
+        <h2 className="font-ball-pill text-2xl text-white mb-2">SET UP YOUR FOOT PROFILE</h2>
         <p className="font-sora text-neutral-500 mb-6 max-w-sm mx-auto">Your foot profile is needed to find climbers with the same fit</p>
         <Link href="/footscan">
-          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker px-6 py-2.5 rounded-xl transition-colors">
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill px-6 py-2.5 rounded-xl transition-colors">
             FOOT LAB
           </motion.button>
         </Link>
@@ -152,7 +152,7 @@ function SoleMateTab() {
     return (
       <div className="px-6 md:px-12 lg:px-16 py-16 max-w-[1440px] mx-auto text-center">
         <Users className="w-10 h-10 text-neutral-700 mx-auto mb-4" />
-        <h2 className="font-tanker text-2xl text-white mb-2">NO SOLE MATES YET</h2>
+        <h2 className="font-ball-pill text-2xl text-white mb-2">NO SOLE MATES YET</h2>
         <p className="font-sora text-neutral-500 max-w-sm mx-auto">No one with your exact foot profile has rated shoes above 8.5 yet. Check back as the community grows.</p>
       </div>
     );
@@ -162,7 +162,7 @@ function SoleMateTab() {
     <div className="px-6 md:px-12 lg:px-16 py-10 max-w-[1440px] mx-auto space-y-6">
       <div className="flex items-center gap-4">
         <div className="bg-brand-red/10 border border-brand-red/20 rounded-2xl px-4 py-2.5 text-center">
-          <p className="font-tanker text-2xl text-brand-red">{soleMateMatches.length}</p>
+          <p className="font-ball-pill text-2xl text-brand-red">{soleMateMatches.length}</p>
           <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30">Sole mates</p>
         </div>
         <p className="font-sora text-sm text-neutral-500">Climbers with your exact foot profile — see what&apos;s working for them</p>
@@ -205,11 +205,11 @@ function SoleMateCard({ match }: { match: SoleMateClimberMatch }) {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-tanker text-base leading-none text-white">{rating.shoe.name}</p>
+              <p className="font-ball-pill text-base leading-none text-white">{rating.shoe.name}</p>
               <p className="font-sora text-[10px] text-neutral-500 mt-0.5">{rating.shoe.brand}</p>
             </div>
             <div className="text-right flex-shrink-0">
-              <p className="font-tanker text-lg text-brand-red">{rating.matchScore}%</p>
+              <p className="font-ball-pill text-lg text-brand-red">{rating.matchScore}%</p>
               <p className="font-sora text-[9px] uppercase tracking-[0.15em] text-white/30">match</p>
             </div>
           </div>

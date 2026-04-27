@@ -30,7 +30,7 @@ export default function PricingPage() {
 
         <div className="max-w-5xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8 text-white">
+            <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8 text-white">
               $0 forever
             </h1>
           </motion.div>
@@ -47,7 +47,7 @@ export default function PricingPage() {
             className="bg-neutral-900 border border-white/10 rounded-3xl p-8 md:p-10"
           >
             <div className="flex items-baseline gap-3 mb-6">
-              <h3 className="font-tanker text-6xl text-white">$0</h3>
+              <h3 className="font-ball-pill text-6xl text-white">$0</h3>
               <span className="font-sora text-neutral-500 text-sm">forever</span>
             </div>
 
@@ -68,7 +68,7 @@ export default function PricingPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="relative w-full bg-white hover:bg-white/80 text-black font-tanker text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
+                className="relative w-full bg-white hover:bg-white/80 text-black font-ball-pill text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
               >
                 {isAuthenticated ? "Dashboard" : "Enter"}
                 <ArrowUpRight className="w-5 h-5" />

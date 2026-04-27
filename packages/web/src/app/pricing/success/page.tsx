@@ -37,7 +37,7 @@ function SuccessContent() {
           <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">
             Welcome to GripKicks
           </p>
-          <h1 className="font-tanker text-5xl md:text-6xl mb-4">
+          <h1 className="font-ball-pill text-5xl md:text-6xl mb-4">
             YOU&apos;RE <span className="text-brand-red">IN</span>
           </h1>
           <p className="font-sora text-neutral-400 text-lg mb-2">
@@ -59,7 +59,7 @@ function SuccessContent() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-lg px-8 py-3 rounded-2xl transition-colors inline-flex items-center gap-2"
+                className="bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-lg px-8 py-3 rounded-2xl transition-colors inline-flex items-center gap-2"
               >
                 FIND YOUR SOLE MATE
                 <ArrowUpRight className="w-5 h-5" />

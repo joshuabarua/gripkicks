@@ -54,7 +54,7 @@ export default function PrivacyPage() {
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Privacy Promise</p>
-            <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
+            <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8">
               YOUR DATA<br />
               <span className="text-brand-red">YOUR RULES</span>
             </h1>
@@ -78,7 +78,7 @@ export default function PrivacyPage() {
           className="flex gap-8 whitespace-nowrap"
         >
           {Array(10).fill(null).map((_, i) => (
-            <span key={i} className="font-tanker text-2xl text-black/80">
+            <span key={i} className="font-ball-pill text-2xl text-black/80">
               NO DATA RESELLING • PERMANENT DELETION • YOUR DATA, YOUR CONTROL • COMMUNITY FIRST •
             </span>
           ))}
@@ -90,7 +90,7 @@ export default function PrivacyPage() {
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">TL;DR</p>
-            <h2 className="font-tanker text-4xl md:text-5xl mb-8">
+            <h2 className="font-ball-pill text-4xl md:text-5xl mb-8">
               THE SHORT<br /><span className="text-brand-red">VERSION</span>
             </h2>
           </motion.div>
@@ -114,7 +114,7 @@ export default function PrivacyPage() {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <div className="font-tanker text-4xl md:text-5xl text-brand-red mb-2">{stat.value}</div>
+                  <div className="font-ball-pill text-4xl md:text-5xl text-brand-red mb-2">{stat.value}</div>
                   <p className="font-sora text-sm text-neutral-500">{stat.label}</p>
                 </motion.div>
               ))}
@@ -128,7 +128,7 @@ export default function PrivacyPage() {
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">Our Promises</p>
-            <h2 className="font-tanker text-4xl md:text-5xl mb-12">
+            <h2 className="font-ball-pill text-4xl md:text-5xl mb-12">
               SIX PROMISES<br /><span className="text-brand-red">WE KEEP</span>
             </h2>
           </motion.div>
@@ -146,7 +146,7 @@ export default function PrivacyPage() {
                 <div className="w-12 h-12 bg-brand-red/10 rounded-2xl flex items-center justify-center mb-6">
                   <promise.icon className="w-6 h-6 text-brand-red" />
                 </div>
-                <h3 className="font-tanker text-xl mb-3">{promise.title}</h3>
+                <h3 className="font-ball-pill text-xl mb-3">{promise.title}</h3>
                 <p className="font-sora text-sm text-neutral-500 leading-relaxed">{promise.body}</p>
               </motion.div>
             ))}
@@ -159,7 +159,7 @@ export default function PrivacyPage() {
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">What We Collect</p>
-            <h2 className="font-tanker text-4xl md:text-5xl mb-12">
+            <h2 className="font-ball-pill text-4xl md:text-5xl mb-12">
               EXACTLY WHAT<br /><span className="text-brand-red">WE NEED</span>
             </h2>
           </motion.div>
@@ -211,7 +211,7 @@ export default function PrivacyPage() {
       <section className="px-6 md:px-12 lg:px-16 py-24">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <h2 className="font-tanker text-5xl md:text-7xl mb-6">
+            <h2 className="font-ball-pill text-5xl md:text-7xl mb-6">
               QUESTIONS?<br /><span className="text-brand-red">ASK US</span>
             </h2>
             <p className="font-sora text-neutral-500 text-lg mb-10 max-w-xl mx-auto">
@@ -222,7 +222,7 @@ export default function PrivacyPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
+                  className="bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
                 >
                   JOIN GRIPKICKS
                   <ArrowUpRight className="w-5 h-5" />

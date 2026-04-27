@@ -24,7 +24,7 @@ export default function HomeDesignsIndex() {
             <p className="text-sm tracking-[0.2em] uppercase font-bold text-[#FF3800] mb-8">
               Internal Directory
             </p>
-            <h1 className="font-tanker text-[15vw] sm:text-[12vw] lg:text-[10vw] leading-[0.85] uppercase tracking-tight mix-blend-multiply text-[#111111]">
+            <h1 className="font-ball-pill text-[15vw] sm:text-[12vw] lg:text-[10vw] leading-[0.85] uppercase tracking-tight mix-blend-multiply text-[#111111]">
               Frontend <br/>
               <span className="text-[#8C877E] italic">Archived.</span>
             </h1>
@@ -49,13 +49,13 @@ export default function HomeDesignsIndex() {
               >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-baseline relative z-10">
                   {/* ID */}
-                  <div className="lg:col-span-2 font-tanker text-3xl md:text-4xl text-[#8C877E] transition-colors duration-300 group-hover:text-[#FF3800]">
+                  <div className="lg:col-span-2 font-ball-pill text-3xl md:text-4xl text-[#8C877E] transition-colors duration-300 group-hover:text-[#FF3800]">
                     [{v.id}]
                   </div>
                   
                   {/* Title & Desc */}
                   <div className="lg:col-span-8 relative">
-                    <h2 className="font-tanker text-5xl md:text-7xl lg:text-[7rem] uppercase leading-none mb-6 lg:-ml-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-6">
+                    <h2 className="font-ball-pill text-5xl md:text-7xl lg:text-[7rem] uppercase leading-none mb-6 lg:-ml-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-6">
                       {v.label}
                     </h2>
                     <p className="font-sora text-lg md:text-xl text-[#8C877E] max-w-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-6 group-hover:text-[#111111]">

@@ -114,7 +114,7 @@ const Navigation: React.FC = () => {
               className="rounded-sm flex justify-center items-center"
             >
               <Link href="/">
-                <h1 className="font-tanker text-fluid-2xl hover:scale-105 duration-1000 ease-in-out whitespace-nowrap">
+                <h1 className="font-ball-pill text-fluid-2xl hover:scale-105 duration-1000 ease-in-out whitespace-nowrap">
                   Grip Kicks
                 </h1>
               </Link>

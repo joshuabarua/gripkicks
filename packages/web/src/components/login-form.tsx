@@ -117,7 +117,7 @@ export function LoginForm() {
               },
             });
           }}
-          className="w-full bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-tanker text-lg py-3 transition-colors duration-500 flex items-center justify-center gap-2"
+          className="w-full bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-ball-pill text-lg py-3 transition-colors duration-500 flex items-center justify-center gap-2"
         >
           {loading ? <Loader2 size={20} className="animate-spin" /> : "LOGIN"}
         </motion.button>

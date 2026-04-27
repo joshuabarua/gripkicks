@@ -231,11 +231,11 @@ export default function FootLabPage() {
           <div className="w-16 h-16 bg-brand-red/10 rounded-lg flex items-center justify-center mx-auto mb-6 hal-glow-animate">
             <Footprints className="w-8 h-8 text-brand-red" />
           </div>
-          <h1 className="font-tanker text-5xl mb-3">FOOT PROFILE</h1>
+          <h1 className="font-ball-pill text-5xl mb-3">FOOT PROFILE</h1>
           <p className="font-sora text-neutral-500 mb-6">Log in to discover your foot shape</p>
           <Link
             href="/auth/login?callbackUrl=%2Ffootscan"
-            className="inline-flex items-center justify-center rounded-lg bg-brand-red px-8 py-3 font-tanker text-lg text-black"
+            className="inline-flex items-center justify-center rounded-lg bg-brand-red px-8 py-3 font-ball-pill text-lg text-black"
           >
             LOG IN
           </Link>
@@ -255,7 +255,7 @@ export default function FootLabPage() {
           className="mb-16"
         >
           <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Foot Profile</p>
-          <h1 className="font-tanker text-6xl md:text-8xl leading-none mb-4">
+          <h1 className="font-ball-pill text-6xl md:text-8xl leading-none mb-4">
             KNOW YOUR<br /><span className="text-brand-red">FOOT</span>
           </h1>
           <p className="font-sora text-neutral-400 text-lg max-w-lg">
@@ -273,14 +273,14 @@ export default function FootLabPage() {
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-red/70 mb-2">Onboarding</p>
-                <h2 className="font-tanker text-2xl text-brand-chalk mb-2">Foot Lab is ready — finish setup when you want</h2>
+                <h2 className="font-ball-pill text-2xl text-brand-chalk mb-2">Foot Lab is ready — finish setup when you want</h2>
                 <p className="font-sora text-sm text-brand-putty/70 max-w-2xl">
                   You can use Foot Lab right now, or jump back into onboarding to finish your guided setup and add your first shoe.
                 </p>
               </div>
               <Link
                 href="/onboarding"
-                className="inline-flex items-center justify-center rounded-lg border border-brand-red/30 bg-brand-red px-5 py-3 font-tanker text-sm text-black transition-colors duration-500 hover:bg-brand-red/80"
+                className="inline-flex items-center justify-center rounded-lg border border-brand-red/30 bg-brand-red px-5 py-3 font-ball-pill text-sm text-black transition-colors duration-500 hover:bg-brand-red/80"
               >
                 CONTINUE ONBOARDING
               </Link>
@@ -296,9 +296,9 @@ export default function FootLabPage() {
           className="mb-16"
         >
           <div className="flex items-baseline gap-4 mb-8">
-            <span className="font-tanker text-5xl text-white/10">01</span>
+            <span className="font-ball-pill text-5xl text-white/10">01</span>
             <div>
-              <h2 className="font-tanker text-2xl">Which toe is longest?</h2>
+              <h2 className="font-ball-pill text-2xl">Which toe is longest?</h2>
               <p className="font-sora text-neutral-500 text-sm mt-0.5">Look at your bare foot from above and pick the closest match</p>
             </div>
           </div>
@@ -323,7 +323,7 @@ export default function FootLabPage() {
                   <div className="mb-4 pt-2">
                     <ToeProfile shape={shape} active={isSelected} />
                   </div>
-                  <h3 className="font-tanker text-xl leading-none mb-1">{footShapeInfo[shape].name}</h3>
+                  <h3 className="font-ball-pill text-xl leading-none mb-1">{footShapeInfo[shape].name}</h3>
                   <p className="font-sora text-[11px] text-neutral-500 leading-snug">{footShapeInfo[shape].description}</p>
                   <AnimatePresence>
                     {isSelected && (
@@ -351,9 +351,9 @@ export default function FootLabPage() {
           className="mb-16"
         >
           <div className="flex items-baseline gap-4 mb-8">
-            <span className="font-tanker text-5xl text-white/10">02</span>
+            <span className="font-ball-pill text-5xl text-white/10">02</span>
             <div>
-              <h2 className="font-tanker text-2xl">How full is your foot?</h2>
+              <h2 className="font-ball-pill text-2xl">How full is your foot?</h2>
               <p className="font-sora text-neutral-500 text-sm mt-0.5">Think about your foot width and instep height</p>
             </div>
           </div>
@@ -378,7 +378,7 @@ export default function FootLabPage() {
                   <div className="mb-5">
                     <VolumeArch volume={volume} active={isSelected} />
                   </div>
-                  <h3 className="font-tanker text-2xl leading-none mb-2">{footVolumeInfo[volume].name} Volume</h3>
+                  <h3 className="font-ball-pill text-2xl leading-none mb-2">{footVolumeInfo[volume].name} Volume</h3>
                   <p className="font-sora text-sm text-neutral-500 leading-snug mb-2">{footVolumeInfo[volume].description}</p>
                   <AnimatePresence>
                     {isSelected && (
@@ -409,7 +409,7 @@ export default function FootLabPage() {
           className="bg-brand-charcoal/50 border border-white/[0.06] rounded-lg p-6 md:p-8"
         >
           <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">Why it matters</p>
-          <h2 className="font-tanker text-2xl mb-5">Your foot shape changes everything</h2>
+          <h2 className="font-ball-pill text-2xl mb-5">Your foot shape changes everything</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {[
               'Toes fit without pressure or pain',
@@ -438,7 +438,7 @@ export default function FootLabPage() {
           >
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
               <div>
-                <p className="font-tanker text-xl capitalize">
+                <p className="font-ball-pill text-xl capitalize">
                   {selectedFootShape} <span className="text-brand-red">·</span> {selectedFootVolume} volume
                 </p>
                 <p className="font-sora text-xs text-neutral-500">
@@ -450,7 +450,7 @@ export default function FootLabPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={saveFootProfile}
                 disabled={saving || isAlreadySaved}
-                className={`font-tanker text-lg px-8 py-3 rounded-lg transition-all duration-500 flex items-center gap-2 disabled:opacity-60 ${saved || isAlreadySaved
+                className={`font-ball-pill text-lg px-8 py-3 rounded-lg transition-all duration-500 flex items-center gap-2 disabled:opacity-60 ${saved || isAlreadySaved
                     ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                     : 'bg-brand-red hover:bg-brand-red/80 text-black'
                   }`}

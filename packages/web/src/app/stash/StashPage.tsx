@@ -299,7 +299,7 @@ export default function ShoeSanctuaryPage() {
           <p className="mb-6">Please log in to view your shoe sanctuary</p>
           <Link
             href="/auth/login?callbackUrl=%2Fstash"
-            className="inline-flex items-center justify-center rounded-lg bg-brand-red px-6 py-3 font-tanker text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
+            className="inline-flex items-center justify-center rounded-lg bg-brand-red px-6 py-3 font-ball-pill text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
           >
             LOG IN
           </Link>
@@ -435,7 +435,7 @@ export default function ShoeSanctuaryPage() {
                 >
                   <Footprints className="w-10 h-10 text-brand-red" />
                 </motion.div>
-                <h3 className="font-tanker text-fluid-3xl text-white mb-fluid-xs">
+                <h3 className="font-ball-pill text-fluid-3xl text-white mb-fluid-xs">
                   YOUR SANCTUARY AWAITS
                 </h3>
                 <p className="font-sora text-neutral-500 mb-fluid-md max-w-sm">

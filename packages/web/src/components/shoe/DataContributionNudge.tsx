@@ -68,7 +68,7 @@ export function DataContributionNudge({
             {completedCount}/{totalSteps} signals provided
           </p>
         </div>
-        <span className="font-tanker text-2xl text-brand-red">
+        <span className="font-ball-pill text-2xl text-brand-red">
           {Math.round(progressPct)}%
         </span>
       </div>

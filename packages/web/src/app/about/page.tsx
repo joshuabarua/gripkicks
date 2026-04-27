@@ -14,7 +14,7 @@ export default function AboutPage() {
       <section className="relative px-6 md:px-12 lg:px-16 pt-32 pb-24">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <h1 className="font-tanker text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8 text-white">
+            <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8 text-white">
               About
             </h1>
           </motion.div>

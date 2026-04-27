@@ -21,7 +21,7 @@ export default function PersonalStatsSection({
 
   return (
     <div className="mb-6">
-      <h3 className="font-tanker text-lg text-white mb-3">
+      <h3 className="font-ball-pill text-lg text-white mb-3">
         Personal Rank
         {hasDefaultScore && (
           <span className="text-sm font-normal text-neutral-500 font-sora ml-2">
@@ -40,7 +40,7 @@ export default function PersonalStatsSection({
             <Trophy className="w-4 h-4 text-brand-red" />
             <span className="text-xs text-neutral-400 font-sora">Comfort</span>
           </div>
-          <div className="text-2xl font-tanker text-white">
+          <div className="text-2xl font-ball-pill text-white">
             {(comfortScore || defaultStats.comfort).toFixed(1)}
           </div>
         </motion.div>
@@ -55,7 +55,7 @@ export default function PersonalStatsSection({
             <Zap className="w-4 h-4 text-brand-red" />
             <span className="text-xs text-neutral-400 font-sora">Performance</span>
           </div>
-          <div className="text-2xl font-tanker text-white">
+          <div className="text-2xl font-ball-pill text-white">
             {(performanceRating || defaultStats.performance).toFixed(1)}
           </div>
         </motion.div>
@@ -70,7 +70,7 @@ export default function PersonalStatsSection({
             <Shield className="w-4 h-4 text-brand-red" />
             <span className="text-xs text-neutral-400 font-sora">Durability</span>
           </div>
-          <div className="text-2xl font-tanker text-white">
+          <div className="text-2xl font-ball-pill text-white">
             {(durabilityRating || defaultStats.durability).toFixed(1)}
           </div>
         </motion.div>

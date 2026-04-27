@@ -136,7 +136,7 @@ function ErrorFallback({
               <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500">
                 {error.code}
               </p>
-              <h2 className="font-tanker text-2xl">SOMETHING WENT WRONG</h2>
+              <h2 className="font-ball-pill text-2xl">SOMETHING WENT WRONG</h2>
             </div>
           </div>
 
@@ -150,7 +150,7 @@ function ErrorFallback({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onRetry}
-                className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-tanker text-lg py-3 transition-colors duration-500 flex items-center justify-center gap-2"
+                className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-lg py-3 transition-colors duration-500 flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-5 h-5" />
                 TRY AGAIN

@@ -306,13 +306,13 @@ function ShoeMarker({
               style={{ transform: "translate(-50%, calc(-100% - 8px))" }}
             >
               <div className="bg-black/95 backdrop-blur border border-neutral-700 rounded-xl px-3 py-2 min-w-[180px] shadow-xl">
-                <p className="font-tanker text-sm text-white leading-tight whitespace-nowrap">{pos.name}</p>
+                <p className="font-ball-pill text-sm text-white leading-tight whitespace-nowrap">{pos.name}</p>
                 <p className="font-sora text-[10px] uppercase tracking-wider text-neutral-500 mb-1.5">{pos.brand}</p>
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-sora text-[10px] text-neutral-400">
                     {pos.primaryScoreLabel ?? "Score"}
                   </span>
-                  <span className="font-tanker text-base text-brand-red tabular-nums">{pos.primaryScore}</span>
+                  <span className="font-ball-pill text-base text-brand-red tabular-nums">{pos.primaryScore}</span>
                 </div>
                 {pos.topTrait && (
                   <div className="flex items-center justify-between gap-3 mt-0.5">
@@ -373,7 +373,7 @@ function UserMarker({ x, y, label }: { x: number; y: number; label: string }) {
         <div className="w-8 h-8 rounded-full border-2 border-cyan-400 bg-cyan-500/10 flex items-center justify-center backdrop-blur">
           <div className="w-2 h-2 bg-cyan-400 rounded-full" />
         </div>
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2 py-0.5 rounded-full bg-cyan-500 text-black font-tanker text-[10px] tracking-wider whitespace-nowrap">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2 py-0.5 rounded-full bg-cyan-500 text-black font-ball-pill text-[10px] tracking-wider whitespace-nowrap">
           {label}
         </div>
       </div>
@@ -473,7 +473,7 @@ function QuadrantCornerLabel({
         <div
           className={`pointer-events-none absolute z-30 w-56 rounded-lg border border-neutral-700 bg-black/95 px-3 py-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-150 ${tooltipPositionClass[quadrant.corner]}`}
         >
-          <p className={`font-tanker text-sm leading-tight ${quadrant.accentClass}`}>{quadrant.name}</p>
+          <p className={`font-ball-pill text-sm leading-tight ${quadrant.accentClass}`}>{quadrant.name}</p>
           <p className="font-sora text-[11px] text-neutral-300 mt-1 leading-snug">{quadrant.description}</p>
         </div>
       </div>

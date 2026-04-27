@@ -97,7 +97,7 @@ export default function DashboardPage() {
                 Your Dashboard
               </p>
             </div>
-            <h1 className="font-tanker text-5xl md:text-7xl lg:text-8xl leading-[0.9] text-brand-chalk">
+            <h1 className="font-ball-pill text-5xl md:text-7xl lg:text-8xl leading-[0.9] text-brand-chalk">
               Hey {firstName},<br />
               <span className="text-brand-red">ready to climb?</span>
             </h1>
@@ -106,7 +106,7 @@ export default function DashboardPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => router.push("/stash")}
-            className="group flex items-center gap-3 font-tanker text-2xl text-brand-red hover:text-white transition-colors duration-500 shrink-0"
+            className="group flex items-center gap-3 font-ball-pill text-2xl text-brand-red hover:text-white transition-colors duration-500 shrink-0"
           >
             View Collection
             <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-brand-red transition-colors duration-500">
@@ -126,7 +126,7 @@ export default function DashboardPage() {
           >
             <Plus className="w-5 h-5 text-brand-red" strokeWidth={1.5} />
             <div>
-              <div className="font-tanker text-7xl text-brand-chalk leading-none">
+              <div className="font-ball-pill text-7xl text-brand-chalk leading-none">
                 {userShoes.length}
               </div>
               <p className="font-sora text-brand-putty/40 text-sm mt-2">
@@ -142,7 +142,7 @@ export default function DashboardPage() {
             className="col-span-6 md:col-span-4 bg-black p-8 flex items-center justify-between min-h-[140px]"
           >
             <div>
-              <div className="font-tanker text-4xl text-brand-chalk">
+              <div className="font-ball-pill text-4xl text-brand-chalk">
                 {favCount}
               </div>
               <p className="font-sora text-brand-putty/40 text-xs mt-1">
@@ -159,7 +159,7 @@ export default function DashboardPage() {
             className="col-span-6 md:col-span-4 bg-black p-8 flex items-center justify-between min-h-[140px]"
           >
             <div>
-              <div className="font-tanker text-4xl text-brand-chalk">
+              <div className="font-ball-pill text-4xl text-brand-chalk">
                 {avgComfort}
               </div>
               <p className="font-sora text-brand-putty/40 text-xs mt-1">
@@ -184,7 +184,7 @@ export default function DashboardPage() {
               <div>
                 {hasFootProfile ? (
                   <>
-                    <div className="font-tanker text-2xl text-brand-chalk capitalize">
+                    <div className="font-ball-pill text-2xl text-brand-chalk capitalize">
                       {footShape} <span className="text-brand-putty/30">/</span>{" "}
                       {footVolume} volume
                     </div>
@@ -194,7 +194,7 @@ export default function DashboardPage() {
                   </>
                 ) : (
                   <>
-                    <div className="font-tanker text-xl text-brand-red">
+                    <div className="font-ball-pill text-xl text-brand-red">
                       Set up your foot profile
                     </div>
                     <p className="font-sora text-brand-putty/40 text-xs mt-0.5">
@@ -217,12 +217,12 @@ export default function DashboardPage() {
           <div className="w-full h-px bg-white/[0.06] mb-12" />
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <h2 className="font-tanker text-4xl md:text-5xl leading-none text-brand-chalk">
+            <h2 className="font-ball-pill text-4xl md:text-5xl leading-none text-brand-chalk">
               Where to next?
             </h2>
             <button
               onClick={() => router.push("/matcher")}
-              className="group flex items-center gap-2 font-tanker text-xl text-brand-red hover:text-white transition-colors duration-500"
+              className="group flex items-center gap-2 font-ball-pill text-xl text-brand-red hover:text-white transition-colors duration-500"
             >
               Find my shoe
               <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
@@ -237,7 +237,7 @@ export default function DashboardPage() {
               className="col-span-12 md:col-span-8 bg-brand-red p-8 flex flex-col justify-between cursor-pointer group relative overflow-hidden min-h-[180px]"
             >
               <div className="relative flex justify-between items-start">
-                <h3 className="font-tanker text-4xl md:text-5xl text-black">
+                <h3 className="font-ball-pill text-4xl md:text-5xl text-black">
                   Shoe Sanctuary
                 </h3>
                 <div className="w-10 h-10 border border-black/20 flex items-center justify-center group-hover:border-black/40 transition-colors">
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                 <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
               </div>
               <div>
-                <h4 className="font-tanker text-xl text-brand-chalk mb-1">
+                <h4 className="font-ball-pill text-xl text-brand-chalk mb-1">
                   Sole Mate
                 </h4>
                 <p className="font-sora text-brand-putty/40 text-xs">
@@ -284,7 +284,7 @@ export default function DashboardPage() {
                 <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
               </div>
               <div>
-                <h4 className="font-tanker text-xl text-brand-chalk mb-1">
+                <h4 className="font-ball-pill text-xl text-brand-chalk mb-1">
                   Foot Lab
                 </h4>
                 <p className="font-sora text-brand-putty/40 text-xs">
@@ -303,7 +303,7 @@ export default function DashboardPage() {
                 <ArrowUpRight className="w-4 h-4 text-brand-putty/20 group-hover:text-brand-red group-hover:rotate-45 transition-all duration-500" />
               </div>
               <div>
-                <h4 className="font-tanker text-xl text-brand-chalk mb-1">
+                <h4 className="font-ball-pill text-xl text-brand-chalk mb-1">
                   Matcher
                 </h4>
                 <p className="font-sora text-brand-putty/40 text-xs">
@@ -323,13 +323,13 @@ export default function DashboardPage() {
             <div className="w-full h-px bg-white/[0.06] mb-12" />
 
             <div className="flex items-end justify-between mb-8">
-              <h2 className="font-tanker text-4xl md:text-5xl leading-none text-brand-chalk">
+              <h2 className="font-ball-pill text-4xl md:text-5xl leading-none text-brand-chalk">
                 Recent Shoes
               </h2>
               {userShoes.length > 3 && (
                 <button
                   onClick={() => router.push("/stash")}
-                  className="group flex items-center gap-2 font-tanker text-xl text-brand-red hover:text-white transition-colors duration-500"
+                  className="group flex items-center gap-2 font-ball-pill text-xl text-brand-red hover:text-white transition-colors duration-500"
                 >
                   View all
                   <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-500" />
@@ -422,7 +422,7 @@ export default function DashboardPage() {
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               className="w-3 h-3 bg-brand-red rounded-full mx-auto mb-8"
             />
-            <h3 className="font-tanker text-4xl text-brand-chalk mb-3">
+            <h3 className="font-ball-pill text-4xl text-brand-chalk mb-3">
               NO SHOES YET
             </h3>
             <p className="font-sora text-brand-putty/40 mb-8 max-w-sm mx-auto">
@@ -432,7 +432,7 @@ export default function DashboardPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => router.push("/stash")}
-              className="border border-brand-red text-brand-red font-tanker text-lg px-8 py-3 hover:bg-brand-red hover:text-black transition-all duration-500"
+              className="border border-brand-red text-brand-red font-ball-pill text-lg px-8 py-3 hover:bg-brand-red hover:text-black transition-all duration-500"
             >
               ADD YOUR FIRST SHOE
             </motion.button>

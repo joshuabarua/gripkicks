@@ -117,13 +117,13 @@ export default function ProfilePage() {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="text-center">
-          <h1 className="font-tanker text-4xl mb-4">NOT LOGGED IN</h1>
+          <h1 className="font-ball-pill text-4xl mb-4">NOT LOGGED IN</h1>
           <p className="font-sora text-neutral-500 mb-6">
             Please log in to view your profile
           </p>
           <Link
             href="/auth/login?callbackUrl=%2Fprofile"
-            className="inline-flex items-center justify-center bg-brand-red px-8 py-3 font-tanker text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
+            className="inline-flex items-center justify-center bg-brand-red px-8 py-3 font-ball-pill text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
           >
             LOG IN
           </Link>
@@ -155,7 +155,7 @@ export default function ProfilePage() {
                 />
               </div>
               <div>
-                <h1 className="font-tanker text-4xl md:text-5xl">
+                <h1 className="font-ball-pill text-4xl md:text-5xl">
                   {displayName}
                 </h1>
                 <p className="font-sora text-neutral-500 mt-1">
@@ -190,7 +190,7 @@ export default function ProfilePage() {
                   )}
                 </div>
                 <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Foot Shape</p>
-                <p className="font-tanker text-2xl text-white capitalize">
+                <p className="font-ball-pill text-2xl text-white capitalize">
                   {profile?.footShape
                     ? footShapeLabels[profile.footShape] || profile.footShape
                     : "Not set"}
@@ -214,7 +214,7 @@ export default function ProfilePage() {
                   )}
                 </div>
                 <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Favourite Shoe</p>
-                <p className="font-tanker text-2xl text-white">
+                <p className="font-ball-pill text-2xl text-white">
                   {profile?.favoriteShoe
                     ? `${profile.favoriteShoe.brand} ${profile.favoriteShoe.name}`
                     : "Not set"}
@@ -235,7 +235,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="relative">
                   <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-black/50 mb-2">Getting started</p>
-                  <h3 className="font-tanker text-3xl text-black mb-3">
+                  <h3 className="font-ball-pill text-3xl text-black mb-3">
                     COMPLETE YOUR PROFILE
                   </h3>
                   <ol className="font-sora text-sm text-black/70 space-y-1 mb-4">
@@ -247,7 +247,7 @@ export default function ProfilePage() {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="bg-black text-brand-red font-tanker text-lg px-6 py-3 flex items-center gap-2"
+                      className="bg-black text-brand-red font-ball-pill text-lg px-6 py-3 flex items-center gap-2"
                     >
                       START SETUP
                       <ArrowUpRight className="w-5 h-5" />
@@ -275,7 +275,7 @@ export default function ProfilePage() {
                       <Edit2 className="w-5 h-5 text-brand-red" />
                     </div>
                     <div>
-                      <h3 className="font-tanker text-2xl text-white">Profile Information</h3>
+                      <h3 className="font-ball-pill text-2xl text-white">Profile Information</h3>
                       <p className="font-sora text-sm text-neutral-500">Update your name and avatar</p>
                     </div>
                   </div>
@@ -316,7 +316,7 @@ export default function ProfilePage() {
                       <Lock className="w-5 h-5 text-brand-red" />
                     </div>
                     <div>
-                      <h3 className="font-tanker text-2xl text-white">Security</h3>
+                      <h3 className="font-ball-pill text-2xl text-white">Security</h3>
                       <p className="font-sora text-sm text-neutral-500">Change your password and email address</p>
                     </div>
                   </div>
@@ -353,7 +353,7 @@ export default function ProfilePage() {
                       <AlertTriangle className="w-5 h-5 text-red-500" />
                     </div>
                     <div>
-                      <h3 className="font-tanker text-2xl text-red-500">Danger Zone</h3>
+                      <h3 className="font-ball-pill text-2xl text-red-500">Danger Zone</h3>
                       <p className="font-sora text-sm text-neutral-500">Permanently delete your account</p>
                     </div>
                   </div>

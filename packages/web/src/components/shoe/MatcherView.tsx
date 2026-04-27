@@ -264,7 +264,7 @@ function ModeHeader({ mode, count }: { mode: Mode; count: number }) {
         <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">
           {mode === "personal" ? "Personal" : "Community"}
         </p>
-        <h2 className="font-tanker text-3xl md:text-4xl text-white leading-none">{title}</h2>
+        <h2 className="font-ball-pill text-3xl md:text-4xl text-white leading-none">{title}</h2>
       </div>
       <p className="font-sora text-xs text-neutral-500 max-w-xs text-right hidden sm:block">{subtitle}</p>
     </div>
@@ -293,15 +293,15 @@ function TileGrid({ shoes }: { shoes: DisplayShoe[] }) {
           </div>
 
           <div className="absolute top-2 left-2 w-7 h-7 rounded-full bg-black/80 backdrop-blur border border-white/10 flex items-center justify-center">
-            <span className="font-tanker text-xs text-white">{idx + 1}</span>
+            <span className="font-ball-pill text-xs text-white">{idx + 1}</span>
           </div>
 
           <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-brand-red text-black">
-            <span className="font-tanker text-xs tabular-nums">{shoe.primaryScore}</span>
+            <span className="font-ball-pill text-xs tabular-nums">{shoe.primaryScore}</span>
           </div>
 
           <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black via-black/80 to-transparent">
-            <p className="font-tanker text-sm text-white truncate leading-tight">{shoe.name}</p>
+            <p className="font-ball-pill text-sm text-white truncate leading-tight">{shoe.name}</p>
             <p className="font-sora text-[10px] text-neutral-400 truncate uppercase tracking-wider">{shoe.brand}</p>
           </div>
         </motion.div>
@@ -379,7 +379,7 @@ function LeaderboardRow({
       }`}
     >
       <div className="flex items-center gap-3 md:contents">
-        <span className="font-tanker text-2xl text-white/30 w-8 md:w-auto">{rank}</span>
+        <span className="font-ball-pill text-2xl text-white/30 w-8 md:w-auto">{rank}</span>
 
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="w-12 h-12 bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 shrink-0">
@@ -392,7 +392,7 @@ function LeaderboardRow({
             />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="font-tanker text-base text-white truncate leading-tight">{shoe.name}</p>
+            <p className="font-ball-pill text-base text-white truncate leading-tight">{shoe.name}</p>
             <p className="font-sora text-xs text-neutral-500 truncate">
               {shoe.brand} <span className="text-neutral-700">·</span> {shoe.secondaryLabel}
             </p>
@@ -408,7 +408,7 @@ function LeaderboardRow({
         {mode === "personal" && shoe.breakdown ? (
           <MatchScoreTooltip score={shoe.primaryScore / 20} breakdown={shoe.breakdown} />
         ) : (
-          <Badge className="bg-brand-red text-black border-0 font-tanker text-base px-3 py-1">{shoe.primaryScore}</Badge>
+          <Badge className="bg-brand-red text-black border-0 font-ball-pill text-base px-3 py-1">{shoe.primaryScore}</Badge>
         )}
       </div>
     </motion.div>
@@ -443,13 +443,13 @@ function EmptyState({ mode, hasFootProfile }: { mode: Mode; hasFootProfile: bool
   if (mode === "personal" && !hasFootProfile) {
     return (
       <div className="p-8 bg-neutral-950 border border-neutral-800 rounded-3xl text-center">
-        <h3 className="font-tanker text-2xl text-white mb-2">SET UP YOUR FOOT PROFILE</h3>
+        <h3 className="font-ball-pill text-2xl text-white mb-2">SET UP YOUR FOOT PROFILE</h3>
         <p className="font-sora text-neutral-500 text-sm mb-6 max-w-sm mx-auto">
           Personal matches need your foot shape and volume.
         </p>
         <Link
           href="/footscan"
-          className="inline-flex items-center bg-brand-red hover:bg-brand-red/80 text-black font-tanker px-6 py-3 rounded-xl transition-colors"
+          className="inline-flex items-center bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill px-6 py-3 rounded-xl transition-colors"
         >
           FOOT LAB
         </Link>

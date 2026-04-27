@@ -221,7 +221,7 @@ export function FullPageLoading({ text = "Loading" }: { text?: string }) {
         </motion.div>
 
         <div className="flex flex-col items-center gap-6">
-          <div className="font-tanker text-xl tracking-wider text-white/90">
+          <div className="font-ball-pill text-xl tracking-wider text-white/90">
             GRIP KICKS
           </div>
 

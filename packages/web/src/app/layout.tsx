@@ -12,9 +12,9 @@ const sora = localFont({
   variable: "--font-sora",
 });
 
-const tanker = localFont({
-  src: "../../public/fonts/Tanker-Regular.ttf",
-  variable: "--font-tanker",
+const ballPill = localFont({
+  src: "../../public/fonts/BallPill-regular.otf",
+  variable: "--font-ball-pill",
 });
 
 const soCloudy = localFont({
@@ -29,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`min-h-screen bg-background antialiased ${basteleur.variable} ${sora.variable} ${tanker.variable} ${soCloudy.variable}`}>
+      <body className={`min-h-screen bg-background antialiased ${basteleur.variable} ${sora.variable} ${ballPill.variable} ${soCloudy.variable}`}>
         <AppShell>{children}</AppShell>
       </body>
     </html>

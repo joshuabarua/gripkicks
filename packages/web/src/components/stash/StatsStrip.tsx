@@ -15,15 +15,15 @@ export function StatsStrip({ totalShoes, favouriteCount, brandCount }: StatsStri
       className="flex gap-fluid-md mt-fluid-md flex-wrap"
     >
       <div className="bg-black/60 border border-white/[0.06] px-fluid-md py-fluid-sm">
-        <span className="font-tanker text-fluid-2xl text-brand-red">{totalShoes}</span>
+        <span className="font-ball-pill text-fluid-2xl text-brand-red">{totalShoes}</span>
         <span className="text-brand-putty/40 font-sora text-xs ml-2">shoes</span>
       </div>
       <div className="bg-black/60 border border-white/[0.06] px-fluid-md py-fluid-sm">
-        <span className="font-tanker text-fluid-2xl text-brand-red">{favouriteCount}</span>
+        <span className="font-ball-pill text-fluid-2xl text-brand-red">{favouriteCount}</span>
         <span className="text-brand-putty/40 font-sora text-xs ml-2">favorites</span>
       </div>
       <div className="bg-black/60 border border-white/[0.06] px-fluid-md py-fluid-sm">
-        <span className="font-tanker text-fluid-2xl text-brand-red">{brandCount}</span>
+        <span className="font-ball-pill text-fluid-2xl text-brand-red">{brandCount}</span>
         <span className="text-brand-putty/40 font-sora text-xs ml-2">brands</span>
       </div>
     </motion.div>

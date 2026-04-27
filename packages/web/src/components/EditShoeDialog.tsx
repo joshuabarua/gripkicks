@@ -205,7 +205,7 @@ export default function EditShoeDialog({
                   </Button>
                 )}
                 <Button
-                  className="flex-1 bg-brand-red hover:bg-brand-red/80 text-black font-tanker rounded-lg py-3"
+                  className="flex-1 bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill rounded-lg py-3"
                   onClick={updateShoeStats}
                 >
                   <Save className="w-4 h-4 mr-2" />
