@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { compileShader, parseHex, setupCanvasResize } from "./webgl-utils";
+import { compileShader, createProgram, parseHex, setupCanvasResize, startRenderLoop, stopRenderLoop, RenderLoopState } from "./webgl-utils";
 
 const VERTEX_SHADER = `#version 300 es
 void main() {
@@ -113,18 +113,8 @@ export default function EtherField({
 
     const vertexShader = compileShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER, "EtherField");
     const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER, "EtherField");
-    if (!vertexShader || !fragmentShader) return;
-
-    const program = gl.createProgram();
+    const program = createProgram(gl, vertexShader, fragmentShader, "EtherField");
     if (!program) return;
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error("[EtherField] program link error:", gl.getProgramInfoLog(program));
-      return;
-    }
-    gl.useProgram(program);
 
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
@@ -163,16 +153,9 @@ export default function EtherField({
     window.addEventListener("pointerleave", handlePointerLeave, { passive: true });
     window.addEventListener("blur", handlePointerLeave);
 
-    let raf = 0;
-    let elapsed = 0;
-    let last = performance.now();
-
-    const render = (now: number) => {
-      raf = requestAnimationFrame(render);
-      const dt = (now - last) / 1000;
-      last = now;
+    const render = (dt: number, state: RenderLoopState) => {
       const p = propsRef.current;
-      if (!p.paused) elapsed += dt * p.speed;
+      if (!p.paused) state.elapsed += dt * p.speed;
 
       const m = mouseRef.current;
       const ease = 1 - Math.pow(0.001, dt);
@@ -184,7 +167,7 @@ export default function EtherField({
       const [cr, cg, cb] = parseHex(p.accentColor);
 
       gl.uniform2f(uResolution, canvas.width, canvas.height);
-      gl.uniform1f(uTime, elapsed);
+      gl.uniform1f(uTime, state.elapsed);
       gl.uniform3f(uAmbient, ar, ag, ab);
       gl.uniform3f(uAccent, cr, cg, cb);
       gl.uniform2f(uMouse, m.smoothX, m.smoothY);
@@ -192,10 +175,10 @@ export default function EtherField({
 
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
-    raf = requestAnimationFrame(render);
+    const loopState = startRenderLoop(render);
 
     return () => {
-      cancelAnimationFrame(raf);
+      stopRenderLoop(loopState);
       ro.disconnect();
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerleave", handlePointerLeave);

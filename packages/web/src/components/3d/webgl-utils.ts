@@ -11,6 +11,22 @@ export function compileShader(gl: WebGLRenderingContext | WebGL2RenderingContext
   return shader;
 }
 
+export function createProgram(gl: WebGLRenderingContext | WebGL2RenderingContext, vertexShader: WebGLShader | null, fragmentShader: WebGLShader | null, componentName: string) {
+  if (!vertexShader || !fragmentShader) return null;
+  const program = gl.createProgram();
+  if (!program) return null;
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error(`[${componentName}] program link error:`, gl.getProgramInfoLog(program));
+    gl.deleteProgram(program);
+    return null;
+  }
+  gl.useProgram(program);
+  return program;
+}
+
 export function parseHex(hex: string): [number, number, number] {
   const m = hex.replace("#", "");
   const full = m.length === 3 ? m.split("").map((c) => c + c).join("") : m;
@@ -37,4 +53,32 @@ export function setupCanvasResize(canvas: HTMLCanvasElement, gl: WebGLRenderingC
   resize();
 
   return { ro, resize };
+}
+
+export interface RenderLoopState {
+  raf: number;
+  elapsed: number;
+  last: number;
+}
+
+export function startRenderLoop(render: (dt: number, state: RenderLoopState) => void): RenderLoopState {
+  const state: RenderLoopState = {
+    raf: 0,
+    elapsed: 0,
+    last: performance.now(),
+  };
+
+  const loop = (now: number) => {
+    state.raf = requestAnimationFrame(loop);
+    const dt = (now - state.last) / 1000;
+    state.last = now;
+    render(dt, state);
+  };
+  state.raf = requestAnimationFrame(loop);
+
+  return state;
+}
+
+export function stopRenderLoop(state: RenderLoopState) {
+  cancelAnimationFrame(state.raf);
 }

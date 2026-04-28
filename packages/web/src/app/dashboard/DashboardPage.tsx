@@ -64,11 +64,11 @@ export default function DashboardPage() {
   const avgComfort =
     userShoes.length > 0
       ? (
-        userShoes.reduce((acc, s) => acc + (s.comfortScore || 0), 0) /
+        userShoes.reduce((acc: number, s: any) => acc + (s.comfortScore || 0), 0) /
         userShoes.length
       ).toFixed(1)
       : "—";
-  const favCount = userShoes.filter((s) => s.isFavourite).length;
+  const favCount = userShoes.filter((s: any) => s.isFavourite).length;
   const footShape = footProfile?.shape || userData?.footShape;
   const footVolume = footProfile?.volume || userData?.footVolume;
   const hasFootProfile = !!(footShape && footVolume);
@@ -300,7 +300,7 @@ export default function DashboardPage() {
             </div>
             <div className="border border-white/[0.06]">
               <div className="divide-y divide-white/[0.06]">
-                {userShoes.slice(0, 3).map((shoe, index) => {
+                {userShoes.slice(0, 3).map((shoe: any, index: number) => {
                   const details = shoe.shoe;
                   const brand = details?.brand ?? "Unknown Brand";
                   const name =

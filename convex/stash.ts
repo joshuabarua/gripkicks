@@ -26,6 +26,18 @@ async function findExistingUserShoe(ctx: any, userId: any, shoeId: any) {
     .first();
 }
 
+async function findUsersByFootProfile(ctx: any, footShape: string, footVolume: string) {
+  return await ctx.db
+    .query("users")
+    .filter((q: any) =>
+      q.and(
+        q.eq(q.field("footShape"), footShape),
+        q.eq(q.field("footVolume"), footVolume),
+      ),
+    )
+    .collect();
+}
+
 function calculateRatingAverages(allUserRatings: any[]) {
   const validComfortRatings = allUserRatings
     .filter(r => r.comfortScore !== undefined)
@@ -207,15 +219,7 @@ export const getSoleMateUserCount = query({
     footVolume: v.string(),
   },
   handler: async (ctx, args) => {
-    const matchingUsers = await ctx.db
-      .query("users")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("footShape"), args.footShape),
-          q.eq(q.field("footVolume"), args.footVolume),
-        ),
-      )
-      .collect();
+    const matchingUsers = await findUsersByFootProfile(ctx, args.footShape, args.footVolume);
     return matchingUsers.length;
   },
 });
@@ -245,15 +249,7 @@ export const getSoleMateAggregates = query({
     footVolume: v.string(),
   },
   handler: async (ctx, args) => {
-    const matchingUsers = await ctx.db
-      .query("users")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("footShape"), args.footShape),
-          q.eq(q.field("footVolume"), args.footVolume),
-        ),
-      )
-      .collect();
+    const matchingUsers = await findUsersByFootProfile(ctx, args.footShape, args.footVolume);
 
     if (matchingUsers.length === 0) return [];
 

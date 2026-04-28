@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { compileShader, parseHex, setupCanvasResize } from "./webgl-utils";
+import { compileShader, createProgram, parseHex, setupCanvasResize, startRenderLoop, stopRenderLoop, RenderLoopState } from "./webgl-utils";
 
 const VERTEX_SHADER = `
 attribute vec2 a_position;
@@ -119,18 +119,8 @@ export default function CloudShader({
 
     const vertexShader = compileShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER, "CloudShader");
     const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER, "CloudShader");
-    if (!vertexShader || !fragmentShader) return;
-
-    const program = gl.createProgram();
+    const program = createProgram(gl, vertexShader, fragmentShader, "CloudShader");
     if (!program) return;
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error("[CloudShader] program link error:", gl.getProgramInfoLog(program));
-      return;
-    }
-    gl.useProgram(program);
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -154,22 +144,15 @@ export default function CloudShader({
 
     const { ro } = setupCanvasResize(canvas, gl);
 
-    let raf = 0;
-    let elapsed = 0;
-    let last = performance.now();
-
-    const render = (now: number) => {
-      raf = requestAnimationFrame(render);
-      const dt = (now - last) / 1000;
-      last = now;
+    const render = (dt: number, state: RenderLoopState) => {
       const p = propsRef.current;
-      if (!p.paused) elapsed += dt;
+      if (!p.paused) state.elapsed += dt;
 
       const [sr, sg, sb] = parseHex(p.skyColor);
       const [cr, cg, cb] = parseHex(p.cloudColor);
 
       gl.uniform2f(uResolution, canvas.width, canvas.height);
-      gl.uniform1f(uTime, elapsed * p.speed);
+      gl.uniform1f(uTime, state.elapsed * p.speed);
       gl.uniform1f(uDensity, p.density);
       gl.uniform1f(uSpeed, p.speed);
       gl.uniform1f(uRotation, p.rotation);
@@ -179,10 +162,10 @@ export default function CloudShader({
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
-    raf = requestAnimationFrame(render);
+    const loopState = startRenderLoop(render);
 
     return () => {
-      cancelAnimationFrame(raf);
+      stopRenderLoop(loopState);
       ro.disconnect();
       gl.deleteBuffer(positionBuffer);
       gl.deleteProgram(program);

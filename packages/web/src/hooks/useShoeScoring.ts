@@ -75,7 +75,7 @@ export function useShoeScoring(userPreferences?: {
   const stashCount = userShoes?.length ?? 0;
   const ratedCount =
     userShoes?.filter(
-      (s) => s.comfortScore !== undefined,
+      (s: any) => s.comfortScore !== undefined,
     ).length ?? 0;
 
   const effectivePreferences = useMemo(() => {

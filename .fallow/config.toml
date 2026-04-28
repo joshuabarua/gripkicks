@@ -1,0 +1,9 @@
+[ignore]
+# Test files often have intentional duplication for setup/teardown patterns
+"**/*.test.ts"
+"**/*.test.tsx"
+"**/*.spec.ts"
+"**/*.spec.tsx"
+
+# Ignore common test helper duplications
+"**/__tests__/**"

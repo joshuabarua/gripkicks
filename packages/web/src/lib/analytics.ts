@@ -33,11 +33,6 @@ export function identify(
   posthog.identify(userId, properties);
 }
 
-function resetAnalytics(): void {
-  if (!canTrack()) return;
-  posthog.reset();
-}
-
 export function captureError(
   error: unknown,
   context?: AnalyticsProperties,

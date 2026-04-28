@@ -19,13 +19,6 @@ async function findUserByIdOrBetterAuthId(c: any, id: string) {
   );
 }
 
-function requireField(value: unknown, fieldName: string) {
-  if (!value) {
-    return { valid: false, error: `${fieldName} is required` };
-  }
-  return { valid: true };
-}
-
 function handleError(c: any, error: unknown, context: string) {
   console.error(`Error ${context}:`, error);
   const message = error instanceof Error ? error.message : String(error);
@@ -53,6 +46,25 @@ async function withUserValidation(c: any, betterAuthId: string, operation: (user
 
   try {
     const result = await operation(user);
+    return c.json({ success: true, data: result });
+  } catch (error) {
+    return handleError(c, error, "operation");
+  }
+}
+
+async function withUserValidationNoUserParam(c: any, betterAuthId: string, operation: () => Promise<any>) {
+  if (!betterAuthId) {
+    return handleValidationError(c, "BetterAuth ID");
+  }
+
+  const user = await findUserByBetterAuthId(c, betterAuthId);
+
+  if (!user) {
+    return handleNotFound(c, "User");
+  }
+
+  try {
+    const result = await operation();
     return c.json({ success: true, data: result });
   } catch (error) {
     return handleError(c, error, "operation");
@@ -128,27 +140,18 @@ app.get("/health", (c) => {
   return c.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Sync user from Better Auth to Convex
-app.post("/api/sync-user", async (c) => {
+async function syncUserHandler(c: any, mutationFn: any, successMessage: string, getArgs: () => any) {
   try {
-    const { id, email, name, image, emailVerified } = await c.req.json();
+    const args = getArgs();
+    console.log(`Convex: ${successMessage}:`, args);
 
-    console.log('Convex: Syncing user from Better Auth:', { id, email, name, image, emailVerified });
-
-    // Create or update user in Convex
-    const userId = await c.env.runMutation(api.users.createOrUpdateFromBetterAuth, {
-      betterAuthId: id,
-      email,
-      name: name || '',
-      image: image || '',
-      emailVerified: emailVerified || false,
-    });
+    const userId = await c.env.runMutation(mutationFn, args);
 
     console.log('Convex: User synced with ID:', userId);
 
     return c.json({
       success: true,
-      message: 'User synced to Convex successfully',
+      message: successMessage,
       convexUserId: userId
     });
   } catch (error) {
@@ -160,40 +163,30 @@ app.post("/api/sync-user", async (c) => {
       details: message
     }, 500);
   }
+}
+
+// Sync user from Better Auth to Convex
+app.post("/api/sync-user", async (c) => {
+  const { id, email, name, image, emailVerified } = await c.req.json();
+  return syncUserHandler(c, api.users.createOrUpdateFromBetterAuth, 'User synced to Convex successfully', () => ({
+    betterAuthId: id,
+    email,
+    name: name || '',
+    image: image || '',
+    emailVerified: emailVerified || false,
+  }));
 });
 
 // Sync user from Better Auth to Convex with deduplication
 app.post("/api/sync-user-deduplicated", async (c) => {
-  try {
-    const { betterAuthId, email, name, image, emailVerified } = await c.req.json();
-
-    console.log('Convex: Deduplicated sync for user:', { betterAuthId, email, name, image, emailVerified });
-
-    // Create or update user in Convex with deduplication
-    const userId = await c.env.runMutation(api.users.syncUserDeduplicated, {
-      betterAuthId,
-      email,
-      name: name || '',
-      image: image || '',
-      emailVerified: emailVerified || false,
-    });
-
-    console.log('Convex: User synced with ID:', userId);
-
-    return c.json({
-      success: true,
-      message: 'User synced to Convex successfully (deduplicated)',
-      convexUserId: userId
-    });
-  } catch (error) {
-    console.error('Convex: Error syncing user:', error);
-    const message = error instanceof Error ? error.message : String(error);
-    return c.json({
-      success: false,
-      error: 'Failed to sync user to Convex',
-      details: message
-    }, 500);
-  }
+  const { betterAuthId, email, name, image, emailVerified } = await c.req.json();
+  return syncUserHandler(c, api.users.syncUserDeduplicated, 'User synced to Convex successfully (deduplicated)', () => ({
+    betterAuthId,
+    email,
+    name: name || '',
+    image: image || '',
+    emailVerified: emailVerified || false,
+  }));
 });
 
 // ============ SHOES API ============
@@ -465,7 +458,7 @@ app.post("/api/shoes/updateImageUrl", async (c) => {
 // Update subscription status
 app.post("/api/subscriptions/update", async (c) => {
   const { betterAuthId, subscriptionStatus, subscriptionTier, polarCustomerId, polarSubscriptionId, subscriptionExpiresAt } = await c.req.json();
-  return withUserValidation(c, betterAuthId, async () => {
+  return withUserValidationNoUserParam(c, betterAuthId, async () => {
     return await c.env.runMutation(api.subscriptions.updateSubscription, {
       betterAuthId,
       subscriptionStatus,
@@ -480,7 +473,7 @@ app.post("/api/subscriptions/update", async (c) => {
 // Grant founder status
 app.post("/api/subscriptions/grantFounder", async (c) => {
   const { betterAuthId } = await c.req.json();
-  return withUserValidation(c, betterAuthId, async () => {
+  return withUserValidationNoUserParam(c, betterAuthId, async () => {
     return await c.env.runMutation(api.subscriptions.grantFounderStatus, { betterAuthId });
   });
 });
@@ -488,7 +481,7 @@ app.post("/api/subscriptions/grantFounder", async (c) => {
 // Get subscription status
 app.post("/api/subscriptions/status", async (c) => {
   const { betterAuthId } = await c.req.json();
-  return withUserValidation(c, betterAuthId, async () => {
+  return withUserValidationNoUserParam(c, betterAuthId, async () => {
     return await c.env.runQuery(api.subscriptions.getSubscriptionStatus, { betterAuthId });
   });
 });

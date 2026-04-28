@@ -3,6 +3,7 @@
 import React from "react";
 import { Scene } from "../test-utils";
 import { EditorialLayout } from "../test-utils/editorial-layout";
+import { EditorialContent } from "../test-utils/editorial-content";
 
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.14 0 0 0 0 0.08 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
@@ -64,26 +65,14 @@ export default function EditorialGorp() {
   );
 
   const content = (
-    <section className="relative px-6 md:px-16 py-20" style={{ background: PAPER }}>
-      <div className="max-w-5xl mx-auto grid md:grid-cols-12 gap-10">
-        <aside className="md:col-span-3 space-y-2 font-mono text-[10px] uppercase tracking-widest">
-          <div>§ 1</div>
-          <div className="pt-4">entry 001</div>
-        </aside>
-
-        <div className="md:col-span-9 space-y-6">
-          <h1 className="font-serif italic text-5xl md:text-7xl leading-[0.95] tracking-tight">
-            Field journal test.
-          </h1>
-
-          <div className="h-px w-24" style={{ background: INK }} />
-
-          <p className="font-mono text-xs leading-relaxed max-w-lg">
-            Layout and composition test. No marketing copy.
-          </p>
-        </div>
-      </div>
-    </section>
+    <EditorialContent
+      sectionNumber="1"
+      asideContent="entry 001"
+      heading="Field journal test."
+      description="Layout and composition test. No marketing copy."
+      ink={INK}
+      paper={PAPER}
+    />
   );
 
   const footer = (

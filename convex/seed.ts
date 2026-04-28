@@ -1,6 +1,6 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { cleanupModelName, deriveModelName, deriveVariantLabel } from "./utils/helpers";
+import { deriveModelName, deriveVariantLabel } from "./utils/helpers";
 
 const climbingShoes = [
   // La Sportiva

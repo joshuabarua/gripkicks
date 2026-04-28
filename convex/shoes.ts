@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { footShapeValidator, cleanupModelName, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, genderValidator } from "./utils/helpers";
+import { footShapeValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, genderValidator } from "./utils/helpers";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -11,6 +11,27 @@ interface PaginatedResult<T> {
 
 const DEFAULT_PAGE_SIZE = 50;
 const MAX_PAGE_SIZE = 100;
+
+function calculatePageSize(pageSize?: number): number {
+  return Math.min(MAX_PAGE_SIZE, Math.max(1, pageSize ?? DEFAULT_PAGE_SIZE));
+}
+
+function paginateResults<T extends { _id: any }>(results: T[], pageSize: number, cursor?: string | null): { items: T[]; hasMore: boolean; nextCursor: string | null } {
+  let startIndex = 0;
+  if (cursor) {
+    const idx = results.findIndex((s) => s._id === JSON.parse(cursor).id);
+    startIndex = idx >= 0 ? idx + 1 : 0;
+  }
+
+  const paginatedResults = results.slice(startIndex, startIndex + pageSize + 1);
+  const hasMore = paginatedResults.length > pageSize;
+  const items = hasMore ? paginatedResults.slice(0, pageSize) : paginatedResults;
+
+  const lastItem = items[items.length - 1];
+  const nextCursor = hasMore && lastItem ? JSON.stringify({ id: lastItem._id }) : null;
+
+  return { items, hasMore, nextCursor };
+}
 
 async function enrichShoesWithRubber(ctx: any, shoes: any[]) {
   return await Promise.all(
@@ -63,34 +84,27 @@ export const list = query({
     pageSize: v.optional(v.number()),
   },
   handler: async (ctx, args): Promise<PaginatedResult<any>> => {
-    const pageSize = Math.min(
-      MAX_PAGE_SIZE,
-      Math.max(1, args.pageSize ?? DEFAULT_PAGE_SIZE),
-    );
-    const cursor = args.cursor ? JSON.parse(args.cursor) : null;
+    const pageSize = calculatePageSize(args.pageSize);
+    const cursor = args.cursor;
 
     let query = ctx.db.query("shoes").order("asc");
 
     if (cursor) {
-      query = query.filter((q) => q.gt(q.field("_id"), cursor.id));
+      query = query.filter((q) => q.gt(q.field("_id"), JSON.parse(cursor).id));
     }
 
     const allShoes = await query.collect();
     const totalCount = allShoes.length;
-    const paginatedShoes = allShoes.slice(0, pageSize + 1);
-    const hasMore = paginatedShoes.length > pageSize;
-    const items = hasMore ? paginatedShoes.slice(0, pageSize) : paginatedShoes;
+    const { items, hasMore, nextCursor } = paginateResults(allShoes, pageSize, cursor);
 
     const shoesWithRubber = await enrichShoesWithRubber(ctx, items);
     const sortedItems = sortShoesByName(shoesWithRubber);
-
-    const lastItem = items[items.length - 1];
 
     return {
       items: sortedItems,
       totalCount,
       hasMore,
-      nextCursor: hasMore && lastItem ? JSON.stringify({ id: lastItem._id }) : null,
+      nextCursor,
     };
   },
 });
@@ -215,11 +229,8 @@ export const search = query({
     pageSize: v.optional(v.number()),
   },
   handler: async (ctx, args): Promise<PaginatedResult<any>> => {
-    const pageSize = Math.min(
-      MAX_PAGE_SIZE,
-      Math.max(1, args.pageSize ?? DEFAULT_PAGE_SIZE),
-    );
-    const cursor = args.cursor ? JSON.parse(args.cursor) : null;
+    const pageSize = calculatePageSize(args.pageSize);
+    const cursor = args.cursor;
 
     let results;
     if (!args.searchTerm) {
@@ -234,29 +245,13 @@ export const search = query({
     }
 
     const totalCount = results.length;
-
-    let startIndex = 0;
-    if (cursor) {
-      const idx = results.findIndex((s) => s._id === cursor.id);
-      startIndex = idx >= 0 ? idx + 1 : 0;
-    }
-
-    const paginatedResults = results.slice(
-      startIndex,
-      startIndex + pageSize + 1,
-    );
-    const hasMore = paginatedResults.length > pageSize;
-    const items = hasMore
-      ? paginatedResults.slice(0, pageSize)
-      : paginatedResults;
-
-    const lastItem = items[items.length - 1];
+    const { items, hasMore, nextCursor } = paginateResults(results, pageSize, cursor);
 
     return {
       items,
       totalCount,
       hasMore,
-      nextCursor: hasMore && lastItem ? JSON.stringify({ id: lastItem._id }) : null,
+      nextCursor,
     };
   },
 });
