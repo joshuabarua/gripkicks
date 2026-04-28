@@ -11,6 +11,40 @@ vi.mock("@/lib/api-client", () => ({
   fetchApi: vi.fn(),
 }));
 
+function mockSessionWithUser() {
+  return {
+    data: {
+      user: {
+        id: "test-id",
+        email: "test@example.com",
+        name: "Test",
+        emailVerified: true,
+        createdAt: new Date(),
+      },
+      session: {
+        id: "session-id",
+        createdAt: new Date(),
+        userId: "test-id",
+        expiresAt: new Date(Date.now() + 86400000),
+      },
+    },
+    isPending: false,
+    error: null,
+    isRefetching: false,
+    refetch: vi.fn(),
+  };
+}
+
+function mockSessionWithoutUser() {
+  return {
+    data: null,
+    isPending: false,
+    error: null,
+    isRefetching: false,
+    refetch: vi.fn(),
+  };
+}
+
 describe("useSubscription", () => {
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -23,13 +57,7 @@ describe("useSubscription", () => {
 
   it("returns default values when no session", async () => {
     const { useSession } = await import("@/lib/auth");
-    (useSession as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: null,
-      isPending: false,
-      error: null,
-      isRefetching: false,
-      refetch: vi.fn(),
-    });
+    (useSession as ReturnType<typeof vi.fn>).mockReturnValue(mockSessionWithoutUser());
 
     const { useSubscription } = await import("@/hooks/useSubscription");
     const { result } = renderHook(() => useSubscription());
@@ -40,27 +68,7 @@ describe("useSubscription", () => {
 
   it("fetches subscription data when session exists", async () => {
     const { useSession } = await import("@/lib/auth");
-    (useSession as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: {
-        user: {
-          id: "test-id",
-          email: "test@example.com",
-          name: "Test",
-          emailVerified: true,
-          createdAt: new Date(),
-        },
-        session: {
-          id: "session-id",
-          createdAt: new Date(),
-          userId: "test-id",
-          expiresAt: new Date(Date.now() + 86400000),
-        },
-      },
-      isPending: false,
-      error: null,
-      isRefetching: false,
-      refetch: vi.fn(),
-    });
+    (useSession as ReturnType<typeof vi.fn>).mockReturnValue(mockSessionWithUser());
 
     const { fetchApi } = await import("@/lib/api-client");
     (fetchApi as ReturnType<typeof vi.fn>).mockReturnValue(
@@ -85,27 +93,7 @@ describe("useSubscription", () => {
 
   it("provides refresh function", async () => {
     const { useSession } = await import("@/lib/auth");
-    (useSession as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: {
-        user: {
-          id: "test-id",
-          email: "test@example.com",
-          name: "Test",
-          emailVerified: true,
-          createdAt: new Date(),
-        },
-        session: {
-          id: "session-id",
-          createdAt: new Date(),
-          userId: "test-id",
-          expiresAt: new Date(Date.now() + 86400000),
-        },
-      },
-      isPending: false,
-      error: null,
-      isRefetching: false,
-      refetch: vi.fn(),
-    });
+    (useSession as ReturnType<typeof vi.fn>).mockReturnValue(mockSessionWithUser());
 
     const { fetchApi } = await import("@/lib/api-client");
     (fetchApi as ReturnType<typeof vi.fn>).mockReturnValue(

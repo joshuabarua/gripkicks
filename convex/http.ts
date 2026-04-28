@@ -41,6 +41,76 @@ function handleNotFound(c: any, resourceName: string) {
   return c.json({ success: false, message: `${resourceName} not found` }, 404);
 }
 
+async function withUserValidation(c: any, betterAuthId: string, operation: (user: any) => Promise<any>) {
+  if (!betterAuthId) {
+    return handleValidationError(c, "BetterAuth ID");
+  }
+
+  const user = await findUserByBetterAuthId(c, betterAuthId);
+
+  if (!user) {
+    return handleNotFound(c, "User");
+  }
+
+  try {
+    const result = await operation(user);
+    return c.json({ success: true, data: result });
+  } catch (error) {
+    return handleError(c, error, "operation");
+  }
+}
+
+async function withUserAndShoeValidation(c: any, betterAuthId: string, shoeId: string, operation: (user: any, shoeId: Id<"shoes">) => Promise<any>) {
+  if (!betterAuthId || !shoeId) {
+    return c.json({ success: false, message: "BetterAuth ID and Shoe ID are required" }, 400);
+  }
+
+  const user = await findUserByBetterAuthId(c, betterAuthId);
+
+  if (!user) {
+    return handleNotFound(c, "User");
+  }
+
+  try {
+    const result = await operation(user, shoeId as Id<"shoes">);
+    return c.json({ success: true, data: result });
+  } catch (error) {
+    return handleError(c, error, "operation");
+  }
+}
+
+async function withUserIdValidation(c: any, id: string, operation: (user: any) => Promise<any>) {
+  if (!id) {
+    return c.json({ success: false, message: "User ID is required" }, 400);
+  }
+
+  const user = await findUserByIdOrBetterAuthId(c, id);
+
+  if (!user) {
+    return handleNotFound(c, "User");
+  }
+
+  try {
+    const result = await operation(user);
+    return c.json({ success: true, data: result });
+  } catch (error) {
+    return handleError(c, error, "operation");
+  }
+}
+
+async function withIdValidation<T>(c: any, id: string, idName: string, operation: (id: T) => Promise<any>) {
+  if (!id) {
+    return handleValidationError(c, idName);
+  }
+
+  try {
+    const result = await operation(id as T);
+    return c.json({ success: true, data: result });
+  } catch (error) {
+    return handleError(c, error, "operation");
+  }
+}
+
 // Better Auth routes are handled automatically by the @convex-dev/better-auth component
 
 // CORS middleware
@@ -238,96 +308,39 @@ app.delete("/api/v1/stash/:shoeId", async (c) => {
 
 // Get user's stash (internal)
 app.post("/api/stash/getUserStash", async (c) => {
-  try {
-    const { betterAuthId } = await c.req.json();
-
-    if (!betterAuthId) {
-      return handleValidationError(c, "BetterAuth ID");
-    }
-
-    const user = await findUserByBetterAuthId(c, betterAuthId);
-
-    if (!user) {
-      return c.json({ success: false, message: "User not found" }, 404);
-    }
-
-    const stash = await c.env.runQuery(api.stash.getUserStash, {
-      userId: user._id
-    });
-
-    return c.json({ success: true, data: stash });
-  } catch (error) {
-    return handleError(c, error, "getting stash");
-  }
+  return withUserValidation(c, (await c.req.json()).betterAuthId, async (user) => {
+    return await c.env.runQuery(api.stash.getUserStash, { userId: user._id });
+  });
 });
 
 // Add to stash (internal)
 app.post("/api/stash/addToStash", async (c) => {
-  try {
-    const { betterAuthId, shoeId } = await c.req.json();
-
-    if (!betterAuthId || !shoeId) {
-      return c.json({ success: false, message: "BetterAuth ID and Shoe ID are required" }, 400);
-    }
-
-    const user = await findUserByBetterAuthId(c, betterAuthId);
-
-    if (!user) {
-      return c.json({ success: false, message: "User not found" }, 404);
-    }
-
+  const { betterAuthId, shoeId } = await c.req.json();
+  return withUserAndShoeValidation(c, betterAuthId, shoeId, async (user, shoeId) => {
     const userShoeId = await c.env.runMutation(api.stash.addToStash, {
       userId: user._id,
-      shoeId: shoeId as Id<"shoes">
+      shoeId
     });
-
-    return c.json({ success: true, data: { userShoeId } });
-  } catch (error) {
-    return handleError(c, error, "adding to stash");
-  }
+    return { userShoeId };
+  });
 });
 
 // Remove from stash (internal)
 app.post("/api/stash/removeFromStash", async (c) => {
-  try {
-    const { betterAuthId, shoeId } = await c.req.json();
-
-    if (!betterAuthId || !shoeId) {
-      return c.json({ success: false, message: "BetterAuth ID and Shoe ID are required" }, 400);
-    }
-
-    const user = await findUserByBetterAuthId(c, betterAuthId);
-
-    if (!user) {
-      return c.json({ success: false, message: "User not found" }, 404);
-    }
-
+  const { betterAuthId, shoeId } = await c.req.json();
+  return withUserAndShoeValidation(c, betterAuthId, shoeId, async (user, shoeId) => {
     const removed = await c.env.runMutation(api.stash.removeFromStash, {
       userId: user._id,
-      shoeId: shoeId as Id<"shoes">
+      shoeId
     });
-
-    return c.json({ success: true, data: { removed } });
-  } catch (error) {
-    return handleError(c, error, "removing from stash");
-  }
+    return { removed };
+  });
 });
 
 // Update user profile (internal)
 app.post("/api/users/update", async (c) => {
-  try {
-    const { id, name, image, emailVerified, footShape, footVolume, favoriteShoeId } = await c.req.json();
-
-    if (!id) {
-      return c.json({ success: false, message: "User ID is required" }, 400);
-    }
-
-    const user = await findUserByIdOrBetterAuthId(c, id);
-
-    if (!user) {
-      return c.json({ success: false, message: "User not found" }, 404);
-    }
-
+  const { id, name, image, emailVerified, footShape, footVolume, favoriteShoeId } = await c.req.json();
+  return withUserIdValidation(c, id, async (user) => {
     const updatePayload: any = { id: user._id };
 
     if (name !== undefined) updatePayload.name = name;
@@ -339,29 +352,14 @@ app.post("/api/users/update", async (c) => {
       updatePayload.favoriteShoeId = favoriteShoeId === null ? null : (favoriteShoeId as Id<"shoes">);
     }
 
-    const updated = await c.env.runMutation(api.users.update, updatePayload);
-
-    return c.json({ success: true, data: updated });
-  } catch (error) {
-    return handleError(c, error, "updating user");
-  }
+    return await c.env.runMutation(api.users.update, updatePayload);
+  });
 });
 
 // Complete onboarding for a user
 app.post("/api/users/completeOnboarding", async (c) => {
-  try {
-    const { userId, footShape, favoriteShoeId } = await c.req.json();
-
-    if (!userId) {
-      return c.json({ success: false, message: "User ID is required" }, 400);
-    }
-
-    const user = await findUserByIdOrBetterAuthId(c, userId);
-
-    if (!user) {
-      return c.json({ success: false, message: "User not found" }, 404);
-    }
-
+  const { userId, footShape, favoriteShoeId } = await c.req.json();
+  return withUserIdValidation(c, userId, async (user) => {
     const onboardingPayload: any = { userId: user._id };
 
     if (footShape !== undefined) onboardingPayload.footShape = footShape;
@@ -369,50 +367,25 @@ app.post("/api/users/completeOnboarding", async (c) => {
       onboardingPayload.favoriteShoeId = favoriteShoeId as Id<"shoes">;
     }
 
-    const updated = await c.env.runMutation(api.users.completeOnboarding, onboardingPayload);
-
-    return c.json({ success: true, data: updated });
-  } catch (error) {
-    return handleError(c, error, "completing onboarding");
-  }
+    return await c.env.runMutation(api.users.completeOnboarding, onboardingPayload);
+  });
 });
 
 // Delete user profile (internal)
 app.post("/api/users/delete", async (c) => {
-  try {
-    const { id } = await c.req.json();
-
-    if (!id) {
-      return c.json({ success: false, message: "User ID is required" }, 400);
-    }
-
-    const user = await findUserByIdOrBetterAuthId(c, id);
-
-    if (!user) {
-      return c.json({ success: false, message: "User not found" }, 404);
-    }
-
-    await c.env.runMutation(api.authDb.deleteUser, {
-      id: user._id,
-    });
-
-    return c.json({ success: true, message: "User deleted successfully" });
-  } catch (error) {
-    return handleError(c, error, "deleting user");
-  }
+  const { id } = await c.req.json();
+  return withUserIdValidation(c, id, async (user) => {
+    await c.env.runMutation(api.authDb.deleteUser, { id: user._id });
+    return { message: "User deleted successfully" };
+  });
 });
 
 // Update user shoe stats (internal)
 app.post("/api/stash/updateUserShoeStats", async (c) => {
-  try {
-    const { userShoeId, size, purchaseDate, condition, notes, comfortScore, performanceRating, durabilityRating } = await c.req.json();
-
-    if (!userShoeId) {
-      return c.json({ success: false, message: "User shoe ID is required" }, 400);
-    }
-
-    const updated = await c.env.runMutation(api.stash.updateUserShoeStats, {
-      userShoeId: userShoeId as Id<"userShoes">,
+  const { userShoeId, size, purchaseDate, condition, notes, comfortScore, performanceRating, durabilityRating } = await c.req.json();
+  return withIdValidation<Id<"userShoes">>(c, userShoeId, "User shoe ID", async (userShoeId) => {
+    return await c.env.runMutation(api.stash.updateUserShoeStats, {
+      userShoeId,
       size,
       purchaseDate,
       condition,
@@ -421,45 +394,27 @@ app.post("/api/stash/updateUserShoeStats", async (c) => {
       performanceRating,
       durabilityRating
     });
-
-    return c.json({ success: true, data: updated });
-  } catch (error) {
-    return handleError(c, error, "updating shoe stats");
-  }
+  });
 });
 
 app.post("/api/stash/toggleFavourite", async (c) => {
-  try {
-    const { userShoeId } = await c.req.json();
-
-    if (!userShoeId) {
-      return c.json({ success: false, message: "User shoe ID is required" }, 400);
-    }
-
-    const updated = await c.env.runMutation(api.stash.toggleFavourite, {
-      userShoeId: userShoeId as Id<"userShoes">
-    });
-
-    return c.json({ success: true, data: updated });
-  } catch (error) {
-    return handleError(c, error, "toggling favourite");
-  }
+  const { userShoeId } = await c.req.json();
+  return withIdValidation<Id<"userShoes">>(c, userShoeId, "User shoe ID", async (userShoeId) => {
+    return await c.env.runMutation(api.stash.toggleFavourite, { userShoeId });
+  });
 });
 
 // Verify ownership of user shoe
 app.post("/api/stash/verifyOwnership", async (c) => {
+  const { userShoeId, betterAuthUserId } = await c.req.json();
+  if (!userShoeId || !betterAuthUserId) {
+    return c.json({ success: false, message: "User shoe ID and Better Auth User ID are required" }, 400);
+  }
   try {
-    const { userShoeId, betterAuthUserId } = await c.req.json();
-
-    if (!userShoeId || !betterAuthUserId) {
-      return c.json({ success: false, message: "User shoe ID and Better Auth User ID are required" }, 400);
-    }
-
     const ownership = await c.env.runQuery(api.auth.verifyUserShoeOwnership, {
       userShoeId: userShoeId as Id<"userShoes">,
       betterAuthUserId
     });
-
     return c.json({ success: true, data: ownership });
   } catch (error) {
     return handleError(c, error, "verifying ownership");
@@ -468,34 +423,21 @@ app.post("/api/stash/verifyOwnership", async (c) => {
 
 // Delete user shoe (internal)
 app.post("/api/stash/deleteUserShoe", async (c) => {
-  try {
-    const { userShoeId } = await c.req.json();
-
-    if (!userShoeId) {
-      return c.json({ success: false, message: "User shoe ID is required" }, 400);
-    }
-
-    await c.env.runMutation(api.stash.deleteUserShoe, {
-      userShoeId: userShoeId as Id<"userShoes">
-    });
-
-    return c.json({ success: true, data: { deleted: true } });
-  } catch (error) {
-    return handleError(c, error, "deleting user shoe");
-  }
+  const { userShoeId } = await c.req.json();
+  return withIdValidation<Id<"userShoes">>(c, userShoeId, "User shoe ID", async (userShoeId) => {
+    await c.env.runMutation(api.stash.deleteUserShoe, { userShoeId });
+    return { deleted: true };
+  });
 });
 
 // Delete shoe by name (admin)
 app.post("/api/shoes/deleteByName", async (c) => {
+  const { name, brand } = await c.req.json();
+  if (!name || !brand) {
+    return c.json({ success: false, message: "Name and brand are required" }, 400);
+  }
   try {
-    const { name, brand } = await c.req.json();
-
-    if (!name || !brand) {
-      return c.json({ success: false, message: "Name and brand are required" }, 400);
-    }
-
     const result = await c.env.runMutation(api.seed.deleteShoeByName, { name, brand });
-
     return c.json(result);
   } catch (error) {
     return handleError(c, error, "deleting shoe");
@@ -504,19 +446,15 @@ app.post("/api/shoes/deleteByName", async (c) => {
 
 // Update shoe image URL
 app.post("/api/shoes/updateImageUrl", async (c) => {
+  const { id, imageUrl } = await c.req.json();
+  if (!id || !imageUrl) {
+    return c.json({ success: false, message: "ID and imageUrl are required" }, 400);
+  }
   try {
-    const { id, imageUrl } = await c.req.json();
-
-    if (!id || !imageUrl) {
-      return c.json({ success: false, message: "ID and imageUrl are required" }, 400);
-    }
-
-    // Use the seed's update function directly
     const updated = await c.env.runMutation(api.seed.updateShoeImageUrl, {
       id: id as Id<"shoes">,
       imageUrl
     });
-
     return c.json({ success: true, data: updated });
   } catch (error) {
     return handleError(c, error, "updating shoe image URL");
@@ -527,14 +465,9 @@ app.post("/api/shoes/updateImageUrl", async (c) => {
 
 // Update subscription status
 app.post("/api/subscriptions/update", async (c) => {
-  try {
-    const { betterAuthId, subscriptionStatus, subscriptionTier, polarCustomerId, polarSubscriptionId, subscriptionExpiresAt } = await c.req.json();
-
-    if (!betterAuthId) {
-      return handleValidationError(c, "betterAuthId");
-    }
-
-    const user = await c.env.runMutation(api.subscriptions.updateSubscription, {
+  const { betterAuthId, subscriptionStatus, subscriptionTier, polarCustomerId, polarSubscriptionId, subscriptionExpiresAt } = await c.req.json();
+  return withUserValidation(c, betterAuthId, async () => {
+    return await c.env.runMutation(api.subscriptions.updateSubscription, {
       betterAuthId,
       subscriptionStatus,
       subscriptionTier,
@@ -542,49 +475,23 @@ app.post("/api/subscriptions/update", async (c) => {
       polarSubscriptionId,
       subscriptionExpiresAt,
     });
-
-    return c.json({ success: true, data: user });
-  } catch (error) {
-    return handleError(c, error, "updating subscription");
-  }
+  });
 });
 
 // Grant founder status
 app.post("/api/subscriptions/grantFounder", async (c) => {
-  try {
-    const { betterAuthId } = await c.req.json();
-
-    if (!betterAuthId) {
-      return handleValidationError(c, "betterAuthId");
-    }
-
-    const user = await c.env.runMutation(api.subscriptions.grantFounderStatus, {
-      betterAuthId,
-    });
-
-    return c.json({ success: true, data: user });
-  } catch (error) {
-    return handleError(c, error, "granting founder status");
-  }
+  const { betterAuthId } = await c.req.json();
+  return withUserValidation(c, betterAuthId, async () => {
+    return await c.env.runMutation(api.subscriptions.grantFounderStatus, { betterAuthId });
+  });
 });
 
 // Get subscription status
 app.post("/api/subscriptions/status", async (c) => {
-  try {
-    const { betterAuthId } = await c.req.json();
-
-    if (!betterAuthId) {
-      return handleValidationError(c, "betterAuthId");
-    }
-
-    const status = await c.env.runQuery(api.subscriptions.getSubscriptionStatus, {
-      betterAuthId,
-    });
-
-    return c.json({ success: true, data: status });
-  } catch (error) {
-    return handleError(c, error, "getting subscription status");
-  }
+  const { betterAuthId } = await c.req.json();
+  return withUserValidation(c, betterAuthId, async () => {
+    return await c.env.runQuery(api.subscriptions.getSubscriptionStatus, { betterAuthId });
+  });
 });
 
 // Get total user count (for founder spots)

@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader2, CheckCircle2, AlertCircle, AlertTriangle, Trash2 } from 'lucide-react';
+import { AlertTriangle, Trash2 } from 'lucide-react';
+import { AccountFormStatus } from './AccountFormStatus';
 
 const deletionSchema = z.object({
   password: z.string().min(1, 'Password is required'),
@@ -147,58 +148,28 @@ export function AccountDeletion() {
                   />
                 </div>
 
-                {validationError && (
-                  <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    {validationError}
-                  </div>
-                )}
-
-                {isError && error && (
-                  <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <div>
-                      <p className="font-medium">Error</p>
-                      <p className="mt-1">{error.message}</p>
-                    </div>
-                  </div>
-                )}
-
-                {isSuccess && (
-                  <div className="flex items-center gap-2 rounded-md bg-green-50 p-3 text-sm text-green-800">
-                    <CheckCircle2 className="h-4 w-4" />
-                    <div>
-                      <p className="font-medium">Account Deleted</p>
-                      <p className="mt-1">Redirecting you to the login page...</p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex gap-2 pt-2">
-                  <Button
-                    type="submit"
-                    variant="destructive"
-                    disabled={isLoading}
-                    className="flex-1"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Deleting Account...
-                      </>
-                    ) : (
-                      'Permanently Delete Account'
-                    )}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => handleDialogClose(false)}
-                    disabled={isLoading}
-                  >
-                    Cancel
-                  </Button>
+                <div className="space-y-4">
+                  <AccountFormStatus
+                    isLoading={isLoading}
+                    isError={isError}
+                    isSuccess={isSuccess}
+                    error={error}
+                    validationError={validationError}
+                    successTitle="Account Deleted"
+                    successMessage="Redirecting you to the login page..."
+                    loadingText="Deleting Account..."
+                    buttonText="Permanently Delete Account"
+                  />
                 </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleDialogClose(false)}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
               </form>
             </DialogContent>
           </Dialog>

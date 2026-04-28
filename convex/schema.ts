@@ -1,6 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { footShapeValidator, backlogStatusValidator, scoreHistoryEntryValidator, subscriptionStatusValidator, subscriptionTierValidator } from "./utils/helpers";
+import { footShapeValidator, backlogStatusValidator, scoreHistoryEntryValidator, subscriptionStatusValidator, subscriptionTierValidator, preferenceProfileValidator, learnedPreferencesValidator, footProfileValidator, genderValidator } from "./utils/helpers";
 
 export { footShapeValidator, backlogStatusValidator };
 
@@ -14,14 +14,7 @@ export default defineSchema({
     parentModelId: v.optional(v.id("shoes")),
     imageUrl: v.optional(v.string()),
     slug: v.optional(v.string()),
-    gender: v.optional(
-      v.union(
-        v.literal("men"),
-        v.literal("women"),
-        v.literal("kids"),
-        v.literal("unisex"),
-      ),
-    ),
+    gender: v.optional(genderValidator),
     aggressiveness: v.string(),
     brandAggressiveness: v.optional(v.number()),
     stiffness: v.string(),
@@ -165,26 +158,9 @@ export default defineSchema({
   userScoreProfiles: defineTable({
     userId: v.id("users"),
     overallScore: v.number(),
-    preferenceProfile: v.object({
-      comfort: v.number(),
-      performance: v.number(),
-      durability: v.number(),
-      aggressiveness: v.number(),
-      versatility: v.number(),
-    }),
-    learnedPreferences: v.object({
-      preferredBrands: v.array(v.string()),
-      preferredVolumes: v.array(v.string()),
-      preferredDisciplines: v.array(v.string()),
-      confidence: v.number(),
-      sampleSize: v.number(),
-    }),
-    footProfile: v.optional(
-      v.object({
-        shape: v.string(),
-        volume: v.string(),
-      }),
-    ),
+    preferenceProfile: preferenceProfileValidator,
+    learnedPreferences: learnedPreferencesValidator,
+    footProfile: footProfileValidator,
     lastUpdated: v.number(),
     version: v.number(),
     history: v.array(scoreHistoryEntryValidator),

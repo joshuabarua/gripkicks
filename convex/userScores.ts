@@ -1,30 +1,15 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
-import { scoreHistoryEntryValidator } from './utils/helpers';
+import { scoreHistoryEntryValidator, preferenceProfileValidator, learnedPreferencesValidator, footProfileValidator } from './utils/helpers';
 
 // Update or create user score profile
 export const updateScoreProfile = mutation({
   args: {
     userId: v.id('users'),
     overallScore: v.number(),
-    preferenceProfile: v.object({
-      comfort: v.number(),
-      performance: v.number(),
-      durability: v.number(),
-      aggressiveness: v.number(),
-      versatility: v.number(),
-    }),
-    learnedPreferences: v.object({
-      preferredBrands: v.array(v.string()),
-      preferredVolumes: v.array(v.string()),
-      preferredDisciplines: v.array(v.string()),
-      confidence: v.number(),
-      sampleSize: v.number(),
-    }),
-    footProfile: v.optional(v.object({
-      shape: v.string(),
-      volume: v.string(),
-    })),
+    preferenceProfile: preferenceProfileValidator,
+    learnedPreferences: learnedPreferencesValidator,
+    footProfile: footProfileValidator,
     lastUpdated: v.number(),
     version: v.number(),
   },

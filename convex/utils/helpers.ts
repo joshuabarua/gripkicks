@@ -114,4 +114,34 @@ export const scoreHistoryEntryValidator = v.object({
   affectedShoes: v.array(v.string()),
 });
 
+export const preferenceProfileValidator = v.object({
+  comfort: v.number(),
+  performance: v.number(),
+  durability: v.number(),
+  aggressiveness: v.number(),
+  versatility: v.number(),
+});
+
+export const learnedPreferencesValidator = v.object({
+  preferredBrands: v.array(v.string()),
+  preferredVolumes: v.array(v.string()),
+  preferredDisciplines: v.array(v.string()),
+  confidence: v.number(),
+  sampleSize: v.number(),
+});
+
+export const footProfileValidator = v.optional(
+  v.object({
+    shape: v.string(),
+    volume: v.string(),
+  })
+);
+
+export const genderValidator = v.union(
+  v.literal("men"),
+  v.literal("women"),
+  v.literal("kids"),
+  v.literal("unisex"),
+);
+
 export { cleanupModelName, deriveModelName, deriveVariantLabel };

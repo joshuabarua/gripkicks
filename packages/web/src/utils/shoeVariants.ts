@@ -118,36 +118,17 @@ export function groupUserShoesByModel<T extends UserShoeLike>(userShoes: T[]) {
 
     const source = details as ShoeVariantSource;
     const brandName = source.brand || "Unknown";
-
     const modelName = getStoredModelName(source);
     const groupKey = `${brandName.toLowerCase()}::${modelName.toLowerCase()}`;
-    const existing = grouped.get(groupKey);
     const variant = {
       item,
       variantLabel: getStoredVariantLabel(source),
     };
 
-    if (existing) {
-      existing.variants.push(variant);
-      continue;
-    }
-
-    grouped.set(groupKey, {
-      brand: brandName,
-      baseName: modelName,
-      groupKey,
-      variants: [variant],
-    });
+    addVariantToGroup(grouped, groupKey, brandName, modelName, variant);
   }
 
-  return Array.from(grouped.values()).map((group) => ({
-    ...group,
-    variants: [...group.variants].sort((a, b) => {
-      const left = a.variantLabel ?? "";
-      const right = b.variantLabel ?? "";
-      return left.localeCompare(right);
-    }),
-  }));
+  return sortGroupedVariants(grouped);
 }
 
 export function groupShoesByModel<T extends ShoeLike>(shoes: T[]) {
@@ -155,28 +136,43 @@ export function groupShoesByModel<T extends ShoeLike>(shoes: T[]) {
 
   for (const item of shoes) {
     const source = item as ShoeVariantSource;
-    const modelName = getStoredModelName(source);
     const brandName = source.brand || "Unknown";
+    const modelName = getStoredModelName(source);
     const groupKey = `${brandName.toLowerCase()}::${modelName.toLowerCase()}`;
-    const existing = grouped.get(groupKey);
     const variant = {
       item,
       variantLabel: getStoredVariantLabel(source),
     };
 
-    if (existing) {
-      existing.variants.push(variant);
-      continue;
-    }
-
-    grouped.set(groupKey, {
-      brand: brandName,
-      baseName: modelName,
-      groupKey,
-      variants: [variant],
-    });
+    addVariantToGroup(grouped, groupKey, brandName, modelName, variant);
   }
 
+  return sortGroupedVariants(grouped);
+}
+
+function addVariantToGroup<T>(
+  grouped: Map<string, ShoeVariantGroup<T>>,
+  groupKey: string,
+  brandName: string,
+  modelName: string,
+  variant: GroupedVariant<T>
+) {
+  const existing = grouped.get(groupKey);
+
+  if (existing) {
+    existing.variants.push(variant);
+    return;
+  }
+
+  grouped.set(groupKey, {
+    brand: brandName,
+    baseName: modelName,
+    groupKey,
+    variants: [variant],
+  });
+}
+
+function sortGroupedVariants<T>(grouped: Map<string, ShoeVariantGroup<T>>) {
   return Array.from(grouped.values()).map((group) => ({
     ...group,
     variants: [...group.variants].sort((a, b) => {

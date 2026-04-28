@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { footShapeValidator, cleanupModelName, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists } from "./utils/helpers";
+import { footShapeValidator, cleanupModelName, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, genderValidator } from "./utils/helpers";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -11,6 +11,25 @@ interface PaginatedResult<T> {
 
 const DEFAULT_PAGE_SIZE = 50;
 const MAX_PAGE_SIZE = 100;
+
+async function enrichShoesWithRubber(ctx: any, shoes: any[]) {
+  return await Promise.all(
+    shoes.map(async (shoe) => {
+      const rubberTechnology = shoe.rubberTechnologyId
+        ? await ctx.db.get(shoe.rubberTechnologyId)
+        : null;
+      return { ...shoe, rubberTechnology };
+    }),
+  );
+}
+
+function sortShoesByName(shoes: any[]) {
+  return shoes.sort((a, b) => {
+    const brandCompare = a.brand.localeCompare(b.brand);
+    if (brandCompare !== 0) return brandCompare;
+    return a.name.localeCompare(b.name);
+  });
+}
 
 async function resolveParentModelId(
   ctx: any,
@@ -62,20 +81,8 @@ export const list = query({
     const hasMore = paginatedShoes.length > pageSize;
     const items = hasMore ? paginatedShoes.slice(0, pageSize) : paginatedShoes;
 
-    const shoesWithRubber = await Promise.all(
-      items.map(async (shoe) => {
-        const rubberTechnology = shoe.rubberTechnologyId
-          ? await ctx.db.get(shoe.rubberTechnologyId)
-          : null;
-        return { ...shoe, rubberTechnology };
-      }),
-    );
-
-    const sortedItems = shoesWithRubber.sort((a, b) => {
-      const brandCompare = a.brand.localeCompare(b.brand);
-      if (brandCompare !== 0) return brandCompare;
-      return a.name.localeCompare(b.name);
-    });
+    const shoesWithRubber = await enrichShoesWithRubber(ctx, items);
+    const sortedItems = sortShoesByName(shoesWithRubber);
 
     const lastItem = items[items.length - 1];
 
@@ -92,21 +99,8 @@ export const listAll = query({
   args: {},
   handler: async (ctx) => {
     const shoes = await ctx.db.query("shoes").collect();
-
-    const shoesWithRubber = await Promise.all(
-      shoes.map(async (shoe) => {
-        const rubberTechnology = shoe.rubberTechnologyId
-          ? await ctx.db.get(shoe.rubberTechnologyId)
-          : null;
-        return { ...shoe, rubberTechnology };
-      }),
-    );
-
-    return shoesWithRubber.sort((a, b) => {
-      const brandCompare = a.brand.localeCompare(b.brand);
-      if (brandCompare !== 0) return brandCompare;
-      return a.name.localeCompare(b.name);
-    });
+    const shoesWithRubber = await enrichShoesWithRubber(ctx, shoes);
+    return sortShoesByName(shoesWithRubber);
   },
 });
 
@@ -166,14 +160,7 @@ export const create = mutation({
     parentModelId: v.optional(v.id("shoes")),
     imageUrl: v.optional(v.string()),
     slug: v.optional(v.string()),
-    gender: v.optional(
-      v.union(
-        v.literal("men"),
-        v.literal("women"),
-        v.literal("kids"),
-        v.literal("unisex"),
-      ),
-    ),
+    gender: v.optional(genderValidator),
     aggressiveness: v.string(),
     stiffness: v.string(),
     climbingDiscipline: v.string(),
@@ -284,14 +271,7 @@ export const update = mutation({
     parentModelId: v.optional(v.id("shoes")),
     imageUrl: v.optional(v.string()),
     slug: v.optional(v.string()),
-    gender: v.optional(
-      v.union(
-        v.literal("men"),
-        v.literal("women"),
-        v.literal("kids"),
-        v.literal("unisex"),
-      ),
-    ),
+    gender: v.optional(genderValidator),
     aggressiveness: v.optional(v.string()),
     stiffness: v.optional(v.string()),
     climbingDiscipline: v.optional(v.string()),

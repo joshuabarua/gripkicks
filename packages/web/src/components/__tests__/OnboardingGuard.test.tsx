@@ -28,8 +28,34 @@ vi.mocked(await import("@/lib/auth")).useSession = mockUseSession;
 vi.mocked(await import("@/lib/api-client")).fetchApi = mockFetchApi;
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <LoadingProvider>{children}</LoadingProvider>
-  );
+  <LoadingProvider>{children}</LoadingProvider>
+);
+
+function renderWithWrapper(content: React.ReactNode) {
+  return render(content, { wrapper });
+}
+
+function setupMockSession(data: any = null, isPending: boolean = false) {
+  mockUseSession.mockReturnValue({ data, isPending });
+}
+
+function setupMockOnboardingComplete(complete: boolean = true) {
+  mockFetchApi.mockResolvedValue({
+    isOk: () => true,
+    value: { onboardingComplete: complete },
+  });
+}
+
+function setupMockApiError() {
+  mockFetchApi.mockRejectedValue(new Error("Network error"));
+}
+
+function setupMockApiResponseError() {
+  mockFetchApi.mockResolvedValue({
+    isOk: () => false,
+    error: new Error("Server error"),
+  });
+}
 
 describe("OnboardingGuard", () => {
   beforeEach(() => {
@@ -43,13 +69,12 @@ describe("OnboardingGuard", () => {
 
   it("renders children immediately for public paths", () => {
     mockUsePathname.mockReturnValue("/");
-    mockUseSession.mockReturnValue({ data: null, isPending: false });
+    setupMockSession();
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Public Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
     expect(screen.getByTestId("protected-content")).toBeInTheDocument();
@@ -58,13 +83,12 @@ describe("OnboardingGuard", () => {
 
   it("renders children immediately for auth paths", () => {
     mockUsePathname.mockReturnValue("/auth/login");
-    mockUseSession.mockReturnValue({ data: null, isPending: false });
+    setupMockSession();
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Auth Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
     expect(screen.getByTestId("protected-content")).toBeInTheDocument();
@@ -73,13 +97,12 @@ describe("OnboardingGuard", () => {
 
   it("renders children immediately for onboarding path", () => {
     mockUsePathname.mockReturnValue("/onboarding");
-    mockUseSession.mockReturnValue({ data: null, isPending: false });
+    setupMockSession();
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Onboarding Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
     expect(screen.getByTestId("protected-content")).toBeInTheDocument();
@@ -88,28 +111,25 @@ describe("OnboardingGuard", () => {
 
   it("renders children while session is loading (loading shown via global overlay)", () => {
     mockUsePathname.mockReturnValue("/dashboard");
-    mockUseSession.mockReturnValue({ data: null, isPending: true });
+    setupMockSession(null, true);
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
-    // With global loading, children are always rendered
     expect(screen.getByTestId("protected-content")).toBeInTheDocument();
   });
 
   it("renders children for unauthenticated users on protected paths", async () => {
     mockUsePathname.mockReturnValue("/dashboard");
-    mockUseSession.mockReturnValue({ data: null, isPending: false });
+    setupMockSession();
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
     await waitFor(() => {
@@ -122,20 +142,13 @@ describe("OnboardingGuard", () => {
 
   it("renders children when onboarding is incomplete (no redirect)", async () => {
     mockUsePathname.mockReturnValue("/dashboard");
-    mockUseSession.mockReturnValue({
-      data: { user: { id: "user-1" } },
-      isPending: false,
-    });
-    mockFetchApi.mockResolvedValue({
-      isOk: () => true,
-      value: { onboardingComplete: false },
-    });
+    setupMockSession({ user: { id: "user-1" } });
+    setupMockOnboardingComplete(false);
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
     await waitFor(() => {
@@ -148,20 +161,13 @@ describe("OnboardingGuard", () => {
 
   it("renders children when onboarding is complete", async () => {
     mockUsePathname.mockReturnValue("/dashboard");
-    mockUseSession.mockReturnValue({
-      data: { user: { id: "user-1" } },
-      isPending: false,
-    });
-    mockFetchApi.mockResolvedValue({
-      isOk: () => true,
-      value: { onboardingComplete: true },
-    });
+    setupMockSession({ user: { id: "user-1" } });
+    setupMockOnboardingComplete(true);
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
     await waitFor(() => {
@@ -173,19 +179,15 @@ describe("OnboardingGuard", () => {
 
   it("handles API errors gracefully and renders children", async () => {
     mockUsePathname.mockReturnValue("/dashboard");
-    mockUseSession.mockReturnValue({
-      data: { user: { id: "user-1" } },
-      isPending: false,
-    });
-    mockFetchApi.mockRejectedValue(new Error("Network error"));
+    setupMockSession({ user: { id: "user-1" } });
+    setupMockApiError();
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
     await waitFor(() => {
@@ -203,20 +205,13 @@ describe("OnboardingGuard", () => {
 
   it("handles API error response and renders children", async () => {
     mockUsePathname.mockReturnValue("/footscan");
-    mockUseSession.mockReturnValue({
-      data: { user: { id: "user-1" } },
-      isPending: false,
-    });
-    mockFetchApi.mockResolvedValue({
-      isOk: () => false,
-      error: new Error("Server error"),
-    });
+    setupMockSession({ user: { id: "user-1" } });
+    setupMockApiResponseError();
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Foot Lab Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
     await waitFor(() => {
@@ -228,22 +223,15 @@ describe("OnboardingGuard", () => {
 
   it("renders children for footscan path even when onboarding incomplete", async () => {
     mockUsePathname.mockReturnValue("/footscan");
-    mockUseSession.mockReturnValue({
-      data: { user: { id: "user-1" } },
-      isPending: false,
-    });
-    mockFetchApi.mockResolvedValue({
-      isOk: () => true,
-      value: { onboardingComplete: false },
-    });
+    setupMockSession({ user: { id: "user-1" } });
+    setupMockOnboardingComplete(false);
 
     const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Foot Lab Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
     await waitFor(() => {
@@ -260,18 +248,16 @@ describe("OnboardingGuard", () => {
 
   it("times out session loading after 5 seconds and logs warning", async () => {
     mockUsePathname.mockReturnValue("/dashboard");
-    mockUseSession.mockReturnValue({ data: null, isPending: true });
+    setupMockSession(null, true);
 
     const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-    render(
+    renderWithWrapper(
       <OnboardingGuard>
         <div data-testid="protected-content">Protected Content</div>
-      </OnboardingGuard>,
-      { wrapper }
+      </OnboardingGuard>
     );
 
-    // Children are always rendered with global loading
     expect(screen.getByTestId("protected-content")).toBeInTheDocument();
 
     vi.advanceTimersByTime(5001);
@@ -289,20 +275,13 @@ describe("OnboardingGuard", () => {
     for (const path of protectedPaths) {
       vi.clearAllMocks();
       mockUsePathname.mockReturnValue(path);
-      mockUseSession.mockReturnValue({
-        data: { user: { id: "user-1" } },
-        isPending: false,
-      });
-      mockFetchApi.mockResolvedValue({
-        isOk: () => true,
-        value: { onboardingComplete: false },
-      });
+      setupMockSession({ user: { id: "user-1" } });
+      setupMockOnboardingComplete(false);
 
-      const { unmount } = render(
+      const { unmount } = renderWithWrapper(
         <OnboardingGuard>
           <div data-testid="protected-content">Content for {path}</div>
-        </OnboardingGuard>,
-        { wrapper }
+        </OnboardingGuard>
       );
 
       await waitFor(() => {

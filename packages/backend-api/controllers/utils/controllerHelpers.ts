@@ -59,3 +59,26 @@ export function handleControllerError(error: any, operation: string, method: str
   logControllerError(operation, error, method, url, userId);
   return error instanceof Error ? new UnexpectedError(error.message) : new UnexpectedError('Unknown error');
 }
+
+export async function authenticatedConvexRequest<T>(
+  c: Context,
+  endpoint: string,
+  method: string = 'POST',
+  body?: any
+): Promise<T> {
+  const user = c.get('user');
+  const convexUrl = getConvexUrl();
+
+  const response = await fetchWithTimeout(`${convexUrl}${endpoint}`, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined
+  });
+
+  if (!response.ok) {
+    throw new UnexpectedError(`Convex request failed: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.data || data;
+}

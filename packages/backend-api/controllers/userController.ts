@@ -1,14 +1,14 @@
-import { Context } from "hono";
-import { userService } from "../services/user.service";
-import { resultAsyncToHonoResponse } from "../utils/response";
-import {
-  UnauthenticatedError,
-  ValidationError,
+import { Context } from 'hono';
+import { ResultAsync, err, ok } from 'neverthrow';
+import { 
+  UnauthenticatedError, 
+  ValidationError, 
   NotFoundError,
-  UnexpectedError,
-  AppError,
-} from "../src/lib/errors";
-import { err, ResultAsync } from "neverthrow";
+  UnexpectedError 
+} from '../src/lib/errors';
+import { resultAsyncToHonoResponse } from '../utils/response';
+import { checkUserAuthentication, handleControllerError } from './utils/controllerHelpers';
+import { userService } from "../services/user.service";
 import { getConvexUrl } from "../utils/convexHelper";
 
 export const getUsers = async (c: Context): Promise<Response> => {
@@ -31,41 +31,26 @@ export const getUserById = async (c: Context): Promise<Response> => {
 
   const result = await ResultAsync.fromPromise(
     Promise.reject(new NotFoundError("User not found")), // TODO: Replace with Convex query
-    (error: any) =>
-      error instanceof AppError
-        ? error
-        : new UnexpectedError("Failed to fetch user"),
+    (error: any) => new UnexpectedError("Failed to fetch user"),
   );
 
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
 export const getProfile = async (c: Context): Promise<Response> => {
-  const user = c.get("user");
-  if (!user || !user.id) {
-    return resultAsyncToHonoResponse(
-      c,
-      Promise.resolve(
-        err(new UnauthenticatedError("User not found in context")),
-      ),
-    );
-  }
+  const authError = checkUserAuthentication(c);
+  if (authError) return authError;
 
+  const user = c.get("user");
   const result = await userService.getUserById(user.id);
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
 export const editProfile = async (c: Context): Promise<Response> => {
-  const user = c.get("user");
-  if (!user || !user.id) {
-    return resultAsyncToHonoResponse(
-      c,
-      Promise.resolve(
-        err(new UnauthenticatedError("User not found in context")),
-      ),
-    );
-  }
+  const authError = checkUserAuthentication(c);
+  if (authError) return authError;
 
+  const user = c.get("user");
   const body = await c.req.json();
   const updateFields: Record<string, any> = {};
   if (typeof body.name === "string" && body.name !== "")
@@ -93,16 +78,10 @@ export const editProfile = async (c: Context): Promise<Response> => {
 };
 
 export const completeOnboarding = async (c: Context): Promise<Response> => {
-  const user = c.get("user");
-  if (!user || !user.id) {
-    return resultAsyncToHonoResponse(
-      c,
-      Promise.resolve(
-        err(new UnauthenticatedError("User not found in context")),
-      ),
-    );
-  }
+  const authError = checkUserAuthentication(c);
+  if (authError) return authError;
 
+  const user = c.get("user");
   const body = await c.req.json();
   const { footShape, favoriteShoeId } = body;
 

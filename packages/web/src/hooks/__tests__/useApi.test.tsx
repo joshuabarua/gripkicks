@@ -7,7 +7,6 @@ import { fetchApi } from "@/lib/api-client";
 import { ApiError } from "@/lib/errors";
 import { ok, err } from "neverthrow";
 
-// Mock fetchApi
 vi.mock("@/lib/api-client", () => ({
   fetchApi: vi.fn(),
 }));
@@ -36,6 +35,40 @@ describe("useApi hooks", () => {
     vi.clearAllMocks();
   });
 
+  async function testSuccessfulHook(
+    hookFn: () => any,
+    mockData: any,
+    expectedEndpoint: string
+  ) {
+    mockFetchApi.mockResolvedValue(ok(mockData));
+    const { result } = renderHook(hookFn, { wrapper });
+
+    expect(result.current.isLoading).toBe(true);
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.data).toEqual(mockData);
+    expect(result.current.error).toBeNull();
+    expect(mockFetchApi).toHaveBeenCalledWith(expectedEndpoint);
+  }
+
+  async function testErrorHook(
+    hookFn: () => any,
+    error: any
+  ) {
+    mockFetchApi.mockResolvedValue(err(error));
+    const { result } = renderHook(hookFn, { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.error).toEqual(error);
+  }
+
   describe("useProfile", () => {
     it("fetches profile successfully", async () => {
       const profileData = {
@@ -45,33 +78,12 @@ describe("useApi hooks", () => {
         image: "https://example.com/avatar.jpg",
       };
 
-      mockFetchApi.mockResolvedValue(ok(profileData));
-
-      const { result } = renderHook(() => useProfile(), { wrapper });
-
-      expect(result.current.isLoading).toBe(true);
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.data).toEqual(profileData);
-      expect(result.current.error).toBeNull();
-      expect(mockFetchApi).toHaveBeenCalledWith("/api/v1/profile");
+      await testSuccessfulHook(() => useProfile(), profileData, "/api/v1/profile");
     });
 
     it("handles API error", async () => {
       const error = new ApiError({ type: "NETWORK_ERROR", message: "Failed to fetch" });
-      mockFetchApi.mockResolvedValue(err(error));
-
-      const { result } = renderHook(() => useProfile(), { wrapper });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.data).toBeUndefined();
-      expect(result.current.error).toEqual(error);
+      await testErrorHook(() => useProfile(), error);
     });
 
     it("uses correct query key", () => {
@@ -86,14 +98,11 @@ describe("useApi hooks", () => {
       const profileData = { id: "user-123", name: "John", email: "john@example.com" };
       mockFetchApi.mockResolvedValue(ok(profileData));
 
-      // Render hook
       const { result, rerender } = renderHook(() => useProfile(), { wrapper });
-      
-      // Initial fetch
+
       await waitFor(() => expect(result.current.data).toEqual(profileData));
       expect(mockFetchApi).toHaveBeenCalledTimes(1);
 
-      // Rerender should use cached data (no additional fetch)
       rerender();
       expect(result.current.data).toEqual(profileData);
       expect(mockFetchApi).toHaveBeenCalledTimes(1);
@@ -108,33 +117,12 @@ describe("useApi hooks", () => {
         message: "Service is healthy",
       };
 
-      mockFetchApi.mockResolvedValue(ok(healthData));
-
-      const { result } = renderHook(() => useHealthCheck(), { wrapper });
-
-      expect(result.current.isLoading).toBe(true);
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.data).toEqual(healthData);
-      expect(result.current.error).toBeNull();
-      expect(mockFetchApi).toHaveBeenCalledWith("/health");
+      await testSuccessfulHook(() => useHealthCheck(), healthData, "/health");
     });
 
     it("handles health check error", async () => {
-      const error = new ApiError({ type: "SERVER_ERROR", message: "Service unavailable" });
-      mockFetchApi.mockResolvedValue(err(error));
-
-      const { result } = renderHook(() => useHealthCheck(), { wrapper });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.data).toBeUndefined();
-      expect(result.current.error).toEqual(error);
+      const error = new ApiError({ type: "INTERNAL_SERVER_ERROR", message: "Service unavailable" });
+      await testErrorHook(() => useHealthCheck(), error);
     });
 
     it("uses correct query key", () => {
@@ -153,12 +141,10 @@ describe("useApi hooks", () => {
   describe("error handling", () => {
     it("handles API errors correctly", async () => {
       const error = new ApiError({ type: "UNAUTHORIZED", message: "Unauthorized" });
-      mockFetchApi.mockResolvedValue(err(error));
+      await testErrorHook(() => useProfile(), error);
 
       const { result } = renderHook(() => useProfile(), { wrapper });
-
       await waitFor(() => {
-        expect(result.current.error).toEqual(error);
         expect(result.current.status).toBe("error");
         expect(result.current.data).toBeUndefined();
       });
@@ -166,12 +152,10 @@ describe("useApi hooks", () => {
 
     it("handles network errors correctly", async () => {
       const networkError = new ApiError({ type: "NETWORK_ERROR", message: "Network failed" });
-      mockFetchApi.mockResolvedValue(err(networkError));
+      await testErrorHook(() => useProfile(), networkError);
 
       const { result } = renderHook(() => useProfile(), { wrapper });
-
       await waitFor(() => {
-        expect(result.current.error).toEqual(networkError);
         expect(result.current.status).toBe("error");
         expect(result.current.data).toBeUndefined();
       });

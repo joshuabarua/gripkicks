@@ -17,6 +17,15 @@ async function getUserShoesByUserId(ctx: any, userId: any) {
     .collect();
 }
 
+async function findExistingUserShoe(ctx: any, userId: any, shoeId: any) {
+  return await ctx.db
+    .query("userShoes")
+    .withIndex("by_userId_shoeId", (q: any) =>
+      q.eq("userId", userId).eq("shoeId", shoeId)
+    )
+    .first();
+}
+
 function calculateRatingAverages(allUserRatings: any[]) {
   const validComfortRatings = allUserRatings
     .filter(r => r.comfortScore !== undefined)
@@ -39,6 +48,28 @@ function calculateRatingAverages(allUserRatings: any[]) {
       ? validDurabilityRatings.reduce((a, b) => a + b, 0) / validDurabilityRatings.length
       : undefined,
   };
+}
+
+async function updateShoeRatingAverages(ctx: any, shoeId: any) {
+  const allUserRatings = await ctx.db
+    .query("userShoes")
+    .withIndex("by_shoeId", (q: any) => q.eq("shoeId", shoeId))
+    .collect();
+
+  if (allUserRatings.length >= 3) {
+    const averages = calculateRatingAverages(allUserRatings);
+    await ctx.db.patch(shoeId, {
+      ...averages,
+      totalRatings: allUserRatings.length,
+    });
+  } else {
+    await ctx.db.patch(shoeId, {
+      avgComfortScore: undefined,
+      avgPerformanceRating: undefined,
+      avgDurabilityRating: undefined,
+      totalRatings: allUserRatings.length,
+    });
+  }
 }
 
 export const getUserStash = query({
@@ -78,12 +109,7 @@ export const addToStash = mutation({
   },
   handler: async (ctx, args) => {
     // Check if already in stash
-    const existing = await ctx.db
-      .query("userShoes")
-      .withIndex("by_userId_shoeId", (q) =>
-        q.eq("userId", args.userId).eq("shoeId", args.shoeId)
-      )
-      .first();
+    const existing = await findExistingUserShoe(ctx, args.userId, args.shoeId);
 
     if (existing) {
       return existing._id;
@@ -102,12 +128,7 @@ export const removeFromStash = mutation({
     shoeId: v.id("shoes"),
   },
   handler: async (ctx, args) => {
-    const existing = await ctx.db
-      .query("userShoes")
-      .withIndex("by_userId_shoeId", (q) =>
-        q.eq("userId", args.userId).eq("shoeId", args.shoeId)
-      )
-      .first();
+    const existing = await findExistingUserShoe(ctx, args.userId, args.shoeId);
 
     if (existing) {
       await ctx.db.delete(existing._id);
@@ -123,13 +144,7 @@ export const isInStash = query({
     shoeId: v.id("shoes"),
   },
   handler: async (ctx, args) => {
-    const existing = await ctx.db
-      .query("userShoes")
-      .withIndex("by_userId_shoeId", (q) =>
-        q.eq("userId", args.userId).eq("shoeId", args.shoeId)
-      )
-      .first();
-
+    const existing = await findExistingUserShoe(ctx, args.userId, args.shoeId);
     return existing !== null;
   },
 });
@@ -141,7 +156,6 @@ export const updateUserShoeStats = mutation({
     purchaseDate: v.optional(v.string()),
     condition: v.optional(v.string()),
     notes: v.optional(v.string()),
-    // Comfort ranking fields
     comfortScore: v.optional(v.number()),
     performanceRating: v.optional(v.number()),
     durabilityRating: v.optional(v.number()),
@@ -157,30 +171,8 @@ export const updateUserShoeStats = mutation({
       return null;
     }
 
-    // Update the user shoe
     await ctx.db.patch(userShoeId, fieldsToUpdate);
-
-    // Recalculate average ratings for this shoe
-    const allUserRatings = await ctx.db
-      .query("userShoes")
-      .withIndex("by_shoeId", (q) => q.eq("shoeId", userShoe.shoeId))
-      .collect();
-
-    if (allUserRatings.length >= 3) {
-      const averages = calculateRatingAverages(allUserRatings);
-      await ctx.db.patch(userShoe.shoeId, {
-        ...averages,
-        totalRatings: allUserRatings.length,
-      });
-    } else if (allUserRatings.length < 3) {
-      // Clear averages if less than 3 ratings
-      await ctx.db.patch(userShoe.shoeId, {
-        avgComfortScore: undefined,
-        avgPerformanceRating: undefined,
-        avgDurabilityRating: undefined,
-        totalRatings: allUserRatings.length,
-      });
-    }
+    await updateShoeRatingAverages(ctx, userShoe.shoeId);
 
     return await ctx.db.get(userShoeId);
   },
