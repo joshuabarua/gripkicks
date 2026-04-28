@@ -9,8 +9,6 @@ import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useQuery } from 'convex/react';
-import { api } from 'convex/_generated/api';
 
 type FootShape = 'egyptian' | 'roman' | 'greek' | 'germanic' | 'celtic';
 type FootVolume = 'low' | 'medium' | 'high';
@@ -126,7 +124,6 @@ function VolumeArch({ volume, active }: { volume: FootVolume; active: boolean })
 
 export default function FootLabPage() {
   const { data: session } = useSession();
-  const { profile: footProfile } = useFootProfileStore();
   const router = useRouter();
   const setProfile = useFootProfileStore((state) => state.setProfile);
   const [selectedFootShape, setSelectedFootShape] = useState<FootShape | null>(null);
@@ -136,18 +133,6 @@ export default function FootLabPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);(true);
 
-  const userData = useQuery(
-    api.users.findByBetterAuthId,
-    session?.user ? { betterAuthId: session.user.id } : "skip",
-  );
-  const userStashData = useQuery(
-    api.stash.getUserStash,
-    userData ? { userId: userData._id } : "skip",
-  );
-
-  const hasFootProfile = !!(footProfile?.shape && footProfile?.volume);
-  const hasShoesInStash = userStashData && userStashData.length > 0;
-  const shouldSkipOnboarding = hasFootProfile && hasShoesInStash;
   const [error, setError] = useState<string | null>(null);
   const [onboardingComplete, setOnboardingComplete] = useState<boolean>(true);
 
