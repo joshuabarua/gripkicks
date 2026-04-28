@@ -1,4 +1,3 @@
-import { hc } from "hono/client";
 import { ResultAsync } from "neverthrow";
 import { AppError, ErrorFactory } from "./errors";
 
@@ -56,15 +55,6 @@ function getCacheKey(path: string, options?: RequestInit): string {
 }
 
 const apiBaseUrl = "";
-
-const apiClient = hc(apiBaseUrl, {
-  fetch: (input: RequestInfo | URL, init?: RequestInit) => {
-    return fetch(input, {
-      ...init,
-      credentials: "include",
-    });
-  },
-});
 
 export function fetchApi<T>(
   path: string,
@@ -128,5 +118,3 @@ export function fetchApi<T>(
 
   return request;
 }
-
-export default apiClient;

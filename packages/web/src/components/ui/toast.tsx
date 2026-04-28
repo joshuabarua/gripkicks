@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 import { AppError } from "@/lib/errors";
 
-export type ToastType = "success" | "error" | "info" | "warning" | "loading";
+type ToastType = "success" | "error" | "info" | "warning" | "loading";
 
-export interface Toast {
+interface Toast {
   id: string;
   message: string;
   description?: string | undefined;

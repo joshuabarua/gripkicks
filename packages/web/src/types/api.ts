@@ -1,19 +1,4 @@
 // Base API response types
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
-
-export interface PaginatedResponse<T> extends ApiResponse<T[]> {
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
 
 // Shoe related types
 export interface Shoe {
@@ -34,6 +19,7 @@ export interface Shoe {
   rubberTechnology?: RubberTechnology | null | undefined;
 }
 
+// fallow-ignore-next-line unused-type
 export interface RubberTechnology {
   _id: string;
   brand: string;
@@ -42,6 +28,7 @@ export interface RubberTechnology {
   durability: string;
 }
 
+// fallow-ignore-next-line unused-type
 export interface FootShapeCompat {
   _id: string;
   shoeId: string;
@@ -74,28 +61,7 @@ export interface UserShoe {
   isFavourite?: boolean | undefined;
 }
 
-export interface CreateUserShoeRequest {
-  shoeId: string;
-  size?: string | undefined;
-  purchaseDate?: string | undefined;
-  condition?: string | undefined;
-  notes?: string | undefined;
-  comfortScore?: number | undefined;
-  performanceRating?: number | undefined;
-  durabilityRating?: number | undefined;
-}
-
-export interface UpdateUserShoeRequest {
-  size?: string | undefined;
-  purchaseDate?: string | undefined;
-  condition?: string | undefined;
-  notes?: string | undefined;
-  comfortScore?: number | undefined;
-  performanceRating?: number | undefined;
-  durabilityRating?: number | undefined;
-}
-
-// User types
+// fallow-ignore-next-line unused-type
 export interface User {
   id: string;
   email: string;
@@ -104,6 +70,7 @@ export interface User {
   createdAt: string;
 }
 
+// fallow-ignore-next-line unused-type
 export interface Session {
   user: User;
   session: {
@@ -115,6 +82,7 @@ export interface Session {
 }
 
 // Error types
+// fallow-ignore-next-line unused-type
 export interface ApiError {
   code: string;
   message: string;

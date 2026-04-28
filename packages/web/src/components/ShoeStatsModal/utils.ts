@@ -4,7 +4,7 @@ export interface DefaultStats {
   durability: number;
 }
 
-export interface ShoeCharacteristics {
+interface ShoeCharacteristics {
   aggressiveness?: string | undefined;
   climbingDiscipline?: string | undefined;
   stiffness?: string | undefined;
@@ -64,19 +64,18 @@ export const calculateDefaultStats = (shoe: ShoeCharacteristics): DefaultStats =
   return { comfort, performance, durability };
 };
 
-export interface UserProvidedStats {
-  comfortScore?: number | undefined;
-  performanceRating?: number | undefined;
-  durabilityRating?: number | undefined;
-}
-
+// fallow-ignore-next-line unused-type
 export interface EffectiveShoeStats extends DefaultStats {
   average: number;
 }
 
 export const getEffectiveShoeStats = (
   shoe: ShoeCharacteristics,
-  stats?: UserProvidedStats,
+  stats?: {
+    comfortScore?: number | undefined;
+    performanceRating?: number | undefined;
+    durabilityRating?: number | undefined;
+  },
 ): EffectiveShoeStats => {
   const defaults = calculateDefaultStats(shoe);
   const comfort = stats?.comfortScore ?? defaults.comfort;

@@ -1,5 +1,6 @@
 import { Result, ResultAsync, err } from "neverthrow";
 
+// fallow-ignore-next-line unused-type
 export type ErrorSeverity = "low" | "medium" | "high" | "critical";
 
 export type ErrorCategory =
@@ -142,8 +143,8 @@ export class NotFoundError extends AppError {
     super({
       code: "NOT_FOUND_ERROR",
       message: customMessage || `${resource} not found`,
-      userMessage: customMessage ? 
-        customMessage : 
+      userMessage: customMessage ?
+        customMessage :
         `The ${resource.toLowerCase()} you're looking for doesn't exist or has been removed.`,
       severity: "low",
       category: "not_found",
@@ -264,12 +265,14 @@ export const ErrorFactory = {
   },
 };
 
+// fallow-ignore-next-line unused-type
 export type AsyncResult<T, E = AppError> = ResultAsync<T, E>;
+// fallow-ignore-next-line unused-type
 export type SyncResult<T, E = AppError> = Result<T, E>;
 
 export const ResultUtils = {
   retry: async <T>(
-    fn: () => AsyncResult<T>,
+    fn: () => Promise<Result<T, AppError>>,
     maxRetries: number = 3,
     delayMs: number = 1000,
   ): Promise<Result<T, AppError>> => {
