@@ -114,31 +114,6 @@ export interface Session {
   };
 }
 
-// ImageKit types
-export interface ImageKitAuthResponse {
-  token: string;
-  expire: number;
-  signature?: string;
-}
-
-export interface ImageKitUploadOptions {
-  file: File;
-  fileName: string;
-  folder?: string;
-  useUniqueFileName?: boolean;
-  tags?: string[];
-}
-
-// Search and filter types
-export interface ShoeSearchParams {
-  searchTerm?: string;
-  brand?: string;
-  climbingDiscipline?: string;
-  aggressiveness?: string;
-  stiffness?: string;
-  volume?: string;
-}
-
 // Error types
 export interface ApiError {
   code: string;
@@ -146,8 +121,3 @@ export interface ApiError {
   details?: unknown;
 }
 
-// Request/response types for API endpoints
-export type GetStashResponse = ApiResponse<UserShoe[]>;
-export type AddToStashResponse = ApiResponse<UserShoe>;
-export type UpdateStashItemResponse = ApiResponse<UserShoe>;
-export type RemoveFromStashResponse = ApiResponse<null>;

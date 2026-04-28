@@ -97,7 +97,7 @@ function getStoredVariantLabel(details: Pick<ShoeVariantSource, "name" | "gender
   return details.variantLabel?.trim() || getVariantLabel(details.name, details.gender);
 }
 
-export interface GroupedVariant<T> {
+interface GroupedVariant<T> {
   item: T;
   variantLabel: string | null;
 }
