@@ -161,19 +161,6 @@ export const logApiError = (
   }
 ) => logger.logApiError(message, error, request);
 
-export const logDatabaseError = (
-  operation: string,
-  error: unknown,
-  context: {
-    table?: string;
-    query?: unknown;
-    userId?: string;
-  }
-) => logger.logDatabaseError(operation, error, context);
-
-export const logAuthError = (message: string, error: unknown, userId?: string) =>
-  logger.logAuthError(message, error, userId);
-
 export const createErrorResponse = (
   error: unknown,
   defaultMessage?: string,

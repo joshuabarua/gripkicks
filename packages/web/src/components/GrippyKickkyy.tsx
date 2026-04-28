@@ -230,12 +230,6 @@ export function FooterGrippy() {
   );
 }
 
-export function NavigationGrippy() {
-  return (
-    <GrippyKickkyy trigger="hover" size="small" className="top-16 left-1/2" />
-  );
-}
-
 export function KonamiGrippy() {
   return <GrippyKickkyy trigger="konami" size="fullscreen" />;
 }

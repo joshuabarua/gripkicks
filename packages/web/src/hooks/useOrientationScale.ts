@@ -26,15 +26,3 @@ export function useOrientationScale(): OrientationScale {
 }
 
 export const useOrientation = useOrientationScale;
-
-export function getOrientationValue<T>(
-  orientation: "portrait" | "landscape",
-  portraitValue: T,
-  landscapeValue: T,
-): T {
-  return orientation === "portrait" ? portraitValue : landscapeValue;
-}
-
-export function scaleValue(value: number, scale: number): number {
-  return value * scale;
-}

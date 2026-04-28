@@ -76,27 +76,6 @@ export function ShoeCardSkeleton() {
   );
 }
 
-// User profile skeleton
-export function ProfileSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Skeleton variant="circular" width="96px" height="96px" />
-        <div className="space-y-2">
-          <Skeleton variant="text" width="120px" />
-          <Skeleton variant="text" width="200px" />
-        </div>
-      </div>
-      <div className="space-y-4">
-        <Skeleton variant="text" width="100px" />
-        <Skeleton variant="rectangular" height="40px" />
-        <Skeleton variant="text" width="100px" />
-        <Skeleton variant="rectangular" height="40px" />
-      </div>
-    </div>
-  );
-}
-
 // Stats strip skeleton
 export function StatsStripSkeleton() {
   return (
@@ -107,43 +86,6 @@ export function StatsStripSkeleton() {
           <Skeleton variant="text" width="80px" className="mx-auto" />
         </div>
       ))}
-    </div>
-  );
-}
-
-// Filter skeleton for advanced filters
-export function FilterSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-3">
-          <Skeleton variant="text" width="60px" />
-          <Skeleton variant="rectangular" height="40px" />
-        </div>
-        <div className="space-y-3">
-          <Skeleton variant="text" width="60px" />
-          <div className="flex gap-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} variant="rectangular" width="60px" height="32px" />
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="space-y-4">
-        <Skeleton variant="text" width="200px" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="space-y-3">
-              <Skeleton variant="text" width="80px" />
-              <div className="flex gap-2">
-                {Array.from({ length: 3 }).map((_, j) => (
-                  <Skeleton key={j} variant="rectangular" width="50px" height="32px" />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

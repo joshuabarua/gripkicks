@@ -92,9 +92,7 @@ export const useAppStore = create<AppStore>()(
 );
 
 // Performance-optimized selectors
-export const useTheme = () => useAppStore((state) => state.theme);
 export const useAnimationsEnabled = () => useAppStore((state) => state.animationsEnabled);
 export const useHighPerformanceMode = () => useAppStore((state) => state.highPerformanceMode);
-export const useSearchQuery = () => useAppStore((state) => state.searchQuery);
 export const useSelectedFilters = () => useAppStore((state) => state.selectedFilters);
 export const useLoadingStates = () => useAppStore((state) => state.loadingStates);

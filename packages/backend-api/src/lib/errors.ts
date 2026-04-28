@@ -57,33 +57,13 @@ export class UnexpectedError extends AppError {
   }
 }
 
-export class RandomError extends AppError {
-  constructor(message: string = 'Random error occurred') {
-    super('RANDOM_ERROR', message, 418);
-  }
-}
-
-export type ErrorType = 
+export type ErrorType =
   | 'VALIDATION_ERROR'
   | 'INVALID_DATA'
   | 'UNAUTHENTICATED'
   | 'UNAUTHORIZED'
   | 'NOT_FOUND'
-  | 'DATABASE_ERROR'
   | 'INTERNAL_SERVER_ERROR'
   | 'NETWORK_ERROR'
   | 'TIMEOUT_ERROR'
-  | 'UNEXPECTED_ERROR'
-  | 'RANDOM_ERROR';
-
-export class ApiError extends Error {
-  public readonly type: ErrorType;
-  public readonly details?: unknown;
-
-  constructor({ type, message, details }: { type: ErrorType; message: string; details?: unknown }) {
-    super(message);
-    this.name = 'ApiError';
-    this.type = type;
-    this.details = details;
-  }
-}
+  | 'UNEXPECTED_ERROR';

@@ -37,7 +37,7 @@ export function getConvexUrl(): string {
 
 export async function findUserByBetterAuthId(betterAuthId: string): Promise<{ success: boolean; data?: any; error?: string }> {
   const convexUrl = getConvexUrl();
-  
+
   try {
     const response = await fetchWithTimeout(`${convexUrl}/api/users/findByBetterAuthId`, {
       method: 'POST',
@@ -57,47 +57,12 @@ export async function findUserByBetterAuthId(betterAuthId: string): Promise<{ su
 
     return { success: true, data: result.data };
   } catch (error) {
-    // Log error with proper context
     const errorContext = {
       method: 'POST',
       url: '/api/users/findByBetterAuthId',
-      userId: betterAuthId, // Using betterAuthId as identifier
+      userId: betterAuthId,
     };
     console.error('Failed to find user in Convex:', error, errorContext);
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
-  }
-}
-
-export async function updateUserInConvex(
-  userId: string,
-  updateData: Record<string, any>
-): Promise<{ success: boolean; data?: any; error?: string }> {
-  const convexUrl = getConvexUrl();
-  
-  try {
-    const response = await fetchWithTimeout(`${convexUrl}/api/users/update`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: userId,
-        ...updateData
-      })
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      return { success: false, error: errorText };
-    }
-
-    const result = await response.json();
-    return { success: true, data: result };
-  } catch (error) {
-    logApiError('Failed to update user in Convex', error, {
-      method: 'POST',
-      url: '/api/users/update',
-      userId,
-      body: updateData
-    });
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
