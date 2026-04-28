@@ -62,9 +62,6 @@ export default function ShoeModel() {
           font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
           letterSpacing={-0.08}
-          scale={hoveredText === "GRIP" ? 1.1 : 1}
-          onPointerOver={() => setHoveredText("GRIP")}
-          onPointerOut={() => setHoveredText(null)}
         >
           GRIP
         </Text>
@@ -75,9 +72,6 @@ export default function ShoeModel() {
           font="fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
           letterSpacing={-0.08}
-          scale={hoveredText === "KICKS" ? 1.1 : 1}
-          onPointerOver={() => setHoveredText("KICKS")}
-          onPointerOut={() => setHoveredText(null)}
         >
           KICKS
         </Text>

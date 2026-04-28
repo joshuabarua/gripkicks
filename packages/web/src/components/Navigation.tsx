@@ -49,6 +49,7 @@ const menu = {
 
 const Navigation: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
+  const [showLogo, setShowLogo] = useState(true);
   const navRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { orientation, screenWidth } = useOrientation();
@@ -57,6 +58,7 @@ const Navigation: React.FC = () => {
   const isAuthenticated = !!session?.user;
   const isPhonePortrait =
     orientation === "portrait" && screenWidth > 0 && screenWidth < 768;
+  const isHomePage = pathname === "/";
   const menuVariants = isPhonePortrait
     ? {
         open: {
@@ -74,6 +76,23 @@ const Navigation: React.FC = () => {
         closedText: menu.closedText,
       }
     : menu;
+
+  useEffect(() => {
+    if (!isHomePage) {
+      setShowLogo(true);
+      return;
+    }
+
+    const handleScroll = () => {
+      const heroHeight = window.innerHeight;
+      setShowLogo(window.scrollY > heroHeight * 0.5);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isHomePage]);
 
   const closeMenu = () => setIsActive(false);
 
@@ -107,11 +126,23 @@ const Navigation: React.FC = () => {
     >
       <ul className="flex justify-between items-center text-foreground w-full">
         <li className="flex-1">
-          <Link href="/" className="inline-block">
-            <h1 className="font-ball-pill text-fluid-2xl whitespace-nowrap transition-transform duration-700 ease-in-out hover:scale-105">
-              Grip Kicks
-            </h1>
-          </Link>
+          <AnimatePresence>
+            {showLogo && (
+              <motion.div
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -100, opacity: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="inline-block"
+              >
+                <Link href="/" className="inline-block">
+                  <h1 className="font-ball-pill text-fluid-2xl whitespace-nowrap transition-transform duration-700 ease-in-out hover:scale-105">
+                    Grip Kicks
+                  </h1>
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </li>
 
         <li className="flex items-center justify-end">
