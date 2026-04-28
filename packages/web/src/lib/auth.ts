@@ -4,7 +4,7 @@ import { createAuthClient } from "better-auth/react";
 const SESSION_TIMEOUT_MS = 5000;
 const authBaseUrl = process.env["NEXT_PUBLIC_API_URL"] || "";
 
-export const authClient = createAuthClient({
+const authClient = createAuthClient({
   baseURL: authBaseUrl,
 });
 
@@ -12,11 +12,10 @@ export const {
   signIn,
   signUp,
   signOut,
-  useSession: useBetterAuthSession,
 } = authClient;
 
 export function useSession() {
-  const session = useBetterAuthSession();
+  const session = authClient.useSession();
   const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {

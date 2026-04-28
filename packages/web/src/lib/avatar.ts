@@ -19,14 +19,10 @@ export const getAvatarSeed = ({ userId, email }: AvatarIdentity) => {
   return email || userId || "gripkicks";
 };
 
-export const getAvatarBackground = (seed: string) => {
-  const index = hashString(seed) % BRAND_BACKGROUNDS.length;
-  return BRAND_BACKGROUNDS[index] || BRAND_BACKGROUNDS[0] || "f97316";
-};
-
 export const getDicebearAvatarUrl = (identity: AvatarIdentity, size = 128) => {
   const seed = getAvatarSeed(identity);
-  const backgroundColor = getAvatarBackground(seed);
+  const index = hashString(seed) % BRAND_BACKGROUNDS.length;
+  const backgroundColor = BRAND_BACKGROUNDS[index] || BRAND_BACKGROUNDS[0] || "f97316";
   const params = new URLSearchParams({
     seed,
     backgroundColor,

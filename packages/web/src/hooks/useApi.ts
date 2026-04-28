@@ -48,6 +48,3 @@ export function useHealthCheck() {
     staleTime: 30000, // 30 seconds
   });
 }
-
-// Export fetchApi for direct use
-export { fetchApi };

@@ -10,7 +10,7 @@ interface SkeletonProps {
   lines?: number;
 }
 
-export function Skeleton({ 
+function Skeleton({ 
   className = '', 
   variant = 'default', 
   width, 

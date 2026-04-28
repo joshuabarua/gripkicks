@@ -2,7 +2,7 @@ import { Context } from 'hono';
 import { Result } from 'neverthrow';
 import { AppError } from '../src/lib/errors';
 
-export function resultToHonoResponse<T>(
+function resultToHonoResponse<T>(
   c: Context,
   result: Result<T, AppError>
 ): Response {

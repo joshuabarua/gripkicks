@@ -1,6 +1,6 @@
 import { Polar } from "@polar-sh/sdk";
 
-export const polarClient = new Polar({
+const polarClient = new Polar({
   accessToken: process.env.POLAR_ACCESS_TOKEN,
 });
 
@@ -47,44 +47,6 @@ export class PolarService {
     }
   }
 
-  /**
-   * Create a new customer
-   */
-  static async createCustomer(email: string, name?: string) {
-    try {
-      const customer = await polarClient.customers.create({
-        email,
-        name,
-        metadata: {
-          source: "gripkicks-web",
-        },
-      });
-
-      return customer;
-    } catch (error) {
-      console.error("Error creating Polar customer:", error);
-      throw new Error("Failed to create customer");
-    }
-  }
-
-  /**
-   * Get product information
-   */
-  static async getProduct(productId: string) {
-    try {
-      const product = await polarClient.products.get({
-        id: productId,
-      } as never);
-      return product;
-    } catch (error) {
-      console.error("Error fetching Polar product:", error);
-      throw new Error("Failed to fetch product");
-    }
-  }
-
-  /**
-   * List customer subscriptions
-   */
   static async getCustomerSubscriptions(customerId: string) {
     try {
       const subscriptions = await polarClient.subscriptions.list({
@@ -104,7 +66,9 @@ export class PolarService {
    */
   static async cancelSubscription(subscriptionId: string) {
     try {
-      const subscriptions = polarClient.subscriptions as unknown as {
+      const subscriptions = await polarClient.subscriptions.list({
+        customerId: subscriptionId,
+      }) as unknown as {
         update: (input: {
           id: string;
           cancelAtPeriodEnd: boolean;
@@ -118,33 +82,6 @@ export class PolarService {
     } catch (error) {
       console.error("Error cancelling Polar subscription:", error);
       throw new Error("Failed to cancel subscription");
-    }
-  }
-
-  /**
-   * Verify webhook signature
-   */
-  static verifyWebhookSignature(payload: string, signature: string): boolean {
-    const webhookSecret = process.env.POLAR_WEBHOOK_SECRET;
-    if (!webhookSecret) {
-      console.error("POLAR_WEBHOOK_SECRET not configured");
-      return false;
-    }
-
-    // Note: You'll need to implement proper signature verification
-    // based on Polar.sh's webhook signature method
-    // This is a placeholder - check Polar docs for exact implementation
-    try {
-      const crypto = require("crypto");
-      const expectedSignature = crypto
-        .createHmac("sha256", webhookSecret)
-        .update(payload)
-        .digest("hex");
-
-      return signature === expectedSignature;
-    } catch (error) {
-      console.error("Error verifying webhook signature:", error);
-      return false;
     }
   }
 }

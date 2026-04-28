@@ -158,7 +158,7 @@ const modelMap: Record<string, string> = {
   verification: "verification",
 };
 
-export const convexAdapter = (config: ConvexAdapterConfig) => {
+const convexAdapter = (config: ConvexAdapterConfig) => {
   const baseUrls = getConvexBaseUrls(config.convexUrl);
 
   const callConvex = async (

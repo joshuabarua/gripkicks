@@ -33,7 +33,7 @@ interface AppStore extends UserPreferences, UIState {
   resetToDefaults: () => void;
 }
 
-export const useAppStore = create<AppStore>()(
+const useAppStore = create<AppStore>()(
   persist(
     (set) => ({
       // Default user preferences
@@ -94,5 +94,3 @@ export const useAppStore = create<AppStore>()(
 // Performance-optimized selectors
 export const useAnimationsEnabled = () => useAppStore((state) => state.animationsEnabled);
 export const useHighPerformanceMode = () => useAppStore((state) => state.highPerformanceMode);
-export const useSelectedFilters = () => useAppStore((state) => state.selectedFilters);
-export const useLoadingStates = () => useAppStore((state) => state.loadingStates);

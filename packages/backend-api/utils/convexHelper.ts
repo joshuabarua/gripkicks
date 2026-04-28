@@ -35,7 +35,7 @@ export function getConvexUrl(): string {
   return convexUrl;
 }
 
-export async function findUserByBetterAuthId(betterAuthId: string): Promise<{ success: boolean; data?: any; error?: string }> {
+async function findUserByBetterAuthId(betterAuthId: string): Promise<{ success: boolean; data?: any; error?: string }> {
   const convexUrl = getConvexUrl();
 
   try {

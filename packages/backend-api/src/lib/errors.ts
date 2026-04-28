@@ -1,4 +1,4 @@
-export interface BaseError {
+interface BaseError {
   code: string;
   message: string;
 }
@@ -33,7 +33,7 @@ export class UnauthorizedError extends AppError {
   }
 }
 
-export class DatabaseError extends AppError {
+class DatabaseError extends AppError {
   constructor(message: string = 'Database operation failed') {
     super('DATABASE_ERROR', message, 500);
   }
@@ -57,7 +57,7 @@ export class UnexpectedError extends AppError {
   }
 }
 
-export type ErrorType =
+type ErrorType =
   | 'VALIDATION_ERROR'
   | 'INVALID_DATA'
   | 'UNAUTHENTICATED'

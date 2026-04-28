@@ -6,12 +6,11 @@ import {
   ValidationError,
   InvalidDataError,
   UnauthenticatedError,
-  UnexpectedError,
-  RandomError
+  UnexpectedError
 } from '../src/lib/errors';
 import { getConvexUrl } from '../utils/convexHelper';
 
-export interface User {
+interface User {
   id: string;
   email: string;
   name?: string;
@@ -22,7 +21,7 @@ export interface User {
   favoriteShoe?: any;
 }
 
-export interface UpdateProfileData {
+interface UpdateProfileData {
   name?: string;
   phone?: string;
   image?: string;

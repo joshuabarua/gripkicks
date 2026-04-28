@@ -12,7 +12,7 @@ interface OrientationScale {
   screenHeight: number;
 }
 
-export function useOrientationScale(): OrientationScale {
+function useOrientationScale(): OrientationScale {
   return useOrientationStore(
     useShallow((state) => ({
       isPortrait: state.isPortrait,
@@ -24,5 +24,3 @@ export function useOrientationScale(): OrientationScale {
     })),
   );
 }
-
-export const useOrientation = useOrientationScale;

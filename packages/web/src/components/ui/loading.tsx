@@ -26,7 +26,7 @@ interface LoadingProps {
   variant?: "default" | "minimal" | "full";
 }
 
-export function Loading({ ...props }: LoadingProps) {
+function Loading({ ...props }: LoadingProps) {
   const text = props.text?.trim() ? props.text : getClimbingMessage();
   const {
     showProgress = false,

@@ -12,12 +12,9 @@
     "@types/node": "^22.10.10",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "@typescript-eslint/eslint-plugin": "8.21.0",
-    "@typescript-eslint/parser": "8.21.0",
     "concurrently": "^9.1.2",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9.19.0",
-    "eslint-config-next": "15.1.6",
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
     "tailwindcss": "^3.4.17",
@@ -42,19 +39,9 @@
     "dev:all:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"' && osascript -e 'tell application \"Terminal\" to do script \"npx convex dev\"'"
   },
   "dependencies": {
-    "@convex-dev/better-auth": "^0.10.10",
-    "@polar-sh/sdk": "^0.42.5",
-    "@radix-ui/react-select": "^2.2.6",
-    "backend-api": "workspace:^",
-    "better-auth": "1.4.9",
-    "body-parser": "^1.20.3",
     "convex": "^1.31.6",
     "convex-helpers": "^0.1.111",
-    "cors": "^2.8.5",
-    "create-next-app": "^15.1.6",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "workspace": "^0.0.1-preview.2",
     "zustand": "^5.0.3"
   }
 }

@@ -33,7 +33,7 @@ export function identify(
   posthog.identify(userId, properties);
 }
 
-export function resetAnalytics(): void {
+function resetAnalytics(): void {
   if (!canTrack()) return;
   posthog.reset();
 }

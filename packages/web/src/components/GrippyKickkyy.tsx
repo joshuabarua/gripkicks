@@ -27,7 +27,7 @@ interface GrippyKickkyyProps {
   className?: string;
 }
 
-export function GrippyKickkyy({
+function GrippyKickkyy({
   trigger = "click",
   size = "medium",
   position = "fixed",

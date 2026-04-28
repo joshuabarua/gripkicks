@@ -1,13 +1,13 @@
 // Error logging utilities for consistent error handling across the application
 
-export interface ErrorContext {
+interface ErrorContext {
   userId?: string;
   operation?: string;
   endpoint?: string;
   additionalData?: Record<string, unknown>;
 }
 
-export interface LoggedError {
+interface LoggedError {
   message: string;
   error: unknown;
   context: ErrorContext;
@@ -146,8 +146,8 @@ class ErrorLogger {
   }
 }
 
-// Export singleton instance
-export const logger = new ErrorLogger();
+// Export singleton instance 
+const logger = new ErrorLogger();
 
 // Convenience functions for common error scenarios
 export const logApiError = (

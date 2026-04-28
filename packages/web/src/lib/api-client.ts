@@ -57,7 +57,7 @@ function getCacheKey(path: string, options?: RequestInit): string {
 
 const apiBaseUrl = "";
 
-export const apiClient = hc(apiBaseUrl, {
+const apiClient = hc(apiBaseUrl, {
   fetch: (input: RequestInfo | URL, init?: RequestInit) => {
     return fetch(input, {
       ...init,
@@ -122,7 +122,7 @@ export function fetchApi<T>(
   pendingRequests.set(cacheKey, request as PendingRequest<unknown>);
 
   request.match(
-    () => pendingRequests.delete(cacheKey),
+    () => {},
     () => pendingRequests.delete(cacheKey),
   );
 
