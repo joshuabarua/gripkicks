@@ -4,7 +4,6 @@ import { HonoWithConvex, HttpRouterWithHono } from "convex-helpers/server/hono";
 import { ActionCtx } from "./_generated/server";
 import { api } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { subscriptionStatusValidator, subscriptionTierValidator } from "./utils/helpers";
 
 const app: HonoWithConvex<ActionCtx> = new Hono();
 
