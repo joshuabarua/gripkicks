@@ -2,7 +2,7 @@ import { logApiError } from './errorLogger';
 
 const CONVEX_TIMEOUT = 10000; // 10 seconds
 
-export async function fetchWithTimeout(
+async function fetchWithTimeout(
   url: string,
   options: RequestInit = {},
   timeout: number = CONVEX_TIMEOUT

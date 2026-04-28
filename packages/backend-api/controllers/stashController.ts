@@ -7,7 +7,7 @@ import {
   UnexpectedError
 } from '../src/lib/errors';
 import { resultAsyncToHonoResponse } from '../utils/response';
-import { getConvexUrl, fetchWithTimeout } from '../utils/convexHelper';
+import { getConvexUrl } from '../utils/convexHelper';
 import { checkUserAuthentication, validateRequiredParam, verifyOwnership, handleControllerError, authenticatedConvexRequest, getAuthenticatedUser } from './utils/controllerHelpers';
 
 async function validateUserShoeAccess(c: Context, paramName: string = 'userShoeId') {

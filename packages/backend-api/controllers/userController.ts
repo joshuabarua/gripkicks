@@ -8,7 +8,7 @@ import {
 } from '../src/lib/errors';
 import { resultAsyncToHonoResponse } from '../utils/response';
 import { checkUserAuthentication, handleControllerError, getAuthenticatedUser } from './utils/controllerHelpers';
-import * as userService from '../services/userService';
+import { userService } from '../services/user.service';
 import { getConvexUrl } from "../utils/convexHelper";
 
 export const getUsers = async (c: Context): Promise<Response> => {

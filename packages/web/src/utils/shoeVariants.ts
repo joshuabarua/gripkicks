@@ -33,7 +33,7 @@ function cleanupBaseName(name: string) {
     .trim();
 }
 
-export function getBaseShoeName(name: string) {
+function getBaseShoeName(name: string) {
   let baseName = name;
 
   for (const { pattern } of variantPatterns) {
@@ -43,7 +43,7 @@ export function getBaseShoeName(name: string) {
   return cleanupBaseName(baseName) || cleanupBaseName(name);
 }
 
-export function getVariantLabels(name: string, gender?: string | null) {
+function getVariantLabels(name: string, gender?: string | null) {
   const labels: string[] = [];
 
   for (const { testPattern, label } of variantPatterns) {
@@ -66,14 +66,11 @@ export function getVariantLabels(name: string, gender?: string | null) {
   return unique;
 }
 
-export function getVariantLabel(name: string, gender?: string | null) {
+function getVariantLabel(name: string, gender?: string | null) {
   const labels = getVariantLabels(name, gender);
   return labels.length > 0 ? labels.join(" ") : null;
 }
 
-export function getShoeGroupKey(brand: string, name: string) {
-  return `${brand.toLowerCase()}::${getBaseShoeName(name).toLowerCase()}`;
-}
 
 type UserShoeLike = Pick<UserShoe, "_id" | "shoe" | "shoeDetails">;
 type ShoeLike = Pick<
@@ -166,13 +163,3 @@ function addVariantToGroup<T>(
   });
 }
 
-function sortGroupedVariants<T>(grouped: Map<string, ShoeVariantGroup<T>>) {
-  return Array.from(grouped.values()).map((group) => ({
-    ...group,
-    variants: [...group.variants].sort((a, b) => {
-      const left = a.variantLabel ?? "";
-      const right = b.variantLabel ?? "";
-      return left.localeCompare(right);
-    }),
-  }));
-}
