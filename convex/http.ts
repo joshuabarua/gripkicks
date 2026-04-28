@@ -7,6 +7,18 @@ import { Id } from "./_generated/dataModel";
 
 const app: HonoWithConvex<ActionCtx> = new Hono();
 
+async function findUserByBetterAuthId(c: any, betterAuthId: string) {
+  const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+  return user;
+}
+
+async function findUserByIdOrBetterAuthId(c: any, id: string) {
+  return (
+    (await findUserByBetterAuthId(c, id)) ||
+    (await c.env.runQuery(api.users.getById, { id: id as Id<"users"> }))
+  );
+}
+
 // Better Auth routes are handled automatically by the @convex-dev/better-auth component
 
 // CORS middleware
@@ -140,7 +152,7 @@ app.post("/api/users/findByBetterAuthId", async (c) => {
       return c.json({ success: false, message: "Better Auth ID is required" }, 400);
     }
 
-    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+    const user = await findUserByBetterAuthId(c, betterAuthId);
 
     return c.json({ success: true, data: user });
   } catch (error) {
@@ -213,7 +225,7 @@ app.post("/api/stash/getUserStash", async (c) => {
       return c.json({ success: false, message: "BetterAuth ID is required" }, 400);
     }
 
-    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+    const user = await findUserByBetterAuthId(c, betterAuthId);
 
     if (!user) {
       return c.json({ success: false, message: "User not found" }, 404);
@@ -239,7 +251,7 @@ app.post("/api/stash/addToStash", async (c) => {
       return c.json({ success: false, message: "BetterAuth ID and Shoe ID are required" }, 400);
     }
 
-    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+    const user = await findUserByBetterAuthId(c, betterAuthId);
 
     if (!user) {
       return c.json({ success: false, message: "User not found" }, 404);
@@ -266,7 +278,7 @@ app.post("/api/stash/removeFromStash", async (c) => {
       return c.json({ success: false, message: "BetterAuth ID and Shoe ID are required" }, 400);
     }
 
-    const user = await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+    const user = await findUserByBetterAuthId(c, betterAuthId);
 
     if (!user) {
       return c.json({ success: false, message: "User not found" }, 404);
@@ -293,9 +305,7 @@ app.post("/api/users/update", async (c) => {
       return c.json({ success: false, message: "User ID is required" }, 400);
     }
 
-    const user =
-      (await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: id })) ||
-      (await c.env.runQuery(api.users.getById, { id: id as Id<"users"> }));
+    const user = await findUserByIdOrBetterAuthId(c, id);
 
     if (!user) {
       return c.json({ success: false, message: "User not found" }, 404);
@@ -330,9 +340,7 @@ app.post("/api/users/completeOnboarding", async (c) => {
       return c.json({ success: false, message: "User ID is required" }, 400);
     }
 
-    const user =
-      (await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: userId })) ||
-      (await c.env.runQuery(api.users.getById, { id: userId as Id<"users"> }));
+    const user = await findUserByIdOrBetterAuthId(c, userId);
 
     if (!user) {
       return c.json({ success: false, message: "User not found" }, 404);
@@ -363,9 +371,7 @@ app.post("/api/users/delete", async (c) => {
       return c.json({ success: false, message: "User ID is required" }, 400);
     }
 
-    const user =
-      (await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId: id })) ||
-      (await c.env.runQuery(api.users.getById, { id: id as Id<"users"> }));
+    const user = await findUserByIdOrBetterAuthId(c, id);
 
     if (!user) {
       return c.json({ success: false, message: "User not found" }, 404);

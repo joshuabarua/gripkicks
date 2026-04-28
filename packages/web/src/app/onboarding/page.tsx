@@ -34,6 +34,7 @@ import {
   useFootProfileStore,
   normalizeBackendFootProfile,
 } from "@/stores/footProfileStore";
+import { RatingButton, BackButton } from "@/components/onboarding/OnboardingHelpers";
 
 type ShoeSizeOption = { value: string; label: string };
 const isShoeSizeOption = (
@@ -394,14 +395,7 @@ export default function OnboardingPage() {
                     </div>
 
                     <div className="flex justify-between pt-4">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handlePrevious}
-                        className="border border-white/[0.06] hover:border-brand-red/30 text-brand-putty/50 font-sora text-sm px-6 py-3 transition-all duration-500 flex items-center gap-2"
-                      >
-                        <ChevronLeft className="w-4 h-4" /> Back
-                      </motion.button>
+                      <BackButton onClick={handlePrevious} />
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -538,24 +532,17 @@ export default function OnboardingPage() {
                             </Label>
                             <div className="flex items-center gap-2 mt-2">
                               {[1, 2, 3, 4, 5].map((rating) => (
-                                <motion.button
+                                <RatingButton
                                   key={rating}
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.9 }}
-                                  onClick={() =>
+                                  rating={rating}
+                                  currentRating={shoeFormData.comfort}
+                                  onRatingChange={(rating) =>
                                     setShoeFormData({
                                       ...shoeFormData,
                                       comfort: rating,
                                     })
                                   }
-                                  className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-ball-pill text-sm transition-all ${
-                                    shoeFormData.comfort >= rating
-                                      ? "border-brand-red bg-brand-red/20 text-brand-red"
-                                      : "border-white/10 text-brand-putty/30"
-                                  }`}
-                                >
-                                  {rating}
-                                </motion.button>
+                                />
                               ))}
                             </div>
                           </div>
@@ -565,24 +552,17 @@ export default function OnboardingPage() {
                             </Label>
                             <div className="flex items-center gap-2 mt-2">
                               {[1, 2, 3, 4, 5].map((rating) => (
-                                <motion.button
+                                <RatingButton
                                   key={rating}
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.9 }}
-                                  onClick={() =>
+                                  rating={rating}
+                                  currentRating={shoeFormData.performance}
+                                  onRatingChange={(rating) =>
                                     setShoeFormData({
                                       ...shoeFormData,
                                       performance: rating,
                                     })
                                   }
-                                  className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-ball-pill text-sm transition-all ${
-                                    shoeFormData.performance >= rating
-                                      ? "border-brand-red bg-brand-red/20 text-brand-red"
-                                      : "border-white/10 text-brand-putty/30"
-                                  }`}
-                                >
-                                  {rating}
-                                </motion.button>
+                                />
                               ))}
                             </div>
                           </div>
@@ -610,14 +590,7 @@ export default function OnboardingPage() {
                     )}
 
                     <div className="flex justify-between pt-4">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handlePrevious}
-                        className="border border-white/[0.06] hover:border-brand-red/30 text-brand-putty/50 font-sora text-sm px-6 py-3 transition-all duration-500 flex items-center gap-2"
-                      >
-                        <ChevronLeft className="w-4 h-4" /> Back
-                      </motion.button>
+                      <BackButton onClick={handlePrevious} />
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}

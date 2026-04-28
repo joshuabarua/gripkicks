@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { filterUndefinedValues } from "./utils/helpers";
 
 export const getUserStash = query({
   args: { userId: v.id("users") },
@@ -112,25 +113,15 @@ export const updateUserShoeStats = mutation({
   handler: async (ctx, args) => {
     const { userShoeId, ...updateFields } = args;
 
-    // Get the current user shoe to get the shoeId
     const userShoe = await ctx.db.get(userShoeId);
     if (!userShoe) {
       throw new Error("User shoe not found");
     }
 
-    // Remove undefined fields
-    const fieldsToUpdate: Record<string, any> = {};
-    if (updateFields["size"] !== undefined) fieldsToUpdate["size"] = updateFields["size"];
-    if (updateFields["purchaseDate"] !== undefined) fieldsToUpdate["purchaseDate"] = updateFields["purchaseDate"];
-    if (updateFields["condition"] !== undefined) fieldsToUpdate["condition"] = updateFields["condition"];
-    if (updateFields["notes"] !== undefined) fieldsToUpdate["notes"] = updateFields["notes"];
-    // Comfort ranking fields
-    if (updateFields["comfortScore"] !== undefined) fieldsToUpdate["comfortScore"] = updateFields["comfortScore"];
-    if (updateFields["performanceRating"] !== undefined) fieldsToUpdate["performanceRating"] = updateFields["performanceRating"];
-    if (updateFields["durabilityRating"] !== undefined) fieldsToUpdate["durabilityRating"] = updateFields["durabilityRating"];
+    const fieldsToUpdate = filterUndefinedValues(updateFields);
 
     if (Object.keys(fieldsToUpdate).length === 0) {
-      return null; // No fields to update
+      return null;
     }
 
     // Update the user shoe

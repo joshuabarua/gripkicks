@@ -55,10 +55,10 @@ export default function HomeDesignsIndex() {
                   
                   {/* Title & Desc */}
                   <div className="lg:col-span-8 relative">
-                    <h2 className="font-ball-pill text-5xl md:text-7xl lg:text-[7rem] uppercase leading-none mb-6 lg:-ml-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-6">
+                    <h2 className="font-ball-pill text-5xl md:text-7xl lg:text-[7rem] uppercase leading-none mb-6 lg:-ml-4 transition-transform duration-500 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:translate-x-6">
                       {v.label}
                     </h2>
-                    <p className="font-sora text-lg md:text-xl text-[#8C877E] max-w-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-6 group-hover:text-[#111111]">
+                    <p className="font-sora text-lg md:text-xl text-[#8C877E] max-w-xl transition-all duration-500 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:translate-x-6 group-hover:text-[#111111]">
                       {v.desc}
                     </p>
                   </div>
@@ -75,7 +75,7 @@ export default function HomeDesignsIndex() {
                 </div>
                 
                 {/* Decorative Line that draws across on hover */}
-                <div className="absolute -bottom-6 lg:-bottom-12 left-0 right-0 h-[2px] bg-[#111111] origin-left scale-x-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 z-0" />
+                <div className="absolute -bottom-6 lg:-bottom-12 left-0 right-0 h-[2px] bg-[#111111] origin-left scale-x-0 transition-transform duration-700 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:scale-x-100 z-0" />
               </Link>
             ))}
           </div>

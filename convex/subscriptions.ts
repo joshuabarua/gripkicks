@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { filterUndefinedValues } from "./utils/helpers";
 
 export const updateSubscription = mutation({
   args: {
@@ -22,10 +23,7 @@ export const updateSubscription = mutation({
       throw new Error(`User not found with betterAuthId: ${betterAuthId}`);
     }
 
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, v]) => v !== undefined)
-    );
-
+    const filteredUpdates = filterUndefinedValues(updates);
     await ctx.db.patch(user._id, filteredUpdates);
     return await ctx.db.get(user._id);
   },

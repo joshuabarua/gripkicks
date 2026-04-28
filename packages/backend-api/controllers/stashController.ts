@@ -9,14 +9,13 @@ import {
 import { resultAsyncToHonoResponse } from '../utils/response';
 import { getConvexUrl, fetchWithTimeout } from '../utils/convexHelper';
 import { logApiError } from '../utils/errorLogger';
+import { checkUserAuthentication, validateRequiredParam, verifyOwnership, handleControllerError } from './utils/controllerHelpers';
 
 export const getUserStash = async (c: Context): Promise<Response> => {
+  const authError = checkUserAuthentication(c);
+  if (authError) return authError;
+
   const user = c.get('user');
-  if (!user || !user.id) {
-    return resultAsyncToHonoResponse(c, 
-      Promise.resolve(err(new UnauthenticatedError('User not found in context')))
-    );
-  }
 
   const result = await ResultAsync.fromPromise(
     (async () => {
@@ -44,12 +43,10 @@ export const getUserStash = async (c: Context): Promise<Response> => {
 };
 
 export const addToStash = async (c: Context): Promise<Response> => {
+  const authError = checkUserAuthentication(c);
+  if (authError) return authError;
+
   const user = c.get('user');
-  if (!user || !user.id) {
-    return resultAsyncToHonoResponse(c,
-      Promise.resolve(err(new UnauthenticatedError('User not found in context')))
-    );
-  }
 
   const result = await ResultAsync.fromPromise(
     (async () => {
@@ -79,56 +76,27 @@ export const addToStash = async (c: Context): Promise<Response> => {
       const addData = await addResponse.json();
       return addData;
     })(),
-    (error) => {
-      logApiError('Failed to add to stash', error, {
-        method: 'POST',
-        url: '/api/v1/stash',
-        userId: user.id
-      });
-      return error instanceof Error ? new UnexpectedError(error.message) : new UnexpectedError('Unknown error');
-    }
+    (error) => handleControllerError(error, 'add to stash', 'POST', '/api/v1/stash', user.id)
   );
 
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
 export const removeFromStash = async (c: Context): Promise<Response> => {
+  const authError = checkUserAuthentication(c);
+  if (authError) return authError;
+
   const user = c.get('user');
-  if (!user || !user.id) {
-    return resultAsyncToHonoResponse(c, 
-      Promise.resolve(err(new UnauthenticatedError('User not found in context')))
-    );
-  }
 
   const userShoeId = c.req.param('shoeId');
-  if (!userShoeId) {
-    return resultAsyncToHonoResponse(c, 
-      Promise.resolve(err(new ValidationError('Shoe ID is required')))
-    );
-  }
+  const paramError = validateRequiredParam(userShoeId, 'Shoe ID', c);
+  if (paramError) return paramError;
 
   const result = await ResultAsync.fromPromise(
     (async () => {
       const convexUrl = getConvexUrl();
 
-      // Verify ownership
-      const ownershipResponse = await fetchWithTimeout(`${convexUrl}/api/stash/verifyOwnership`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userShoeId: userShoeId,
-          betterAuthUserId: user.id
-        })
-      });
-
-      if (!ownershipResponse.ok) {
-        throw new UnexpectedError('Failed to verify ownership');
-      }
-
-      const ownershipData = await ownershipResponse.json();
-      if (!ownershipData.data?.owned) {
-        throw new UnauthenticatedError('You can only remove your own shoes');
-      }
+      await verifyOwnership(c, userShoeId);
 
       // Delete the userShoe document
       const deleteResponse = await fetchWithTimeout(`${convexUrl}/api/stash/deleteUserShoe`, {
@@ -143,57 +111,28 @@ export const removeFromStash = async (c: Context): Promise<Response> => {
 
       return { success: true, message: 'Removed from stash' };
     })(),
-    (error) => {
-      logApiError('Failed to remove from stash', error, {
-        method: 'DELETE',
-        url: `/api/v1/stash/${userShoeId}`,
-        userId: user.id
-      });
-      return error instanceof Error ? new UnexpectedError(error.message) : new UnexpectedError('Unknown error');
-    }
+    (error) => handleControllerError(error, 'remove from stash', 'DELETE', `/api/v1/stash/${userShoeId}`, user.id)
   );
 
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
 export const updateUserShoeStats = async (c: Context): Promise<Response> => {
+  const authError = checkUserAuthentication(c);
+  if (authError) return authError;
+
   const user = c.get('user');
-  if (!user || !user.id) {
-    return resultAsyncToHonoResponse(c, 
-      Promise.resolve(err(new UnauthenticatedError('User not found in context')))
-    );
-  }
 
   const userShoeId = c.req.param('userShoeId');
-  if (!userShoeId) {
-    return resultAsyncToHonoResponse(c, 
-      Promise.resolve(err(new ValidationError('User shoe ID is required')))
-    );
-  }
+  const paramError = validateRequiredParam(userShoeId, 'User shoe ID', c);
+  if (paramError) return paramError;
 
   const result = await ResultAsync.fromPromise(
     (async () => {
       const body = await c.req.json();
       const convexUrl = getConvexUrl();
 
-      // Verify ownership
-      const ownershipResponse = await fetchWithTimeout(`${convexUrl}/api/stash/verifyOwnership`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userShoeId: userShoeId,
-          betterAuthUserId: user.id
-        })
-      });
-
-      if (!ownershipResponse.ok) {
-        throw new UnexpectedError('Failed to verify ownership');
-      }
-
-      const ownershipData = await ownershipResponse.json();
-      if (!ownershipData.data?.owned) {
-        throw new UnauthenticatedError('You can only modify your own shoes');
-      }
+      await verifyOwnership(c, userShoeId);
 
       // Update shoe stats
       const updateResponse = await fetchWithTimeout(`${convexUrl}/api/stash/updateUserShoeStats`, {
@@ -222,56 +161,27 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
         data: updateData.data
       };
     })(),
-    (error) => {
-      logApiError('Failed to update shoe stats', error, {
-        method: 'PUT',
-        url: `/api/v1/stash/${userShoeId}`,
-        userId: user.id
-      });
-      return error instanceof Error ? new UnexpectedError(error.message) : new UnexpectedError('Unknown error');
-    }
+    (error) => handleControllerError(error, 'update shoe stats', 'PUT', `/api/v1/stash/${userShoeId}`, user.id)
   );
 
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
 export const toggleFavourite = async (c: Context): Promise<Response> => {
+  const authError = checkUserAuthentication(c);
+  if (authError) return authError;
+
   const user = c.get('user');
-  if (!user || !user.id) {
-    return resultAsyncToHonoResponse(c, 
-      Promise.resolve(err(new UnauthenticatedError('User not found in context')))
-    );
-  }
 
   const userShoeId = c.req.param('userShoeId');
-  if (!userShoeId) {
-    return resultAsyncToHonoResponse(c, 
-      Promise.resolve(err(new ValidationError('User shoe ID is required')))
-    );
-  }
+  const paramError = validateRequiredParam(userShoeId, 'User shoe ID', c);
+  if (paramError) return paramError;
 
   const result = await ResultAsync.fromPromise(
     (async () => {
       const convexUrl = getConvexUrl();
 
-      // Verify ownership
-      const ownershipResponse = await fetchWithTimeout(`${convexUrl}/api/stash/verifyOwnership`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userShoeId: userShoeId,
-          betterAuthUserId: user.id
-        })
-      });
-
-      if (!ownershipResponse.ok) {
-        throw new UnexpectedError('Failed to verify ownership');
-      }
-
-      const ownershipData = await ownershipResponse.json();
-      if (!ownershipData.data?.owned) {
-        throw new UnauthenticatedError('You can only modify your own shoes');
-      }
+      await verifyOwnership(c, userShoeId);
 
       // Toggle favourite
       const toggleResponse = await fetchWithTimeout(`${convexUrl}/api/stash/toggleFavourite`, {
@@ -291,14 +201,7 @@ export const toggleFavourite = async (c: Context): Promise<Response> => {
         data: toggleData.data
       };
     })(),
-    (error) => {
-      logApiError('Failed to toggle favourite', error, {
-        method: 'POST',
-        url: `/api/v1/stash/${userShoeId}/favourite`,
-        userId: user.id
-      });
-      return error instanceof Error ? new UnexpectedError(error.message) : new UnexpectedError('Unknown error');
-    }
+    (error) => handleControllerError(error, 'toggle favourite', 'POST', `/api/v1/stash/${userShoeId}/favourite`, user.id)
   );
 
   return resultAsyncToHonoResponse(c, Promise.resolve(result));

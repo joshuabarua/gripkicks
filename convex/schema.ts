@@ -1,19 +1,8 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { footShapeValidator, backlogStatusValidator, scoreHistoryEntryValidator } from "./utils/helpers";
 
-export const footShapeValidator = v.union(
-  v.literal("egyptian"),
-  v.literal("roman"),
-  v.literal("greek"),
-  v.literal("germanic"),
-  v.literal("celtic"),
-);
-
-export const backlogStatusValidator = v.union(
-  v.literal("not_started"),
-  v.literal("in_progress"),
-  v.literal("done"),
-);
+export { footShapeValidator, backlogStatusValidator };
 
 export default defineSchema({
   // Climbing Shoes
@@ -212,21 +201,7 @@ export default defineSchema({
     ),
     lastUpdated: v.number(),
     version: v.number(),
-    history: v.array(
-      v.object({
-        timestamp: v.number(),
-        previousScore: v.number(),
-        newScore: v.number(),
-        changeReason: v.union(
-          v.literal("shoe_added"),
-          v.literal("shoe_updated"),
-          v.literal("shoe_removed"),
-          v.literal("profile_updated"),
-          v.literal("recalculation"),
-        ),
-        affectedShoes: v.array(v.string()),
-      }),
-    ),
+    history: v.array(scoreHistoryEntryValidator),
   })
     .index("by_userId", ["userId"])
     .index("by_overallScore", ["overallScore"]),

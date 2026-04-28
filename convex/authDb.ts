@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
+import { formatEntityWithId, filterUndefinedValues } from "./utils/helpers";
 
 // ============ USERS ============
 
@@ -83,16 +84,10 @@ export const updateUser = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, val]) => val !== undefined)
-    );
+    const filteredUpdates = filterUndefinedValues(updates);
     await ctx.db.patch(id, filteredUpdates);
     const user = await ctx.db.get(id);
-    return user ? {
-      ...user,
-      id: user._id,
-      createdAt: user._creationTime,
-    } : null;
+    return formatEntityWithId(user);
   },
 });
 
@@ -135,11 +130,7 @@ export const findUserById = query({
   args: { id: v.id("users") },
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.id);
-    return user ? {
-      ...user,
-      id: user._id,
-      createdAt: user._creationTime,
-    } : null;
+    return formatEntityWithId(user);
   },
 });
 
@@ -150,11 +141,7 @@ export const findUserByEmail = query({
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .first();
-    return user ? {
-      ...user,
-      id: user._id,
-      createdAt: user._creationTime,
-    } : null;
+    return formatEntityWithId(user);
   },
 });
 
@@ -215,23 +202,14 @@ export const updateSession = mutation({
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
 
-    // Convert expiresAt to number if it's a string
     if (updates.expiresAt && typeof updates.expiresAt === 'string') {
       updates.expiresAt = new Date(updates.expiresAt).getTime();
     }
 
-    // Filter out undefined values
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, val]) => val !== undefined)
-    );
-
+    const filteredUpdates = filterUndefinedValues(updates);
     await ctx.db.patch(id, filteredUpdates);
     const session = await ctx.db.get(id);
-    return session ? {
-      ...session,
-      id: session._id,
-      createdAt: session._creationTime,
-    } : null;
+    return formatEntityWithId(session);
   },
 });
 
@@ -273,11 +251,7 @@ export const findSessionById = query({
   args: { id: v.id("sessions") },
   handler: async (ctx, args) => {
     const session = await ctx.db.get(args.id);
-    return session ? {
-      ...session,
-      id: session._id,
-      createdAt: session._creationTime,
-    } : null;
+    return formatEntityWithId(session);
   },
 });
 
@@ -288,11 +262,7 @@ export const findSessionByToken = query({
       .query("sessions")
       .withIndex("by_token", (q) => q.eq("token", args.token))
       .first();
-    return session ? {
-      ...session,
-      id: session._id,
-      createdAt: session._creationTime,
-    } : null;
+    return formatEntityWithId(session);
   },
 });
 
@@ -303,11 +273,7 @@ export const findSessionsByUserId = query({
       .query("sessions")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .collect();
-    return sessions.map(session => ({
-      ...session,
-      id: session._id,
-      createdAt: session._creationTime,
-    }));
+    return sessions.map(session => formatEntityWithId(session));
   },
 });
 
@@ -412,16 +378,10 @@ export const updateAccount = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, val]) => val !== undefined)
-    );
+    const filteredUpdates = filterUndefinedValues(updates);
     await ctx.db.patch(id, filteredUpdates);
     const account = await ctx.db.get(id);
-    return account ? {
-      ...account,
-      id: account._id,
-      createdAt: account._creationTime,
-    } : null;
+    return formatEntityWithId(account);
   },
 });
 
@@ -436,11 +396,7 @@ export const findAccountById = query({
   args: { id: v.id("accounts") },
   handler: async (ctx, args) => {
     const account = await ctx.db.get(args.id);
-    return account ? {
-      ...account,
-      id: account._id,
-      createdAt: account._creationTime,
-    } : null;
+    return formatEntityWithId(account);
   },
 });
 
@@ -451,11 +407,7 @@ export const findAccountByUserId = query({
       .query("accounts")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .collect();
-    return accounts.map(account => ({
-      ...account,
-      id: account._id,
-      createdAt: account._creationTime,
-    }));
+    return accounts.map(account => formatEntityWithId(account));
   },
 });
 
@@ -468,11 +420,7 @@ export const findAccountByProviderAndAccountId = query({
         q.eq("providerId", args.providerId).eq("accountId", args.accountId)
       )
       .first();
-    return accounts ? {
-      ...accounts,
-      id: accounts._id,
-      createdAt: accounts._creationTime,
-    } : null;
+    return formatEntityWithId(accounts);
   },
 });
 
@@ -507,16 +455,10 @@ export const updateVerification = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, val]) => val !== undefined)
-    );
+    const filteredUpdates = filterUndefinedValues(updates);
     await ctx.db.patch(id, filteredUpdates);
     const verification = await ctx.db.get(id);
-    return verification ? {
-      ...verification,
-      id: verification._id,
-      createdAt: verification._creationTime,
-    } : null;
+    return formatEntityWithId(verification);
   },
 });
 
@@ -576,10 +518,6 @@ export const findVerificationByIdentifier = query({
       .query("verifications")
       .withIndex("by_identifier", (q) => q.eq("identifier", args.identifier))
       .first();
-    return verification ? {
-      ...verification,
-      id: verification._id,
-      createdAt: verification._creationTime,
-    } : null;
+    return formatEntityWithId(verification);
   },
 });

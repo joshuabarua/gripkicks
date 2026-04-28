@@ -11,7 +11,7 @@ import NavLinks from "@/components/ui/nav-links";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { SignOutButton } from "@/components/signout-button";
 import { User } from "lucide-react";
-import { useOrientation } from "@/hooks/useOrientationScale";
+import { useOrientationScale } from "@/hooks/useOrientationScale";
 
 const menu = {
   open: {
@@ -52,7 +52,7 @@ const Navigation: React.FC = () => {
   const [showLogo, setShowLogo] = useState(true);
   const navRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { orientation, screenWidth } = useOrientation();
+  const { orientation, screenWidth } = useOrientationScale();
 
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;

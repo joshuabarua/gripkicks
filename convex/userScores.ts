@@ -1,20 +1,6 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
-
-// Score history entry schema
-const scoreHistoryEntryValidator = v.object({
-  timestamp: v.number(),
-  previousScore: v.number(),
-  newScore: v.number(),
-  changeReason: v.union(
-    v.literal('shoe_added'),
-    v.literal('shoe_updated'),
-    v.literal('shoe_removed'),
-    v.literal('profile_updated'),
-    v.literal('recalculation')
-  ),
-  affectedShoes: v.array(v.string()),
-});
+import { scoreHistoryEntryValidator } from './utils/helpers';
 
 // Update or create user score profile
 export const updateScoreProfile = mutation({
