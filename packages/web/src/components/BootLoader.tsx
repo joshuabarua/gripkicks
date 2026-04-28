@@ -21,7 +21,7 @@ export default function BootLoader({ visible }: { visible: boolean }) {
     setCurrentImageIndex(0);
     const imageInterval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % transitionImages.length);
-    }, 120);
+    }, 1000);
 
     return () => clearInterval(imageInterval);
   }, [visible]);
@@ -42,10 +42,10 @@ export default function BootLoader({ visible }: { visible: boolean }) {
               src={transitionImages[currentImageIndex]}
               alt=""
               className="w-[180px] h-[180px] object-contain"
-              initial={{ scale: 1.3, opacity: 0 }}
+              initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.7, opacity: 0 }}
-              transition={{ duration: 0.1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
             />
           </AnimatePresence>
         </motion.div>
