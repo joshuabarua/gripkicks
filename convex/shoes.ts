@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { footShapeValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, genderValidator, commonShoeFieldsValidator, optionalShoeFieldsValidator } from "./utils/helpers";
+import { footShapeValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, commonShoeFieldsValidator, optionalShoeFieldsValidator } from "./utils/helpers";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -253,6 +253,9 @@ export const update = mutation({
   args: {
     id: v.id("shoes"),
     ...optionalShoeFieldsValidator,
+    modelName: v.optional(v.string()),
+    variantLabel: v.optional(v.string()),
+    parentModelId: v.optional(v.id("shoes")),
     stiffness: v.optional(v.string()),
     climbingDiscipline: v.optional(v.string()),
     volume: v.optional(v.string()),

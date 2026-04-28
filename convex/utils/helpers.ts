@@ -186,11 +186,16 @@ export const commonShoeFieldsValidator = {
   aggressiveness: v.string(),
 };
 
-export const optionalShoeFieldsValidator = Object.fromEntries(
-  Object.entries(commonShoeFieldsValidator).map(([key, value]) => [
-    key,
-    key === 'aggressiveness' ? v.optional(v.string()) : value,
-  ])
-);
+export const optionalShoeFieldsValidator = {
+  name: v.optional(v.string()),
+  brand: v.optional(v.string()),
+  modelName: v.optional(v.string()),
+  variantLabel: v.optional(v.string()),
+  parentModelId: v.optional(v.id("shoes")),
+  imageUrl: v.optional(v.string()),
+  slug: v.optional(v.string()),
+  gender: v.optional(genderValidator),
+  aggressiveness: v.optional(v.string()),
+};
 
 export { cleanupModelName, deriveModelName, deriveVariantLabel };

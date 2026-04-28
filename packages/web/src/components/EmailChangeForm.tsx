@@ -6,7 +6,6 @@ import { fetchApi } from '@/lib/api-client';
 import { z } from 'zod';
 import { AccountFormStatus } from '@/components/AccountFormStatus';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail } from 'lucide-react';

@@ -23,7 +23,7 @@ export function useBrandGroups(userShoes: UserShoe[]) {
     return Object.entries(grouped)
       .map(([brand, shoes]) => ({
         brand,
-        models: groupUserShoesByModel(shoes),
+        models: Array.from(groupUserShoesByModel(shoes).values()),
       }))
       .sort((a, b) => a.brand.localeCompare(b.brand));
   }, [userShoes]);

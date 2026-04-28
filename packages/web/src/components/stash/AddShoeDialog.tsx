@@ -43,7 +43,7 @@ export function AddShoeDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState(searchQuery);
   const groupedSearchResults = useMemo(
-    () => groupShoesByModel(searchResults),
+    () => Array.from(groupShoesByModel(searchResults).values()),
     [searchResults],
   );
 

@@ -1,6 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { footShapeValidator, backlogStatusValidator, scoreHistoryEntryValidator, subscriptionStatusValidator, subscriptionTierValidator, preferenceProfileValidator, learnedPreferencesValidator, footProfileValidator, genderValidator, accountFieldsValidator, commonShoeFieldsValidator, subscriptionFieldsValidator, userShoeFieldsValidator } from "./utils/helpers";
+import { footShapeValidator, backlogStatusValidator, scoreHistoryEntryValidator, preferenceProfileValidator, learnedPreferencesValidator, footProfileValidator, accountFieldsValidator, commonShoeFieldsValidator, subscriptionFieldsValidator, userShoeFieldsValidator } from "./utils/helpers";
 
 export { footShapeValidator, backlogStatusValidator };
 

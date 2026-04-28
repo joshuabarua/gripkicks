@@ -128,6 +128,50 @@ export type AsyncResult<T, E = AppError> = ResultAsync<T, E>;
 // fallow-ignore-next-line unused-type
 export type SyncResult<T, E = AppError> = Result<T, E>;
 
+export class ErrorFactory {
+  static fromHttpStatus(status: number, message: string): AppError {
+    const categoryMap: Record<number, ErrorCategory> = {
+      400: "validation",
+      401: "authentication",
+      403: "authorization",
+      404: "not_found",
+      500: "server",
+      502: "network",
+      503: "server",
+      504: "network",
+    };
+
+    const category = categoryMap[status] ?? "unknown";
+    const code = `HTTP_${status}`;
+
+    return new AppError({
+      code,
+      message,
+      userMessage: message,
+      severity: status >= 500 ? "high" : "medium",
+      category,
+      retryable: status >= 500,
+    });
+  }
+
+  static fromUnknown(error: unknown): AppError {
+    if (error instanceof AppError) {
+      return error;
+    }
+
+    const message = error instanceof Error ? error.message : "Unknown error occurred";
+
+    return new AppError({
+      code: "UNKNOWN_ERROR",
+      message,
+      userMessage: "An unexpected error occurred",
+      severity: "medium",
+      category: "unknown",
+      retryable: false,
+    });
+  }
+}
+
 const ResultUtils = {
   retry: async <T>(
     fn: () => Promise<Result<T, AppError>>,

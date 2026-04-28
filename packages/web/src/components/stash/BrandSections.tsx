@@ -31,7 +31,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
             <div className="flex-1 h-px bg-neutral-800" />
             <span className="font-sora text-[10px] text-neutral-600 tracking-wider">{models.length} {models.length === 1 ? "MODEL" : "MODELS"}</span>
           </div>
-          <div className="space-y-fluid-lg">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-fluid-lg">
             {models.map((model, modelIndex) => (
               <div
                 key={model.groupKey}
