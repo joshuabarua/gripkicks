@@ -174,27 +174,26 @@ export const userShoeFieldsValidator = {
   durabilityRating: v.optional(v.number()),
 };
 
-export const commonShoeFieldsValidator = {
-  name: v.string(),
-  brand: v.string(),
+const baseShoeFieldsValidator = {
   modelName: v.optional(v.string()),
   variantLabel: v.optional(v.string()),
   parentModelId: v.optional(v.id("shoes")),
   imageUrl: v.optional(v.string()),
   slug: v.optional(v.string()),
   gender: v.optional(genderValidator),
+};
+
+export const commonShoeFieldsValidator = {
+  ...baseShoeFieldsValidator,
+  name: v.string(),
+  brand: v.string(),
   aggressiveness: v.string(),
 };
 
 export const optionalShoeFieldsValidator = {
+  ...baseShoeFieldsValidator,
   name: v.optional(v.string()),
   brand: v.optional(v.string()),
-  modelName: v.optional(v.string()),
-  variantLabel: v.optional(v.string()),
-  parentModelId: v.optional(v.id("shoes")),
-  imageUrl: v.optional(v.string()),
-  slug: v.optional(v.string()),
-  gender: v.optional(genderValidator),
   aggressiveness: v.optional(v.string()),
 };
 
