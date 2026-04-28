@@ -14,6 +14,20 @@ export const backlogStatusValidator = v.union(
   v.literal("done"),
 );
 
+export const subscriptionStatusValidator = v.union(
+  v.literal("active"),
+  v.literal("canceled"),
+  v.literal("past_due"),
+  v.literal("founder"),
+);
+
+export const subscriptionTierValidator = v.union(
+  v.literal("monthly"),
+  v.literal("yearly"),
+  v.literal("lifetime"),
+  v.literal("founder"),
+);
+
 function cleanupModelName(name: string) {
   return name
     .replace(/[()]/g, " ")

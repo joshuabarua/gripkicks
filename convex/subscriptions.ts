@@ -1,12 +1,20 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { filterUndefinedValues } from "./utils/helpers";
+import { filterUndefinedValues, subscriptionStatusValidator, subscriptionTierValidator } from "./utils/helpers";
+
+async function findUserByBetterAuthId(ctx: any, betterAuthId: string) {
+  const user = await ctx.db
+    .query("users")
+    .withIndex("by_betterAuthId", (q: any) => q.eq("betterAuthId", betterAuthId))
+    .first();
+  return user;
+}
 
 export const updateSubscription = mutation({
   args: {
     betterAuthId: v.string(),
-    subscriptionStatus: v.optional(v.union(v.literal("active"), v.literal("canceled"), v.literal("past_due"), v.literal("founder"))),
-    subscriptionTier: v.optional(v.union(v.literal("monthly"), v.literal("yearly"), v.literal("lifetime"), v.literal("founder"))),
+    subscriptionStatus: v.optional(subscriptionStatusValidator),
+    subscriptionTier: v.optional(subscriptionTierValidator),
     polarCustomerId: v.optional(v.string()),
     polarSubscriptionId: v.optional(v.string()),
     subscriptionExpiresAt: v.optional(v.number()),
@@ -14,10 +22,7 @@ export const updateSubscription = mutation({
   handler: async (ctx, args) => {
     const { betterAuthId, ...updates } = args;
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", betterAuthId))
-      .first();
+    const user = await findUserByBetterAuthId(ctx, betterAuthId);
 
     if (!user) {
       throw new Error(`User not found with betterAuthId: ${betterAuthId}`);
@@ -32,10 +37,7 @@ export const updateSubscription = mutation({
 export const getSubscriptionStatus = query({
   args: { betterAuthId: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
-      .first();
+    const user = await findUserByBetterAuthId(ctx, args.betterAuthId);
 
     if (!user) {
       return null;
@@ -58,10 +60,7 @@ export const getSubscriptionStatus = query({
 export const grantFounderStatus = mutation({
   args: { betterAuthId: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
-      .first();
+    const user = await findUserByBetterAuthId(ctx, args.betterAuthId);
 
     if (!user) {
       throw new Error(`User not found with betterAuthId: ${args.betterAuthId}`);
@@ -79,10 +78,7 @@ export const grantFounderStatus = mutation({
 export const revokeFounderStatus = mutation({
   args: { betterAuthId: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
-      .first();
+    const user = await findUserByBetterAuthId(ctx, args.betterAuthId);
 
     if (!user) {
       throw new Error(`User not found with betterAuthId: ${args.betterAuthId}`);
@@ -100,10 +96,7 @@ export const revokeFounderStatus = mutation({
 export const isPremium = query({
   args: { betterAuthId: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
-      .first();
+    const user = await findUserByBetterAuthId(ctx, args.betterAuthId);
 
     if (!user) return false;
     return user.subscriptionStatus === "active" || user.subscriptionStatus === "founder";

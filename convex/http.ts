@@ -3,7 +3,8 @@ import { cors } from "hono/cors";
 import { HonoWithConvex, HttpRouterWithHono } from "convex-helpers/server/hono";
 import { ActionCtx } from "./_generated/server";
 import { api } from "./_generated/api";
-import { Id } from "./_generated/dataModel";
+import type { Id } from "./_generated/dataModel";
+import { subscriptionStatusValidator, subscriptionTierValidator } from "./utils/helpers";
 
 const app: HonoWithConvex<ActionCtx> = new Hono();
 
@@ -17,6 +18,27 @@ async function findUserByIdOrBetterAuthId(c: any, id: string) {
     (await findUserByBetterAuthId(c, id)) ||
     (await c.env.runQuery(api.users.getById, { id: id as Id<"users"> }))
   );
+}
+
+function requireField(value: unknown, fieldName: string) {
+  if (!value) {
+    return { valid: false, error: `${fieldName} is required` };
+  }
+  return { valid: true };
+}
+
+function handleError(c: any, error: unknown, context: string) {
+  console.error(`Error ${context}:`, error);
+  const message = error instanceof Error ? error.message : String(error);
+  return c.json({ success: false, message }, 500);
+}
+
+function handleValidationError(c: any, fieldName: string) {
+  return c.json({ success: false, message: `${fieldName} is required` }, 400);
+}
+
+function handleNotFound(c: any, resourceName: string) {
+  return c.json({ success: false, message: `${resourceName} not found` }, 404);
 }
 
 // Better Auth routes are handled automatically by the @convex-dev/better-auth component
@@ -149,15 +171,14 @@ app.post("/api/users/findByBetterAuthId", async (c) => {
     const { betterAuthId } = await c.req.json();
 
     if (!betterAuthId) {
-      return c.json({ success: false, message: "Better Auth ID is required" }, 400);
+      return handleValidationError(c, "Better Auth ID");
     }
 
     const user = await findUserByBetterAuthId(c, betterAuthId);
 
     return c.json({ success: true, data: user });
   } catch (error) {
-    console.error("Error finding user by Better Auth ID:", error);
-    return c.json({ success: false, message: "Failed to find user" }, 500);
+    return handleError(c, error, "finding user by Better Auth ID");
   }
 });
 
@@ -167,15 +188,14 @@ app.post("/api/users/findByEmail", async (c) => {
     const { email } = await c.req.json();
 
     if (!email) {
-      return c.json({ success: false, message: "Email is required" }, 400);
+      return handleValidationError(c, "Email");
     }
 
     const user = await c.env.runQuery(api.users.getByEmail, { email });
 
     return c.json({ success: true, data: user });
   } catch (error) {
-    console.error("Error finding user by email:", error);
-    return c.json({ success: false, message: "Failed to find user" }, 500);
+    return handleError(c, error, "finding user by email");
   }
 });
 
@@ -222,7 +242,7 @@ app.post("/api/stash/getUserStash", async (c) => {
     const { betterAuthId } = await c.req.json();
 
     if (!betterAuthId) {
-      return c.json({ success: false, message: "BetterAuth ID is required" }, 400);
+      return handleValidationError(c, "BetterAuth ID");
     }
 
     const user = await findUserByBetterAuthId(c, betterAuthId);
@@ -237,8 +257,7 @@ app.post("/api/stash/getUserStash", async (c) => {
 
     return c.json({ success: true, data: stash });
   } catch (error) {
-    console.error("Error getting stash:", error);
-    return c.json({ success: false, message: "Failed to get stash" }, 500);
+    return handleError(c, error, "getting stash");
   }
 });
 
@@ -264,8 +283,7 @@ app.post("/api/stash/addToStash", async (c) => {
 
     return c.json({ success: true, data: { userShoeId } });
   } catch (error) {
-    console.error("Error adding to stash:", error);
-    return c.json({ success: false, message: "Failed to add to stash" }, 500);
+    return handleError(c, error, "adding to stash");
   }
 });
 
@@ -291,8 +309,7 @@ app.post("/api/stash/removeFromStash", async (c) => {
 
     return c.json({ success: true, data: { removed } });
   } catch (error) {
-    console.error("Error removing from stash:", error);
-    return c.json({ success: false, message: "Failed to remove from stash" }, 500);
+    return handleError(c, error, "removing from stash");
   }
 });
 
@@ -326,8 +343,7 @@ app.post("/api/users/update", async (c) => {
 
     return c.json({ success: true, data: updated });
   } catch (error) {
-    console.error("Error updating user:", error);
-    return c.json({ success: false, message: "Failed to update user" }, 500);
+    return handleError(c, error, "updating user");
   }
 });
 
@@ -357,8 +373,7 @@ app.post("/api/users/completeOnboarding", async (c) => {
 
     return c.json({ success: true, data: updated });
   } catch (error) {
-    console.error("Error completing onboarding:", error);
-    return c.json({ success: false, message: "Failed to complete onboarding" }, 500);
+    return handleError(c, error, "completing onboarding");
   }
 });
 
@@ -383,8 +398,7 @@ app.post("/api/users/delete", async (c) => {
 
     return c.json({ success: true, message: "User deleted successfully" });
   } catch (error) {
-    console.error("Error deleting user:", error);
-    return c.json({ success: false, message: "Failed to delete user" }, 500);
+    return handleError(c, error, "deleting user");
   }
 });
 
@@ -410,8 +424,7 @@ app.post("/api/stash/updateUserShoeStats", async (c) => {
 
     return c.json({ success: true, data: updated });
   } catch (error) {
-    console.error("Error updating shoe stats:", error);
-    return c.json({ success: false, message: "Failed to update shoe stats" }, 500);
+    return handleError(c, error, "updating shoe stats");
   }
 });
 
@@ -429,8 +442,7 @@ app.post("/api/stash/toggleFavourite", async (c) => {
 
     return c.json({ success: true, data: updated });
   } catch (error) {
-    console.error("Error toggling favourite:", error);
-    return c.json({ success: false, message: "Failed to toggle favourite" }, 500);
+    return handleError(c, error, "toggling favourite");
   }
 });
 
@@ -450,8 +462,7 @@ app.post("/api/stash/verifyOwnership", async (c) => {
 
     return c.json({ success: true, data: ownership });
   } catch (error) {
-    console.error("Error verifying ownership:", error);
-    return c.json({ success: false, message: "Failed to verify ownership" }, 500);
+    return handleError(c, error, "verifying ownership");
   }
 });
 
@@ -470,8 +481,7 @@ app.post("/api/stash/deleteUserShoe", async (c) => {
 
     return c.json({ success: true, data: { deleted: true } });
   } catch (error) {
-    console.error("Error deleting user shoe:", error);
-    return c.json({ success: false, message: "Failed to delete user shoe" }, 500);
+    return handleError(c, error, "deleting user shoe");
   }
 });
 
@@ -488,8 +498,7 @@ app.post("/api/shoes/deleteByName", async (c) => {
 
     return c.json(result);
   } catch (error) {
-    console.error("Error deleting shoe:", error);
-    return c.json({ success: false, message: "Failed to delete shoe" }, 500);
+    return handleError(c, error, "deleting shoe");
   }
 });
 
@@ -510,8 +519,7 @@ app.post("/api/shoes/updateImageUrl", async (c) => {
 
     return c.json({ success: true, data: updated });
   } catch (error) {
-    console.error("Error updating shoe image URL:", error);
-    return c.json({ success: false, message: "Failed to update shoe image URL" }, 500);
+    return handleError(c, error, "updating shoe image URL");
   }
 });
 
@@ -523,7 +531,7 @@ app.post("/api/subscriptions/update", async (c) => {
     const { betterAuthId, subscriptionStatus, subscriptionTier, polarCustomerId, polarSubscriptionId, subscriptionExpiresAt } = await c.req.json();
 
     if (!betterAuthId) {
-      return c.json({ success: false, message: "betterAuthId is required" }, 400);
+      return handleValidationError(c, "betterAuthId");
     }
 
     const user = await c.env.runMutation(api.subscriptions.updateSubscription, {
@@ -537,9 +545,7 @@ app.post("/api/subscriptions/update", async (c) => {
 
     return c.json({ success: true, data: user });
   } catch (error) {
-    console.error("Error updating subscription:", error);
-    const message = error instanceof Error ? error.message : String(error);
-    return c.json({ success: false, message }, 500);
+    return handleError(c, error, "updating subscription");
   }
 });
 
@@ -549,7 +555,7 @@ app.post("/api/subscriptions/grantFounder", async (c) => {
     const { betterAuthId } = await c.req.json();
 
     if (!betterAuthId) {
-      return c.json({ success: false, message: "betterAuthId is required" }, 400);
+      return handleValidationError(c, "betterAuthId");
     }
 
     const user = await c.env.runMutation(api.subscriptions.grantFounderStatus, {
@@ -558,9 +564,7 @@ app.post("/api/subscriptions/grantFounder", async (c) => {
 
     return c.json({ success: true, data: user });
   } catch (error) {
-    console.error("Error granting founder status:", error);
-    const message = error instanceof Error ? error.message : String(error);
-    return c.json({ success: false, message }, 500);
+    return handleError(c, error, "granting founder status");
   }
 });
 
@@ -570,7 +574,7 @@ app.post("/api/subscriptions/status", async (c) => {
     const { betterAuthId } = await c.req.json();
 
     if (!betterAuthId) {
-      return c.json({ success: false, message: "betterAuthId is required" }, 400);
+      return handleValidationError(c, "betterAuthId");
     }
 
     const status = await c.env.runQuery(api.subscriptions.getSubscriptionStatus, {
@@ -579,9 +583,7 @@ app.post("/api/subscriptions/status", async (c) => {
 
     return c.json({ success: true, data: status });
   } catch (error) {
-    console.error("Error getting subscription status:", error);
-    const message = error instanceof Error ? error.message : String(error);
-    return c.json({ success: false, message }, 500);
+    return handleError(c, error, "getting subscription status");
   }
 });
 
@@ -591,9 +593,7 @@ app.get("/api/subscriptions/userCount", async (c) => {
     const count = await c.env.runQuery(api.subscriptions.getUserCount, {});
     return c.json({ success: true, data: { count } });
   } catch (error) {
-    console.error("Error getting user count:", error);
-    const message = error instanceof Error ? error.message : String(error);
-    return c.json({ success: false, message }, 500);
+    return handleError(c, error, "getting user count");
   }
 });
 

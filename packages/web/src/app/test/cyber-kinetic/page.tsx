@@ -1,14 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import dynamic from "next/dynamic";
-
-const Scene = dynamic(() => import("@/components/3d/Scene"), {
-  ssr: false,
-  loading: () => null,
-});
+import { Scene, BackButton } from "../test-utils";
 
 export default function CyberKinetic() {
   return (
@@ -21,12 +14,10 @@ export default function CyberKinetic() {
         }}
       />
 
-      <Link
+      <BackButton
         href="/test"
-        className="fixed top-8 left-8 z-[100] flex items-center justify-center w-12 h-12 bg-[#00FF41] text-[#050505] rounded-none hover:bg-white transition-colors uppercase font-bold text-xs"
-      >
-        <ArrowLeft className="w-5 h-5" />
-      </Link>
+        className="w-12 h-12 bg-[#00FF41] text-[#050505] rounded-none hover:bg-white transition-colors uppercase font-bold text-xs z-[100]"
+      />
 
       <section className="relative min-h-screen flex flex-col justify-between pt-24 px-8 pb-8 z-10 w-full mb-32">
         <div className="w-full flex justify-end">

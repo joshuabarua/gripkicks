@@ -3,6 +3,36 @@ import { mutation, query } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { formatEntityWithId, filterUndefinedValues } from "./utils/helpers";
 
+async function deleteByIndex(ctx: any, tableName: string, indexName: string, field: string, value: any) {
+  const items = await ctx.db
+    .query(tableName)
+    .withIndex(indexName, (q: any) => q.eq(field, value))
+    .collect();
+  for (const item of items) {
+    await ctx.db.delete(item._id);
+  }
+  return items.length;
+}
+
+async function queryByIndexFirst(ctx: any, tableName: string, indexName: string, field: string | string[], value: any) {
+  if (Array.isArray(field)) {
+    return await ctx.db
+      .query(tableName)
+      .withIndex(indexName, (q: any) => {
+        let query = q.eq(field[0], (value as any)[field[0]]);
+        for (let i = 1; i < field.length; i++) {
+          query = query.eq(field[i], (value as any)[field[i]]);
+        }
+        return query;
+      })
+      .first();
+  }
+  return await ctx.db
+    .query(tableName)
+    .withIndex(indexName, (q: any) => q.eq(field, value))
+    .first();
+}
+
 // ============ USERS ============
 
 export const createUser = mutation({
@@ -94,34 +124,9 @@ export const updateUser = mutation({
 export const deleteUser = mutation({
   args: { id: v.id("users") },
   handler: async (ctx, args) => {
-    // 1. Delete all sessions for this user
-    const sessions = await ctx.db
-      .query("sessions")
-      .withIndex("by_userId", (q) => q.eq("userId", args.id))
-      .collect();
-    for (const session of sessions) {
-      await ctx.db.delete(session._id);
-    }
-
-    // 2. Delete all accounts for this user
-    const accounts = await ctx.db
-      .query("accounts")
-      .withIndex("by_userId", (q) => q.eq("userId", args.id))
-      .collect();
-    for (const account of accounts) {
-      await ctx.db.delete(account._id);
-    }
-
-    // 3. Delete all user shoes for this user
-    const userShoes = await ctx.db
-      .query("userShoes")
-      .withIndex("by_userId", (q) => q.eq("userId", args.id))
-      .collect();
-    for (const shoe of userShoes) {
-      await ctx.db.delete(shoe._id);
-    }
-
-    // 4. Finally delete the user
+    deleteByIndex(ctx, "sessions", "by_userId", "userId", args.id);
+    deleteByIndex(ctx, "accounts", "by_userId", "userId", args.id);
+    deleteByIndex(ctx, "userShoes", "by_userId", "userId", args.id);
     await ctx.db.delete(args.id);
   },
 });
@@ -137,10 +142,7 @@ export const findUserById = query({
 export const findUserByEmail = query({
   args: { email: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
-      .first();
+    const user = await queryByIndexFirst(ctx, "users", "by_email", "email", args.email);
     return formatEntityWithId(user);
   },
 });
@@ -223,10 +225,7 @@ export const deleteSession = mutation({
 export const deleteSessionByToken = mutation({
   args: { token: v.string() },
   handler: async (ctx, args) => {
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
+    const session = await queryByIndexFirst(ctx, "sessions", "by_token", "token", args.token);
     if (session) {
       await ctx.db.delete(session._id);
     }
@@ -236,14 +235,7 @@ export const deleteSessionByToken = mutation({
 export const deleteSessionsByUserId = mutation({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
-    const sessions = await ctx.db
-      .query("sessions")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
-      .collect();
-    for (const session of sessions) {
-      await ctx.db.delete(session._id);
-    }
-    return sessions.length;
+    return deleteByIndex(ctx, "sessions", "by_userId", "userId", args.userId);
   },
 });
 
@@ -258,10 +250,7 @@ export const findSessionById = query({
 export const findSessionByToken = query({
   args: { token: v.string() },
   handler: async (ctx, args) => {
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
+    const session = await queryByIndexFirst(ctx, "sessions", "by_token", "token", args.token);
     return formatEntityWithId(session);
   },
 });
@@ -405,7 +394,7 @@ export const findAccountByUserId = query({
   handler: async (ctx, args) => {
     const accounts = await ctx.db
       .query("accounts")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .withIndex("by_userId", (q: any) => q.eq("userId", args.userId))
       .collect();
     return accounts.map(account => formatEntityWithId(account));
   },
@@ -414,12 +403,7 @@ export const findAccountByUserId = query({
 export const findAccountByProviderAndAccountId = query({
   args: { providerId: v.string(), accountId: v.string() },
   handler: async (ctx, args) => {
-    const accounts = await ctx.db
-      .query("accounts")
-      .withIndex("by_provider_accountId", (q) =>
-        q.eq("providerId", args.providerId).eq("accountId", args.accountId)
-      )
-      .first();
+    const accounts = await queryByIndexFirst(ctx, "accounts", "by_provider_accountId", ["providerId", "accountId"], { providerId: args.providerId, accountId: args.accountId });
     return formatEntityWithId(accounts);
   },
 });
@@ -514,10 +498,7 @@ export const deleteVerification = mutation({
 export const findVerificationByIdentifier = query({
   args: { identifier: v.string() },
   handler: async (ctx, args) => {
-    const verification = await ctx.db
-      .query("verifications")
-      .withIndex("by_identifier", (q) => q.eq("identifier", args.identifier))
-      .first();
+    const verification = await queryByIndexFirst(ctx, "verifications", "by_identifier", "identifier", args.identifier);
     return formatEntityWithId(verification);
   },
 });

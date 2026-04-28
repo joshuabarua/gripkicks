@@ -1,24 +1,17 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import dynamic from "next/dynamic";
-
-const Scene = dynamic(() => import("@/components/3d/Scene"), {
-  ssr: false,
-  loading: () => null,
-});
+import { Scene, BackButton } from "../test-utils";
 
 export default function SoftMinimal() {
   return (
     <main className="min-h-screen bg-[#FDFCFB] text-[#5A5856] font-sora selection:bg-[#EAE5DF] selection:text-[#5A5856]">
-      <Link
+      <BackButton
         href="/test"
-        className="fixed top-8 left-8 lg:top-12 lg:left-12 z-50 flex items-center gap-4 text-xs tracking-[0.3em] uppercase opacity-50 hover:opacity-100 transition-opacity"
+        className="top-8 left-8 lg:top-12 lg:left-12 gap-4 text-xs tracking-[0.3em] uppercase opacity-50 hover:opacity-100 transition-opacity"
       >
-        <ArrowLeft className="w-4 h-4" /> Return
-      </Link>
+        <span className="hidden lg:inline">Return</span>
+      </BackButton>
 
       <section className="min-h-[90vh] flex flex-col items-center justify-center relative overflow-hidden px-6 pt-32 pb-24">
          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl max-h-4xl pointer-events-none opacity-[0.15]">

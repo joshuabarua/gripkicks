@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { compileShader, parseHex, setupCanvasResize } from "./webgl-utils";
 
 const VERTEX_SHADER = `#version 300 es
 void main() {
@@ -69,25 +70,6 @@ void main() {
 }
 `;
 
-function compileShader(gl: WebGL2RenderingContext, type: number, source: string) {
-  const shader = gl.createShader(type);
-  if (!shader) return null;
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error("[EtherField] shader compile error:", gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
-    return null;
-  }
-  return shader;
-}
-
-function parseHex(hex: string): [number, number, number] {
-  const m = hex.replace("#", "");
-  const full = m.length === 3 ? m.split("").map((c) => c + c).join("") : m;
-  const n = parseInt(full, 16);
-  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
-}
 
 interface EtherFieldProps {
   className?: string;
@@ -129,8 +111,8 @@ export default function EtherField({
       return;
     }
 
-    const vertexShader = compileShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER);
-    const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
+    const vertexShader = compileShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER, "EtherField");
+    const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER, "EtherField");
     if (!vertexShader || !fragmentShader) return;
 
     const program = gl.createProgram();
@@ -154,22 +136,7 @@ export default function EtherField({
     const uMouse = gl.getUniformLocation(program, "uMouse");
     const uMouseStrength = gl.getUniformLocation(program, "uMouseStrength");
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      const w = Math.max(1, Math.floor(rect.width * dpr));
-      const h = Math.max(1, Math.floor(rect.height * dpr));
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w;
-        canvas.height = h;
-        gl.viewport(0, 0, w, h);
-      }
-    };
-
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-    resize();
+    const { ro } = setupCanvasResize(canvas, gl);
 
     const handlePointerMove = (e: PointerEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -179,6 +146,7 @@ export default function EtherField({
         e.clientY >= rect.top &&
         e.clientY <= rect.bottom;
       const m = mouseRef.current;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       if (inside) {
         m.targetX = (e.clientX - rect.left) * dpr;
         m.targetY = (rect.height - (e.clientY - rect.top)) * dpr;

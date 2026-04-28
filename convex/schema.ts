@@ -1,6 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { footShapeValidator, backlogStatusValidator, scoreHistoryEntryValidator } from "./utils/helpers";
+import { footShapeValidator, backlogStatusValidator, scoreHistoryEntryValidator, subscriptionStatusValidator, subscriptionTierValidator } from "./utils/helpers";
 
 export { footShapeValidator, backlogStatusValidator };
 
@@ -80,22 +80,8 @@ export default defineSchema({
     footVolume: v.optional(v.string()),
     favoriteShoeId: v.optional(v.id("shoes")),
     // Subscription fields (Polar.sh)
-    subscriptionStatus: v.optional(
-      v.union(
-        v.literal("active"),
-        v.literal("canceled"),
-        v.literal("past_due"),
-        v.literal("founder"),
-      ),
-    ),
-    subscriptionTier: v.optional(
-      v.union(
-        v.literal("monthly"),
-        v.literal("yearly"),
-        v.literal("lifetime"),
-        v.literal("founder"),
-      ),
-    ),
+    subscriptionStatus: v.optional(subscriptionStatusValidator),
+    subscriptionTier: v.optional(subscriptionTierValidator),
     polarCustomerId: v.optional(v.string()),
     polarSubscriptionId: v.optional(v.string()),
     subscriptionExpiresAt: v.optional(v.number()),

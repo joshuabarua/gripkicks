@@ -2,22 +2,58 @@ import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { filterUndefinedValues } from "./utils/helpers";
 
+async function getUserShoe(ctx: any, userShoeId: any) {
+  const userShoe = await ctx.db.get(userShoeId);
+  if (!userShoe) {
+    throw new Error("User shoe not found");
+  }
+  return userShoe;
+}
+
+async function getUserShoesByUserId(ctx: any, userId: any) {
+  return await ctx.db
+    .query("userShoes")
+    .withIndex("by_userId", (q: any) => q.eq("userId", userId))
+    .collect();
+}
+
+function calculateRatingAverages(allUserRatings: any[]) {
+  const validComfortRatings = allUserRatings
+    .filter(r => r.comfortScore !== undefined)
+    .map(r => r.comfortScore!);
+  const validPerformanceRatings = allUserRatings
+    .filter(r => r.performanceRating !== undefined)
+    .map(r => r.performanceRating!);
+  const validDurabilityRatings = allUserRatings
+    .filter(r => r.durabilityRating !== undefined)
+    .map(r => r.durabilityRating!);
+
+  return {
+    avgComfortScore: validComfortRatings.length > 0
+      ? validComfortRatings.reduce((a, b) => a + b, 0) / validComfortRatings.length
+      : undefined,
+    avgPerformanceRating: validPerformanceRatings.length > 0
+      ? validPerformanceRatings.reduce((a, b) => a + b, 0) / validPerformanceRatings.length
+      : undefined,
+    avgDurabilityRating: validDurabilityRatings.length > 0
+      ? validDurabilityRatings.reduce((a, b) => a + b, 0) / validDurabilityRatings.length
+      : undefined,
+  };
+}
+
 export const getUserStash = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
-    const userShoes = await ctx.db
-      .query("userShoes")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
-      .collect();
+    const userShoes = await getUserShoesByUserId(ctx, args.userId);
 
     if (userShoes.length === 0) {
       return [];
     }
 
     // Collect all shoe IDs and fetch them in a single batch
-    const shoeIds = userShoes.map(entry => entry.shoeId);
+    const shoeIds = userShoes.map((entry: any) => entry.shoeId);
     const shoes = await Promise.all(
-      shoeIds.map(shoeId => ctx.db.get(shoeId))
+      shoeIds.map((shoeId: any) => ctx.db.get(shoeId))
     );
 
     // Create a map for O(1) lookup instead of array search
@@ -27,11 +63,11 @@ export const getUserStash = query({
 
     // Combine userShoes with their corresponding shoe data
     return userShoes
-      .map(entry => ({
+      .map((entry: any) => ({
         ...entry,
         shoe: shoeMap.get(entry.shoeId) || null
       }))
-      .filter(entry => entry.shoe !== null);
+      .filter((entry: any) => entry.shoe !== null);
   },
 });
 
@@ -113,10 +149,7 @@ export const updateUserShoeStats = mutation({
   handler: async (ctx, args) => {
     const { userShoeId, ...updateFields } = args;
 
-    const userShoe = await ctx.db.get(userShoeId);
-    if (!userShoe) {
-      throw new Error("User shoe not found");
-    }
+    const userShoe = await getUserShoe(ctx, userShoeId);
 
     const fieldsToUpdate = filterUndefinedValues(updateFields);
 
@@ -134,27 +167,9 @@ export const updateUserShoeStats = mutation({
       .collect();
 
     if (allUserRatings.length >= 3) {
-      // Only calculate averages if we have 3 or more ratings
-      const validComfortRatings = allUserRatings
-        .filter(r => r.comfortScore !== undefined)
-        .map(r => r.comfortScore!);
-      const validPerformanceRatings = allUserRatings
-        .filter(r => r.performanceRating !== undefined)
-        .map(r => r.performanceRating!);
-      const validDurabilityRatings = allUserRatings
-        .filter(r => r.durabilityRating !== undefined)
-        .map(r => r.durabilityRating!);
-
+      const averages = calculateRatingAverages(allUserRatings);
       await ctx.db.patch(userShoe.shoeId, {
-        avgComfortScore: validComfortRatings.length > 0
-          ? validComfortRatings.reduce((a, b) => a + b, 0) / validComfortRatings.length
-          : undefined,
-        avgPerformanceRating: validPerformanceRatings.length > 0
-          ? validPerformanceRatings.reduce((a, b) => a + b, 0) / validPerformanceRatings.length
-          : undefined,
-        avgDurabilityRating: validDurabilityRatings.length > 0
-          ? validDurabilityRatings.reduce((a, b) => a + b, 0) / validDurabilityRatings.length
-          : undefined,
+        ...averages,
         totalRatings: allUserRatings.length,
       });
     } else if (allUserRatings.length < 3) {
@@ -176,10 +191,7 @@ export const toggleFavourite = mutation({
     userShoeId: v.id("userShoes"),
   },
   handler: async (ctx, args) => {
-    const userShoe = await ctx.db.get(args.userShoeId);
-    if (!userShoe) {
-      throw new Error("User shoe not found");
-    }
+    const userShoe = await getUserShoe(ctx, args.userShoeId);
     await ctx.db.patch(args.userShoeId, {
       isFavourite: !userShoe.isFavourite,
     });
@@ -267,10 +279,7 @@ export const getSoleMateAggregates = query({
     >();
 
     for (const user of matchingUsers) {
-      const userShoes = await ctx.db
-        .query("userShoes")
-        .withIndex("by_userId", (q) => q.eq("userId", user._id))
-        .collect();
+      const userShoes = await getUserShoesByUserId(ctx, user._id);
 
       for (const userShoe of userShoes) {
         const key = userShoe.shoeId as string;

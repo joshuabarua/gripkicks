@@ -1,14 +1,7 @@
 "use client";
 
 import React from "react";
-import dynamic from "next/dynamic";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-
-const Scene = dynamic(() => import("@/components/3d/Scene"), {
-  ssr: false,
-  loading: () => null,
-});
+import { Scene, BackButton } from "../test-utils";
 
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.10 0 0 0 0 0.05 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
@@ -24,13 +17,7 @@ export default function EditorialRetro() {
         style={{ backgroundImage: GRAIN, backgroundSize: "240px 240px" }}
       />
 
-      <Link
-        href="/test"
-        className="fixed top-24 left-6 z-[70] inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest px-3 py-1.5 border"
-        style={{ borderColor: INK, background: PAPER, color: INK }}
-      >
-        <ArrowLeft className="w-3 h-3" /> back
-      </Link>
+      <BackButton href="/test" className="text-[#26190d] fixed top-8 left-8 z-50 text-xs tracking-[0.3em] uppercase opacity-60 hover:opacity-100 transition-opacity" style={{ borderColor: INK, background: PAPER, color: INK }} />
 
       <header className="relative px-6 py-5" style={{ borderBottom: `3px double ${INK}` }}>
         <div className="max-w-6xl mx-auto flex items-end justify-between gap-6 flex-wrap">
