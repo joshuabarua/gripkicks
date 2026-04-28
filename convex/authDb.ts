@@ -19,9 +19,9 @@ async function queryByIndexFirst(ctx: any, tableName: string, indexName: string,
     return await ctx.db
       .query(tableName)
       .withIndex(indexName, (q: any) => {
-        let query = q.eq(field[0], (value as any)[field[0]]);
+        let query = q.eq(field[0]!, (value as any)[field[0]!]);
         for (let i = 1; i < field.length; i++) {
-          query = query.eq(field[i], (value as any)[field[i]]);
+          query = query.eq(field[i]!, (value as any)[field[i]!]);
         }
         return query;
       })
