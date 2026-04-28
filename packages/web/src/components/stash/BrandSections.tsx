@@ -33,39 +33,22 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-fluid-lg">
             {models.map((model, modelIndex) => (
-              <div
-                key={model.groupKey}
-                className="rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-fluid-md"
-              >
-                <div className="mb-fluid-md flex items-center justify-between gap-fluid-sm">
-                  <div>
-                    <h3 className="font-sora text-lg font-semibold text-white">
-                      {model.baseName}
-                    </h3>
+              <div key={model.groupKey} className="flex flex-wrap gap-fluid-md">
+                {model.variants.map(({ item: shoe, variantLabel }, variantIndex) => (
+                  <div key={shoe._id} className="space-y-2">
                     {model.variants.length > 1 && (
-                      <p className="font-sora text-[10px] tracking-wider text-neutral-500">
-                        {model.variants.length} VARIANTS
+                      <p className="pl-1 font-sora text-[10px] uppercase tracking-wider text-neutral-500">
+                        {variantLabel || "Standard"}
                       </p>
                     )}
+                    <CloudShoe
+                      shoe={shoe}
+                      onClick={() => onSelect(shoe)}
+                      index={variantIndex + modelIndex * 10 + brandIndex * 100}
+                      specialLabel={specialLabels[shoe._id]}
+                    />
                   </div>
-                </div>
-                <div className="flex flex-wrap gap-fluid-md">
-                  {model.variants.map(({ item: shoe, variantLabel }, variantIndex) => (
-                    <div key={shoe._id} className="space-y-2">
-                      {model.variants.length > 1 && (
-                        <p className="pl-1 font-sora text-[10px] uppercase tracking-wider text-neutral-500">
-                          {variantLabel || "Standard"}
-                        </p>
-                      )}
-                      <CloudShoe
-                        shoe={shoe}
-                        onClick={() => onSelect(shoe)}
-                        index={variantIndex + modelIndex * 10 + brandIndex * 100}
-                        specialLabel={specialLabels[shoe._id]}
-                      />
-                    </div>
-                  ))}
-                </div>
+                ))}
               </div>
             ))}
           </div>

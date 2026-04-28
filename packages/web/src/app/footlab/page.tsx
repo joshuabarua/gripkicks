@@ -9,6 +9,8 @@ import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useQuery } from 'convex/react';
+import { api } from 'convex/_generated/api';
 
 type FootShape = 'egyptian' | 'roman' | 'greek' | 'germanic' | 'celtic';
 type FootVolume = 'low' | 'medium' | 'high';
@@ -124,6 +126,7 @@ function VolumeArch({ volume, active }: { volume: FootVolume; active: boolean })
 
 export default function FootLabPage() {
   const { data: session } = useSession();
+  const { profile: footProfile } = useFootProfileStore();
   const router = useRouter();
   const setProfile = useFootProfileStore((state) => state.setProfile);
   const [selectedFootShape, setSelectedFootShape] = useState<FootShape | null>(null);
@@ -131,7 +134,20 @@ export default function FootLabPage() {
   const [savedFootShape, setSavedFootShape] = useState<FootShape | null>(null);
   const [savedFootVolume, setSavedFootVolume] = useState<FootVolume | null>(null);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(false);(true);
+
+  const userData = useQuery(
+    api.users.findByBetterAuthId,
+    session?.user ? { betterAuthId: session.user.id } : "skip",
+  );
+  const userStashData = useQuery(
+    api.stash.getUserStash,
+    userData ? { userId: userData._id } : "skip",
+  );
+
+  const hasFootProfile = !!(footProfile?.shape && footProfile?.volume);
+  const hasShoesInStash = userStashData && userStashData.length > 0;
+  const shouldSkipOnboarding = hasFootProfile && hasShoesInStash;
   const [error, setError] = useState<string | null>(null);
   const [onboardingComplete, setOnboardingComplete] = useState<boolean>(true);
 
@@ -234,7 +250,7 @@ export default function FootLabPage() {
           <h1 className="font-ball-pill text-5xl mb-3">FOOT PROFILE</h1>
           <p className="font-sora text-neutral-500 mb-6">Log in to discover your foot shape</p>
           <Link
-            href="/auth/login?callbackUrl=%2Ffootscan"
+            href="/auth/login?callbackUrl=%2Ffootlab"
             className="inline-flex items-center justify-center rounded-lg bg-brand-red px-8 py-3 font-ball-pill text-lg text-black"
           >
             LOG IN
@@ -246,7 +262,7 @@ export default function FootLabPage() {
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden pb-32">
-      <section className="px-6 md:px-12 lg:px-16 py-14 max-w-6xl mx-auto">
+      <section className="px-6 m!shouldSkipOnboarding && d:px-12 lg:px-16 py-14 max-w-6xl mx-auto">
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}

@@ -191,7 +191,7 @@ function FeaturesSection() {
     {
       title: "Foot Lab",
       copy: "Lock in your foot shape and volume. Everything else flows from this.",
-      href: "/footscan",
+      href: "/footlab",
     },
     {
       title: "Sanctuary",

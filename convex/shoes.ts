@@ -437,3 +437,93 @@ export const remove = mutation({
     return { success: true };
   },
 });
+
+export const bulkUpsertByBrand = mutation({
+  args: {
+    brand: v.string(),
+    shoes: v.array(
+      v.object({
+        name: v.string(),
+        imageUrl: v.optional(v.string()),
+        aggressiveness: v.optional(v.string()),
+        stiffness: v.optional(v.string()),
+        climbingDiscipline: v.optional(v.string()),
+        volume: v.optional(v.string()),
+        gender: v.optional(v.union(
+          v.literal("men"),
+          v.literal("women"),
+          v.literal("kids"),
+          v.literal("unisex"),
+        )),
+        footShapeCompat: v.optional(v.array(footShapeValidator)),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const updated: string[] = [];
+    const created: string[] = [];
+
+    for (const shoeData of args.shoes) {
+      const existing = await ctx.db
+        .query("shoes")
+        .withIndex("by_brand", (q) => q.eq("brand", args.brand))
+        .filter((q) => q.eq(q.field("name"), shoeData.name))
+        .first();
+
+      if (existing) {
+        const patch: Record<string, unknown> = {};
+        if (shoeData.imageUrl !== undefined) patch.imageUrl = shoeData.imageUrl;
+        if (shoeData.aggressiveness !== undefined) patch.aggressiveness = shoeData.aggressiveness;
+        if (shoeData.stiffness !== undefined) patch.stiffness = shoeData.stiffness;
+        if (shoeData.climbingDiscipline !== undefined) patch.climbingDiscipline = shoeData.climbingDiscipline;
+        if (shoeData.volume !== undefined) patch.volume = shoeData.volume;
+        if (shoeData.gender !== undefined) patch.gender = shoeData.gender;
+
+        if (Object.keys(patch).length > 0) {
+          await ctx.db.patch(existing._id, patch);
+        }
+        updated.push(shoeData.name);
+        continue;
+      }
+
+      const modelName = deriveModelName(shoeData.name);
+      const variantLabel = deriveVariantLabel(shoeData.name, shoeData.gender);
+      const siblingModels = await ctx.db
+        .query("shoes")
+        .withIndex("by_brand_modelName", (q) =>
+          q.eq("brand", args.brand).eq("modelName", modelName),
+        )
+        .collect();
+      const parentModel = siblingModels.find((candidate) => !candidate.variantLabel);
+
+      const shoeId = await ctx.db.insert("shoes", {
+        name: shoeData.name,
+        brand: args.brand,
+        modelName,
+        ...(variantLabel !== undefined ? { variantLabel } : {}),
+        ...(parentModel?._id !== undefined ? { parentModelId: parentModel._id } : {}),
+        aggressiveness: shoeData.aggressiveness ?? "moderate",
+        stiffness: shoeData.stiffness ?? "medium",
+        climbingDiscipline: shoeData.climbingDiscipline ?? "sport",
+        volume: shoeData.volume ?? "medium",
+        ...(shoeData.imageUrl !== undefined ? { imageUrl: shoeData.imageUrl } : {}),
+        ...(shoeData.gender !== undefined ? { gender: shoeData.gender } : {}),
+      });
+
+      if (shoeData.footShapeCompat) {
+        for (const footShape of shoeData.footShapeCompat) {
+          await ctx.db.insert("footShapeCompat", { shoeId, footShape });
+        }
+      }
+      created.push(shoeData.name);
+    }
+
+    return {
+      success: true,
+      updatedCount: updated.length,
+      createdCount: created.length,
+      updated,
+      created,
+    };
+  },
+});

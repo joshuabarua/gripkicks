@@ -302,11 +302,11 @@ function ShoeMarker({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 4 }}
               transition={{ duration: 0.15 }}
-              className="absolute left-1/2 -translate-x-1/2 -translate-y-2 -top-2 pointer-events-none z-40"
-              style={{ transform: "translate(-50%, calc(-100% - 8px))" }}
+              className="absolute left-1/2 -translate-x-1/2 pointer-events-none z-40"
+              style={{ transform: "translate(-50%, calc(-100% - 12px))" }}
             >
               <div className="bg-black/95 backdrop-blur border border-neutral-700 rounded-xl px-3 py-2 min-w-[180px] shadow-xl">
-                <p className="font-ball-pill text-sm text-white leading-tight whitespace-nowrap">{pos.name}</p>
+                <p className="font-ball-pill text-sm text-white leading-tight whitespace-nowrap overflow-visible">{pos.name}</p>
                 <p className="font-sora text-[10px] uppercase tracking-wider text-neutral-500 mb-1.5">{pos.brand}</p>
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-sora text-[10px] text-neutral-400">
@@ -370,10 +370,10 @@ function UserMarker({ x, y, label }: { x: number; y: number; label: string }) {
       transition={{ duration: 0.4 }}
     >
       <div className="relative">
-        <div className="w-8 h-8 rounded-full border-2 border-cyan-400 bg-cyan-500/10 flex items-center justify-center backdrop-blur">
-          <div className="w-2 h-2 bg-cyan-400 rounded-full" />
+        <div className="w-12 h-12 rounded-full border-2 border-cyan-400 bg-cyan-500/10 flex items-center justify-center backdrop-blur">
+          <div className="w-3 h-3 bg-cyan-400 rounded-full" />
         </div>
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2 py-0.5 rounded-full bg-cyan-500 text-black font-ball-pill text-[10px] tracking-wider whitespace-nowrap">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-cyan-500 text-black font-ball-pill text-xs tracking-wider whitespace-nowrap">
           {label}
         </div>
       </div>

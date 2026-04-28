@@ -139,7 +139,7 @@ function SoleMateTab() {
         <Footprints className="w-10 h-10 text-brand-red/40 mx-auto mb-4" />
         <h2 className="font-ball-pill text-2xl text-white mb-2">SET UP YOUR FOOT PROFILE</h2>
         <p className="font-sora text-neutral-500 mb-6 max-w-sm mx-auto">Your foot profile is needed to find climbers with the same fit</p>
-        <Link href="/footscan">
+        <Link href="/footlab">
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill px-6 py-2.5 rounded-xl transition-colors">
             FOOT LAB
           </motion.button>

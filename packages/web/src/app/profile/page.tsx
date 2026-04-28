@@ -20,6 +20,9 @@ import { AccountDeletion } from "@/components/AccountDeletion";
 import { useLoading } from "@/contexts/LoadingContext";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import { useFootProfileStore } from "@/stores/footProfileStore";
 
 interface UserProfile {
   id: string;
@@ -50,9 +53,26 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
+  const { profile: footProfile } = useFootProfileStore();
   const displayName = profile?.name || session?.user?.name || "User";
   const displayEmail = profile?.email || session?.user?.email || "";
   const displayUserId = profile?.id ?? session?.user?.id ?? null;
+
+  const userData = useQuery(
+    api.users.findByBetterAuthId,
+    session?.user ? { betterAuthId: session.user.id } : "skip",
+  );
+  const userStashData = useQuery(
+    api.stash.getUserStash,
+    userData ? { userId: userData._id } : "skip",
+  );
+
+  const hasFootProfile = !!(footProfile?.shape && footProfile?.volume);
+  const hasShoesInStash = userStashData && userStashData.length > 0;
+  const shouldSkipOnboarding = hasFootProfile && hasShoesInStash;
+
+  const favouriteUserShoe = userStashData?.find((item: any) => item.isFavourite);
+  const favouriteShoe = favouriteUserShoe?.shoe;
 
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? null : section);
@@ -179,7 +199,7 @@ export default function ProfilePage() {
                     <Footprints className="w-5 h-5 text-brand-red" />
                   </div>
                   {!profile?.footShape && (
-                    <Link href="/footscan">
+                    <Link href="/footlab">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
                         className="font-sora text-[10px] text-brand-red cursor-pointer uppercase tracking-wide"
@@ -202,7 +222,7 @@ export default function ProfilePage() {
                   <div className="w-10 h-10 bg-brand-red/10 rounded-xl flex items-center justify-center">
                     <Star className="w-5 h-5 text-brand-red" />
                   </div>
-                  {!profile?.favoriteShoe && (
+                  {!favouriteShoe && (
                     <Link href="/stash">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
@@ -215,15 +235,15 @@ export default function ProfilePage() {
                 </div>
                 <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Favourite Shoe</p>
                 <p className="font-ball-pill text-2xl text-white">
-                  {profile?.favoriteShoe
-                    ? `${profile.favoriteShoe.brand} ${profile.favoriteShoe.name}`
+                  {favouriteShoe
+                    ? `${favouriteShoe.brand} ${favouriteShoe.name}`
                     : "Not set"}
                 </p>
               </div>
             </motion.div>
 
             {/* Onboarding CTA */}
-            {!profile?.onboardingComplete && (
+            {!profile?.onboardingComplete && !shouldSkipOnboarding && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -243,7 +263,7 @@ export default function ProfilePage() {
                     <li>2. Add your first shoe with comfort ratings</li>
                     <li>3. Find your perfect match</li>
                   </ol>
-                  <Link href="/footscan">
+                  <Link href="/footlab">
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}

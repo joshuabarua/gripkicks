@@ -146,7 +146,7 @@ export function MatcherView() {
           <p className="font-sora text-neutral-400 text-sm flex-1">
             Complete your foot profile for stronger recommendation accuracy.
           </p>
-          <Link href="/footscan" className="font-sora text-sm text-brand-red hover:text-brand-red transition-colors shrink-0">
+          <Link href="/footlab" className="font-sora text-sm text-brand-red hover:text-brand-red transition-colors shrink-0">
             Set up →
           </Link>
         </div>
@@ -264,7 +264,7 @@ function ModeHeader({ mode, count }: { mode: Mode; count: number }) {
         <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">
           {mode === "personal" ? "Personal" : "Community"}
         </p>
-        <h2 className="font-ball-pill text-3xl md:text-4xl text-white leading-none">{title}</h2>
+        <h2 className="font-ball-pill text-4xl md:text-5xl text-white leading-none">{title}</h2>
       </div>
       <p className="font-sora text-xs text-neutral-500 max-w-xs text-right hidden sm:block">{subtitle}</p>
     </div>
@@ -304,6 +304,17 @@ function TileGrid({ shoes }: { shoes: DisplayShoe[] }) {
             <p className="font-ball-pill text-sm text-white truncate leading-tight">{shoe.name}</p>
             <p className="font-sora text-[10px] text-neutral-400 truncate uppercase tracking-wider">{shoe.brand}</p>
           </div>
+
+          {shoe.breakdown && (
+            <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black via-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <p className="font-sora text-[10px] text-neutral-400 mb-1">Why this match:</p>
+              <div className="space-y-0.5">
+                <p className="font-sora text-[9px] text-neutral-300">Foot type: {(shoe.breakdown.footTypeCompatibility * 20).toFixed(0)}%</p>
+                <p className="font-sora text-[9px] text-neutral-300">Volume: {(shoe.breakdown.volumeCompatibility * 20).toFixed(0)}%</p>
+                <p className="font-sora text-[9px] text-neutral-300">Preferences: {(shoe.breakdown.userPreferenceMatch * 20).toFixed(0)}%</p>
+              </div>
+            </div>
+          )}
         </motion.div>
       ))}
     </div>
@@ -391,8 +402,8 @@ function LeaderboardRow({
               {...(shoe.imageUrl ? { imageUrl: shoe.imageUrl } : {})}
             />
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-ball-pill text-base text-white truncate leading-tight">{shoe.name}</p>
+          <div className="min-w-0 flex-1 overflow-visible">
+            <p className="font-ball-pill text-base text-white leading-tight">{shoe.name}</p>
             <p className="font-sora text-xs text-neutral-500 truncate">
               {shoe.brand} <span className="text-neutral-700">·</span> {shoe.secondaryLabel}
             </p>
@@ -448,7 +459,7 @@ function EmptyState({ mode, hasFootProfile }: { mode: Mode; hasFootProfile: bool
           Personal matches need your foot shape and volume.
         </p>
         <Link
-          href="/footscan"
+          href="/footlab"
           className="inline-flex items-center bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill px-6 py-3 rounded-xl transition-colors"
         >
           FOOT LAB

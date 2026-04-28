@@ -7,7 +7,7 @@ import { FooterGrippy } from "./GrippyKickkyy";
 const footerLinks = {
   product: [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Foot Lab", href: "/footscan" },
+    { title: "Foot Lab", href: "/footlab" },
     { title: "Sanctuary", href: "/stash" },
     { title: "Matcher", href: "/matcher" },
   ],

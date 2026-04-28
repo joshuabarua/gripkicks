@@ -27,12 +27,12 @@ export function DataContributionNudge({
       {
         label: "Set foot shape",
         done: !!footProfile?.shape,
-        href: "/footscan",
+        href: "/footlab",
       },
       {
         label: "Set foot volume",
         done: !!footProfile?.volume,
-        href: "/footscan",
+        href: "/footlab",
       },
       {
         label: "Add a shoe to your Sanctuary",

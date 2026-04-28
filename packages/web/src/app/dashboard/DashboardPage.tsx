@@ -152,7 +152,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.16 }}
-            onClick={() => router.push("/footscan")}
+            onClick={() => router.push("/footlab")}
             className="col-span-12 md:col-span-8 bg-black p-8 flex items-center justify-between cursor-pointer hover:bg-brand-surface transition-colors duration-500 group relative overflow-hidden min-h-[140px]"
           >
             <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-red origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 ease-out" />
@@ -242,7 +242,7 @@ export default function DashboardPage() {
 
             <motion.div
               whileHover={{ backgroundColor: "rgba(26,26,26,1)" }}
-              onClick={() => router.push("/footscan")}
+              onClick={() => router.push("/footlab")}
               className="monolith-card col-span-6 md:col-span-4 bg-black p-6 flex flex-col justify-between cursor-pointer group relative overflow-hidden transition-colors duration-500 min-h-[180px]"
             >
               <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-red origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 ease-out" />

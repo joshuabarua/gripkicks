@@ -629,7 +629,7 @@ export default function OnboardingPage() {
                   <div className="grid md:grid-cols-3 gap-4 mb-10">
                     {[
                       {
-                        href: "/footscan",
+                        href: "/footlab",
                         icon: Footprints,
                         label: "Foot Lab",
                       },

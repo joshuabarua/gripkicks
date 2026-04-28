@@ -204,7 +204,7 @@ describe("OnboardingGuard", () => {
   });
 
   it("handles API error response and renders children", async () => {
-    mockUsePathname.mockReturnValue("/footscan");
+    mockUsePathname.mockReturnValue("/footlab");
     setupMockSession({ user: { id: "user-1" } });
     setupMockApiResponseError();
 
@@ -222,7 +222,7 @@ describe("OnboardingGuard", () => {
   });
 
   it("renders children for footscan path even when onboarding incomplete", async () => {
-    mockUsePathname.mockReturnValue("/footscan");
+    mockUsePathname.mockReturnValue("/footlab");
     setupMockSession({ user: { id: "user-1" } });
     setupMockOnboardingComplete(false);
 

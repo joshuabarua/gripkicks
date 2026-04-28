@@ -16,7 +16,7 @@ interface NavItem {
 
 const mainLinks: NavItem[] = [
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, animation: 'bounce' },
-    { title: "Foot Lab", href: "/footscan", icon: Footprints, animation: 'wiggle' },
+    { title: "Foot Lab", href: "/footlab", icon: Footprints, animation: 'wiggle' },
     { title: "Sanctuary", href: "/stash", icon: Archive, animation: 'pop' },
     { title: "Matcher", href: "/matcher", icon: Target, animation: 'pulse' },
 ]

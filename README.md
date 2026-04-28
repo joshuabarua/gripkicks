@@ -64,7 +64,7 @@ Frontend ↔ Convex Client ↔ Convex Functions (Queries/Mutations) ↔ Convex D
 
 - **/** - Home page with 3D visualization
 - **/stash** - Shoe Sanctuary - Manage your shoe collection
-- **/footscan** - Foot Lab - Analyze foot shape and get recommendations
+- **/footlab** - Foot Lab - Analyze foot shape and get recommendations
 - **/findmyshoe** - Sole Mate - Find your perfect shoe match
 - **/profile** - User profile management
 - **/auth/login** - Authentication page

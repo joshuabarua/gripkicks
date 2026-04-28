@@ -91,7 +91,7 @@ Active/selected: `border-brand-red bg-brand-red/10`
 | Label | Route | Purpose |
 |---|---|---|
 | Dashboard | `/dashboard` | Home base — stats, foot profile, recent shoes |
-| Foot Lab | `/footscan` | Set up / update foot profile |
+| Foot Lab | `/footlab` | Set up / update foot profile |
 | Sanctuary | `/stash` | Shoe collection |
 | Matcher | `/matcher` | Visual shoe radar |
 | Sole Mate | `/findmyshoe` | Personalised recommendations |
