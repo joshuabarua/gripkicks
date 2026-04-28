@@ -65,14 +65,11 @@ export function useAddShoeToStash() {
       return result.value;
     },
     onMutate: async (shoeId) => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: queryKeys.userStash('') });
+      await queryClient.cancelQueries({ queryKey: queryKeys.userStash("") });
 
-      // Snapshot the previous value
-      const previousStash = queryClient.getQueryData(queryKeys.userStash(''));
+      const previousStash = queryClient.getQueryData(queryKeys.userStash(""));
 
-      // Optimistically update to the new value
-      queryClient.setQueryData(queryKeys.userStash(''), (old: UserShoe[] = []) => [
+      queryClient.setQueryData(queryKeys.userStash(""), (old: UserShoe[] = []) => [
         ...old,
         {
           _id: `temp-${Date.now()}`,
@@ -83,12 +80,10 @@ export function useAddShoeToStash() {
       return { previousStash };
     },
     onError: (_err, _shoeId, context) => {
-      // Rollback on error
-      queryClient.setQueryData(queryKeys.userStash(''), (context as { previousStash: UserShoe[] })?.previousStash);
+      queryClient.setQueryData(queryKeys.userStash(""), (context as { previousStash: UserShoe[] })?.previousStash);
     },
     onSettled: () => {
-      // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: queryKeys.userStash('') });
+      queryClient.invalidateQueries({ queryKey: queryKeys.userStash("") });
     },
   });
 }
@@ -106,22 +101,21 @@ export function useRemoveShoeFromStash() {
       return result.value;
     },
     onMutate: async (shoeId) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.userStash('') });
+      await queryClient.cancelQueries({ queryKey: queryKeys.userStash("") });
 
-      const previousStash = queryClient.getQueryData(queryKeys.userStash(''));
+      const previousStash = queryClient.getQueryData(queryKeys.userStash(""));
 
-      // Optimistically remove the shoe
-      queryClient.setQueryData(queryKeys.userStash(''), (old: UserShoe[] = []) =>
+      queryClient.setQueryData(queryKeys.userStash(""), (old: UserShoe[] = []) =>
         old.filter(shoe => shoe.shoeId !== shoeId)
       );
 
       return { previousStash };
     },
     onError: (_err, _shoeId, context) => {
-      queryClient.setQueryData(queryKeys.userStash(''), (context as { previousStash: UserShoe[] })?.previousStash);
+      queryClient.setQueryData(queryKeys.userStash(""), (context as { previousStash: UserShoe[] })?.previousStash);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.userStash('') });
+      queryClient.invalidateQueries({ queryKey: queryKeys.userStash("") });
     },
   });
 }
@@ -139,22 +133,21 @@ export function useUpdateShoeStats() {
       return result.value;
     },
     onMutate: async ({ shoeId, updates }) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.userStash('') });
+      await queryClient.cancelQueries({ queryKey: queryKeys.userStash("") });
 
-      const previousStash = queryClient.getQueryData(queryKeys.userStash(''));
+      const previousStash = queryClient.getQueryData(queryKeys.userStash(""));
 
-      // Optimistically update the shoe
-      queryClient.setQueryData(queryKeys.userStash(''), (old: UserShoe[] = []) =>
+      queryClient.setQueryData(queryKeys.userStash(""), (old: UserShoe[] = []) =>
         old.map(shoe => shoe._id === shoeId ? { ...shoe, ...updates } : shoe)
       );
 
       return { previousStash };
     },
     onError: (_err, _variables, context) => {
-      queryClient.setQueryData(queryKeys.userStash(''), (context as { previousStash: UserShoe[] })?.previousStash);
+      queryClient.setQueryData(queryKeys.userStash(""), (context as { previousStash: UserShoe[] })?.previousStash);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.userStash('') });
+      queryClient.invalidateQueries({ queryKey: queryKeys.userStash("") });
     },
   });
 }
@@ -172,12 +165,11 @@ export function useToggleFavourite() {
       return result.value;
     },
     onMutate: async (shoeId) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.userStash('') });
+      await queryClient.cancelQueries({ queryKey: queryKeys.userStash("") });
 
-      const previousStash = queryClient.getQueryData(queryKeys.userStash(''));
+      const previousStash = queryClient.getQueryData(queryKeys.userStash(""));
 
-      // Optimistically toggle favorite status
-      queryClient.setQueryData(queryKeys.userStash(''), (old: UserShoe[] = []) =>
+      queryClient.setQueryData(queryKeys.userStash(""), (old: UserShoe[] = []) =>
         old.map(shoe =>
           shoe._id === shoeId ? { ...shoe, isFavourite: !shoe.isFavourite } : shoe
         )
@@ -186,10 +178,10 @@ export function useToggleFavourite() {
       return { previousStash };
     },
     onError: (_err, _shoeId, context) => {
-      queryClient.setQueryData(queryKeys.userStash(''), (context as { previousStash: UserShoe[] })?.previousStash);
+      queryClient.setQueryData(queryKeys.userStash(""), (context as { previousStash: UserShoe[] })?.previousStash);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.userStash('') });
+      queryClient.invalidateQueries({ queryKey: queryKeys.userStash("") });
     },
   });
 }

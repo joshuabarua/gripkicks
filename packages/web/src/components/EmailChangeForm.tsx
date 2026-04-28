@@ -4,11 +4,11 @@ import React, { useState } from 'react';
 import { useMutation } from '@/hooks/useAsync';
 import { fetchApi } from '@/lib/api-client';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
+import { AccountFormStatus } from '@/components/AccountFormStatus';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, CheckCircle2, AlertCircle, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 const emailChangeSchema = z.object({
   newEmail: z.string().email('Please enter a valid email address'),
@@ -114,64 +114,30 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
               />
             </div>
 
-            {validationError && (
-              <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                <AlertCircle className="h-4 w-4" />
-                {validationError}
-              </div>
-            )}
+            <AccountFormStatus
+              isLoading={isLoading}
+              isError={isError}
+              isSuccess={isSuccess}
+              error={error}
+              validationError={validationError}
+              successTitle="Verification Email Sent"
+              successMessage="Please check your new email inbox and click the verification link to complete the change."
+              loadingText="Sending Verification..."
+              buttonText="Change Email"
+            />
 
-            {isError && error && (
-              <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                <AlertCircle className="h-4 w-4" />
-                <div>
-                  <p className="font-medium">Error</p>
-                  <p className="mt-1">{error.message}</p>
-                </div>
-              </div>
-            )}
-
-            {isSuccess && (
-              <div className="flex items-center gap-2 rounded-md bg-green-50 p-3 text-sm text-green-800">
-                <CheckCircle2 className="h-4 w-4" />
-                <div>
-                  <p className="font-medium">Verification Email Sent</p>
-                  <p className="mt-1">
-                    Please check your new email inbox and click the verification link to complete the change.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-2 pt-2">
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="flex-1"
+            {(isSuccess || isError || validationError) && (
+              <button
+                type="button"
+                onClick={() => {
+                  reset();
+                  setValidationError(null);
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2"
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Sending Verification...
-                  </>
-                ) : (
-                  'Change Email'
-                )}
-              </Button>
-
-              {(isSuccess || isError || validationError) && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    reset();
-                    setValidationError(null);
-                  }}
-                >
-                  Reset
-                </Button>
-              )}
-            </div>
+                Reset
+              </button>
+            )}
           </form>
         </div>
       </CardContent>

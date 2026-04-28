@@ -175,35 +175,13 @@ export function ShoeMatcherChart() {
     return "performance-aggressive";
   };
 
-  // Calculate positions for all shoes with filtering
-  const shoePositions = useMemo(() => {
-    if (!shoes) return [];
-
-    let filteredShoes = shoes;
-
-    // Apply search filter
-    if (searchQuery.trim()) {
-      filteredShoes = filteredShoes.filter(
-        (shoe) =>
-          shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          shoe.brand.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-    }
-
-    // Apply quadrant filter
-    if (selectedQuadrantFilter !== "all") {
-      filteredShoes = filteredShoes.filter((shoe) => {
-        const position = calculateShoePosition(shoe);
-        return getQuadrant(position) === selectedQuadrantFilter;
-      });
-    }
-
-    return filteredShoes.map((shoe) => ({
-      shoe,
-      position: calculateShoePosition(shoe),
-      quadrant: getQuadrant(calculateShoePosition(shoe)),
-    }));
-  }, [shoes, calculateShoePosition, searchQuery, selectedQuadrantFilter]);
+  const shoePositions = useShoeFiltering({
+    shoes,
+    calculateShoePosition,
+    getQuadrant,
+    searchQuery,
+    selectedQuadrantFilter,
+  });
 
   // Prepare chart data
   const chartData = useMemo(() => {

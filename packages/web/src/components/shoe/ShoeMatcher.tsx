@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useShoeFiltering, getShoesInQuadrant } from "./useShoeFiltering";
+import { useShoeFiltering, getShoesInQuadrant } from "./useShoeFiltering";
 import { motion } from "framer-motion";
 import ShoeImage from "@/components/ShoeImage";
 import { useQuery } from "convex/react";
@@ -136,40 +137,13 @@ export function ShoeMatcher() {
     return "endurance-sport";
   };
 
-  // Calculate positions for all shoes with filtering
-  const shoePositions = useMemo(() => {
-    if (!shoes) return [];
-
-    let filteredShoes = shoes;
-
-    // Apply search filter
-    if (searchQuery.trim()) {
-      filteredShoes = filteredShoes.filter(
-        (shoe) =>
-          shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          shoe.brand.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-    }
-
-    // Apply quadrant filter
-    if (selectedQuadrantFilter !== "all") {
-      filteredShoes = filteredShoes.filter((shoe) => {
-        const position = calculateShoePosition(shoe);
-        return getQuadrant(position) === selectedQuadrantFilter;
-      });
-    }
-
-    return filteredShoes.map((shoe) => ({
-      shoe,
-      position: calculateShoePosition(shoe),
-      quadrant: getQuadrant(calculateShoePosition(shoe)),
-    }));
-  }, [shoes, calculateShoePosition, searchQuery, selectedQuadrantFilter]);
-
-  // Filter shoes by quadrant
-  const getShoesInQuadrant = (quadrant: string) => {
-    return shoePositions.filter((item) => item.quadrant === quadrant);
-  };
+  const shoePositions = useShoeFiltering({
+    shoes,
+    calculateShoePosition,
+    getQuadrant,
+    searchQuery,
+    selectedQuadrantFilter,
+  });
 
   if (!shoes) {
     return (
