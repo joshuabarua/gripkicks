@@ -16,6 +16,11 @@ const CloudShader = dynamic(() => import("@/components/3d/CloudShader"), {
   ssr: false,
   loading: () => null,
 });
+
+const CloudBackground = dynamic(() => import("@/components/CloudBackground"), {
+  ssr: false,
+  loading: () => null,
+});
 import { LoadingBar } from "@/components/ui/loading";
 import { useLoading } from "@/contexts/LoadingContext";
 import { ShoeCardSkeleton, StatsStripSkeleton } from "@/components/ui/skeleton";
@@ -325,6 +330,8 @@ export default function ShoeSanctuaryPage() {
           cloudColor="#e6dccb"
         />
       </div>
+
+      <CloudBackground />
 
       <div className="fixed inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/85 pointer-events-none z-0" />
 
