@@ -23,7 +23,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
     setCurrentImageIndex(0);
     const imageInterval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % transitionImages.length);
-    }, 120);
+    }, 200);
 
     return () => clearInterval(imageInterval);
   }, [isLoading]);

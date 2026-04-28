@@ -1,0 +1,10 @@
+{
+  "brand": "Zamberlan",
+  "brandKey": "zamberlan",
+  "imagekitFolder": "gripkicks/imgs/shoes/zamberlan/",
+  "filenameToName": {},
+  "shoes": [
+    { "name": "Free Blast", "aggressiveness": "flat", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Salathe", "aggressiveness": "flat", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] }
+  ]
+}

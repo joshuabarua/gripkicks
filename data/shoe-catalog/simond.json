@@ -1,0 +1,16 @@
+{
+  "brand": "Simond",
+  "brandKey": "simond",
+  "imagekitFolder": "gripkicks/imgs/shoes/simond/",
+  "filenameToName": {
+    "rockplus": "Rock+",
+    "edge": "Edge"
+  },
+  "shoes": [
+    { "name": "Rock+", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Cliff", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Edge", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Rock", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Vertika", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] }
+  ]
+}

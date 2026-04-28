@@ -1,0 +1,19 @@
+{
+  "brand": "Mad Rock",
+  "brandKey": "mad_rock",
+  "imagekitFolder": "gripkicks/imgs/shoes/madrock/",
+  "filenameToName": {
+    "shark2": "Shark 2.0"
+  },
+  "shoes": [
+    { "name": "Remora", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek", "germanic"] },
+    { "name": "Remora HV", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic", "celtic"] },
+    { "name": "Drone", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Drone HV", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Shark 2.0", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Weaver", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "competition", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Drifter", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Lyra", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Haywire", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] }
+  ]
+}

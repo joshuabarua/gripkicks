@@ -1,161 +1,117 @@
 import "dotenv/config";
+import path from "node:path";
+import fs from "node:fs";
 import ImageKit from "imagekit";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api.js";
 
-const BRAND = process.argv[2];
-const FOLDER = process.argv[3];
+const BRAND_KEY = process.argv[2];
+const DRY_RUN = process.argv.includes("--dry-run");
 
-if (!BRAND || !FOLDER) {
-  console.error("Usage: node scripts/sync-shoe-images.mjs <brand> <imagekit-folder-path>");
-  console.error("Example: node scripts/sync-shoe-images.mjs Scarpa gripkicks/imgs/shoes/scarpa/");
+if (!BRAND_KEY) {
+  console.error("Usage: node scripts/sync-shoe-images.mjs <brand-key> [--dry-run]");
+  console.error("Example: node scripts/sync-shoe-images.mjs scarpa");
+  console.error("\nBrand key must match a file in data/shoe-catalog/<brand-key>.json");
   process.exit(1);
 }
 
-const FILENAME_TO_NAME = {
-  drago: "Drago",
-  dragoLV: "Drago LV",
-  dragoxt: "Drago XT",
-  dragoxtlv: "Drago XT LV",
-  instinctVS: "Instinct VS",
-  instinctvslace: "Instinct VS Lace",
-  instinctVSR: "Instinct VSR",
-  instinctvsrlv: "Instinct VSR LV",
-  instincts: "Instinct S",
-  instinctle: "Instinct LE",
-  furiaair: "Furia Air",
-  furiaairls: "Furia Air LS",
-  furias: "Furia S",
-  vaporV: "Vapor V",
-  vapors: "Vapor S",
-  vapourLACE: "Vapor Lace",
-  vapourVLV: "Vapour LV",
-  vapourVTORQUOISE: "Vapour V Turquoise",
-  veloce: "Veloce",
-  velocelace: "Veloce Lace",
-  velocityV: "Velocity V",
-  maestro: "Maestro",
-  chimera: "Chimera",
-  origin: "Origin",
-  originORANGE: "Origin Orange",
-  originVS: "Origin VS",
-  originVSTORQUOISE: "Origin VS Turquoise",
-  quantic: "Quantic",
-  quantixsf: "Quantix SF",
-  reflex: "Reflex",
-  reflexvs: "Reflex VS",
-  reflexv: "Reflex V",
-  booster: "Booster",
-  boostic: "Boostic",
-  generator: "Generator",
-  generatormidlace: "Generator Mid Lace",
-  mago: "Mago",
-  pikij: "Pikij",
-  arpiav: "Arpia V",
-  boosticR: "Boostic R",
-  instinctS1: "Instinct S",
-  vapourS: "Vapor S",
+const GENDER_SUFFIX = {
+  men: "",
+  women: " Women's",
+  kids: " Kids",
+  unisex: "",
 };
 
-const SHOE_DEFAULTS = {
-  Scarpa: {
-    Drago: { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Drago LV": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Drago XT": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Drago XT LV": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Instinct VS": { aggressiveness: "aggressive", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-    "Instinct VS Lace": { aggressiveness: "aggressive", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Instinct VSR": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-    "Instinct VSR LV": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Instinct S": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Instinct LE": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Furia Air": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "competition", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Furia Air LS": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "competition", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Furia S": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Vapor V": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Vapor S": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Vapor Lace": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "trad", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek", "germanic"] },
-    "Vapour LV": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Vapour V Turquoise": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Veloce": { aggressiveness: "flat", stiffness: "medium", climbingDiscipline: "gym", volume: "high", footShapeCompat: ["egyptian", "roman", "greek", "germanic", "celtic"] },
-    "Veloce Lace": { aggressiveness: "flat", stiffness: "medium", climbingDiscipline: "gym", volume: "high", footShapeCompat: ["egyptian", "roman", "greek", "germanic", "celtic"] },
-    "Velocity V": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Maestro": { aggressiveness: "aggressive", stiffness: "stiff", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-    "Chimera": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Origin": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Origin Orange": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Origin VS": { aggressiveness: "aggressive", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-    "Origin VS Turquoise": { aggressiveness: "aggressive", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-    "Quantic": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Quantix SF": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "competition", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Reflex": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "gym", volume: "high", footShapeCompat: ["egyptian", "roman", "greek", "germanic", "celtic"] },
-    "Reflex VS": { aggressiveness: "aggressive", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-    "Reflex V": { aggressiveness: "aggressive", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-    "Booster": { aggressiveness: "flat", stiffness: "soft", climbingDiscipline: "gym", volume: "high", footShapeCompat: ["egyptian", "roman", "greek", "germanic", "celtic"] },
-    "Boostic": { aggressiveness: "aggressive", stiffness: "stiff", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-    "Boostic R": { aggressiveness: "aggressive", stiffness: "stiff", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-    "Generator": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek"] },
-    "Generator Mid Lace": { aggressiveness: "moderate", stiffness: "medium", climbingDiscipline: "trad", volume: "medium", footShapeCompat: ["egyptian", "roman", "greek", "germanic"] },
-    "Mago": { aggressiveness: "aggressive", stiffness: "soft", climbingDiscipline: "bouldering", volume: "low", footShapeCompat: ["egyptian", "greek"] },
-    "Pikij": { aggressiveness: "flat", stiffness: "soft", climbingDiscipline: "gym", volume: "high", footShapeCompat: ["egyptian", "roman", "greek", "germanic", "celtic"] },
-    "Arpia V": { aggressiveness: "aggressive", stiffness: "medium", climbingDiscipline: "sport", volume: "medium", footShapeCompat: ["egyptian", "roman"] },
-  },
+const GENDER_FROM_CODE = {
+  m: "men",
+  w: "women",
+  k: "kids",
+  u: "unisex",
 };
 
-function parseFilename(filename) {
+function defaultParseFilename(filename) {
   const base = filename.replace(/\.(png|jpg|jpeg|webp)$/i, "");
-  const match = base.match(/^(.+?)_([mwk])(\d+)$/);
+  const match = base.match(/^(.+?)_([mwku])(\d+)$/);
   if (!match) return null;
-
-  const [, slugRaw, genderCode] = match;
-  const slug = slugRaw.toLowerCase();
-  const genderMap = { m: "men", w: "women", k: "kids" };
-  return { slug, slugRaw, gender: genderMap[genderCode] };
+  const [, slug, genderCode] = match;
+  return { slug, gender: GENDER_FROM_CODE[genderCode] };
 }
 
-function resolveShoeName(slugRaw) {
-  if (FILENAME_TO_NAME[slugRaw]) return FILENAME_TO_NAME[slugRaw];
-  const lower = slugRaw.toLowerCase();
-  for (const [key, value] of Object.entries(FILENAME_TO_NAME)) {
-    if (key.toLowerCase() === lower) return value;
+function normalizeSlug(slug) {
+  return slug.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function resolveShoeName(slug, config) {
+  if (config.filenameToName?.[slug]) return config.filenameToName[slug];
+  const normalized = normalizeSlug(slug);
+  for (const [key, value] of Object.entries(config.filenameToName ?? {})) {
+    if (normalizeSlug(key) === normalized) return value;
+  }
+  for (const knownName of Object.keys(config.defaults ?? {})) {
+    if (normalizeSlug(knownName) === normalized) return knownName;
   }
   return null;
 }
 
-async function main() {
+function loadBrandCatalog(key) {
+  const catalogPath = path.resolve(`data/shoe-catalog/${key}.json`);
+  if (!fs.existsSync(catalogPath)) {
+    throw new Error(`Missing brand catalog at ${catalogPath}`);
+  }
+  const raw = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
+  if (!raw.brand) throw new Error(`${catalogPath} must contain 'brand'`);
+  if (!raw.imagekitFolder) throw new Error(`${catalogPath} must contain 'imagekitFolder'`);
+
+  const defaults = {};
+  for (const shoe of raw.shoes ?? []) {
+    const { name, ...attrs } = shoe;
+    if (name) defaults[name] = attrs;
+  }
+
+  return {
+    brand: raw.brand,
+    imagekitFolder: raw.imagekitFolder,
+    filenameToName: raw.filenameToName ?? {},
+    defaults,
+    parseFilename: defaultParseFilename,
+  };
+}
+
+async function listImagekitFiles(folder) {
   const imagekit = new ImageKit({
     urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
     privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
   });
+  return imagekit.listFiles({ path: folder, limit: 1000 });
+}
 
-  const files = await imagekit.listFiles({ path: FOLDER, limit: 1000 });
-  console.log(`Found ${files.length} files in ${FOLDER}`);
-
-  const brandDefaults = SHOE_DEFAULTS[BRAND] ?? {};
-  const shoesByName = new Map();
+function buildShoePayloads(files, config) {
+  const seen = new Set();
+  const shoes = [];
+  const warnings = [];
 
   for (const file of files) {
-    const parsed = parseFilename(file.name);
+    const parsed = config.parseFilename(file.name);
     if (!parsed) {
-      console.warn(`Skipping unparseable filename: ${file.name}`);
+      warnings.push(`Unparseable filename: ${file.name}`);
       continue;
     }
 
-    const shoeName = resolveShoeName(parsed.slugRaw);
-    if (!shoeName) {
-      console.warn(`No name mapping for slug: ${parsed.slugRaw} (file: ${file.name})`);
+    const baseName = resolveShoeName(parsed.slug, config);
+    if (!baseName) {
+      warnings.push(`No name mapping for slug '${parsed.slug}' (file: ${file.name})`);
       continue;
     }
 
-    const isVariantImage = parsed.gender === "women" || parsed.gender === "kids";
-    const variantSuffix = parsed.gender === "women" ? " Women's" : parsed.gender === "kids" ? " Kids" : "";
-    const fullName = isVariantImage && !shoeName.endsWith(variantSuffix) ? `${shoeName}${variantSuffix}` : shoeName;
+    const suffix = GENDER_SUFFIX[parsed.gender] ?? "";
+    const fullName = suffix && !baseName.endsWith(suffix) ? `${baseName}${suffix}` : baseName;
 
-    if (shoesByName.has(fullName)) continue;
+    if (seen.has(fullName)) continue;
+    seen.add(fullName);
 
-    const defaults = brandDefaults[fullName] || brandDefaults[shoeName] || {};
-    shoesByName.set(fullName, {
+    const defaults = config.defaults[fullName] ?? config.defaults[baseName] ?? {};
+    shoes.push({
       name: fullName,
       imageUrl: file.url,
       gender: parsed.gender,
@@ -163,22 +119,40 @@ async function main() {
     });
   }
 
-  const shoes = Array.from(shoesByName.values());
-  console.log(`Prepared ${shoes.length} shoes for upsert`);
+  return { shoes, warnings };
+}
+
+async function main() {
+  const config = loadBrandCatalog(BRAND_KEY);
+  console.log(`\n━━ Syncing ${config.brand} ━━`);
+  console.log(`Folder: ${config.imagekitFolder}`);
+
+  const files = await listImagekitFiles(config.imagekitFolder);
+  console.log(`Found ${files.length} files`);
+
+  const { shoes, warnings } = buildShoePayloads(files, config);
+  warnings.forEach((w) => console.warn(`⚠ ${w}`));
+  console.log(`Prepared ${shoes.length} shoes`);
+
+  if (DRY_RUN) {
+    console.log("\n-- DRY RUN --");
+    shoes.forEach((s) => console.log(`  ${s.name}  [${s.gender}]  ${s.imageUrl}`));
+    return;
+  }
 
   const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || process.env.CONVEX_URL;
-  if (!convexUrl) throw new Error("Missing CONVEX_URL");
+  if (!convexUrl) throw new Error("Missing NEXT_PUBLIC_CONVEX_URL or CONVEX_URL");
 
   const client = new ConvexHttpClient(convexUrl);
   const result = await client.mutation(api.shoes.bulkUpsertByBrand, {
-    brand: BRAND,
+    brand: config.brand,
     shoes,
   });
 
   console.log(`\n✓ Updated: ${result.updatedCount}`);
   console.log(`✓ Created: ${result.createdCount}`);
   if (result.created.length > 0) {
-    console.log("Created:", result.created.join(", "));
+    console.log(`Created: ${result.created.join(", ")}`);
   }
 }
 

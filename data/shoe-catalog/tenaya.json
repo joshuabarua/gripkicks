@@ -1,0 +1,20 @@
+{
+  "brand": "Tenaya",
+  "brandKey": "tenaya",
+  "imagekitFolder": "gripkicks/imgs/shoes/tenaya/",
+  "filenameToName": {},
+  "shoes": [
+    { "name": "Oasi", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Oasi LV", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Iati", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Mastia", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Tarifa", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Mundaka", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "competition", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Indalo", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Tarifa Extreme", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Ra", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Inti", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek", "germanic"] },
+    { "name": "Masai", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Tatanka", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] }
+  ]
+}

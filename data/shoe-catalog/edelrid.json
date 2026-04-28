@@ -1,0 +1,13 @@
+{
+  "brand": "Edelrid",
+  "brandKey": "edelrid",
+  "imagekitFolder": "gripkicks/imgs/shoes/edelrid/",
+  "filenameToName": {},
+  "shoes": [
+    { "name": "Centrino", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Centrino Lace", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "trad", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek", "germanic"] },
+    { "name": "Typhoon", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Cyclone", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Reptile", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic"] }
+  ]
+}

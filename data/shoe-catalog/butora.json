@@ -1,0 +1,17 @@
+{
+  "brand": "Butora",
+  "brandKey": "butora",
+  "imagekitFolder": "gripkicks/imgs/shoes/butora/",
+  "filenameToName": {
+    "acrocomp": "Acro Comp"
+  },
+  "shoes": [
+    { "name": "Acro", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek", "celtic"] },
+    { "name": "Acro Comp", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "competition", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Altura", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Endeavor", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Gomi", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Senchi", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Libra", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] }
+  ]
+}

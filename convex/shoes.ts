@@ -472,12 +472,12 @@ export const bulkUpsertByBrand = mutation({
 
       if (existing) {
         const patch: Record<string, unknown> = {};
-        if (shoeData.imageUrl !== undefined) patch.imageUrl = shoeData.imageUrl;
-        if (shoeData.aggressiveness !== undefined) patch.aggressiveness = shoeData.aggressiveness;
-        if (shoeData.stiffness !== undefined) patch.stiffness = shoeData.stiffness;
-        if (shoeData.climbingDiscipline !== undefined) patch.climbingDiscipline = shoeData.climbingDiscipline;
-        if (shoeData.volume !== undefined) patch.volume = shoeData.volume;
-        if (shoeData.gender !== undefined) patch.gender = shoeData.gender;
+        if (shoeData.imageUrl !== undefined) patch['imageUrl'] = shoeData.imageUrl;
+        if (shoeData.aggressiveness !== undefined) patch['aggressiveness'] = shoeData.aggressiveness;
+        if (shoeData.stiffness !== undefined) patch['stiffness'] = shoeData.stiffness;
+        if (shoeData.climbingDiscipline !== undefined) patch['climbingDiscipline'] = shoeData.climbingDiscipline;
+        if (shoeData.volume !== undefined) patch['volume'] = shoeData.volume;
+        if (shoeData.gender !== undefined) patch['gender'] = shoeData.gender;
 
         if (Object.keys(patch).length > 0) {
           await ctx.db.patch(existing._id, patch);

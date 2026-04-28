@@ -1,0 +1,36 @@
+{
+  "brand": "La Sportiva",
+  "brandKey": "la_sportiva",
+  "imagekitFolder": "gripkicks/imgs/shoes/lasportiva/",
+  "filenameToName": {
+    "solutioncomp": "Solution Comp",
+    "miuravs": "Miura VS",
+    "katanalace": "Katana Lace",
+    "tcpro": "TC Pro"
+  },
+  "shoes": [
+    { "name": "Solution", "aggressiveness": "aggressive", "stiffness": "stiff", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Solution Comp", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "competition", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Skwama", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Skwama Vegan", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Miura", "aggressiveness": "moderate", "stiffness": "stiff", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Miura VS", "aggressiveness": "aggressive", "stiffness": "stiff", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Katana", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Katana Lace", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "trad", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek", "germanic"] },
+    { "name": "Otaki", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Futura", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Genius", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "sport", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Tarantula", "aggressiveness": "flat", "stiffness": "stiff", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Tarantulace", "aggressiveness": "flat", "stiffness": "stiff", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Tarantula Boulder", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "TC Pro", "aggressiveness": "flat", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Cobra", "aggressiveness": "flat", "stiffness": "soft", "climbingDiscipline": "gym", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Cobra 4.99", "aggressiveness": "flat", "stiffness": "soft", "climbingDiscipline": "competition", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Theory", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Finale", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Mythos", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Mythos Eco", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Testarossa", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Python", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] }
+  ]
+}

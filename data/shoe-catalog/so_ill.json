@@ -1,0 +1,17 @@
+{
+  "brand": "So iLL",
+  "brandKey": "so_ill",
+  "imagekitFolder": "gripkicks/imgs/shoes/soill/",
+  "filenameToName": {
+    "thebowler": "The Bowler",
+    "newzero": "New Zero",
+    "freerange": "Free Range"
+  },
+  "shoes": [
+    { "name": "The Bowler", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "New Zero", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Free Range", "aggressiveness": "flat", "stiffness": "soft", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Street", "aggressiveness": "flat", "stiffness": "soft", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic"] },
+    { "name": "Runner LV", "aggressiveness": "flat", "stiffness": "soft", "climbingDiscipline": "gym", "volume": "low", "footShapeCompat": ["egyptian", "greek"] }
+  ]
+}

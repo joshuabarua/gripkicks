@@ -1,0 +1,24 @@
+{
+  "brand": "Evolv",
+  "brandKey": "evolv",
+  "imagekitFolder": "gripkicks/imgs/shoes/evolv/",
+  "filenameToName": {},
+  "shoes": [
+    { "name": "Shaman", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Shaman LV", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Shaman Pro", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Phantom", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Phantom LV", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Zenist", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "competition", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Zenist Pro", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "competition", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Kira", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Elektra", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "low", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Defy", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Kronos", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Oracle", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Geshido", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Agro", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Raven", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Supra", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "brand": "Red Chili",
+  "brandKey": "red_chilli",
+  "imagekitFolder": "gripkicks/imgs/shoes/redchili/",
+  "filenameToName": {},
+  "shoes": [
+    { "name": "Voltage", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Voltage 2", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Voltage Lace", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Voltage LV", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Atomyc", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Sausalito", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Charger", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Corona", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Fusion", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Puzzle", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Spirit", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Session", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic"] },
+    { "name": "Mystix", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] }
+  ]
+}

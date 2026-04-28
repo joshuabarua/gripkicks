@@ -1,0 +1,31 @@
+{
+  "brand": "Five Ten",
+  "brandKey": "five_ten",
+  "imagekitFolder": "gripkicks/imgs/shoes/fiveten/",
+  "filenameToName": {
+    "hiangleprocomp": "Hiangle Pro Comp",
+    "niadvcs": "Niad VCS",
+    "niadlace": "Niad Lace",
+    "niadmoccasym": "Niad Moccasym",
+    "anasaziprofessional": "Anasazi Pro",
+    "anasazilace": "Anasazi Lace",
+    "anasazivcs": "Anasazi VCS"
+  },
+  "shoes": [
+    { "name": "Hiangle", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Hiangle Pro", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Hiangle Pro Comp", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "competition", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Hiangle Tour", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "trad", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Aleon", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Anasazi Pro", "aggressiveness": "moderate", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Anasazi Lace", "aggressiveness": "moderate", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek", "germanic"] },
+    { "name": "Anasazi VCS", "aggressiveness": "moderate", "stiffness": "stiff", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Kirigami", "aggressiveness": "flat", "stiffness": "soft", "climbingDiscipline": "gym", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Niad VCS", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Niad Lace", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "trad", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek", "germanic"] },
+    { "name": "Niad Moccasym", "aggressiveness": "flat", "stiffness": "soft", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Crawe", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Grandstone", "aggressiveness": "flat", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Quantum", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] }
+  ]
+}

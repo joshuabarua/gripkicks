@@ -1,0 +1,21 @@
+{
+  "brand": "Black Diamond",
+  "brandKey": "black_diamond",
+  "imagekitFolder": "gripkicks/imgs/shoes/blackdiamond/",
+  "filenameToName": {
+    "shadowlv": "Shadow LV",
+    "zonelv": "Zone LV"
+  },
+  "shoes": [
+    { "name": "Shadow", "aggressiveness": "aggressive", "stiffness": "stiff", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
+    { "name": "Shadow LV", "aggressiveness": "aggressive", "stiffness": "stiff", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Zone", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Zone LV", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
+    { "name": "Momentum", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Momentum Lace", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
+    { "name": "Focus", "aggressiveness": "moderate", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Aspect", "aggressiveness": "flat", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
+    { "name": "Method", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
+    { "name": "Method S", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] }
+  ]
+}

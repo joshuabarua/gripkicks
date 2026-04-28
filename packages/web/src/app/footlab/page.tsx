@@ -262,7 +262,7 @@ export default function FootLabPage() {
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden pb-32">
-      <section className="px-6 m!shouldSkipOnboarding && d:px-12 lg:px-16 py-14 max-w-6xl mx-auto">
+      <section className="px-6 m!shouldSkipOnboar!ing && dshouldSkipOnboarding && d:px-12 lg:px-16 py-14 max-w-6xl mx-auto">
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -309,12 +309,9 @@ export default function FootLabPage() {
           transition={{ delay: 0.1 }}
           className="mb-16"
         >
-          <div className="flex items-baseline gap-4 mb-8">
-            <span className="font-ball-pill text-5xl text-white/10">01</span>
-            <div>
-              <h2 className="font-ball-pill text-2xl">Which toe is longest?</h2>
-              <p className="font-sora text-neutral-500 text-sm mt-0.5">Look at your bare foot from above and pick the closest match</p>
-            </div>
+          <div className="mb-8">
+            <h2 className="font-ball-pill text-2xl">Which toe is longest?</h2>
+            <p className="font-sora text-neutral-500 text-sm mt-0.5">Look at your bare foot from above and pick the closest match</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -364,12 +361,9 @@ export default function FootLabPage() {
           transition={{ delay: 0.2 }}
           className="mb-16"
         >
-          <div className="flex items-baseline gap-4 mb-8">
-            <span className="font-ball-pill text-5xl text-white/10">02</span>
-            <div>
-              <h2 className="font-ball-pill text-2xl">How full is your foot?</h2>
-              <p className="font-sora text-neutral-500 text-sm mt-0.5">Think about your foot width and instep height</p>
-            </div>
+          <div className="mb-8">
+            <h2 className="font-ball-pill text-2xl">How full is your foot?</h2>
+            <p className="font-sora text-neutral-500 text-sm mt-0.5">Think about your foot width and instep height</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
