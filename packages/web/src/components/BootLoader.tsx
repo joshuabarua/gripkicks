@@ -21,7 +21,7 @@ export default function BootLoader({ visible }: { visible: boolean }) {
     setCurrentImageIndex(0);
     const imageInterval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % transitionImages.length);
-    }, 1000);
+    }, 460);
 
     return () => clearInterval(imageInterval);
   }, [visible]);
