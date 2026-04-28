@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, Suspense, useMemo, useState } from "react";
+import React, { useRef, useCallback, Suspense, useMemo } from "react";
 import { useGLTF, Text, MeshTransmissionMaterial } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Mesh } from "three";
@@ -10,7 +10,6 @@ useGLTF.preload("/glb/HeroShoe.glb");
 export default function ShoeModel() {
   const { nodes } = useGLTF("/glb/HeroShoe.glb");
   const { viewport } = useThree();
-  const [hoveredText, setHoveredText] = useState<string | null>(null);
 
   // Get performance settings from store
   const highPerformanceMode = useHighPerformanceMode();
