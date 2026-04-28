@@ -109,14 +109,16 @@ export interface ShoeVariantGroup<T> {
   variants: GroupedVariant<T>[];
 }
 
-export function groupUserShoesByModel<T extends UserShoeLike>(userShoes: T[]) {
+function groupShoesByModelHelper<T>(
+  items: T[],
+  getSource: (item: T) => ShoeVariantSource | null,
+): Map<string, ShoeVariantGroup<T>> {
   const grouped = new Map<string, ShoeVariantGroup<T>>();
 
-  for (const item of userShoes) {
-    const details = item.shoe ?? item.shoeDetails;
-    if (!details) continue;
+  for (const item of items) {
+    const source = getSource(item);
+    if (!source) continue;
 
-    const source = details as ShoeVariantSource;
     const brandName = source.brand || "Unknown";
     const modelName = getStoredModelName(source);
     const groupKey = `${brandName.toLowerCase()}::${modelName.toLowerCase()}`;
@@ -128,26 +130,18 @@ export function groupUserShoesByModel<T extends UserShoeLike>(userShoes: T[]) {
     addVariantToGroup(grouped, groupKey, brandName, modelName, variant);
   }
 
-  return sortGroupedVariants(grouped);
+  return grouped;
+}
+
+export function groupUserShoesByModel<T extends UserShoeLike>(userShoes: T[]) {
+  return groupShoesByModelHelper(userShoes, (item) => {
+    const details = (item as any).shoe ?? (item as any).shoeDetails;
+    return details as ShoeVariantSource;
+  });
 }
 
 export function groupShoesByModel<T extends ShoeLike>(shoes: T[]) {
-  const grouped = new Map<string, ShoeVariantGroup<T>>();
-
-  for (const item of shoes) {
-    const source = item as ShoeVariantSource;
-    const brandName = source.brand || "Unknown";
-    const modelName = getStoredModelName(source);
-    const groupKey = `${brandName.toLowerCase()}::${modelName.toLowerCase()}`;
-    const variant = {
-      item,
-      variantLabel: getStoredVariantLabel(source),
-    };
-
-    addVariantToGroup(grouped, groupKey, brandName, modelName, variant);
-  }
-
-  return sortGroupedVariants(grouped);
+  return groupShoesByModelHelper(shoes, (item) => item as ShoeVariantSource);
 }
 
 function addVariantToGroup<T>(

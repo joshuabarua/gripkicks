@@ -2,7 +2,8 @@
 
 import React from "react";
 import { Scene } from "../test-utils";
-import { EditorialLayout } from "../test-utils/editorial-layout";
+import { EditorialLayout, EditorialFooter } from "../test-utils/editorial-layout";
+import { EditorialContent } from "../test-utils/editorial-content";
 
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.10 0 0 0 0 0.05 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
@@ -44,27 +45,18 @@ export default function EditorialRetro() {
   );
 
   const content = (
-    <section className="relative px-6 md:px-16 py-16" style={{ background: PAPER }}>
-      <div className="max-w-6xl mx-auto">
-        <h1 className="font-serif text-5xl md:text-7xl leading-[0.95] tracking-tight max-w-4xl italic">
-          Gazette test layout.
-        </h1>
-
-        <div className="h-px w-40 mt-10" style={{ background: INK }} />
-
-        <p className="font-mono text-xs leading-relaxed uppercase tracking-widest mt-6 max-w-lg">
-          Typography and composition test. No marketing copy.
-        </p>
-      </div>
-    </section>
+    <EditorialContent
+      sectionNumber="1"
+      asideContent="vol. i · no. 01"
+      heading="Gazette test layout."
+      description="Typography and composition test. No marketing copy."
+      ink={INK}
+      paper={PAPER}
+    />
   );
 
   const footer = (
-    <footer className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between" style={{ background: PAPER }}>
-      <span>gripkicks.co</span>
-      <span className="hidden md:inline">est. mmxxvi</span>
-      <span>p. 01 / 16</span>
-    </footer>
+    <EditorialFooter paper={PAPER} leftText="gripkicks.co" centerText="est. mmxxvi" rightText="p. 01 / 16" />
   );
 
   return (

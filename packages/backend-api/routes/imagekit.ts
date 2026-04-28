@@ -34,14 +34,21 @@ const router = new Hono<{
   };
 }>();
 
+function requireAuth(c: any) {
+  const user = c.get("user");
+
+  if (!user || !user.id) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  return user;
+}
+
 // ImageKit authentication endpoint
 router.post("/imagekit", protect, async (c) => {
   try {
-    const user = c.get("user");
-
-    if (!user || !user.id) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
+    const user = requireAuth(c);
+    if (!user) return;
 
     // Get the request body for additional parameters
     const body: ImageKitAuthRequest = await c.req.json().catch(() => ({}));
@@ -96,11 +103,8 @@ router.post("/imagekit", protect, async (c) => {
 // Image upload endpoint for ProfileImageUpload component
 router.post("/upload", protect, async (c) => {
   try {
-    const user = c.get("user");
-
-    if (!user || !user.id) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
+    const user = requireAuth(c);
+    if (!user) return;
 
     const body = await c.req.json();
     const { fileName, folder } = body;

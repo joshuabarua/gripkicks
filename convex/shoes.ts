@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { footShapeValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, genderValidator } from "./utils/helpers";
+import { footShapeValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, genderValidator, commonShoeFieldsValidator, optionalShoeFieldsValidator } from "./utils/helpers";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -11,6 +11,11 @@ interface PaginatedResult<T> {
 
 const DEFAULT_PAGE_SIZE = 50;
 const MAX_PAGE_SIZE = 100;
+
+const paginationQueryArgs = {
+  cursor: v.optional(v.string()),
+  pageSize: v.optional(v.number()),
+};
 
 function calculatePageSize(pageSize?: number): number {
   return Math.min(MAX_PAGE_SIZE, Math.max(1, pageSize ?? DEFAULT_PAGE_SIZE));
@@ -79,10 +84,7 @@ async function resolveParentModelId(
 }
 
 export const list = query({
-  args: {
-    cursor: v.optional(v.string()),
-    pageSize: v.optional(v.number()),
-  },
+  args: paginationQueryArgs,
   handler: async (ctx, args): Promise<PaginatedResult<any>> => {
     const pageSize = calculatePageSize(args.pageSize);
     const cursor = args.cursor;
@@ -167,15 +169,7 @@ export const getCompatibleWithFootShape = query({
 
 export const create = mutation({
   args: {
-    name: v.string(),
-    brand: v.string(),
-    modelName: v.optional(v.string()),
-    variantLabel: v.optional(v.string()),
-    parentModelId: v.optional(v.id("shoes")),
-    imageUrl: v.optional(v.string()),
-    slug: v.optional(v.string()),
-    gender: v.optional(genderValidator),
-    aggressiveness: v.string(),
+    ...commonShoeFieldsValidator,
     stiffness: v.string(),
     climbingDiscipline: v.string(),
     volume: v.string(),
@@ -225,8 +219,7 @@ export const create = mutation({
 export const search = query({
   args: {
     searchTerm: v.string(),
-    cursor: v.optional(v.string()),
-    pageSize: v.optional(v.number()),
+    ...paginationQueryArgs,
   },
   handler: async (ctx, args): Promise<PaginatedResult<any>> => {
     const pageSize = calculatePageSize(args.pageSize);
@@ -259,15 +252,7 @@ export const search = query({
 export const update = mutation({
   args: {
     id: v.id("shoes"),
-    name: v.optional(v.string()),
-    brand: v.optional(v.string()),
-    modelName: v.optional(v.string()),
-    variantLabel: v.optional(v.string()),
-    parentModelId: v.optional(v.id("shoes")),
-    imageUrl: v.optional(v.string()),
-    slug: v.optional(v.string()),
-    gender: v.optional(genderValidator),
-    aggressiveness: v.optional(v.string()),
+    ...optionalShoeFieldsValidator,
     stiffness: v.optional(v.string()),
     climbingDiscipline: v.optional(v.string()),
     volume: v.optional(v.string()),

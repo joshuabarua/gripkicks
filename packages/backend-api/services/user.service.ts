@@ -185,6 +185,17 @@ class UserService {
     }
   }
 
+  private mapUserFromConvex(user: any): User {
+    return {
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      image: user.image,
+      footShape: user.footShape,
+      footVolume: user.footVolume,
+    };
+  }
+
   private async findUserById(id: string): Promise<User | null> {
     try {
       const convexUrl = getConvexUrl();
@@ -246,14 +257,7 @@ class UserService {
       const result = await response.json();
       const user = result.data;
 
-      return {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        image: user.image,
-        footShape: user.footShape,
-        footVolume: user.footVolume,
-      };
+      return this.mapUserFromConvex(user);
     } catch (error) {
       console.error('Error updating user:', error);
       throw error;
@@ -284,14 +288,7 @@ class UserService {
       const result = await response.json();
       const user = result.data;
 
-      return {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        image: user.image,
-        footShape: user.footShape,
-        footVolume: user.footVolume,
-      };
+      return this.mapUserFromConvex(user);
     } catch (error) {
       console.error('Error updating onboarding status:', error);
       throw error;

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
-import type { Id } from "convex/_generated/dataModel";
+import type { Doc, Id } from "convex/_generated/dataModel";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import ShoeImage from "@/components/ShoeImage";
@@ -23,32 +23,13 @@ import {
   ListTodo,
 } from "lucide-react";
 
-type RubberTechnology = {
-  _id: Id<"rubberTechnologies">;
-  brand: string;
-  compound: string;
-  stickiness: string;
-  durability: string;
-};
-
-type Shoe = {
-  _id: Id<"shoes">;
-  name: string;
-  brand: string;
-  modelName?: string;
-  variantLabel?: string;
-  parentModelId?: Id<"shoes">;
-  imageUrl?: string;
-  slug?: string;
-  gender?: "men" | "women" | "kids" | "unisex";
-  aggressiveness: string;
-  stiffness: string;
-  climbingDiscipline: string;
-  volume: string;
-  rubberTechnologyId?: Id<"rubberTechnologies">;
-  rubberTechnology?: RubberTechnology | null;
-  brandAggressiveness?: number;
-  brandStiffness?: number;
+type Shoe = Doc<"shoes"> & {
+  rubberTechnology?: {
+    brand: string;
+    compound: string;
+    stickiness: string;
+    durability: string;
+  } | null;
 };
 
 type EditingShoe = Partial<Shoe> & { _id: Id<"shoes"> };

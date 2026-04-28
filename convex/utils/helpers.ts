@@ -144,4 +144,53 @@ export const genderValidator = v.union(
   v.literal("unisex"),
 );
 
+export const accountFieldsValidator = {
+  accessToken: v.optional(v.string()),
+  refreshToken: v.optional(v.string()),
+  idToken: v.optional(v.string()),
+  expiresAt: v.optional(v.number()),
+  password: v.optional(v.string()),
+  accessTokenExpiresAt: v.optional(v.number()),
+  refreshTokenExpiresAt: v.optional(v.number()),
+  scope: v.optional(v.string()),
+};
+
+export const subscriptionFieldsValidator = {
+  subscriptionStatus: v.optional(subscriptionStatusValidator),
+  subscriptionTier: v.optional(subscriptionTierValidator),
+  polarCustomerId: v.optional(v.string()),
+  polarSubscriptionId: v.optional(v.string()),
+  subscriptionExpiresAt: v.optional(v.number()),
+  subscriptionUpdatedAt: v.optional(v.number()),
+};
+
+export const userShoeFieldsValidator = {
+  size: v.optional(v.string()),
+  purchaseDate: v.optional(v.string()),
+  condition: v.optional(v.string()),
+  notes: v.optional(v.string()),
+  comfortScore: v.optional(v.number()),
+  performanceRating: v.optional(v.number()),
+  durabilityRating: v.optional(v.number()),
+};
+
+export const commonShoeFieldsValidator = {
+  name: v.string(),
+  brand: v.string(),
+  modelName: v.optional(v.string()),
+  variantLabel: v.optional(v.string()),
+  parentModelId: v.optional(v.id("shoes")),
+  imageUrl: v.optional(v.string()),
+  slug: v.optional(v.string()),
+  gender: v.optional(genderValidator),
+  aggressiveness: v.string(),
+};
+
+export const optionalShoeFieldsValidator = Object.fromEntries(
+  Object.entries(commonShoeFieldsValidator).map(([key, value]) => [
+    key,
+    key === 'aggressiveness' ? v.optional(v.string()) : value,
+  ])
+);
+
 export { cleanupModelName, deriveModelName, deriveVariantLabel };

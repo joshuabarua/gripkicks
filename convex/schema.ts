@@ -1,21 +1,13 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { footShapeValidator, backlogStatusValidator, scoreHistoryEntryValidator, subscriptionStatusValidator, subscriptionTierValidator, preferenceProfileValidator, learnedPreferencesValidator, footProfileValidator, genderValidator } from "./utils/helpers";
+import { footShapeValidator, backlogStatusValidator, scoreHistoryEntryValidator, subscriptionStatusValidator, subscriptionTierValidator, preferenceProfileValidator, learnedPreferencesValidator, footProfileValidator, genderValidator, accountFieldsValidator, commonShoeFieldsValidator, subscriptionFieldsValidator, userShoeFieldsValidator } from "./utils/helpers";
 
 export { footShapeValidator, backlogStatusValidator };
 
 export default defineSchema({
   // Climbing Shoes
   shoes: defineTable({
-    name: v.string(),
-    brand: v.string(),
-    modelName: v.optional(v.string()),
-    variantLabel: v.optional(v.string()),
-    parentModelId: v.optional(v.id("shoes")),
-    imageUrl: v.optional(v.string()),
-    slug: v.optional(v.string()),
-    gender: v.optional(genderValidator),
-    aggressiveness: v.string(),
+    ...commonShoeFieldsValidator,
     brandAggressiveness: v.optional(v.number()),
     stiffness: v.string(),
     brandStiffness: v.optional(v.number()),
@@ -72,13 +64,7 @@ export default defineSchema({
     footShape: v.optional(footShapeValidator),
     footVolume: v.optional(v.string()),
     favoriteShoeId: v.optional(v.id("shoes")),
-    // Subscription fields (Polar.sh)
-    subscriptionStatus: v.optional(subscriptionStatusValidator),
-    subscriptionTier: v.optional(subscriptionTierValidator),
-    polarCustomerId: v.optional(v.string()),
-    polarSubscriptionId: v.optional(v.string()),
-    subscriptionExpiresAt: v.optional(v.number()),
-    subscriptionUpdatedAt: v.optional(v.number()),
+    ...subscriptionFieldsValidator,
   })
     .index("by_email", ["email"])
     .index("by_betterAuthId", ["betterAuthId"]),
@@ -88,14 +74,7 @@ export default defineSchema({
     accountId: v.string(),
     providerId: v.string(),
     userId: v.id("users"),
-    accessToken: v.optional(v.string()),
-    refreshToken: v.optional(v.string()),
-    idToken: v.optional(v.string()),
-    expiresAt: v.optional(v.number()),
-    password: v.optional(v.string()),
-    accessTokenExpiresAt: v.optional(v.number()),
-    refreshTokenExpiresAt: v.optional(v.number()),
-    scope: v.optional(v.string()),
+    ...accountFieldsValidator,
   })
     .index("by_userId", ["userId"])
     .index("by_provider_accountId", ["providerId", "accountId"]),
@@ -124,20 +103,14 @@ export default defineSchema({
   userShoes: defineTable({
     userId: v.id("users"),
     shoeId: v.id("shoes"),
-    size: v.optional(v.string()),
-    purchaseDate: v.optional(v.string()),
-    condition: v.optional(v.string()),
-    notes: v.optional(v.string()),
-    comfortScore: v.optional(v.number()),
-    performanceRating: v.optional(v.number()),
-    durabilityRating: v.optional(v.number()),
+    ...userShoeFieldsValidator,
     perceivedAggressiveness: v.optional(v.number()),
     perceivedStiffness: v.optional(v.number()),
     perceivedVolumeFit: v.optional(v.string()),
     isFavourite: v.optional(v.boolean()),
     // B2B signal enrichment
-    fitLongevity: v.optional(v.string()), // e.g. "1-3 months", "3-6 months", "6+ months"
-    sizingDeviation: v.optional(v.number()), // e.g. -1.0 means user sized down 1 from standard
+    fitLongevity: v.optional(v.string()),
+    sizingDeviation: v.optional(v.number()),
   })
     .index("by_userId", ["userId"])
     .index("by_shoeId", ["shoeId"])

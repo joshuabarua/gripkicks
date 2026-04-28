@@ -273,7 +273,7 @@ function generateLearningInsights(
   const increasingPerformance = secondHalfAvgPerformance > firstHalfAvgPerformance + 0.2;
   const durabilityFocus = profile.durability > (profile.comfort + profile.performance) / 2 + 0.5;
 
-  const firstHalfAggressiveness = firstHalf.map(userShoe => {
+  const calculateAggressivenessScore = (userShoe: UserShoe): number => {
     const shoe = allShoes.find(s => s._id === userShoe.shoeId);
     if (!shoe) return 3;
     if (shoe.aggressiveness === 'very_high') return 5;
@@ -281,17 +281,10 @@ function generateLearningInsights(
     if (shoe.aggressiveness === 'moderate') return 3;
     if (shoe.aggressiveness === 'low') return 1;
     return 3;
-  }).reduce((sum, score) => sum + score, 0) / (firstHalf.length || 1);
+  };
 
-  const secondHalfAggressiveness = secondHalf.map(userShoe => {
-    const shoe = allShoes.find(s => s._id === userShoe.shoeId);
-    if (!shoe) return 3;
-    if (shoe.aggressiveness === 'very_high') return 5;
-    if (shoe.aggressiveness === 'high') return 4;
-    if (shoe.aggressiveness === 'moderate') return 3;
-    if (shoe.aggressiveness === 'low') return 1;
-    return 3;
-  }).reduce((sum, score) => sum + score, 0) / (secondHalf.length || 1);
+  const firstHalfAggressiveness = firstHalf.map(calculateAggressivenessScore).reduce((sum, score) => sum + score, 0) / (firstHalf.length || 1);
+  const secondHalfAggressiveness = secondHalf.map(calculateAggressivenessScore).reduce((sum, score) => sum + score, 0) / (secondHalf.length || 1);
 
   let aggressivenessProgression: 'decreasing' | 'stable' | 'increasing' = 'stable';
   if (secondHalfAggressiveness > firstHalfAggressiveness + 0.3) aggressivenessProgression = 'increasing';

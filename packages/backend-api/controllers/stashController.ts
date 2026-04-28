@@ -1,14 +1,28 @@
 import { Context } from 'hono';
 import { ResultAsync, err, ok } from 'neverthrow';
-import { 
-  UnauthenticatedError, 
-  ValidationError, 
+import {
+  UnauthenticatedError,
+  ValidationError,
   NotFoundError,
-  UnexpectedError 
+  UnexpectedError
 } from '../src/lib/errors';
 import { resultAsyncToHonoResponse } from '../utils/response';
 import { getConvexUrl, fetchWithTimeout } from '../utils/convexHelper';
-import { checkUserAuthentication, validateRequiredParam, verifyOwnership, handleControllerError, authenticatedConvexRequest } from './utils/controllerHelpers';
+import { checkUserAuthentication, validateRequiredParam, verifyOwnership, handleControllerError, authenticatedConvexRequest, getAuthenticatedUser } from './utils/controllerHelpers';
+
+async function validateUserShoeAccess(c: Context, paramName: string = 'userShoeId') {
+  const authError = checkUserAuthentication(c);
+  if (authError) return { error: authError };
+
+  const user = c.get('user');
+  const userShoeId = c.req.param(paramName);
+  const paramError = validateRequiredParam(userShoeId, 'User shoe ID', c);
+  if (paramError) return { error: paramError };
+
+  await verifyOwnership(c, userShoeId);
+
+  return { user, userShoeId };
+}
 
 export const getUserStash = async (c: Context): Promise<Response> => {
   const authError = checkUserAuthentication(c);
@@ -25,10 +39,9 @@ export const getUserStash = async (c: Context): Promise<Response> => {
 };
 
 export const addToStash = async (c: Context): Promise<Response> => {
-  const authError = checkUserAuthentication(c);
-  if (authError) return authError;
+  const auth = getAuthenticatedUser(c);
+  if (auth.error) return auth.error;
 
-  const user = c.get('user');
   const body = await c.req.json();
   const { shoeId } = body;
 
@@ -38,10 +51,10 @@ export const addToStash = async (c: Context): Promise<Response> => {
 
   const result = await ResultAsync.fromPromise(
     authenticatedConvexRequest(c, '/api/stash/addToStash', 'POST', {
-      betterAuthId: user.id,
+      betterAuthId: auth.user.id,
       shoeId
     }),
-    (error) => handleControllerError(error, 'add to stash', 'POST', '/api/v1/stash', user.id)
+    (error) => handleControllerError(error, 'add to stash', 'POST', '/api/v1/stash', auth.user.id)
   );
 
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
@@ -67,16 +80,11 @@ export const removeFromStash = async (c: Context): Promise<Response> => {
 };
 
 export const updateUserShoeStats = async (c: Context): Promise<Response> => {
-  const authError = checkUserAuthentication(c);
-  if (authError) return authError;
+  const validation = await validateUserShoeAccess(c);
+  if (validation.error) return validation.error;
 
-  const user = c.get('user');
-  const userShoeId = c.req.param('userShoeId');
-  const paramError = validateRequiredParam(userShoeId, 'User shoe ID', c);
-  if (paramError) return paramError;
-
+  const { user, userShoeId } = validation;
   const body = await c.req.json();
-  await verifyOwnership(c, userShoeId);
 
   const result = await ResultAsync.fromPromise(
     authenticatedConvexRequest(c, '/api/stash/updateUserShoeStats', 'POST', {
@@ -96,15 +104,10 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
 };
 
 export const toggleFavourite = async (c: Context): Promise<Response> => {
-  const authError = checkUserAuthentication(c);
-  if (authError) return authError;
+  const validation = await validateUserShoeAccess(c);
+  if (validation.error) return validation.error;
 
-  const user = c.get('user');
-  const userShoeId = c.req.param('userShoeId');
-  const paramError = validateRequiredParam(userShoeId, 'User shoe ID', c);
-  if (paramError) return paramError;
-
-  await verifyOwnership(c, userShoeId);
+  const { user, userShoeId } = validation;
 
   const result = await ResultAsync.fromPromise(
     authenticatedConvexRequest(c, '/api/stash/toggleFavourite', 'POST', { userShoeId }),

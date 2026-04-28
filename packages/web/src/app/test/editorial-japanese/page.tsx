@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Scene } from "../test-utils";
-import { EditorialLayout } from "../test-utils/editorial-layout";
+import { EditorialLayout, EditorialFooter } from "../test-utils/editorial-layout";
 import { EditorialContent } from "../test-utils/editorial-content";
 
 const GRAIN =
@@ -56,11 +56,7 @@ export default function EditorialJapanese() {
   );
 
   const footer = (
-    <footer className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between" style={{ background: PAPER }}>
-      <span>gripkicks.co</span>
-      <span className="hidden md:inline">printed on recycled paper</span>
-      <span>p. 01 / 12</span>
-    </footer>
+    <EditorialFooter paper={PAPER} leftText="gripkicks.co" centerText="printed on recycled paper" rightText="p. 01 / 12" />
   );
 
   return (

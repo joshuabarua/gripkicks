@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { filterUndefinedValues, subscriptionStatusValidator, subscriptionTierValidator } from "./utils/helpers";
+import { filterUndefinedValues, subscriptionFieldsValidator } from "./utils/helpers";
 
 async function findUserByBetterAuthId(ctx: any, betterAuthId: string) {
   const user = await ctx.db
@@ -10,14 +10,18 @@ async function findUserByBetterAuthId(ctx: any, betterAuthId: string) {
   return user;
 }
 
+async function findUserOrThrow(ctx: any, betterAuthId: string) {
+  const user = await findUserByBetterAuthId(ctx, betterAuthId);
+  if (!user) {
+    throw new Error(`User not found with betterAuthId: ${betterAuthId}`);
+  }
+  return user;
+}
+
 export const updateSubscription = mutation({
   args: {
     betterAuthId: v.string(),
-    subscriptionStatus: v.optional(subscriptionStatusValidator),
-    subscriptionTier: v.optional(subscriptionTierValidator),
-    polarCustomerId: v.optional(v.string()),
-    polarSubscriptionId: v.optional(v.string()),
-    subscriptionExpiresAt: v.optional(v.number()),
+    ...subscriptionFieldsValidator,
   },
   handler: async (ctx, args) => {
     const { betterAuthId, ...updates } = args;
@@ -57,39 +61,26 @@ export const getSubscriptionStatus = query({
   },
 });
 
+async function updateSubscriptionStatus(ctx: any, betterAuthId: string, status: "founder" | undefined, tier: "founder" | undefined) {
+  const user = await findUserOrThrow(ctx, betterAuthId);
+  await ctx.db.patch(user._id, {
+    subscriptionStatus: status,
+    subscriptionTier: tier,
+  });
+  return await ctx.db.get(user._id);
+}
+
 export const grantFounderStatus = mutation({
   args: { betterAuthId: v.string() },
   handler: async (ctx, args) => {
-    const user = await findUserByBetterAuthId(ctx, args.betterAuthId);
-
-    if (!user) {
-      throw new Error(`User not found with betterAuthId: ${args.betterAuthId}`);
-    }
-
-    await ctx.db.patch(user._id, {
-      subscriptionStatus: "founder",
-      subscriptionTier: "founder",
-    });
-
-    return await ctx.db.get(user._id);
+    return await updateSubscriptionStatus(ctx, args.betterAuthId, "founder", "founder");
   },
 });
 
 export const revokeFounderStatus = mutation({
   args: { betterAuthId: v.string() },
   handler: async (ctx, args) => {
-    const user = await findUserByBetterAuthId(ctx, args.betterAuthId);
-
-    if (!user) {
-      throw new Error(`User not found with betterAuthId: ${args.betterAuthId}`);
-    }
-
-    await ctx.db.patch(user._id, {
-      subscriptionStatus: undefined,
-      subscriptionTier: undefined,
-    });
-
-    return await ctx.db.get(user._id);
+    return await updateSubscriptionStatus(ctx, args.betterAuthId, undefined, undefined);
   },
 });
 

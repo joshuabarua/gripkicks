@@ -7,8 +7,8 @@ import {
   UnexpectedError 
 } from '../src/lib/errors';
 import { resultAsyncToHonoResponse } from '../utils/response';
-import { checkUserAuthentication, handleControllerError } from './utils/controllerHelpers';
-import { userService } from "../services/user.service";
+import { checkUserAuthentication, handleControllerError, getAuthenticatedUser } from './utils/controllerHelpers';
+import * as userService from '../services/userService';
 import { getConvexUrl } from "../utils/convexHelper";
 
 export const getUsers = async (c: Context): Promise<Response> => {
@@ -38,19 +38,17 @@ export const getUserById = async (c: Context): Promise<Response> => {
 };
 
 export const getProfile = async (c: Context): Promise<Response> => {
-  const authError = checkUserAuthentication(c);
-  if (authError) return authError;
+  const auth = getAuthenticatedUser(c);
+  if (auth.error) return auth.error;
 
-  const user = c.get("user");
-  const result = await userService.getUserById(user.id);
+  const result = await userService.getUserById(auth.user.id);
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
 export const editProfile = async (c: Context): Promise<Response> => {
-  const authError = checkUserAuthentication(c);
-  if (authError) return authError;
+  const auth = getAuthenticatedUser(c);
+  if (auth.error) return auth.error;
 
-  const user = c.get("user");
   const body = await c.req.json();
   const updateFields: Record<string, any> = {};
   if (typeof body.name === "string" && body.name !== "")
@@ -73,20 +71,19 @@ export const editProfile = async (c: Context): Promise<Response> => {
     );
   }
 
-  const result = await userService.updateProfile(user.id, updateFields);
+  const result = await userService.updateProfile(auth.user.id, updateFields);
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
 export const completeOnboarding = async (c: Context): Promise<Response> => {
-  const authError = checkUserAuthentication(c);
-  if (authError) return authError;
+  const auth = getAuthenticatedUser(c);
+  if (auth.error) return auth.error;
 
-  const user = c.get("user");
   const body = await c.req.json();
   const { footShape, favoriteShoeId } = body;
 
   const result = await userService.completeOnboarding(
-    user.id,
+    auth.user.id,
     footShape,
     favoriteShoeId,
   );

@@ -1,30 +1,7 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
 import { footShapeValidator } from "./schema";
-
-interface AggregatedShoeRating {
-  _id: string;
-  name: string;
-  brand: string;
-  imageUrl?: string;
-  slug?: string;
-  gender?: string;
-  aggressiveness: string;
-  stiffness: string;
-  climbingDiscipline: string;
-  volume: string;
-  avgComfortScore?: number;
-  avgPerformanceRating?: number;
-  avgDurabilityRating?: number;
-  totalRatings: number;
-  matchScore: number;
-  isSoleMateMatch: boolean;
-  soleMateUsers?: {
-    _id: string;
-    name?: string;
-    image?: string;
-  }[];
-}
+import { ShoeRecommendation } from "../types/shoe";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -48,7 +25,7 @@ export const getShoeRecommendations = query({
   handler: async (
     ctx,
     args,
-  ): Promise<PaginatedResult<AggregatedShoeRating>> => {
+  ): Promise<PaginatedResult<ShoeRecommendation>> => {
     const page = Math.max(1, args.page ?? 1);
     const pageSize = Math.min(
       MAX_PAGE_SIZE,
@@ -135,7 +112,7 @@ export const getShoeRecommendations = query({
       shoeRatingsMap.set(shoeId, existing);
     }
 
-    const recommendations: AggregatedShoeRating[] = [];
+    const recommendations: ShoeRecommendation[] = [];
 
     for (const shoe of allShoes) {
       const ratings = shoeRatingsMap.get(shoe._id);
@@ -179,7 +156,7 @@ export const getShoeRecommendations = query({
           ...(user.image !== undefined ? { image: user.image } : {}),
         }));
 
-      const recommendation: AggregatedShoeRating = {
+      const recommendation: ShoeRecommendation = {
         _id: shoe._id,
         name: shoe.name,
         brand: shoe.brand,

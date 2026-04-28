@@ -1245,6 +1245,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gripkicks/shared-types@workspace:packages/shared-types":
+  version: 0.0.0-use.local
+  resolution: "@gripkicks/shared-types@workspace:packages/shared-types"
+  dependencies:
+    typescript: "npm:^5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@hono/node-server@npm:^1.14.4":
   version: 1.14.4
   resolution: "@hono/node-server@npm:1.14.4"

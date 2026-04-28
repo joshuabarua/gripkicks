@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-import { formatEntityWithId, filterUndefinedValues } from "./utils/helpers";
+import { formatEntityWithId, filterUndefinedValues, accountFieldsValidator } from "./utils/helpers";
 
 async function deleteByIndex(ctx: any, tableName: string, indexName: string, field: string, value: any) {
   const items = await ctx.db
@@ -356,14 +356,7 @@ export const createAccount = mutation({
 export const updateAccount = mutation({
   args: {
     id: v.id("accounts"),
-    accessToken: v.optional(v.string()),
-    refreshToken: v.optional(v.string()),
-    idToken: v.optional(v.string()),
-    expiresAt: v.optional(v.number()),
-    password: v.optional(v.string()),
-    accessTokenExpiresAt: v.optional(v.number()),
-    refreshTokenExpiresAt: v.optional(v.number()),
-    scope: v.optional(v.string()),
+    ...accountFieldsValidator,
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;

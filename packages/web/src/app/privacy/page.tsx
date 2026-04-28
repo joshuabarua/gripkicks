@@ -10,6 +10,17 @@ const fadeUp = {
   viewport: { once: true },
 };
 
+function SectionHeader({ label, heading, highlight }: { label: string; heading: string; highlight: string }) {
+  return (
+    <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
+      <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">{label}</p>
+      <h2 className="font-ball-pill text-4xl md:text-5xl mb-12">
+        {heading}<br /><span className="text-brand-red">{highlight}</span>
+      </h2>
+    </motion.div>
+  );
+}
+
 const promises = [
   {
     icon: Shield,
@@ -126,12 +137,7 @@ export default function PrivacyPage() {
       {/* Promises Grid */}
       <section className="px-6 md:px-12 lg:px-16 py-24">
         <div className="max-w-4xl mx-auto">
-          <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">Our Promises</p>
-            <h2 className="font-ball-pill text-4xl md:text-5xl mb-12">
-              SIX PROMISES<br /><span className="text-brand-red">WE KEEP</span>
-            </h2>
-          </motion.div>
+          <SectionHeader label="Our Promises" heading="SIX PROMISES" highlight="WE KEEP" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {promises.map((promise, i) => (
@@ -157,12 +163,7 @@ export default function PrivacyPage() {
       {/* What We Collect */}
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-neutral-950">
         <div className="max-w-4xl mx-auto">
-          <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-6">What We Collect</p>
-            <h2 className="font-ball-pill text-4xl md:text-5xl mb-12">
-              EXACTLY WHAT<br /><span className="text-brand-red">WE NEED</span>
-            </h2>
-          </motion.div>
+          <SectionHeader label="What We Collect" heading="EXACTLY WHAT" highlight="WE NEED" />
 
           <div className="space-y-4">
             {[

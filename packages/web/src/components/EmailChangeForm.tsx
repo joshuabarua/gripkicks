@@ -5,10 +5,12 @@ import { useMutation } from '@/hooks/useAsync';
 import { fetchApi } from '@/lib/api-client';
 import { z } from 'zod';
 import { AccountFormStatus } from '@/components/AccountFormStatus';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail } from 'lucide-react';
+import { useFormChange } from '@/hooks/useFormChange';
 
 const emailChangeSchema = z.object({
   newEmail: z.string().email('Please enter a valid email address'),
@@ -22,7 +24,7 @@ interface EmailChangeFormProps {
 }
 
 export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
-  const [formData, setFormData] = useState<EmailChangeFormData>({
+  const { formData, setFormData, handleChange } = useFormChange<EmailChangeFormData>({
     newEmail: '',
     password: '',
   });
@@ -61,11 +63,6 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
         password: '',
       });
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   return (

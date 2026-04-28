@@ -9,12 +9,9 @@ type AuthContext = Context<{
     }
 }>
 
-// Middleware to protect routes from unauthorized access
-export const protect = async (c: AuthContext, next: Next) => {
-    // Extract the session from the incoming request headers
+async function validateSession(c: AuthContext) {
     const session = await auth.api.getSession({ headers: c.req.raw.headers })
 
-    // If no valid session or user is found, return an unauthorized response
     if (!session || !session.user) {
         return c.json(
             {
@@ -26,34 +23,33 @@ export const protect = async (c: AuthContext, next: Next) => {
         )
     }
 
-    console.log(session.user)
-    // Optionally set the user and session on the context variables
     c.set('user', session.user)
     c.set('session', session.session)
 
-    // Continue to the next middleware/handler
+    return session
+}
+
+// Middleware to protect routes from unauthorized access
+export const protect = async (c: AuthContext, next: Next) => {
+    const session = await validateSession(c)
+
+    if (typeof session === 'object' && 'status' in session) {
+        return session
+    }
+
+    console.log(session.user)
     await next()
 }
 
 // Middleware to protect admin routes
 export const isAdmin = async (c: AuthContext, next: Next) => {
-    // Extract the session from the incoming request headers
-    const session = await auth.api.getSession({ headers: c.req.raw.headers })
+    const sessionResult = await validateSession(c)
 
-    // If no valid session or user is found, return an unauthorized response
-    if (!session || !session.user) {
-        return c.json(
-            {
-                success: false,
-                message: 'Unauthorized',
-                error: 'No valid session found',
-            },
-            401
-        )
+    if (sessionResult && typeof sessionResult === 'object' && 'status' in sessionResult) {
+        return sessionResult
     }
 
-    // Check if the user is an admin
-    const user = session.user as typeof session.user & { isAdmin?: boolean };
+    const user = sessionResult.user as typeof sessionResult.user & { isAdmin?: boolean };
     if (!user.isAdmin) {
         return c.json(
             {
@@ -65,10 +61,5 @@ export const isAdmin = async (c: AuthContext, next: Next) => {
         )
     }
 
-    // Optionally set the user and session on the context variables
-    c.set('user', session.user)
-    c.set('session', session.session)
-
-    // Continue to the next middleware/handler
     await next()
 }

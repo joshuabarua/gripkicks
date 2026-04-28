@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { UserAvatar } from "@/components/ui/UserAvatar";
+import { useFormChange } from "@/hooks/useFormChange";
 
 const profileSchema = z.object({
   name: z
@@ -43,7 +44,7 @@ export function ProfileForm({
   onProfileUpdated,
   onSuccess,
 }: ProfileFormProps) {
-  const [formData, setFormData] = useState<ProfileData>({
+  const { formData, setFormData, handleChange } = useFormChange<ProfileData>({
     name: "",
   });
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -115,11 +116,6 @@ export function ProfileForm({
       onProfileUpdated?.(updatedProfile);
       onSuccess?.();
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (

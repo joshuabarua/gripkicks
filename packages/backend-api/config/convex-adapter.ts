@@ -228,7 +228,6 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
           );
         }
 
-        // Return the data, ensuring it has the expected format
         return result.data;
       } catch (error) {
         lastError = error as Error;
@@ -240,6 +239,16 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
 
     throw lastError || new Error("Convex adapter request failed");
   };
+
+  async function findSessionsByUserIdWhere(where: any[], model: string) {
+    const userIdWhere = where.find(
+      (w: { field: string; value: unknown }) => w.field === "userId",
+    );
+    if (!userIdWhere) return null;
+    return await callConvex(model, "findByUserId", {
+      userId: userIdWhere.value,
+    });
+  }
 
   return createAdapterFactory({
     config: {
@@ -387,13 +396,8 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
 
             // For session model, handle specific cases
             if (model === "session") {
-              const userIdWhere = where.find(
-                (w: { field: string; value: unknown }) => w.field === "userId",
-              );
-              if (userIdWhere) {
-                const sessions = await callConvex(model, "findByUserId", {
-                  userId: userIdWhere.value,
-                });
+              const sessions = await findSessionsByUserIdWhere(where, model);
+              if (sessions) {
                 if (Array.isArray(sessions)) {
                   let updateCount = 0;
                   for (const session of sessions) {
@@ -604,42 +608,34 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
               }
             }
 
+            async function handleUserIdQuery(model: string, where: unknown[], offset?: number, limit?: number) {
+              const userIdWhere = where.find(
+                (w): w is { field: string; value: unknown } => 
+                  typeof w === 'object' && w !== null && 'field' in w && w.field === "userId",
+              );
+              if (!userIdWhere) return null;
+
+              const result = await callConvex(model, "findByUserId", {
+                userId: userIdWhere.value,
+              });
+              let records = Array.isArray(result) ? result : [];
+
+              if (offset) records = records.slice(offset);
+              if (limit) records = records.slice(0, limit);
+
+              return records;
+            }
+
             // Handle session queries
             if (model === "session" && where && where.length > 0) {
-              const userIdWhere = where.find(
-                (w: { field: string; value: unknown }) => w.field === "userId",
-              );
-              if (userIdWhere) {
-                const result = await callConvex(model, "findByUserId", {
-                  userId: userIdWhere.value,
-                });
-                let records = Array.isArray(result) ? result : [];
-
-                // Apply limit and offset if provided
-                if (offset) records = records.slice(offset);
-                if (limit) records = records.slice(0, limit);
-
-                return records;
-              }
+              const result = await handleUserIdQuery(model, where, offset, limit);
+              if (result) return result;
             }
 
             // Handle account queries
             if (model === "account" && where && where.length > 0) {
-              const userIdWhere = where.find(
-                (w: { field: string; value: unknown }) => w.field === "userId",
-              );
-              if (userIdWhere) {
-                const result = await callConvex(model, "findByUserId", {
-                  userId: userIdWhere.value,
-                });
-                let records = Array.isArray(result) ? result : [];
-
-                // Apply limit and offset if provided
-                if (offset) records = records.slice(offset);
-                if (limit) records = records.slice(0, limit);
-
-                return records;
-              }
+              const result = await handleUserIdQuery(model, where, offset, limit);
+              if (result) return result;
             }
 
             // For other cases, return empty array (Better Auth typically doesn't need these)
@@ -669,13 +665,8 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
 
             // For session model
             if (model === "session") {
-              const userIdWhere = where.find(
-                (w: { field: string; value: unknown }) => w.field === "userId",
-              );
-              if (userIdWhere) {
-                const result = await callConvex(model, "findByUserId", {
-                  userId: userIdWhere.value,
-                });
+              const result = await findSessionsByUserIdWhere(where, model);
+              if (result) {
                 return Array.isArray(result) ? result.length : 0;
               }
             }
@@ -683,7 +674,8 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
             // For account model
             if (model === "account") {
               const userIdWhere = where.find(
-                (w: { field: string; value: unknown }) => w.field === "userId",
+                (w): w is { field: string; value: unknown } => 
+                  typeof w === 'object' && w !== null && 'field' in w && w.field === "userId",
               );
               if (userIdWhere) {
                 const result = await callConvex(model, "findByUserId", {

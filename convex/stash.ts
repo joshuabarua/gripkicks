@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
-import { filterUndefinedValues } from "./utils/helpers";
+import { filterUndefinedValues, userShoeFieldsValidator } from "./utils/helpers";
 
 async function getUserShoe(ctx: any, userShoeId: any) {
   const userShoe = await ctx.db.get(userShoeId);
@@ -25,6 +25,27 @@ async function findExistingUserShoe(ctx: any, userId: any, shoeId: any) {
     )
     .first();
 }
+
+async function withExistingUserShoe<T>(
+  ctx: any,
+  userId: string,
+  shoeId: string,
+  onExists: (existing: any) => Promise<T>,
+  onNotExists: () => Promise<T>,
+): Promise<T> {
+  const existing = await findExistingUserShoe(ctx, userId, shoeId);
+
+  if (existing) {
+    return await onExists(existing);
+  }
+
+  return await onNotExists();
+}
+
+const userShoeMutationArgs = {
+  userId: v.id("users"),
+  shoeId: v.id("shoes"),
+};
 
 async function findUsersByFootProfile(ctx: any, footShape: string, footVolume: string) {
   return await ctx.db
@@ -115,38 +136,34 @@ export const getUserStash = query({
 });
 
 export const addToStash = mutation({
-  args: {
-    userId: v.id("users"),
-    shoeId: v.id("shoes"),
-  },
+  args: userShoeMutationArgs,
   handler: async (ctx, args) => {
-    // Check if already in stash
-    const existing = await findExistingUserShoe(ctx, args.userId, args.shoeId);
-
-    if (existing) {
-      return existing._id;
-    }
-
-    return await ctx.db.insert("userShoes", {
-      userId: args.userId,
-      shoeId: args.shoeId,
-    });
+    return await withExistingUserShoe(
+      ctx,
+      args.userId,
+      args.shoeId,
+      async (existing) => existing._id,
+      async () => ctx.db.insert("userShoes", {
+        userId: args.userId,
+        shoeId: args.shoeId,
+      }),
+    );
   },
 });
 
 export const removeFromStash = mutation({
-  args: {
-    userId: v.id("users"),
-    shoeId: v.id("shoes"),
-  },
+  args: userShoeMutationArgs,
   handler: async (ctx, args) => {
-    const existing = await findExistingUserShoe(ctx, args.userId, args.shoeId);
-
-    if (existing) {
-      await ctx.db.delete(existing._id);
-      return true;
-    }
-    return false;
+    return await withExistingUserShoe(
+      ctx,
+      args.userId,
+      args.shoeId,
+      async (existing) => {
+        await ctx.db.delete(existing._id);
+        return true;
+      },
+      async () => false,
+    );
   },
 });
 
@@ -164,13 +181,7 @@ export const isInStash = query({
 export const updateUserShoeStats = mutation({
   args: {
     userShoeId: v.id("userShoes"),
-    size: v.optional(v.string()),
-    purchaseDate: v.optional(v.string()),
-    condition: v.optional(v.string()),
-    notes: v.optional(v.string()),
-    comfortScore: v.optional(v.number()),
-    performanceRating: v.optional(v.number()),
-    durabilityRating: v.optional(v.number()),
+    ...userShoeFieldsValidator,
   },
   handler: async (ctx, args) => {
     const { userShoeId, ...updateFields } = args;

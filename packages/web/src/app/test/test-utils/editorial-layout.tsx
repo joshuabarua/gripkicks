@@ -32,3 +32,13 @@ export function EditorialLayout({ grain, paper, ink, header, hero, content, foot
     </main>
   );
 }
+
+export function EditorialFooter({ paper, leftText, centerText, rightText }: { paper: string; leftText: string; centerText?: string; rightText: string }) {
+  return (
+    <footer className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between" style={{ background: paper }}>
+      <span>{leftText}</span>
+      {centerText && <span className="hidden md:inline">{centerText}</span>}
+      <span>{rightText}</span>
+    </footer>
+  );
+}

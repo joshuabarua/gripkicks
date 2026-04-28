@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Scene } from "../test-utils";
-import { EditorialLayout } from "../test-utils/editorial-layout";
+import { EditorialLayout, EditorialFooter } from "../test-utils/editorial-layout";
 import { EditorialContent } from "../test-utils/editorial-content";
 
 const GRAIN =
@@ -76,11 +76,7 @@ export default function EditorialGorp() {
   );
 
   const footer = (
-    <footer className="relative px-6 py-4 font-mono text-[10px] uppercase tracking-widest flex justify-between" style={{ background: PAPER }}>
-      <span>gripkicks · field edition</span>
-      <span className="hidden md:inline">printed on kraft</span>
-      <span>entry 001 / 012</span>
-    </footer>
+    <EditorialFooter paper={PAPER} leftText="gripkicks · field edition" centerText="printed on kraft" rightText="entry 001 / 012" />
   );
 
   return (

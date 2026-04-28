@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
+import type { Doc, Id } from "convex/_generated/dataModel";
 import type { UserShoe } from "@/types/api";
 import { shoeCache } from "@/lib/cache";
 import { getUserStash } from "@/services/stash";
-import { Id } from "convex/_generated/dataModel";
 
 interface UseStashDataOptions {
   enabled?: boolean;
   loadAllShoes?: boolean;
   onError?: (message: string) => void;
 }
+
+type Shoe = Doc<"shoes">;
 
 // Convex user shoe type (from schema)
 interface ConvexUserShoe {
@@ -26,22 +28,8 @@ interface ConvexUserShoe {
   performanceRating?: number;
   durabilityRating?: number;
   isFavourite?: boolean;
-  shoe?: {
-    _id: Id<"shoes">;
+  shoe?: Omit<Shoe, "rubberTechnology" | "brandAggressiveness" | "brandStiffness"> & {
     _creationTime: number;
-    name: string;
-    brand: string;
-    modelName?: string;
-    variantLabel?: string;
-    parentModelId?: Id<"shoes">;
-    imageUrl?: string;
-    slug?: string;
-    gender?: "men" | "women" | "kids" | "unisex";
-    aggressiveness: string;
-    stiffness: string;
-    climbingDiscipline: string;
-    volume: string;
-    rubberTechnologyId?: Id<"rubberTechnologies">;
   } | null;
 }
 

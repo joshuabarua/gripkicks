@@ -33,13 +33,7 @@ function handleNotFound(c: any, resourceName: string) {
   return c.json({ success: false, message: `${resourceName} not found` }, 404);
 }
 
-async function withUserValidation(c: any, betterAuthId: string, operation: (user: any) => Promise<any>) {
-  if (!betterAuthId) {
-    return handleValidationError(c, "BetterAuth ID");
-  }
-
-  const user = await findUserByBetterAuthId(c, betterAuthId);
-
+async function withUserValidationBase(c: any, user: any, operation: (user: any) => Promise<any>) {
   if (!user) {
     return handleNotFound(c, "User");
   }
@@ -50,6 +44,15 @@ async function withUserValidation(c: any, betterAuthId: string, operation: (user
   } catch (error) {
     return handleError(c, error, "operation");
   }
+}
+
+async function withUserValidation(c: any, betterAuthId: string, operation: (user: any) => Promise<any>) {
+  if (!betterAuthId) {
+    return handleValidationError(c, "BetterAuth ID");
+  }
+
+  const user = await findUserByBetterAuthId(c, betterAuthId);
+  return withUserValidationBase(c, user, operation);
 }
 
 async function withUserValidationNoUserParam(c: any, betterAuthId: string, operation: () => Promise<any>) {
@@ -58,17 +61,7 @@ async function withUserValidationNoUserParam(c: any, betterAuthId: string, opera
   }
 
   const user = await findUserByBetterAuthId(c, betterAuthId);
-
-  if (!user) {
-    return handleNotFound(c, "User");
-  }
-
-  try {
-    const result = await operation();
-    return c.json({ success: true, data: result });
-  } catch (error) {
-    return handleError(c, error, "operation");
-  }
+  return withUserValidationBase(c, user, () => operation());
 }
 
 async function withUserAndShoeValidation(c: any, betterAuthId: string, shoeId: string, operation: (user: any, shoeId: Id<"shoes">) => Promise<any>) {
@@ -77,36 +70,20 @@ async function withUserAndShoeValidation(c: any, betterAuthId: string, shoeId: s
   }
 
   const user = await findUserByBetterAuthId(c, betterAuthId);
+  return withUserValidationBase(c, user, (u) => operation(u, shoeId as Id<"shoes">));
+}
 
-  if (!user) {
-    return handleNotFound(c, "User");
+async function withUserFinderValidation(c: any, id: string, idName: string, userFinder: (c: any, id: string) => Promise<any>, operation: (user: any) => Promise<any>) {
+  if (!id) {
+    return c.json({ success: false, message: `${idName} is required` }, 400);
   }
 
-  try {
-    const result = await operation(user, shoeId as Id<"shoes">);
-    return c.json({ success: true, data: result });
-  } catch (error) {
-    return handleError(c, error, "operation");
-  }
+  const user = await userFinder(c, id);
+  return withUserValidationBase(c, user, operation);
 }
 
 async function withUserIdValidation(c: any, id: string, operation: (user: any) => Promise<any>) {
-  if (!id) {
-    return c.json({ success: false, message: "User ID is required" }, 400);
-  }
-
-  const user = await findUserByIdOrBetterAuthId(c, id);
-
-  if (!user) {
-    return handleNotFound(c, "User");
-  }
-
-  try {
-    const result = await operation(user);
-    return c.json({ success: true, data: result });
-  } catch (error) {
-    return handleError(c, error, "operation");
-  }
+  return withUserFinderValidation(c, id, "User ID", findUserByIdOrBetterAuthId, operation);
 }
 
 async function withIdValidation<T>(c: any, id: string, idName: string, operation: (id: T) => Promise<any>) {

@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useSession } from "@/lib/auth";
+import type { ShoeRecommendation } from "@/types/shoe";
 
 export interface AggregatedRating {
   shoe: {
@@ -36,30 +37,6 @@ export interface SoleMateClimberMatch {
     image?: string | undefined;
   };
   shoes: AggregatedRating[];
-}
-
-interface ShoeRecommendation {
-  _id: string;
-  name: string;
-  brand: string;
-  imageUrl?: string | undefined;
-  slug?: string | undefined;
-  gender?: string | undefined;
-  aggressiveness: string;
-  stiffness: string;
-  climbingDiscipline: string;
-  volume: string;
-  avgComfortScore?: number;
-  avgPerformanceRating?: number;
-  avgDurabilityRating?: number;
-  totalRatings: number;
-  matchScore: number;
-  isSoleMateMatch: boolean;
-  soleMateUsers?: {
-    _id: string;
-    name?: string | undefined;
-    image?: string | undefined;
-  }[];
 }
 
 interface PaginatedResult {

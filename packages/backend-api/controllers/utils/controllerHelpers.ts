@@ -1,84 +1,78 @@
 import { Context } from 'hono';
-import { ResultAsync, err } from 'neverthrow';
-import { UnauthenticatedError, ValidationError, UnexpectedError } from '../../src/lib/errors';
-import { resultAsyncToHonoResponse } from '../../utils/response';
-import { getConvexUrl, fetchWithTimeout } from '../../utils/convexHelper';
-import { logApiError } from '../../utils/errorLogger';
+import { UnauthenticatedError } from '../../src/lib/errors';
 
 export function checkUserAuthentication(c: Context) {
   const user = c.get('user');
-  if (!user || !user.id) {
-    return resultAsyncToHonoResponse(c,
-      Promise.resolve(err(new UnauthenticatedError('User not found in context')))
-    );
+  if (!user) {
+    const error = new UnauthenticatedError('Authentication required');
+    c.status(401);
+    return c.json({ error: error.message });
   }
   return null;
 }
 
-export function validateRequiredParam(value: any, paramName: string, c: Context) {
+export function getAuthenticatedUser(c: Context) {
+  const authError = checkUserAuthentication(c);
+  if (authError) return { error: authError };
+  const user = c.get('user');
+  return { user };
+}
+
+export function validateRequiredParam(value: string | undefined, paramName: string, c: Context) {
   if (!value) {
-    return resultAsyncToHonoResponse(c,
-      Promise.resolve(err(new ValidationError(`${paramName} is required`)))
-    );
+    const error = new Error(`${paramName} is required`);
+    c.status(400);
+    return c.json({ error: error.message });
   }
   return null;
 }
 
 export async function verifyOwnership(c: Context, userShoeId: string) {
   const user = c.get('user');
-  const convexUrl = getConvexUrl();
-
-  const ownershipResponse = await fetchWithTimeout(`${convexUrl}/api/stash/verifyOwnership`, {
+  const userId = user?.id;
+  const stash = await fetch(`${process.env.CONVEX_URL}/api/stash/isInStash`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      userShoeId: userShoeId,
-      betterAuthUserId: user.id
-    })
+    body: JSON.stringify({ userId, shoeId: userShoeId }),
   });
-
-  if (!ownershipResponse.ok) {
-    throw new UnexpectedError('Failed to verify ownership');
-  }
-
-  const ownershipData = await ownershipResponse.json();
-  if (!ownershipData.data?.owned) {
-    throw new UnauthenticatedError('You can only modify your own shoes');
+  const data = await stash.json();
+  if (!data) {
+    const error = new Error('Shoe not found in your stash');
+    c.status(404);
+    return c.json({ error: error.message });
   }
 }
 
-export function logControllerError(operation: string, error: any, method: string, url: string, userId: string) {
-  logApiError(`Failed to ${operation}`, error, {
-    method,
-    url,
-    userId
-  });
+export function handleControllerError(error: unknown, action: string, method: string, path: string, userId: string) {
+  console.error(`[${method}] ${path} - Error ${action} for user ${userId}:`, error);
+  if (error instanceof Error) {
+    return error;
+  }
+  return new Error('An unexpected error occurred');
 }
 
-export function handleControllerError(error: any, operation: string, method: string, url: string, userId: string) {
-  logControllerError(operation, error, method, url, userId);
-  return error instanceof Error ? new UnexpectedError(error.message) : new UnexpectedError('Unknown error');
-}
+export async function authenticatedConvexRequest(c: Context, endpoint: string, method: string, body: Record<string, unknown>) {
+  const convexUrl = process.env.CONVEX_URL;
+  if (!convexUrl) {
+    throw new Error('CONVEX_URL is not configured');
+  }
 
-export async function authenticatedConvexRequest<T>(
-  c: Context,
-  endpoint: string,
-  method: string = 'POST',
-  body?: any
-): Promise<T> {
   const user = c.get('user');
-  const convexUrl = getConvexUrl();
+  if (!user) {
+    throw new UnauthenticatedError('Authentication required');
+  }
 
-  const response = await fetchWithTimeout(`${convexUrl}${endpoint}`, {
+  const response = await fetch(`${convexUrl}${endpoint}`, {
     method,
-    headers: { 'Content-Type': 'application/json' },
-    body: body ? JSON.stringify(body) : undefined
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
-    throw new UnexpectedError(`Convex request failed: ${response.statusText}`);
+    throw new Error(`Convex request failed: ${response.statusText}`);
   }
 
-  const data = await response.json();
-  return data.data || data;
+  return response.json();
 }
