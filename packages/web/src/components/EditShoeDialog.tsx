@@ -112,6 +112,37 @@ export default function EditShoeDialog({
                   />
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="fitLongevity" className="text-neutral-400 font-sora text-xs">Fit Longevity</Label>
+                  <select
+                    id="fitLongevity"
+                    value={editForm.fitLongevity || ''}
+                    onChange={(e) => setEditForm({ ...editForm, fitLongevity: e.target.value || undefined })}
+                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20 transition-colors"
+                  >
+                    <option value="">How long did the fit last?</option>
+                    <option value="1-3 months">1-3 months</option>
+                    <option value="3-6 months">3-6 months</option>
+                    <option value="6+ months">6+ months</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="sizingDeviation" className="text-neutral-400 font-sora text-xs">Sizing Deviation</Label>
+                  <Input
+                    id="sizingDeviation"
+                    type="number"
+                    step="0.5"
+                    placeholder="e.g. -0.5 or +1.0"
+                    value={editForm.sizingDeviation ?? ''}
+                    onChange={(e) => setEditForm({ ...editForm, sizingDeviation: e.target.value ? Number(e.target.value) : undefined })}
+                    className="h-12 bg-neutral-900 text-white border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20"
+                  />
+                  <p className="font-sora text-[11px] text-neutral-600">
+                    Negative means you sized down from your normal shoe size, positive means you sized up.
+                  </p>
+                </div>
+
                 <div className="rounded-lg border border-white/[0.06] bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
                     <Label htmlFor="comfortScore" className="text-neutral-400 font-sora text-xs">Comfort (1-10)</Label>

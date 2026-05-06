@@ -10,9 +10,11 @@ const variantPatterns = [
   { pattern: /\bwomen'?s\b/gi, testPattern: /\bwomen'?s\b/i, label: "Women" },
   { pattern: /\bwomens\b/gi, testPattern: /\bwomens\b/i, label: "Women" },
   { pattern: /\bwomen\b/gi, testPattern: /\bwomen\b/i, label: "Women" },
+  { pattern: /\bw\b$/gi, testPattern: /\bw\b$/i, label: "Women" },
   { pattern: /\bmen'?s\b/gi, testPattern: /\bmen'?s\b/i, label: "Men" },
   { pattern: /\bmens\b/gi, testPattern: /\bmens\b/i, label: "Men" },
   { pattern: /\bmen\b/gi, testPattern: /\bmen\b/i, label: "Men" },
+  { pattern: /\bm\b$/gi, testPattern: /\bm\b$/i, label: "Men" },
   { pattern: /\bkids\b/gi, testPattern: /\bkids\b/i, label: "Kids" },
   { pattern: /\bkid\b/gi, testPattern: /\bkid\b/i, label: "Kids" },
   { pattern: /\byouth\b/gi, testPattern: /\byouth\b/i, label: "Kids" },
@@ -132,7 +134,7 @@ function groupShoesByModelHelper<T>(
 
 export function groupUserShoesByModel<T extends UserShoeLike>(userShoes: T[]) {
   return groupShoesByModelHelper(userShoes, (item) => {
-    const details = (item as any).shoe ?? (item as any).shoeDetails;
+    const details = item.shoe ?? item.shoeDetails;
     return details as ShoeVariantSource;
   });
 }

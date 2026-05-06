@@ -37,6 +37,7 @@ import { StatsStrip } from "@/components/stash/StatsStrip";
 import { BrandSections } from "@/components/stash/BrandSections";
 import { useBrandGroups } from "@/hooks/useBrandGroups";
 import { AdvancedFilters } from "@/components/stash/AdvancedFilters";
+import { DataContributionNudge } from "@/components/stash/DataContributionNudge";
 import { debounce } from "@/lib/debounce";
 import { analyticsEvents, captureError, track } from "@/lib/analytics";
 import { fetchApi } from "@/lib/api-client";
@@ -79,6 +80,8 @@ export default function ShoeSanctuaryPage() {
     comfortScore: undefined,
     performanceRating: undefined,
     durabilityRating: undefined,
+    fitLongevity: undefined,
+    sizingDeviation: undefined,
   });
 
   // Debounced search function (300ms delay)
@@ -97,6 +100,7 @@ export default function ShoeSanctuaryPage() {
     popularityMap,
     totalShoesInDatabase,
     uniqueBrands,
+    userData,
   } = useStashData(session?.user?.id, {
     loadAllShoes: isAddDialogOpen,
     onError: (message) => toast.error(message),
@@ -195,6 +199,17 @@ export default function ShoeSanctuaryPage() {
     selectedComfortRating,
     selectedPerformanceRating,
   ]);
+
+  const hasRatedShoe = useMemo(
+    () =>
+      userShoes.some(
+        (shoe) =>
+          shoe.comfortScore !== undefined ||
+          shoe.performanceRating !== undefined ||
+          shoe.durabilityRating !== undefined,
+      ),
+    [userShoes],
+  );
 
   const resetFilters = useCallback(() => {
     setSelectedBrand("all");
@@ -383,7 +398,13 @@ export default function ShoeSanctuaryPage() {
               />
             )}
 
-            {/* Show skeleton while loading initial data */}
+            <DataContributionNudge
+              hasFootShape={!!userData?.footShape}
+              hasFootVolume={!!userData?.footVolume}
+              hasShoe={userShoes.length > 0}
+              hasRatedShoe={hasRatedShoe}
+            />
+
             {isLoading && userShoes.length === 0 && <StatsStripSkeleton />}
           </div>
         </section>
@@ -564,6 +585,8 @@ export default function ShoeSanctuaryPage() {
                 comfortScore: defaultStats.comfort,
                 performanceRating: defaultStats.performance,
                 durabilityRating: defaultStats.durability,
+                fitLongevity: selectedShoe.fitLongevity || undefined,
+                sizingDeviation: selectedShoe.sizingDeviation || undefined,
               });
               setIsStatsModalOpen(false);
             }

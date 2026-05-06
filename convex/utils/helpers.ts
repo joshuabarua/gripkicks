@@ -48,9 +48,11 @@ function deriveModelName(name: string) {
       .replace(/\bwomen'?s\b/gi, " ")
       .replace(/\bwomens\b/gi, " ")
       .replace(/\bwomen\b/gi, " ")
+      .replace(/\bw\b$/gi, " ")
       .replace(/\bmen'?s\b/gi, " ")
       .replace(/\bmens\b/gi, " ")
       .replace(/\bmen\b/gi, " ")
+      .replace(/\bm\b$/gi, " ")
       .replace(/\bkids\b/gi, " ")
       .replace(/\bkid\b/gi, " ")
       .replace(/\byouth\b/gi, " ")
@@ -68,8 +70,8 @@ function deriveVariantLabel(
   if (/\blow\s*volume\b|\blv\b/i.test(name)) labels.add("LV");
   if (/\bhigh\s*volume\b|\bhv\b/i.test(name)) labels.add("HV");
   if (/\bmid\s*volume\b|\bmv\b/i.test(name)) labels.add("MV");
-  if (/\bwomen'?s\b|\bwomens\b|\bwomen\b/i.test(name) || gender === "women") labels.add("Women");
-  if (/\bmen'?s\b|\bmens\b|\bmen\b/i.test(name) || gender === "men") labels.add("Men");
+  if (/\bwomen'?s\b|\bwomens\b|\bwomen\b|\bw\b$/i.test(name) || gender === "women") labels.add("Women");
+  if (/\bmen'?s\b|\bmens\b|\bmen\b|\bm\b$/i.test(name) || gender === "men") labels.add("Men");
   if (/\bkids\b|\bkid\b|\byouth\b|\bjunior\b|\bjr\b/i.test(name) || gender === "kids") labels.add("Kids");
 
   const variantLabel = Array.from(labels).join(" ").trim();
@@ -172,6 +174,8 @@ export const userShoeFieldsValidator = {
   comfortScore: v.optional(v.number()),
   performanceRating: v.optional(v.number()),
   durabilityRating: v.optional(v.number()),
+  fitLongevity: v.optional(v.string()),
+  sizingDeviation: v.optional(v.number()),
 };
 
 const baseShoeFieldsValidator = {

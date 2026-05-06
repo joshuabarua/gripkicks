@@ -316,7 +316,7 @@ export const backfillVariantMetadata = mutation({
     let updatedCount = 0;
 
     for (const shoe of shoes) {
-      const modelName = shoe.modelName || deriveModelName(shoe.name);
+      const modelName = deriveModelName(shoe.name);
       const variantLabel =
         shoe.variantLabel || deriveVariantLabel(shoe.name, shoe.gender);
       const parentModelId =

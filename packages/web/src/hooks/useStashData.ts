@@ -28,6 +28,8 @@ interface ConvexUserShoe {
   performanceRating?: number;
   durabilityRating?: number;
   isFavourite?: boolean;
+  fitLongevity?: string;
+  sizingDeviation?: number;
   shoe?: Omit<Shoe, "rubberTechnology" | "brandAggressiveness" | "brandStiffness"> & {
     _creationTime: number;
   } | null;
@@ -132,6 +134,8 @@ export function useStashData(
           ...(item.performanceRating !== undefined ? { performanceRating: item.performanceRating } : {}),
           ...(item.durabilityRating !== undefined ? { durabilityRating: item.durabilityRating } : {}),
           ...(item.isFavourite !== undefined ? { isFavourite: item.isFavourite } : {}),
+          ...(item.fitLongevity !== undefined ? { fitLongevity: item.fitLongevity } : {}),
+          ...(item.sizingDeviation !== undefined ? { sizingDeviation: item.sizingDeviation } : {}),
           ...(item.shoe
             ? {
               shoe: {
@@ -196,5 +200,6 @@ export function useStashData(
     popularityMap,
     totalShoesInDatabase,
     uniqueBrands,
+    userData,
   } as const;
 }

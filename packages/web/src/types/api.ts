@@ -59,6 +59,8 @@ export interface UserShoe {
   performanceRating?: number | undefined;
   durabilityRating?: number | undefined;
   isFavourite?: boolean | undefined;
+  fitLongevity?: string | undefined;
+  sizingDeviation?: number | undefined;
 }
 
 // fallow-ignore-next-line unused-type
