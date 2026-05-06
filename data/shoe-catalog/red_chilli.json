@@ -1,7 +1,7 @@
 {
   "brand": "Red Chili",
   "brandKey": "red_chilli",
-  "imagekitFolder": "gripkicks/imgs/shoes/redchili/",
+  "imagekitFolder": "gripkicks/imgs/shoes/red_chilli/",
   "filenameToName": {},
   "shoes": [
     { "name": "Voltage", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
