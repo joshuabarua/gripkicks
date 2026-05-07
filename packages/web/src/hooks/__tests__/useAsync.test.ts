@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useAsync, useMutation } from "@/hooks/useAsync";
-import { ok, err } from "neverthrow";
+import { ResultAsync } from "neverthrow";
 import { ApiError } from "@/lib/errors";
 
 describe("useAsync", () => {
@@ -21,10 +21,13 @@ describe("useAsync", () => {
 
     await act(async () => {
       const operationResult = await result.current.execute(() => 
-        Promise.resolve(ok(successData))
+        ResultAsync.fromSafePromise(Promise.resolve(successData))
       );
       expect(operationResult.isOk()).toBe(true);
-      expect(operationResult.value).toBe(successData);
+      operationResult.match(
+        (value) => expect(value).toBe(successData),
+        () => {}
+      );
     });
 
     expect(result.current.data).toBe(successData);
@@ -40,10 +43,13 @@ describe("useAsync", () => {
 
     await act(async () => {
       const operationResult = await result.current.execute(() => 
-        Promise.resolve(err(error))
+        ResultAsync.fromSafePromise(Promise.reject(error))
       );
       expect(operationResult.isErr()).toBe(true);
-      expect(operationResult.error).toBe(error);
+      operationResult.match(
+        () => {},
+        (err) => expect(err).toBe(error)
+      );
     });
 
     expect(result.current.data).toBeNull();
@@ -57,7 +63,9 @@ describe("useAsync", () => {
     const { result } = renderHook(() => useAsync<string>());
     
     const operation = vi.fn().mockImplementation(() => 
-      new Promise(resolve => setTimeout(() => resolve(ok("data")), 100))
+      ResultAsync.fromSafePromise(
+        new Promise(resolve => setTimeout(() => resolve("data"), 100))
+      )
     );
 
     act(() => {
@@ -81,7 +89,7 @@ describe("useAsync", () => {
 
     // First, execute a successful operation
     await act(async () => {
-      await result.current.execute(() => Promise.resolve(ok("success")));
+      await result.current.execute(() => ResultAsync.fromSafePromise(Promise.resolve("success")));
     });
 
     expect(result.current.data).toBe("success");
@@ -105,7 +113,7 @@ describe("useAsync", () => {
 
     // First, fail
     await act(async () => {
-      await result.current.execute(() => Promise.resolve(err(error)));
+      await result.current.execute(() => ResultAsync.fromSafePromise(Promise.reject(error)));
     });
 
     expect(result.current.isError).toBe(true);
@@ -113,7 +121,7 @@ describe("useAsync", () => {
 
     // Then succeed
     await act(async () => {
-      await result.current.execute(() => Promise.resolve(ok("success")));
+      await result.current.execute(() => ResultAsync.fromSafePromise(Promise.resolve("success")));
     });
 
     expect(result.current.error).toBeNull();
@@ -153,14 +161,17 @@ describe("useMutation", () => {
   });
 
   it("executes successful mutation", async () => {
-    const mutationFn = vi.fn().mockResolvedValue(ok("mutated data"));
+    const mutationFn = vi.fn().mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve("mutated data")));
     const { result } = renderHook(() => useMutation<string, { value: string }>(mutationFn));
     const params = { value: "test" };
 
     await act(async () => {
       const mutationResult = await result.current.mutate(params);
       expect(mutationResult.isOk()).toBe(true);
-      expect(mutationResult.value).toBe("mutated data");
+      mutationResult.match(
+        (value) => expect(value).toBe("mutated data"),
+        () => {}
+      );
     });
 
     expect(mutationFn).toHaveBeenCalledWith(params);
@@ -169,14 +180,17 @@ describe("useMutation", () => {
   });
 
   it("executes failed mutation", async () => {
-    const error = new ApiError({ type: "SERVER_ERROR", message: "Mutation failed" });
-    const mutationFn = vi.fn().mockResolvedValue(err(error));
+    const error = new ApiError({ type: "INTERNAL_SERVER_ERROR", message: "Mutation failed" });
+    const mutationFn = vi.fn().mockReturnValue(ResultAsync.fromSafePromise(Promise.reject(error)));
     const { result } = renderHook(() => useMutation<string, void>(mutationFn));
 
     await act(async () => {
-      const mutationResult = await result.current.mutate();
+      const mutationResult = await result.current.mutate(undefined);
       expect(mutationResult.isErr()).toBe(true);
-      expect(mutationResult.error).toBe(error);
+      mutationResult.match(
+        () => {},
+        (err) => expect(err).toBe(error)
+      );
     });
 
     expect(result.current.error).toBe(error);
@@ -186,12 +200,14 @@ describe("useMutation", () => {
 
   it("sets loading state during mutation", async () => {
     const mutationFn = vi.fn().mockImplementation(() => 
-      new Promise(resolve => setTimeout(() => resolve(ok("data")), 100))
+      ResultAsync.fromSafePromise(
+        new Promise(resolve => setTimeout(() => resolve("data"), 100))
+      )
     );
     const { result } = renderHook(() => useMutation(mutationFn));
 
     act(() => {
-      result.current.mutate();
+      result.current.mutate(undefined);
     });
 
     expect(result.current.isLoading).toBe(true);
@@ -204,7 +220,7 @@ describe("useMutation", () => {
   });
 
   it("passes parameters to mutation function", async () => {
-    const mutationFn = vi.fn().mockResolvedValue(ok("success"));
+    const mutationFn = vi.fn().mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve("success")));
     const { result } = renderHook(() => useMutation<string, { id: number; name: string }>(mutationFn));
     const params = { id: 123, name: "test" };
 
@@ -217,12 +233,12 @@ describe("useMutation", () => {
   });
 
   it("resets state to initial values", async () => {
-    const mutationFn = vi.fn().mockResolvedValue(ok("data"));
-    const { result } = renderHook(() => useMutation(mutationFn));
+    const mutationFn = vi.fn().mockReturnValue(ResultAsync.fromSafePromise(Promise.resolve("data")));
+    const { result } = renderHook(() => useMutation<string, void>(mutationFn));
 
     // Execute successful mutation
     await act(async () => {
-      await result.current.mutate();
+      await result.current.mutate(undefined);
     });
 
     expect(result.current.data).toBe("data");
@@ -242,21 +258,21 @@ describe("useMutation", () => {
 
   it("clears previous error on new mutation", async () => {
     const mutationFn = vi.fn()
-      .mockResolvedValueOnce(err(new ApiError({ type: "NETWORK_ERROR", message: "First error" })))
-      .mockResolvedValueOnce(ok("success"));
+      .mockReturnValueOnce(ResultAsync.fromSafePromise(Promise.reject(new ApiError({ type: "NETWORK_ERROR", message: "First error" }))))
+      .mockReturnValueOnce(ResultAsync.fromSafePromise(Promise.resolve("success")));
     
-    const { result } = renderHook(() => useMutation(mutationFn));
+    const { result } = renderHook(() => useMutation<string, void>(mutationFn));
 
     // First mutation fails
     await act(async () => {
-      await result.current.mutate();
+      await result.current.mutate(undefined);
     });
 
     expect(result.current.isError).toBe(true);
 
     // Second mutation succeeds
     await act(async () => {
-      await result.current.mutate();
+      await result.current.mutate(undefined);
     });
 
     expect(result.current.error).toBeNull();
