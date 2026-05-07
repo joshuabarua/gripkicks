@@ -83,8 +83,8 @@ All core features shipped. Schema, scoring algorithm, and all UI components are 
 - `perceivedAggressiveness` (1-5)
 - `perceivedStiffness` (1-5)
 - `perceivedVolumeFit` (e.g., "heel_gap", "tight_toe")
-- `fitLongevity` (e.g., "1-3 months", "3-6 months", "6+ months") — _pending_
-- `sizingDeviation` (number, e.g., +0.5, -1.0) — _pending_
+- `fitLongevity` (e.g., "1-3 months", "3-6 months", "6+ months")
+- `sizingDeviation` (number, e.g., +0.5, -1.0)
 
 **Outliers table:**
 
@@ -108,10 +108,11 @@ All core features shipped. Schema, scoring algorithm, and all UI components are 
 
 ### Phase 2: Data Enrichment (In Progress)
 
-- [ ] **Task 2.1: Schema Signal Enrichment**
+- [x] **Task 2.1: Schema Signal Enrichment**
 
   - Add `fitLongevity` to `userShoes` — how long before shoe degraded
   - Add `sizingDeviation` to `userShoes` — size deviation from user's standard
+  - Weight enrichment signals into Matcher, Sole Mate aggregates, and recommendation ranking
 
 - [ ] **Task 2.2: Data Contribution Nudge**
   - Create `DataContributionNudge.tsx` — progress indicator showing profile completeness

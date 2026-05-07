@@ -83,6 +83,18 @@ function calculateRatingAverages(allUserRatings: any[]) {
   };
 }
 
+function fitLongevityToScore(fitLongevity?: string) {
+  if (fitLongevity === "6+ months") return 5;
+  if (fitLongevity === "3-6 months") return 3.5;
+  if (fitLongevity === "1-3 months") return 2;
+  return null;
+}
+
+function sizingDeviationToScore(sizingDeviation?: number) {
+  if (sizingDeviation === undefined) return null;
+  return Math.max(1, 5 - Math.min(4, Math.abs(sizingDeviation) * 2));
+}
+
 async function updateShoeRatingAverages(ctx: any, shoeId: any) {
   const allUserRatings = await ctx.db
     .query("userShoes")
@@ -273,6 +285,10 @@ export const getSoleMateAggregates = query({
         performanceCount: number;
         durabilityTotal: number;
         durabilityCount: number;
+        fitLongevityTotal: number;
+        fitLongevityCount: number;
+        sizingDeviationTotal: number;
+        sizingDeviationCount: number;
         ownerCount: number;
       }
     >();
@@ -289,6 +305,10 @@ export const getSoleMateAggregates = query({
           performanceCount: 0,
           durabilityTotal: 0,
           durabilityCount: 0,
+          fitLongevityTotal: 0,
+          fitLongevityCount: 0,
+          sizingDeviationTotal: 0,
+          sizingDeviationCount: 0,
           ownerCount: 0,
         };
         agg.ownerCount += 1;
@@ -304,6 +324,16 @@ export const getSoleMateAggregates = query({
           agg.durabilityTotal += userShoe.durabilityRating;
           agg.durabilityCount += 1;
         }
+        const fitLongevityScore = fitLongevityToScore(userShoe.fitLongevity);
+        if (fitLongevityScore !== null) {
+          agg.fitLongevityTotal += fitLongevityScore;
+          agg.fitLongevityCount += 1;
+        }
+        const sizingDeviationScore = sizingDeviationToScore(userShoe.sizingDeviation);
+        if (sizingDeviationScore !== null) {
+          agg.sizingDeviationTotal += sizingDeviationScore;
+          agg.sizingDeviationCount += 1;
+        }
         aggregates.set(key, agg);
       }
     }
@@ -316,6 +346,10 @@ export const getSoleMateAggregates = query({
         agg.performanceCount > 0 ? agg.performanceTotal / agg.performanceCount : null,
       avgDurability:
         agg.durabilityCount > 0 ? agg.durabilityTotal / agg.durabilityCount : null,
+      avgFitLongevityScore:
+        agg.fitLongevityCount > 0 ? agg.fitLongevityTotal / agg.fitLongevityCount : null,
+      avgSizingDeviationScore:
+        agg.sizingDeviationCount > 0 ? agg.sizingDeviationTotal / agg.sizingDeviationCount : null,
     }));
   },
 });

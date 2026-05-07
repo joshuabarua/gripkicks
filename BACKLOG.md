@@ -1,6 +1,6 @@
 # GripKicks Project Backlog
 
-Last updated: 2026-05-06
+Last updated: 2026-05-07
 
 ## Legend
 - `[P0]` Blocker / Critical
@@ -45,8 +45,8 @@ Last updated: 2026-05-06
 
 | Item | Status | Date Added | Owner | Notes |
 |------|--------|------------|-------|-------|
-| Use fitLongevity in recommendation scoring | ⬜ | 2026-05-06 | — | Weight in shoe matching algorithm |
-| Use sizingDeviation in recommendation scoring | ⬜ | 2026-05-06 | — | Weight in shoe matching algorithm |
+| Use fitLongevity in recommendation scoring | ✓ | 2026-05-06 | Cascade | Weighted into frontend Matcher, Sole Mate aggregates, and Convex recommendation/community ranking |
+| Use sizingDeviation in recommendation scoring | ✓ | 2026-05-06 | Cascade | Weighted into volume compatibility, Sole Mate aggregates, and Convex recommendation/community ranking |
 | Community aggregate signals | ⬜ | 2026-05-06 | — | Per-shoe community ratings aggregation |
 | DataContributionNudge improvements | ⬜ | 2026-05-06 | — | CTAs, dismiss state, progress prompts |
 | Shoe detail stats UI | ⬜ | 2026-05-06 | — | Show enrichment data in shoe cards |

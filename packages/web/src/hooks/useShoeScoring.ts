@@ -12,6 +12,8 @@ interface SoleMateAggregate {
   avgComfort: number | null;
   avgPerformance: number | null;
   avgDurability: number | null;
+  avgFitLongevityScore?: number | null;
+  avgSizingDeviationScore?: number | null;
 }
 
 type Shoe = Doc<"shoes">;
@@ -145,7 +147,11 @@ function calculateShoeScore(
   const footTypeScore = calculateFootTypeCompatibility(shoe, footProfile);
 
   // 2. Volume Compatibility (20% weight)
-  const volumeScore = calculateVolumeCompatibility(shoe, footProfile);
+  const soleMate = soleMateMap?.get(shoe._id);
+  const volumeScore = applySizingDeviationSignal(
+    calculateVolumeCompatibility(shoe, footProfile),
+    soleMate?.avgSizingDeviationScore ?? null,
+  );
 
   // 3. User Preference Match (25% weight)
   const preferenceScore = calculatePreferenceMatch(shoe, userPreferences);
@@ -158,7 +164,10 @@ function calculateShoeScore(
   );
 
   // 5. Overall Rating (10% weight)
-  const overallRatingScore = calculateOverallRating(shoe);
+  const overallRatingScore = calculateOverallRating(
+    shoe,
+    soleMate?.avgFitLongevityScore ?? null,
+  );
 
   // 6. Learned Preference Bonus (up to 0.5 points)
   const learnedPreferenceBonus = calculateLearnedPreferenceBonus(
@@ -181,7 +190,7 @@ function calculateShoeScore(
     footTypeScore,
     volumeScore,
     preferenceScore,
-    soleMateMap?.get(shoe._id),
+    soleMate,
   );
 
   // Calculate Reality Delta (Brand Claim vs Community Perception)
@@ -308,6 +317,11 @@ function blend(general: number, soleMate: number | null, soleMateWeight = 3): nu
   return (general + soleMate * soleMateWeight) / (1 + soleMateWeight);
 }
 
+function applySizingDeviationSignal(baseScore: number, sizingDeviationScore: number | null): number {
+  if (sizingDeviationScore === null) return baseScore;
+  return Math.min(5, baseScore * 0.8 + sizingDeviationScore * 0.2);
+}
+
 function calculateCommunityApproval(
   shoe: Shoe,
   popularityData: { shoeId: string; count: number }[],
@@ -394,12 +408,14 @@ function calculateLearnedPreferenceBonus(
   return Math.min(0.5, bonus * learnedPreferences.confidence);
 }
 
-function calculateOverallRating(shoe: Shoe): number {
+function calculateOverallRating(shoe: Shoe, fitLongevityScore: number | null): number {
   const comfort = shoe.avgComfortScore || 2.5;
   const performance = shoe.avgPerformanceRating || 2.5;
   const durability = shoe.avgDurabilityRating || 2.5;
+  const enrichedDurability =
+    fitLongevityScore === null ? durability : durability * 0.85 + fitLongevityScore * 0.15;
 
-  return (comfort + performance + durability) / 3;
+  return (comfort + performance + enrichedDurability) / 3;
 }
 
 function calculateRadarMetrics(
@@ -412,6 +428,10 @@ function calculateRadarMetrics(
   const baseComfort = blend(shoe.avgComfortScore ?? 2.5, soleMate?.avgComfort ?? null);
   const basePerformance = blend(shoe.avgPerformanceRating ?? 2.5, soleMate?.avgPerformance ?? null);
   const baseDurability = blend(shoe.avgDurabilityRating ?? 2.5, soleMate?.avgDurability ?? null);
+  const enrichedDurability =
+    soleMate?.avgFitLongevityScore === null || soleMate?.avgFitLongevityScore === undefined
+      ? baseDurability
+      : baseDurability * 0.85 + soleMate.avgFitLongevityScore * 0.15;
 
   // Comfort (blended rating + compatibility factors)
   const comfort = baseComfort + (footTypeScore + volumeScore) / 5;
@@ -420,7 +440,7 @@ function calculateRadarMetrics(
   const performance = basePerformance + preferenceScore / 5;
 
   // Durability (blended rating)
-  const durability = baseDurability;
+  const durability = enrichedDurability;
 
   // Aggressiveness (convert to 1-5 scale)
   let aggressiveness = 2.5;
