@@ -20,8 +20,7 @@ import { AccountDeletion } from "@/components/AccountDeletion";
 import { useLoading } from "@/contexts/LoadingContext";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
+import { useUserData } from "@/hooks/useUserData";
 import { useFootProfileStore } from "@/stores/footProfileStore";
 
 interface UserProfile {
@@ -58,14 +57,7 @@ export default function ProfilePage() {
   const displayEmail = profile?.email || session?.user?.email || "";
   const displayUserId = profile?.id ?? session?.user?.id ?? null;
 
-  const userData = useQuery(
-    api.users.findByBetterAuthId,
-    session?.user ? { betterAuthId: session.user.id } : "skip",
-  );
-  const userStashData = useQuery(
-    api.stash.getUserStash,
-    userData ? { userId: userData._id } : "skip",
-  );
+  const { userData, userStashData } = useUserData(session);
 
   const hasFootProfile = !!(footProfile?.shape && footProfile?.volume);
   const hasShoesInStash = userStashData && userStashData.length > 0;

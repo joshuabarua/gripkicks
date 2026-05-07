@@ -1,6 +1,7 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { deriveModelName, deriveVariantLabel } from "./utils/helpers";
+import { findParentModel } from "./shoeHelpers";
 
 const climbingShoes = [
   // La Sportiva
@@ -161,13 +162,7 @@ export const seedDatabase = mutation({
 
       const modelName = deriveModelName(shoeData.name);
       const variantLabel = deriveVariantLabel(shoeData.name);
-      const siblingModels = await ctx.db
-        .query("shoes")
-        .withIndex("by_brand_modelName", (q) =>
-          q.eq("brand", shoeData.brand).eq("modelName", modelName),
-        )
-        .collect();
-      const parentModel = siblingModels.find((candidate) => !candidate.variantLabel);
+      const parentModel = await findParentModel(ctx, shoeData.brand, modelName);
 
       const shoeId = await ctx.db.insert("shoes", {
         name: shoeData.name,

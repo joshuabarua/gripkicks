@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLoading } from "@/contexts/LoadingContext";
+import { AnimatedLogoImage } from "./AnimatedLogo";
 
 const transitionImages = [
   "/imgs/transition/blue_hold.png",
@@ -40,18 +41,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-[9999] flex items-center justify-center bg-neutral-950"
           >
-            <AnimatePresence mode="popLayout">
-              <motion.img
-                key={currentImageIndex}
-                src={transitionImages[currentImageIndex]}
-                alt=""
-                className="w-[180px] h-[180px] object-contain"
-                initial={{ scale: 1.3, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.7, opacity: 0 }}
-                transition={{ duration: 0.15 }}
-              />
-            </AnimatePresence>
+            <AnimatedLogoImage currentImageIndex={currentImageIndex} transitionImages={transitionImages} />
           </motion.div>
         )}
       </AnimatePresence>

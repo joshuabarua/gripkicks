@@ -17,6 +17,7 @@ import type * as popularity from "../popularity.js";
 import type * as recommendations from "../recommendations.js";
 import type * as rubberTechnologies from "../rubberTechnologies.js";
 import type * as seed from "../seed.js";
+import type * as shoeHelpers from "../shoeHelpers.js";
 import type * as shoes from "../shoes.js";
 import type * as stash from "../stash.js";
 import type * as subscriptions from "../subscriptions.js";
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   recommendations: typeof recommendations;
   rubberTechnologies: typeof rubberTechnologies;
   seed: typeof seed;
+  shoeHelpers: typeof shoeHelpers;
   shoes: typeof shoes;
   stash: typeof stash;
   subscriptions: typeof subscriptions;

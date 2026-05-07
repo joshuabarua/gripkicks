@@ -4,6 +4,8 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
-    "**/__tests__/**"
+    "**/__tests__/**",
+    "scripts/**",
+    "convex/_generated/**"
   ]
 }

@@ -5,11 +5,10 @@ import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
-import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
 import { useLoading } from "@/contexts/LoadingContext";
 import ShoeImage from "@/components/ShoeImage";
 import { useFootProfileStore } from "@/stores/footProfileStore";
+import { useUserData } from "@/hooks/useUserData";
 
 export default function DashboardPage() {
   const { data: session, isPending } = useSession();
@@ -34,14 +33,7 @@ export default function DashboardPage() {
     router.replace("/auth/login");
   }, [isPending, router, session?.user]);
 
-  const userData = useQuery(
-    api.users.findByBetterAuthId,
-    session?.user ? { betterAuthId: session.user.id } : "skip",
-  );
-  const userStashData = useQuery(
-    api.stash.getUserStash,
-    userData ? { userId: userData._id } : "skip",
-  );
+  const { userData, userStashData } = useUserData(session);
 
   const isLoadingData = userStashData === undefined || userData === undefined;
 

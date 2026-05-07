@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { footShapeValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, commonShoeFieldsValidator, optionalShoeFieldsValidator } from "./utils/helpers";
+import { findParentModel } from "./shoeHelpers";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -488,13 +489,7 @@ export const bulkUpsertByBrand = mutation({
 
       const modelName = deriveModelName(shoeData.name);
       const variantLabel = deriveVariantLabel(shoeData.name, shoeData.gender);
-      const siblingModels = await ctx.db
-        .query("shoes")
-        .withIndex("by_brand_modelName", (q) =>
-          q.eq("brand", args.brand).eq("modelName", modelName),
-        )
-        .collect();
-      const parentModel = siblingModels.find((candidate) => !candidate.variantLabel);
+      const parentModel = await findParentModel(ctx, args.brand, modelName);
 
       const shoeId = await ctx.db.insert("shoes", {
         name: shoeData.name,

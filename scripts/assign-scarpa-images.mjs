@@ -1,7 +1,6 @@
 import "dotenv/config";
 import ImageKit from "imagekit";
-import { ConvexHttpClient } from "convex/browser";
-import { api } from "../convex/_generated/api.js";
+import { bulkUpsertShoesByBrand } from "./convex-utils.mjs";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const SCARPA_FOLDER = "gripkicks/imgs/shoes/scarpa/";
@@ -43,19 +42,7 @@ async function main() {
 
   if (DRY_RUN) return;
 
-  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || process.env.CONVEX_URL;
-  if (!convexUrl) throw new Error("Missing NEXT_PUBLIC_CONVEX_URL or CONVEX_URL");
-  const client = new ConvexHttpClient(convexUrl);
-  const result = await client.mutation(api.shoes.bulkUpsertByBrand, {
-    brand: "Scarpa",
-    shoes,
-  });
-
-  console.log(`Updated: ${result.updatedCount}`);
-  console.log(`Created: ${result.createdCount}`);
-  if (result.created.length > 0) {
-    console.log(`Created: ${result.created.join(", ")}`);
-  }
+  await bulkUpsertShoesByBrand("Scarpa", shoes);
 }
 
 main().catch((error) => {
