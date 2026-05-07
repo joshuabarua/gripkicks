@@ -15,9 +15,17 @@ export interface ShoeRecommendation {
   totalRatings: number;
   matchScore: number;
   isSoleMateMatch: boolean;
+  communitySignals?: CommunitySignal[];
   soleMateUsers?: {
     _id: string;
     name?: string;
     image?: string;
   }[];
+}
+
+export interface CommunitySignal {
+  label: string;
+  value: string;
+  detail: string;
+  tone: "good" | "warn" | "neutral";
 }

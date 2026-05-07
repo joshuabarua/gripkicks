@@ -113,6 +113,7 @@ All core features shipped. Schema, scoring algorithm, and all UI components are 
   - Add `fitLongevity` to `userShoes` — how long before shoe degraded
   - Add `sizingDeviation` to `userShoes` — size deviation from user's standard
   - Weight enrichment signals into Matcher, Sole Mate aggregates, and recommendation ranking
+  - Add per-shoe aggregate signal chips for community recommendations and Sole Mate results
 
 - [ ] **Task 2.2: Data Contribution Nudge**
   - Create `DataContributionNudge.tsx` — progress indicator showing profile completeness

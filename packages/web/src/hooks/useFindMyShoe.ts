@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useSession } from "@/lib/auth";
-import type { ShoeRecommendation } from "@/types/shoe";
+import type { CommunitySignal, ShoeRecommendation } from "@/types/shoe";
 
 export interface AggregatedRating {
   shoe: {
@@ -23,6 +23,7 @@ export interface AggregatedRating {
   totalRatings: number;
   matchScore: number;
   isSoleMateMatch: boolean;
+  communitySignals: CommunitySignal[];
   soleMateUsers: {
     _id: string;
     name?: string | undefined;
@@ -139,6 +140,7 @@ export function useFindMyShoe(
         totalRatings: shoe.totalRatings,
         matchScore: shoe.matchScore,
         isSoleMateMatch: shoe.isSoleMateMatch,
+        communitySignals: shoe.communitySignals ?? [],
         soleMateUsers: shoe.soleMateUsers ?? [],
       }),
     );

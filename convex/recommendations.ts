@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
 import { footShapeValidator } from "./schema";
-import { ShoeRecommendation } from "../types/shoe";
+import type { CommunitySignal, ShoeRecommendation } from "../types/shoe";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -28,6 +28,105 @@ function sizingDeviationToScore(sizingDeviation?: number) {
 
 function avg(values: number[]) {
   return values.length === 0 ? null : values.reduce((a, b) => a + b, 0) / values.length;
+}
+
+function formatSignedDecimal(value: number) {
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)}`;
+}
+
+function buildCommunitySignals(args: {
+  avgComfort: number;
+  avgPerformance: number;
+  avgDurability: number;
+  avgFitLongevity: number | null;
+  avgSizingDeviationScore: number | null;
+  avgRawSizingDeviation: number | null;
+  avgAggressiveness: number | null;
+  avgStiffness: number | null;
+  brandAggressiveness?: number;
+  brandStiffness?: number;
+  totalRatings: number;
+}): CommunitySignal[] {
+  const signals: CommunitySignal[] = [];
+
+  if (args.avgComfort >= 8.5) {
+    signals.push({
+      label: "Comfort favorite",
+      value: `${args.avgComfort.toFixed(1)}/10`,
+      detail: "Community comfort average is elite",
+      tone: "good",
+    });
+  }
+
+  if (args.avgPerformance >= 8.5) {
+    signals.push({
+      label: "High output",
+      value: `${args.avgPerformance.toFixed(1)}/10`,
+      detail: "Strong performance consensus",
+      tone: "good",
+    });
+  }
+
+  if (args.avgFitLongevity !== null && args.avgFitLongevity >= 7) {
+    signals.push({
+      label: "Holds fit",
+      value: `${args.avgDurability.toFixed(1)}/10`,
+      detail: "Fit longevity is trending strong",
+      tone: "good",
+    });
+  }
+
+  if (args.avgSizingDeviationScore !== null) {
+    const isTrueToSize = args.avgSizingDeviationScore >= 8.5;
+    signals.push({
+      label: isTrueToSize ? "True fit" : "Size shift",
+      value:
+        args.avgRawSizingDeviation === null
+          ? `${args.avgSizingDeviationScore.toFixed(1)}/10`
+          : formatSignedDecimal(args.avgRawSizingDeviation),
+      detail: isTrueToSize ? "Most climbers stay close to standard size" : "Community reports sizing deviation",
+      tone: isTrueToSize ? "good" : "warn",
+    });
+  }
+
+  if (
+    args.brandAggressiveness !== undefined &&
+    args.avgAggressiveness !== null &&
+    Math.abs(args.brandAggressiveness - args.avgAggressiveness) >= 1
+  ) {
+    const softer = args.avgAggressiveness < args.brandAggressiveness;
+    signals.push({
+      label: "Reality check",
+      value: softer ? "Less aggressive" : "More aggressive",
+      detail: "Community feel differs from brand positioning",
+      tone: "neutral",
+    });
+  }
+
+  if (
+    args.brandStiffness !== undefined &&
+    args.avgStiffness !== null &&
+    Math.abs(args.brandStiffness - args.avgStiffness) >= 1
+  ) {
+    const softer = args.avgStiffness < args.brandStiffness;
+    signals.push({
+      label: "Flex truth",
+      value: softer ? "Softer" : "Stiffer",
+      detail: "Community stiffness differs from brand claim",
+      tone: "neutral",
+    });
+  }
+
+  if (signals.length === 0 && args.totalRatings >= 5) {
+    signals.push({
+      label: "Stable consensus",
+      value: `${args.totalRatings} ratings`,
+      detail: "Enough community data for a steady baseline",
+      tone: "neutral",
+    });
+  }
+
+  return signals.slice(0, 3);
 }
 
 export const getShoeRecommendations = query({
@@ -78,6 +177,9 @@ export const getShoeRecommendations = query({
         durabilityRatings: number[];
         fitLongevityScores: number[];
         sizingDeviationScores: number[];
+        rawSizingDeviations: number[];
+        aggressivenessRatings: number[];
+        stiffnessRatings: number[];
         soleMateRatings: number[];
         soleMateFitLongevityScores: number[];
         soleMateSizingDeviationScores: number[];
@@ -93,6 +195,9 @@ export const getShoeRecommendations = query({
         durabilityRatings: [],
         fitLongevityScores: [],
         sizingDeviationScores: [],
+        rawSizingDeviations: [],
+        aggressivenessRatings: [],
+        stiffnessRatings: [],
         soleMateRatings: [],
         soleMateFitLongevityScores: [],
         soleMateSizingDeviationScores: [],
@@ -108,6 +213,12 @@ export const getShoeRecommendations = query({
       if (userShoe.durabilityRating !== undefined) {
         existing.durabilityRatings.push(userShoe.durabilityRating);
       }
+      if (userShoe.perceivedAggressiveness !== undefined) {
+        existing.aggressivenessRatings.push(userShoe.perceivedAggressiveness);
+      }
+      if (userShoe.perceivedStiffness !== undefined) {
+        existing.stiffnessRatings.push(userShoe.perceivedStiffness);
+      }
       const fitLongevityScore = fitLongevityToScore(userShoe.fitLongevity);
       if (fitLongevityScore !== null) {
         existing.fitLongevityScores.push(fitLongevityScore);
@@ -115,6 +226,9 @@ export const getShoeRecommendations = query({
       const sizingDeviationScore = sizingDeviationToScore(userShoe.sizingDeviation);
       if (sizingDeviationScore !== null) {
         existing.sizingDeviationScores.push(sizingDeviationScore);
+      }
+      if (userShoe.sizingDeviation !== undefined) {
+        existing.rawSizingDeviations.push(userShoe.sizingDeviation);
       }
 
       if (soleMateIds.has(userShoe.userId)) {
@@ -164,6 +278,9 @@ export const getShoeRecommendations = query({
       const avgDurability = avg(ratings.durabilityRatings) ?? 0;
       const avgFitLongevity = avg(ratings.fitLongevityScores);
       const avgSizingDeviation = avg(ratings.sizingDeviationScores);
+      const avgRawSizingDeviation = avg(ratings.rawSizingDeviations);
+      const avgAggressiveness = avg(ratings.aggressivenessRatings);
+      const avgStiffness = avg(ratings.stiffnessRatings);
       const avgSoleMateFitLongevity = avg(ratings.soleMateFitLongevityScores);
       const avgSoleMateSizingDeviation = avg(ratings.soleMateSizingDeviationScores);
       const fitLongevitySignal = avgSoleMateFitLongevity ?? avgFitLongevity;
@@ -210,6 +327,19 @@ export const getShoeRecommendations = query({
         totalRatings: ratings.comfortScores.length,
         matchScore,
         isSoleMateMatch,
+        communitySignals: buildCommunitySignals({
+          avgComfort,
+          avgPerformance,
+          avgDurability: enrichedDurability,
+          avgFitLongevity: fitLongevitySignal,
+          avgSizingDeviationScore: sizingSignal,
+          avgRawSizingDeviation,
+          avgAggressiveness,
+          avgStiffness,
+          ...(shoe.brandAggressiveness !== undefined ? { brandAggressiveness: shoe.brandAggressiveness } : {}),
+          ...(shoe.brandStiffness !== undefined ? { brandStiffness: shoe.brandStiffness } : {}),
+          totalRatings: ratings.comfortScores.length,
+        }),
       };
 
       if (shoe.imageUrl !== undefined) {
@@ -324,6 +454,7 @@ export const getCommunityTopShoes = query({
         stiffness: number[];
         fitLongevity: number[];
         sizingDeviation: number[];
+        rawSizingDeviation: number[];
       }
     >();
 
@@ -336,6 +467,7 @@ export const getCommunityTopShoes = query({
         stiffness: [],
         fitLongevity: [],
         sizingDeviation: [],
+        rawSizingDeviation: [],
       };
       if (userShoe.comfortScore !== undefined) bucket.comfort.push(userShoe.comfortScore);
       if (userShoe.performanceRating !== undefined) bucket.performance.push(userShoe.performanceRating);
@@ -346,6 +478,7 @@ export const getCommunityTopShoes = query({
       if (fitLongevityScore !== null) bucket.fitLongevity.push(fitLongevityScore);
       const sizingDeviationScore = sizingDeviationToScore(userShoe.sizingDeviation);
       if (sizingDeviationScore !== null) bucket.sizingDeviation.push(sizingDeviationScore);
+      if (userShoe.sizingDeviation !== undefined) bucket.rawSizingDeviation.push(userShoe.sizingDeviation);
       ratingsByShoe.set(userShoe.shoeId, bucket);
     }
 
@@ -358,10 +491,13 @@ export const getCommunityTopShoes = query({
         const avgComfort = avg(bucket.comfort) ?? 0;
         const avgPerformance = avg(bucket.performance) ?? 0;
         const avgDurability = avg(bucket.durability) ?? 0;
-        const avgAggressiveness = avg(bucket.aggressiveness) ?? 0;
-        const avgStiffness = avg(bucket.stiffness) ?? 0;
+        const communityAggressiveness = avg(bucket.aggressiveness);
+        const communityStiffness = avg(bucket.stiffness);
+        const avgAggressiveness = communityAggressiveness ?? 0;
+        const avgStiffness = communityStiffness ?? 0;
         const avgFitLongevity = avg(bucket.fitLongevity);
         const avgSizingDeviation = avg(bucket.sizingDeviation);
+        const avgRawSizingDeviation = avg(bucket.rawSizingDeviation);
         const enrichedDurability =
           avgFitLongevity === null ? avgDurability : avgDurability * 0.85 + avgFitLongevity * 0.15;
         const sizingSignal = avgSizingDeviation === null ? 0 : avgSizingDeviation * 0.1;
@@ -385,6 +521,20 @@ export const getCommunityTopShoes = query({
           avgStiffness,
           avgFitLongevity,
           avgSizingDeviation,
+          avgRawSizingDeviation,
+          communitySignals: buildCommunitySignals({
+            avgComfort,
+            avgPerformance,
+            avgDurability: enrichedDurability,
+            avgFitLongevity,
+            avgSizingDeviationScore: avgSizingDeviation,
+            avgRawSizingDeviation,
+            avgAggressiveness: communityAggressiveness,
+            avgStiffness: communityStiffness,
+            ...(shoe.brandAggressiveness !== undefined ? { brandAggressiveness: shoe.brandAggressiveness } : {}),
+            ...(shoe.brandStiffness !== undefined ? { brandStiffness: shoe.brandStiffness } : {}),
+            totalRatings: sampleSize,
+          }),
           compositeScore,
           totalRatings: sampleSize,
         };

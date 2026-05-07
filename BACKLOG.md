@@ -47,7 +47,7 @@ Last updated: 2026-05-07
 |------|--------|------------|-------|-------|
 | Use fitLongevity in recommendation scoring | ✓ | 2026-05-06 | Cascade | Weighted into frontend Matcher, Sole Mate aggregates, and Convex recommendation/community ranking |
 | Use sizingDeviation in recommendation scoring | ✓ | 2026-05-06 | Cascade | Weighted into volume compatibility, Sole Mate aggregates, and Convex recommendation/community ranking |
-| Community aggregate signals | ⬜ | 2026-05-06 | — | Per-shoe community ratings aggregation |
+| Community aggregate signals | ✓ | 2026-05-06 | Cascade | Per-shoe aggregate signal chips for community recommendations and Sole Mate results |
 | DataContributionNudge improvements | ⬜ | 2026-05-06 | — | CTAs, dismiss state, progress prompts |
 | Shoe detail stats UI | ⬜ | 2026-05-06 | — | Show enrichment data in shoe cards |
 

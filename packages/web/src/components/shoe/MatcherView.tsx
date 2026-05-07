@@ -14,6 +14,7 @@ import { User } from "lucide-react";
 import { MatchScoreTooltip } from "./MatchScoreTooltip";
 import { DataContributionNudge } from "./DataContributionNudge";
 import { RadarGrid, type RadarShoe, type RadarUserPosition } from "./RadarGrid";
+import type { CommunitySignal } from "@/types/shoe";
 
 type Mode = "personal" | "community";
 
@@ -26,6 +27,7 @@ interface DisplayShoe {
   secondaryLabel: string;
   brandAggressiveness?: number;
   totalRatings?: number;
+  communitySignals?: CommunitySignal[];
   metrics: {
     comfort: number;
     performance: number;
@@ -84,6 +86,7 @@ export function MatcherView() {
       secondaryLabel: `${s.totalRatings} ratings`,
       ...(s.brandAggressiveness !== undefined ? { brandAggressiveness: s.brandAggressiveness } : {}),
       totalRatings: s.totalRatings,
+      communitySignals: s.communitySignals ?? [],
       metrics: {
         comfort: s.avgComfort,
         performance: s.avgPerformance,
@@ -115,7 +118,7 @@ export function MatcherView() {
             transition={{ duration: 0.25 }}
           >
             <ModeHeader mode={mode} count={activeShoes.length} />
-            <TileGrid shoes={activeShoes} />
+            <TileGrid shoes={activeShoes} mode={mode} />
             <RadarGrid
               shoes={toRadarShoes(activeShoes, mode)}
               hoveredId={hoveredId}
@@ -271,7 +274,13 @@ function ModeHeader({ mode, count }: { mode: Mode; count: number }) {
   );
 }
 
-function TileGrid({ shoes }: { shoes: DisplayShoe[] }) {
+function signalToneClass(tone: CommunitySignal["tone"]) {
+  if (tone === "good") return "border-brand-red/25 bg-brand-red/10 text-brand-red";
+  if (tone === "warn") return "border-amber-400/25 bg-amber-400/10 text-amber-300";
+  return "border-white/10 bg-white/[0.04] text-neutral-300";
+}
+
+function TileGrid({ shoes, mode }: { shoes: DisplayShoe[]; mode: Mode }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
       {shoes.map((shoe, idx) => (
@@ -315,6 +324,19 @@ function TileGrid({ shoes }: { shoes: DisplayShoe[] }) {
               </div>
             </div>
           )}
+
+          {mode === "community" && shoe.communitySignals && shoe.communitySignals.length > 0 && (
+            <div className="absolute inset-x-2 bottom-12 flex flex-wrap gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              {shoe.communitySignals.slice(0, 2).map((signal) => (
+                <span
+                  key={`${shoe.id}-${signal.label}`}
+                  className={`rounded-full border px-2 py-1 font-sora text-[8px] uppercase tracking-[0.12em] backdrop-blur ${signalToneClass(signal.tone)}`}
+                >
+                  {signal.label}
+                </span>
+              ))}
+            </div>
+          )}
         </motion.div>
       ))}
     </div>
@@ -336,12 +358,13 @@ function Leaderboard({
     <div>
       <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Leaderboard</p>
       <div className="bg-neutral-950 border border-neutral-800 rounded-3xl overflow-hidden">
-        <div className="hidden md:grid grid-cols-[60px_1fr_120px_120px_120px_100px] gap-4 px-5 py-3 border-b border-neutral-800 bg-neutral-900/50">
+        <div className="hidden md:grid grid-cols-[60px_1fr_120px_120px_120px_minmax(160px,1fr)_100px] gap-4 px-5 py-3 border-b border-neutral-800 bg-neutral-900/50">
           <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500">#</span>
           <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500">Shoe</span>
           <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 text-right">Comfort</span>
           <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 text-right">Performance</span>
           <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 text-right">Durability</span>
+          <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500">Signals</span>
           <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 text-right">
             {mode === "personal" ? "Match" : "Score"}
           </span>
@@ -385,7 +408,7 @@ function LeaderboardRow({
       transition={{ delay: rank * 0.04 }}
       onMouseEnter={() => onHoverChange(shoe.id)}
       onMouseLeave={() => onHoverChange(null)}
-      className={`md:grid md:grid-cols-[60px_1fr_120px_120px_120px_100px] gap-4 px-5 py-4 border-b border-neutral-800 last:border-b-0 transition-colors flex flex-col ${
+      className={`md:grid md:grid-cols-[60px_1fr_120px_120px_120px_minmax(160px,1fr)_100px] gap-4 px-5 py-4 border-b border-neutral-800 last:border-b-0 transition-colors flex flex-col ${
         isHovered ? "bg-neutral-900/80" : "hover:bg-neutral-900/40"
       }`}
     >
@@ -415,6 +438,8 @@ function LeaderboardRow({
       <MetricCell label="Performance" value={shoe.metrics.performance} />
       <MetricCell label="Durability" value={shoe.metrics.durability} />
 
+      <SignalCell signals={shoe.communitySignals ?? []} />
+
       <div className="flex md:justify-end items-center mt-3 md:mt-0">
         {mode === "personal" && shoe.breakdown ? (
           <MatchScoreTooltip score={shoe.primaryScore / 20} breakdown={shoe.breakdown} />
@@ -435,6 +460,27 @@ function MetricCell({ label, value }: { label: string; value: number }) {
         <div className="h-full bg-brand-red rounded-full" style={{ width: `${pct}%` }} />
       </div>
       <span className="font-sora text-xs text-white tabular-nums w-8 text-right">{value.toFixed(1)}</span>
+    </div>
+  );
+}
+
+function SignalCell({ signals }: { signals: CommunitySignal[] }) {
+  if (signals.length === 0) {
+    return <span className="hidden md:block font-sora text-xs text-neutral-700">No signals yet</span>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-2 md:mt-0">
+      {signals.slice(0, 2).map((signal) => (
+        <div
+          key={`${signal.label}-${signal.value}`}
+          className={`rounded-full border px-2.5 py-1 ${signalToneClass(signal.tone)}`}
+          title={signal.detail}
+        >
+          <span className="font-sora text-[9px] uppercase tracking-[0.14em]">{signal.label}</span>
+          <span className="ml-1.5 font-ball-pill text-xs">{signal.value}</span>
+        </div>
+      ))}
     </div>
   );
 }
