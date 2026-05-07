@@ -57,7 +57,7 @@ export default function ProfilePage() {
   const displayEmail = profile?.email || session?.user?.email || "";
   const displayUserId = profile?.id ?? session?.user?.id ?? null;
 
-  const { userData, userStashData } = useUserData(session);
+  const { userStashData } = useUserData(session);
 
   const hasFootProfile = !!(footProfile?.shape && footProfile?.volume);
   const hasShoesInStash = userStashData && userStashData.length > 0;
