@@ -6,13 +6,7 @@ import { useSession } from "@/lib/auth";
 import { fetchApi } from "@/lib/api-client";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Footprints,
-  Plus,
-  CheckCircle2,
   ChevronRight,
-  Star,
-  Sparkles,
-  ArrowUpRight,
 } from "lucide-react";
 import Link from "next/link";
 import ShoeImage from "@/components/ShoeImage";
@@ -47,6 +41,11 @@ interface ApiSuccessResponse {
 }
 
 type OnboardingStep = "welcome" | "foot-data" | "first-shoe" | "complete";
+type ProfileResponse = {
+  footShape?: string | null;
+  footVolume?: string | null;
+  onboardingComplete?: boolean;
+};
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -66,6 +65,7 @@ export default function OnboardingPage() {
   const setFootProfile = useFootProfileStore((s) => s.setProfile);
   const [footShape, setFootShape] = useState("");
   const [footVolume, setFootVolume] = useState("");
+  const hasFootProfile = !!footShape && !!footVolume;
 
   const steps = useMemo(
     () =>
@@ -100,13 +100,50 @@ export default function OnboardingPage() {
       return;
     }
 
-    // Calculate progress based on current step
     const stepIndex = steps.findIndex((s) => s.key === currentStep);
     setProgress(((stepIndex + 1) / steps.length) * 100);
   }, [currentStep, session, sessionLoading, router, steps]);
 
+  useEffect(() => {
+    if (!session?.user) return;
+
+    let ignore = false;
+
+    async function loadProfile() {
+      const response = await fetchApi<ProfileResponse>("/api/v1/profile");
+      if (ignore || response.isErr()) return;
+
+      const { footShape: savedFootShape, footVolume: savedFootVolume, onboardingComplete } = response.value;
+      if (savedFootShape) setFootShape(savedFootShape);
+      if (savedFootVolume) setFootVolume(savedFootVolume);
+
+      const normalized = normalizeBackendFootProfile({
+        footShape: savedFootShape ?? null,
+        footVolume: savedFootVolume ?? null,
+      });
+      if (normalized) setFootProfile(normalized);
+
+      if (onboardingComplete) {
+        router.push("/stash");
+        return;
+      }
+
+      if (savedFootShape && savedFootVolume) {
+        setCurrentStep("first-shoe");
+      }
+    }
+
+    loadProfile();
+
+    return () => {
+      ignore = true;
+    };
+  }, [router, session?.user, setFootProfile]);
+
   const handleNext = async () => {
-    if (currentStep === "welcome") setCurrentStep("foot-data");
+    if (currentStep === "welcome") {
+      setCurrentStep(hasFootProfile ? "first-shoe" : "foot-data");
+    }
     else if (currentStep === "foot-data") {
       setIsLoading(true);
       try {
@@ -122,12 +159,10 @@ export default function OnboardingPage() {
         setIsLoading(false);
       }
     } else if (currentStep === "first-shoe") {
-      // Save shoe and complete onboarding
       if (!selectedShoe) return;
 
       setIsLoading(true);
       try {
-        // Add shoe to stash
         const shoeResponse = await fetchApi<ApiSuccessResponse>(
           "/api/v1/stash",
           {
@@ -140,7 +175,6 @@ export default function OnboardingPage() {
         );
 
         if (shoeResponse.isOk()) {
-          // Complete onboarding
           const onboardingResponse = await fetchApi<ApiSuccessResponse>(
             "/api/v1/users/onboarding",
             {
@@ -178,7 +212,7 @@ export default function OnboardingPage() {
 
   const handlePrevious = () => {
     if (currentStep === "foot-data") setCurrentStep("welcome");
-    else if (currentStep === "first-shoe") setCurrentStep("foot-data");
+    else if (currentStep === "first-shoe") setCurrentStep(hasFootProfile ? "welcome" : "foot-data");
   };
 
   const handleSkipOnboarding = () => {
@@ -232,14 +266,6 @@ export default function OnboardingPage() {
             >
               {currentStep === "welcome" && (
                 <div className="text-center">
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                    className="w-20 h-20 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-6"
-                  >
-                    <Sparkles className="w-10 h-10 text-brand-red" />
-                  </motion.div>
                   <h1 className="font-ball-pill text-5xl md:text-6xl mb-4">
                     WELCOME TO
                     <br />
@@ -252,17 +278,14 @@ export default function OnboardingPage() {
                   <div className="grid md:grid-cols-3 gap-4 text-left mb-10">
                     {[
                       {
-                        icon: Footprints,
                         title: "Know Your Feet",
                         desc: "Tell us your foot shape so we can narrow things down",
                       },
                       {
-                        icon: Star,
                         title: "Rate Your Shoes",
                         desc: "Track how each pair feels on comfort and performance",
                       },
                       {
-                        icon: Plus,
                         title: "Find Your Fit",
                         desc: "Get shoe recs based on real data from your feet",
                       },
@@ -271,9 +294,6 @@ export default function OnboardingPage() {
                         key={item.title}
                         className="bg-brand-surface border border-white/[0.06] p-6 group hover:border-brand-red/30 transition-colors duration-500"
                       >
-                        <div className="w-10 h-10 bg-brand-red/10 flex items-center justify-center mb-4">
-                          <item.icon className="w-5 h-5 text-brand-red" />
-                        </div>
                         <h3 className="font-ball-pill text-lg text-white mb-1">
                           {item.title}
                         </h3>
@@ -291,16 +311,12 @@ export default function OnboardingPage() {
                     className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
                   >
                     LET&apos;S GET STARTED
-                    <ChevronRight className="w-5 h-5" />
                   </motion.button>
                 </div>
               )}
 
               {currentStep === "foot-data" && (
                 <div className="bg-brand-surface border border-white/[0.06] p-8">
-                  <div className="w-14 h-14 bg-brand-red/10 flex items-center justify-center mb-6">
-                    <Footprints className="w-7 h-7 text-brand-red" />
-                  </div>
                   <h2 className="font-ball-pill text-3xl mb-2">FOOT SHAPE</h2>
                   <p className="font-sora text-neutral-500 text-sm mb-8">
                     This helps us recommend shoes that will fit you best
@@ -412,9 +428,6 @@ export default function OnboardingPage() {
 
               {currentStep === "first-shoe" && (
                 <div className="bg-brand-surface border border-white/[0.06] p-8">
-                  <div className="w-14 h-14 bg-brand-red/10 flex items-center justify-center mb-6">
-                    <Plus className="w-7 h-7 text-brand-red" />
-                  </div>
                   <h2 className="font-ball-pill text-3xl mb-2">
                     ADD YOUR FIRST SHOE
                   </h2>
@@ -600,7 +613,6 @@ export default function OnboardingPage() {
                         className="bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-ball-pill text-lg px-8 py-3 transition-colors duration-500 flex items-center gap-2"
                       >
                         {isLoading ? "COMPLETING..." : "COMPLETE SETUP"}{" "}
-                        <CheckCircle2 className="w-4 h-4" />
                       </motion.button>
                     </div>
                   </div>
@@ -609,14 +621,6 @@ export default function OnboardingPage() {
 
               {currentStep === "complete" && (
                 <div className="text-center">
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                    className="w-20 h-20 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-6"
-                  >
-                    <CheckCircle2 className="w-10 h-10 text-brand-red" />
-                  </motion.div>
                   <h1 className="font-ball-pill text-5xl md:text-6xl mb-4">
                     YOU&apos;RE
                     <br />
@@ -630,11 +634,10 @@ export default function OnboardingPage() {
                     {[
                       {
                         href: "/footlab",
-                        icon: Footprints,
                         label: "Foot Lab",
                       },
-                      { href: "/stash", icon: Plus, label: "My Shoes" },
-                      { href: "/matcher", icon: Star, label: "Matcher" },
+                      { href: "/stash", label: "My Shoes" },
+                      { href: "/matcher", label: "Matcher" },
                     ].map((item) => (
                       <Link key={item.href} href={item.href}>
                         <motion.div
@@ -642,7 +645,6 @@ export default function OnboardingPage() {
                           whileTap={{ scale: 0.98 }}
                           className="bg-brand-surface border border-white/[0.06] p-6 flex flex-col items-center gap-3 hover:border-brand-red/30 transition-colors duration-500 cursor-pointer"
                         >
-                          <item.icon className="w-8 h-8 text-brand-red" />
                           <span className="font-ball-pill text-lg text-white">
                             {item.label}
                           </span>
@@ -658,7 +660,6 @@ export default function OnboardingPage() {
                     className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
                   >
                     GO TO SHOE SANCTUARY
-                    <ArrowUpRight className="w-5 h-5" />
                   </motion.button>
                 </div>
               )}

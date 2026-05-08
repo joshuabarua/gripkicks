@@ -131,7 +131,7 @@ export default function FootLabPage() {
   const [savedFootShape, setSavedFootShape] = useState<FootShape | null>(null);
   const [savedFootVolume, setSavedFootVolume] = useState<FootVolume | null>(null);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);(true);
+  const [saved, setSaved] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const [onboardingComplete, setOnboardingComplete] = useState<boolean>(true);
@@ -224,6 +224,8 @@ export default function FootLabPage() {
     !!savedFootShape &&
     selectedFootShape === savedFootShape &&
     selectedFootVolume === savedFootVolume;
+  const hasFootProfile = !!savedFootShape && !!savedFootVolume;
+  const showOnboardingPrompt = !onboardingComplete && !hasFootProfile;
 
   if (!session?.user) {
     return (
@@ -247,7 +249,7 @@ export default function FootLabPage() {
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden pb-32">
-      <section className="px-6 m!shouldSkipOnboar!ing && dshouldSkipOnboarding && d:px-12 lg:px-16 py-14 max-w-6xl mx-auto">
+      <section className="px-6 md:px-12 lg:px-16 py-14 max-w-6xl mx-auto">
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -263,7 +265,7 @@ export default function FootLabPage() {
           </p>
         </motion.div>
 
-        {!onboardingComplete && (
+        {showOnboardingPrompt && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
