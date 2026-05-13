@@ -13,6 +13,7 @@ import { KonamiGrippy, RunningGrippy } from "@/components/GrippyKickkyy";
 import BootLoader from "@/components/BootLoader";
 import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
+import MobileComingSoon from "@/components/MobileComingSoon";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -69,30 +70,33 @@ export default function AppShell({ children }: AppShellProps) {
 
   return (
     <>
-      <BootLoader visible={showBootLoader} />
-      {cloudflareBeaconToken ? (
-        <Script
-          src={cloudflareBeaconSrc}
-          strategy="afterInteractive"
-          data-cf-beacon={JSON.stringify({ token: cloudflareBeaconToken })}
-        />
-      ) : null}
-      <Providers>
-        <OrientationInitializer />
-        <ToastProvider>
-          <ImageKitProvider>
-            <PageTransition>
-              <Navigation />
-              <OnboardingGuard>
-                <div className="mt-16">{children}</div>
-                <Footer />
-                <KonamiGrippy />
-                <RunningGrippy />
-              </OnboardingGuard>
-            </PageTransition>
-          </ImageKitProvider>
-        </ToastProvider>
-      </Providers>
+      <MobileComingSoon />
+      <div className="hidden md:block">
+        <BootLoader visible={showBootLoader} />
+        {cloudflareBeaconToken ? (
+          <Script
+            src={cloudflareBeaconSrc}
+            strategy="afterInteractive"
+            data-cf-beacon={JSON.stringify({ token: cloudflareBeaconToken })}
+          />
+        ) : null}
+        <Providers>
+          <OrientationInitializer />
+          <ToastProvider>
+            <ImageKitProvider>
+              <PageTransition>
+                <Navigation />
+                <OnboardingGuard>
+                  <div className="mt-16">{children}</div>
+                  <Footer />
+                  <KonamiGrippy />
+                  <RunningGrippy />
+                </OnboardingGuard>
+              </PageTransition>
+            </ImageKitProvider>
+          </ToastProvider>
+        </Providers>
+      </div>
     </>
   );
 }
