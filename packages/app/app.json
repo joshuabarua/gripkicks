@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "GripKicks",
+    "slug": "grip-kicks",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gripkicks.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "05fffd94-50e6-4ef4-a76b-d5665be4934d"
+      }
+    },
+    "owner": "joshuabarua"
+  }
+}
