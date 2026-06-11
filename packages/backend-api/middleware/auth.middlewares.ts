@@ -1,11 +1,11 @@
 import { Context, Next } from 'hono'
 import { auth } from '../config/auth.config'
-import type { User } from 'better-auth/types'
+import type { Session, User } from 'better-auth/types'
 
 type AuthContext = Context<{
     Variables: {
         user: User;
-        session: any;
+        session: Session;
     }
 }>
 
@@ -37,7 +37,6 @@ export const protect = async (c: AuthContext, next: Next) => {
         return session
     }
 
-    console.log(session.user)
     await next()
 }
 

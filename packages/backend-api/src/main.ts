@@ -23,7 +23,6 @@ import Users from "../routes/users.routes";
 import AuthSync from "../routes/authSync.routes";
 import AuthRoutes from "../routes/auth.routes";
 import ImageKitRoute from "../routes/imagekit";
-import PolarRoutes from "../routes/polar.routes";
 import createApp from "../lib/create-app";
 import { Context } from "hono";
 
@@ -56,12 +55,6 @@ const accountMutationLimiter = createRateLimit({
   max: parseIntEnv(process.env.RATE_LIMIT_ACCOUNT_MAX, 10),
 });
 
-const checkoutLimiter = createRateLimit({
-  keyPrefix: "checkout",
-  windowMs: parseIntEnv(process.env.RATE_LIMIT_CHECKOUT_WINDOW_MS, 60_000),
-  max: parseIntEnv(process.env.RATE_LIMIT_CHECKOUT_MAX, 12),
-});
-
 const imageUploadLimiter = createRateLimit({
   keyPrefix: "upload",
   windowMs: parseIntEnv(process.env.RATE_LIMIT_UPLOAD_WINDOW_MS, 60_000),
@@ -73,7 +66,6 @@ app.use("/api/auth/*", authLimiter);
 app.use(`${API_BASE}/auth/change-email`, accountMutationLimiter);
 app.use(`${API_BASE}/auth/change-password`, accountMutationLimiter);
 app.use(`${API_BASE}/auth/delete-account`, accountMutationLimiter);
-app.use(`${API_BASE}/polar/checkout`, checkoutLimiter);
 app.use("/api/upload", imageUploadLimiter);
 app.use("/api/imagekit", imageUploadLimiter);
 
@@ -123,7 +115,6 @@ app.route(API_BASE, Users);
 app.route(`${API_BASE}/auth`, AuthRoutes);
 app.route(API_BASE, AuthSync);
 app.route("/api", ImageKitRoute);
-app.route(`${API_BASE}/polar`, PolarRoutes);
 
 // Error handling
 app.onError(errorHandler);

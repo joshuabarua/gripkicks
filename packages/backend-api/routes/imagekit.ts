@@ -1,7 +1,7 @@
-import { Hono } from "hono";
+import { Context, Hono } from "hono";
 import { sign } from "jsonwebtoken";
 import { protect } from "../middleware/auth.middlewares";
-import type { User } from "better-auth/types";
+import type { Session, User } from "better-auth/types";
 
 // Define allowed ImageKit token parameters
 type ImageKitTokenParams = {
@@ -27,14 +27,16 @@ type ImageUploadRequest = {
   folder: string;
 };
 
-const router = new Hono<{
+type ImageKitEnv = {
   Variables: {
     user: User;
-    session: any;
+    session: Session;
   };
-}>();
+};
 
-function requireAuth(c: any) {
+const router = new Hono<ImageKitEnv>();
+
+function requireAuth(c: Context<ImageKitEnv>) {
   const user = c.get("user");
 
   if (!user || !user.id) {
@@ -116,8 +118,11 @@ router.post("/upload", protect, async (c) => {
     // For now, return a placeholder URL since ImageKit direct upload
     // should be handled by the frontend component
     // This endpoint can be enhanced later to handle server-side uploads
-    const urlEndpoint =
-      process.env.IMAGEKIT_URL_ENDPOINT || "https://ik.imagekit.io/ie871bk0r";
+    const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
+    if (!urlEndpoint) {
+      console.error("IMAGEKIT_URL_ENDPOINT not configured");
+      return c.json({ error: "ImageKit not configured" }, 500);
+    }
 
     // Generate a mock URL for now - in production, this would be the actual uploaded URL
     const mockUrl = `${urlEndpoint}/${folder}/${fileName}`;
