@@ -18,7 +18,7 @@ function isPublicPath(pathname: string): boolean {
 }
 
 /** Max time (ms) to wait for session before giving up and rendering anyway */
-const SESSION_TIMEOUT_MS = 5_000
+const SESSION_TIMEOUT_MS = 15_000
 
 export function OnboardingGuard({ children }: OnboardingGuardProps) {
   const pathname = usePathname()
@@ -41,13 +41,13 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
   }, [sessionLoading])
 
   useEffect(() => {
-    // Wait for session to resolve (or time out) before rendering gated content
+    // Show loader only while actively loading and not timed out
     if (sessionLoading && !sessionTimedOut) {
       showLoader('session')
       return
     }
 
-    if (sessionLoading) return
+    // Hide loader once loading finishes OR we time out
     hideLoader('session')
   }, [sessionLoading, sessionTimedOut, showLoader, hideLoader])
 

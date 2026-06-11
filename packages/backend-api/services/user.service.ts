@@ -160,6 +160,10 @@ class UserService {
       return err(new InvalidDataError('Invalid foot shape. Must be one of: egyptian, roman, greek, germanic, celtic'));
     }
 
+    if (data.footVolume && !this.isValidFootVolume(data.footVolume)) {
+      return err(new InvalidDataError('Invalid foot volume. Must be one of: low, medium, high'));
+    }
+
     if (
       data.favoriteShoeId !== undefined &&
       data.favoriteShoeId !== null &&
@@ -174,6 +178,11 @@ class UserService {
   private isValidFootShape(shape: string): boolean {
     const validShapes = ['egyptian', 'roman', 'greek', 'germanic', 'celtic'];
     return validShapes.includes(shape);
+  }
+
+  private isValidFootVolume(volume: string): boolean {
+    const validVolumes = ['low', 'medium', 'high'];
+    return validVolumes.includes(volume);
   }
 
   private isValidUrl(url: string): boolean {

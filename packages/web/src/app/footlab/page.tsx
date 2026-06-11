@@ -194,7 +194,13 @@ export default function FootLabPage() {
       });
 
       if (result.isErr()) {
-        setError(result.error.message || 'Failed to save foot profile');
+        const msg = result.error.message || 'Failed to save foot profile';
+        if (result.error.category === 'authentication') {
+          setError('Your session expired. Please log in again.');
+          setTimeout(() => router.push('/auth/login?callbackUrl=%2Ffootlab'), 2000);
+        } else {
+          setError(msg);
+        }
         return;
       }
 

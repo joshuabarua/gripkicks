@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
@@ -13,19 +13,8 @@ import { useUserData } from "@/hooks/useUserData";
 export default function DashboardPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const [sessionTimedOut, setSessionTimedOut] = useState(false);
   const { profile: footProfile } = useFootProfileStore();
   const { showLoader, hideLoader } = useLoading();
-
-  useEffect(() => {
-    if (!isPending) return;
-
-    const timer = setTimeout(() => {
-      setSessionTimedOut(true);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [isPending]);
 
   useEffect(() => {
     if (isPending || session?.user) return;
@@ -35,18 +24,19 @@ export default function DashboardPage() {
 
   const { userData, userStashData } = useUserData(session);
 
-  const isLoadingData = userStashData === undefined || userData === undefined;
+  const isLoadingData =
+    !!session?.user && (userStashData === undefined || userData === undefined);
 
   // Move useMemo before early returns to satisfy Rules of Hooks
   const userShoes = useMemo(() => userStashData ?? [], [userStashData]);
 
   useEffect(() => {
-    if ((isPending && !sessionTimedOut) || isLoadingData) {
+    if (isPending || isLoadingData) {
       showLoader("dashboard");
     } else {
       hideLoader("dashboard");
     }
-  }, [isPending, sessionTimedOut, isLoadingData, showLoader, hideLoader]);
+  }, [isPending, isLoadingData, showLoader, hideLoader]);
 
   if (!isPending && !session?.user) return null;
 
