@@ -138,7 +138,7 @@ function buildPositions(shoes: RadarShoe[]) {
     }
     return group.map((entry, index) => {
       const angle = (Math.PI * 2 * index) / group.length;
-      const radius = 0.028 + Math.floor(index / 4) * 0.012;
+      const radius = 0.045 + Math.floor(index / 4) * 0.018;
       const x = clamp(entry.baseX + Math.cos(angle) * radius, 0.08, 0.92);
       const y = clamp(entry.baseY + Math.sin(angle) * radius, 0.08, 0.92);
       return { ...entry, x, y, quadrantKey: getQuadrantKeyFromPosition(x, y) };
@@ -236,7 +236,7 @@ function ShoeMarker({
   isDimmed: boolean;
   onHover?: ((id: string | null) => void) | undefined;
 }) {
-  const sizePx = 36 + Math.round(clamp(pos.confidence, 0, 1) * 24);
+  const sizePx = 52 + Math.round(clamp(pos.confidence, 0, 1) * 32);
   const isLead = rank === 1;
   const brandDelta =
     pos.brandAggressiveness !== undefined ? pos.metrics.aggressiveness - pos.brandAggressiveness : 0;

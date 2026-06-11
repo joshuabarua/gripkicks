@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
+import { CommunityMilestone } from "@/components/CommunityMilestone";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
@@ -91,6 +92,7 @@ export default function HomeCreative() {
       <PitchSection />
       <HowItWorksSection />
       <FeaturesSection />
+      <CommunityMilestone />
       <FinalCtaSection isAuthenticated={isAuthenticated} onEnter={() => router.push(isAuthenticated ? "/dashboard" : "/auth/signup")} />
     </main>
   );

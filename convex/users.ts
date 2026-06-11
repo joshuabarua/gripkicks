@@ -139,6 +139,14 @@ export const list = query({
   },
 });
 
+export const getCount = query({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    return { count: users.length };
+  },
+});
+
 // Create or update user from Better Auth
 export const createOrUpdateFromBetterAuth = mutation({
   args: {

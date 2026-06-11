@@ -143,15 +143,21 @@ function calculateShoeScore(
   learnedPreferences?: LearnedPreferences | null,
   soleMateMap?: Map<string, SoleMateAggregate>,
 ): ShoeScore {
+  const soleMate = soleMateMap?.get(shoe._id);
+  const overallRating = calculateOverallRating(shoe, soleMate?.avgFitLongevityScore ?? null);
+
   // 1. Foot Type Compatibility (30% weight)
-  const footTypeScore = calculateFootTypeCompatibility(shoe, footProfile);
+  const footTypeScore = footProfile
+    ? calculateFootTypeCompatibility(shoe, footProfile)
+    : overallRating;
 
   // 2. Volume Compatibility (20% weight)
-  const soleMate = soleMateMap?.get(shoe._id);
-  const volumeScore = applySizingDeviationSignal(
-    calculateVolumeCompatibility(shoe, footProfile),
-    soleMate?.avgSizingDeviationScore ?? null,
-  );
+  const volumeScore = footProfile
+    ? applySizingDeviationSignal(
+        calculateVolumeCompatibility(shoe, footProfile),
+        soleMate?.avgSizingDeviationScore ?? null,
+      )
+    : overallRating;
 
   // 3. User Preference Match (25% weight)
   const preferenceScore = calculatePreferenceMatch(shoe, userPreferences);
@@ -164,10 +170,7 @@ function calculateShoeScore(
   );
 
   // 5. Overall Rating (10% weight)
-  const overallRatingScore = calculateOverallRating(
-    shoe,
-    soleMate?.avgFitLongevityScore ?? null,
-  );
+  const overallRatingScore = overallRating;
 
   // 6. Learned Preference Bonus (up to 0.5 points)
   const learnedPreferenceBonus = calculateLearnedPreferenceBonus(

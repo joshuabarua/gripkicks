@@ -110,10 +110,23 @@ export const getShoes = async (c: Context): Promise<Response> => {
 };
 
 export const getUsersCount = async (c: Context): Promise<Response> => {
-  const result = await ResultAsync.fromPromise(
-    Promise.resolve({ count: 0 }),
-    () => new UnexpectedError("Failed to fetch users count"),
-  );
+  try {
+    const convexUrl = getConvexUrl();
+    const response = await fetch(
+      `${convexUrl}/api/users/getCount`,
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) },
+    );
 
-  return resultAsyncToHonoResponse(c, Promise.resolve(result));
+    if (!response.ok) {
+      throw new Error(`Failed to fetch users count: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return c.json(data);
+  } catch (error) {
+    return resultAsyncToHonoResponse(
+      c,
+      Promise.resolve(err(new UnexpectedError("Failed to fetch users count"))),
+    );
+  }
 };

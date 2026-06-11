@@ -118,7 +118,7 @@ export function MatcherView() {
             transition={{ duration: 0.25 }}
           >
             <ModeHeader mode={mode} count={activeShoes.length} />
-            <TileGrid shoes={activeShoes} mode={mode} />
+            <TileGrid shoes={activeShoes} mode={mode} footProfile={footProfile} />
             <RadarGrid
               shoes={toRadarShoes(activeShoes, mode)}
               hoveredId={hoveredId}
@@ -280,10 +280,14 @@ function signalToneClass(tone: CommunitySignal["tone"]) {
   return "border-white/10 bg-white/[0.04] text-neutral-300";
 }
 
-function TileGrid({ shoes, mode }: { shoes: DisplayShoe[]; mode: Mode }) {
+function TileGrid({ shoes, mode, footProfile }: { shoes: DisplayShoe[]; mode: Mode; footProfile?: { shape: string; volume: string } | null }) {
+  const hasProfile = !!footProfile?.shape;
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
-      {shoes.map((shoe, idx) => (
+      {shoes.map((shoe, idx) => {
+        const trait = topTrait(shoe.metrics);
+        const showTrait = !hasProfile && mode === "personal";
+        return (
         <motion.div
           key={shoe.id}
           initial={{ opacity: 0, scale: 0.95 }}
@@ -305,8 +309,8 @@ function TileGrid({ shoes, mode }: { shoes: DisplayShoe[]; mode: Mode }) {
             <span className="font-ball-pill text-xs text-white">{idx + 1}</span>
           </div>
 
-          <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-brand-red text-black">
-            <span className="font-ball-pill text-xs tabular-nums">{shoe.primaryScore}</span>
+          <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-black ${showTrait ? "bg-neutral-600" : "bg-brand-red"}`}>
+            <span className="font-ball-pill text-xs tabular-nums">{showTrait ? "Need profile" : shoe.primaryScore}</span>
           </div>
 
           <div className="absolute inset-x-0 bottom-0 p-3 pb-4 bg-gradient-to-t from-black via-black/80 to-transparent">
@@ -338,7 +342,8 @@ function TileGrid({ shoes, mode }: { shoes: DisplayShoe[]; mode: Mode }) {
             </div>
           )}
         </motion.div>
-      ))}
+      )
+    })}
     </div>
   );
 }
