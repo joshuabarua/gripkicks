@@ -58,7 +58,7 @@ export function useShoeScoring(userPreferences?: {
   performance: number;
   durability: number;
 }) {
-  const shoes = useQuery(api.shoes.listAll);
+  const shoes = useQuery(api.shoes.listAll, {});
   const popularityData = useQuery(api.popularity.getAllShoesPopularity);
   const { profile: footProfile } = useFootProfileStore();
   const { userPreferenceProfile, isLearningReady } =

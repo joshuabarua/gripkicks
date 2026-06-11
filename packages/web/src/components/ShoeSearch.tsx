@@ -19,7 +19,7 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
   const [searchResults, setSearchResults] = useState<Shoe[]>([])
   
   // Use Convex to fetch all shoes instead of legacy REST API
-  const shoesData = useQuery(api.shoes.listAll)
+  const shoesData = useQuery(api.shoes.listAll, {})
   const shoes = useMemo(() => shoesData ?? [], [shoesData])
   const isLoading = shoesData === undefined
 

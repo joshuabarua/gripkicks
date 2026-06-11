@@ -37,11 +37,11 @@ type EditingShoe = Partial<Shoe> & { _id: Id<"shoes"> };
 export default function AdminDashboard() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const shoes = useQuery(api.shoes.listAll);
+  const shoes = useQuery(api.shoes.listAll, {});
   const updateShoe = useMutation(api.shoes.update).withOptimisticUpdate(
     (localStore, args) => {
       const shoe = localStore
-        .getQuery(api.shoes.listAll)
+        .getQuery(api.shoes.listAll, {})
         ?.find((s: Shoe) => s._id === args.id);
       if (shoe) {
         Object.assign(shoe, args);
