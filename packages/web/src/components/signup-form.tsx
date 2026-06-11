@@ -44,9 +44,10 @@ export function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedCallbackUrl = searchParams.get("callbackUrl");
-  const callbackUrl = requestedCallbackUrl?.startsWith("/")
-    ? requestedCallbackUrl
-    : "/onboarding";
+  const callbackUrl = new URL(
+    requestedCallbackUrl?.startsWith("/") ? requestedCallbackUrl : "/onboarding",
+    typeof window !== "undefined" ? window.location.origin : "",
+  ).toString();
   const loginHref = requestedCallbackUrl
     ? `/auth/login?callbackUrl=${encodeURIComponent(requestedCallbackUrl)}`
     : "/auth/login";
@@ -226,7 +227,7 @@ export function SignupForm() {
             await signIn.social({
               provider: "google",
               callbackURL: callbackUrl,
-              errorCallbackURL: "/auth/signup?error=oauth",
+              errorCallbackURL: new URL("/auth/signup?error=oauth", typeof window !== "undefined" ? window.location.origin : "").toString(),
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);

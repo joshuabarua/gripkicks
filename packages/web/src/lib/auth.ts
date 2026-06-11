@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { createAuthClient } from "better-auth/react";
 
-const SESSION_TIMEOUT_MS = 5000;
+const SESSION_TIMEOUT_MS = 15000;
 const authBaseUrl = process.env["NEXT_PUBLIC_API_URL"] || "";
 
 const authClient = createAuthClient({
   baseURL: authBaseUrl,
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 
 export const {
@@ -25,9 +28,6 @@ export function useSession() {
     }
 
     const timer = window.setTimeout(() => {
-      console.warn(
-        "[auth] Session request timed out; treating user as signed out until the next refresh.",
-      );
       setTimedOut(true);
     }, SESSION_TIMEOUT_MS);
 
