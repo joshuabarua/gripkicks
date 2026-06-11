@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth';
@@ -63,7 +64,11 @@ const slideIn = {
     }
 }
 
-export default function NavLinks() {
+interface NavLinksProps {
+    footerAction?: React.ReactNode;
+}
+
+export default function NavLinks({ footerAction }: NavLinksProps) {
     const { data: session } = useSession();
     const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
 
@@ -103,6 +108,7 @@ export default function NavLinks() {
                             </Link>
                         </motion.div>
                     ))}
+                    {footerAction}
                 </div>
             </div>
         </div>

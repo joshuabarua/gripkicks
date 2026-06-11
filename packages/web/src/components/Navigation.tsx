@@ -157,7 +157,7 @@ const Navigation: React.FC = () => {
                     initial="closed"
                     exit="closed"
                   >
-                    <div className="flex h-full flex-col p-4 pt-16">
+                    <div className="flex h-full flex-col p-4 pt-20">
                       {session?.user && (
                         <motion.div
                           custom={-1}
@@ -218,17 +218,18 @@ const Navigation: React.FC = () => {
                         </motion.div>
                       )}
                       <div className="min-h-0 flex-1">
-                        <NavLinks />
+                        <NavLinks
+                          footerAction={
+                            session?.user ? (
+                              <SignOutButton
+                                variant="ghost"
+                                className="h-auto rounded-xl px-3 py-2 font-sora text-xs text-black hover:bg-black/10 hover:text-black"
+                                onClick={closeMenu}
+                              />
+                            ) : undefined
+                          }
+                        />
                       </div>
-                      {session?.user && (
-                        <div className="flex justify-end pt-3">
-                          <SignOutButton
-                            variant="ghost"
-                            className="h-auto rounded-xl px-3 py-2 font-sora text-xs text-black hover:bg-black/10 hover:text-black"
-                            onClick={closeMenu}
-                          />
-                        </div>
-                      )}
                     </div>
                   </motion.div>
                 )}
