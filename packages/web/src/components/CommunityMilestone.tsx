@@ -56,7 +56,7 @@ export function CommunityMilestone() {
 
                 <div className="space-y-1">
                   <p className="font-sora text-sm text-white">{m.label}</p>
-                  <p className="font-sora text-xs text-brand-putty/50">{m.description}</p>
+                  <p className="font-sora text-xs text-brand-putty/70">{m.description}</p>
                 </div>
 
                 <div className="mt-auto">
@@ -69,7 +69,7 @@ export function CommunityMilestone() {
                       className={`h-full rounded-full ${reached ? "bg-brand-red" : "bg-neutral-600"}`}
                     />
                   </div>
-                  <p className="font-sora text-[10px] text-neutral-600 mt-2 tabular-nums">
+                  <p className="font-sora text-[10px] text-neutral-400 mt-2 tabular-nums">
                     {count} / {m.threshold}
                   </p>
                 </div>
