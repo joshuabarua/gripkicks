@@ -325,7 +325,7 @@ export const removeIndoorOutdoorField = mutation({
             await ctx.db.delete(userShoe._id);
 
             // Create a new document without the indoorOutdoor field
-            const newId = await ctx.db.insert("userShoes", fieldsToKeep);
+            await ctx.db.insert("userShoes", fieldsToKeep);
 
             results.documentsUpdated++;
           }
