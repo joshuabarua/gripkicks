@@ -1,29 +1,21 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth';
-import { LayoutDashboard, Footprints, Archive, Info, Shield, Crown, Target } from 'lucide-react';
-import { AnimatedNavIcon } from '@/components/ui/AnimatedNavIcon';
-import type { LucideIcon } from 'lucide-react';
-
-type IconAnimation = 'bounce' | 'wiggle' | 'pulse' | 'spin' | 'pop' | 'shake';
-
 interface NavItem {
     title: string;
     href: string;
-    icon: LucideIcon;
-    animation: IconAnimation;
 }
 
 const mainLinks: NavItem[] = [
-    { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard, animation: 'bounce' },
-    { title: "Foot Lab", href: "/footlab", icon: Footprints, animation: 'wiggle' },
-    { title: "Sanctuary", href: "/stash", icon: Archive, animation: 'pop' },
-    { title: "Matcher", href: "/matcher", icon: Target, animation: 'pulse' },
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Foot Lab", href: "/footlab" },
+    { title: "Sanctuary", href: "/stash" },
+    { title: "Matcher", href: "/matcher" },
 ]
 
 const secondaryLinks: NavItem[] = [
-    { title: "About", href: "/about", icon: Info, animation: 'bounce' },
-    { title: "Privacy", href: "/privacy", icon: Shield, animation: 'shake' },
+    { title: "About", href: "/about" },
+    { title: "Privacy", href: "/privacy" },
 ]
 
 const perspective = {
@@ -75,7 +67,7 @@ export default function NavLinks() {
     const { data: session } = useSession();
     const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
 
-    const adminLink: NavItem = { title: "Admin", href: "/admin", icon: Crown, animation: 'pop' };
+    const adminLink: NavItem = { title: "Admin", href: "/admin" };
 
     return (
         <div className="nav relative h-full flex flex-col justify-between">
@@ -91,12 +83,6 @@ export default function NavLinks() {
                         variants={perspective}
                     >
                         <Link href={link.href} className="font-sora nav-link-item group">
-                            <AnimatedNavIcon
-                                icon={<link.icon className="w-6 h-6 text-black/40 group-hover:text-black transition-colors shrink-0" />}
-                                animation={link.animation}
-                                size={24}
-                                className="shrink-0"
-                            />
                             {link.title}
                         </Link>
                     </motion.div>
@@ -113,11 +99,6 @@ export default function NavLinks() {
                             exit="exit"
                         >
                             <Link href={link.href} className="nav-secondary-link group">
-                                <AnimatedNavIcon
-                                    icon={<link.icon className="w-3.5 h-3.5 text-black/30 group-hover:text-black/70 transition-colors" />}
-                                    animation={link.animation}
-                                    size={8}
-                                />
                                 {link.title}
                             </Link>
                         </motion.div>

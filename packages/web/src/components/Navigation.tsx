@@ -159,43 +159,76 @@ const Navigation: React.FC = () => {
                   >
                     <div className="flex h-full flex-col p-4 pt-16">
                       {session?.user && (
-                        <div className="mb-4 rounded-2xl border border-black/10 bg-black/10 p-3 text-black">
-                          <div className="flex items-center gap-3">
-                            <UserAvatar
-                              userId={session.user.id}
-                              name={session.user.name}
-                              email={session.user.email}
-                              className="h-11 w-11 rounded-full border border-black/10"
-                            />
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate font-sora text-sm font-semibold leading-none">
-                                {session.user.name}
-                              </p>
-                              <p className="truncate pt-1 font-sora text-[11px] leading-none text-black/55">
-                                {session.user.email}
-                              </p>
+                        <motion.div
+                          custom={-1}
+                          initial="initial"
+                          animate="enter"
+                          exit="exit"
+                          variants={{
+                            initial: {
+                              opacity: 0,
+                              rotateX: 90,
+                              translateY: 80,
+                              translateX: 10,
+                            },
+                            enter: {
+                              opacity: 1,
+                              rotateX: 0,
+                              translateY: 0,
+                              translateX: 0,
+                              transition: {
+                                duration: 0.65,
+                                delay: 0.4,
+                                ease: [0.215, 0.61, 0.355, 1],
+                                opacity: { duration: 2 }
+                              }
+                            },
+                            exit: {
+                              opacity: 0,
+                              transition: { duration: 0.6, type: "linear", ease: [0.76, 0, 0.24, 1] }
+                            }
+                          }}
+                        >
+                          <div className="mb-4 rounded-2xl border border-black/10 bg-black/10 p-3 text-black">
+                            <div className="flex items-center gap-3">
+                              <UserAvatar
+                                userId={session.user.id}
+                                name={session.user.name}
+                                email={session.user.email}
+                                className="h-11 w-11 rounded-full border border-black/10 shrink-0"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate font-sora text-sm font-semibold leading-none">
+                                  {session.user.name}
+                                </p>
+                                <p className="truncate pt-1 font-sora text-[11px] leading-none text-black/55">
+                                  {session.user.email}
+                                </p>
+                              </div>
+                              <Link
+                                href="/profile"
+                                onClick={closeMenu}
+                                className="flex items-center gap-1.5 rounded-xl px-2 py-1.5 font-sora text-xs text-black transition-colors hover:bg-black/10 shrink-0"
+                              >
+                                <User className="h-3.5 w-3.5" />
+                                <span>Profile</span>
+                              </Link>
                             </div>
                           </div>
-                          <div className="mt-3 space-y-1.5 border-t border-black/10 pt-3">
-                            <Link
-                              href="/profile"
-                              onClick={closeMenu}
-                              className="flex w-full items-center gap-2 rounded-xl px-2 py-2 font-sora text-sm text-black transition-colors hover:bg-black/10"
-                            >
-                              <User className="h-4 w-4" />
-                              <span>Profile</span>
-                            </Link>
-                            <SignOutButton
-                              variant="ghost"
-                              className="h-auto w-full justify-start rounded-xl px-2 py-2 font-sora text-sm text-black hover:bg-black/10 hover:text-black"
-                              onClick={closeMenu}
-                            />
-                          </div>
-                        </div>
+                        </motion.div>
                       )}
                       <div className="min-h-0 flex-1">
                         <NavLinks />
                       </div>
+                      {session?.user && (
+                        <div className="flex justify-end pt-3">
+                          <SignOutButton
+                            variant="ghost"
+                            className="h-auto rounded-xl px-3 py-2 font-sora text-xs text-black hover:bg-black/10 hover:text-black"
+                            onClick={closeMenu}
+                          />
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}
