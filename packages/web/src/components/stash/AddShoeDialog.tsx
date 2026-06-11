@@ -210,6 +210,7 @@ export function AddShoeDialog({
             onEndReached={handleEndReached}
             hasMore={groupedSearchResults.length > 0}
             isLoading={isLoading}
+            completedIndicator={<span className="font-sora text-xs text-neutral-500">All shoes loaded</span>}
           />
 
           {groupedSearchResults.length === 0 && !isLoading && (

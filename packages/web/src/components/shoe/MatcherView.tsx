@@ -309,8 +309,8 @@ function TileGrid({ shoes, mode }: { shoes: DisplayShoe[]; mode: Mode }) {
             <span className="font-ball-pill text-xs tabular-nums">{shoe.primaryScore}</span>
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black via-black/80 to-transparent">
-            <p className="font-ball-pill text-sm text-white truncate leading-tight">{shoe.name}</p>
+          <div className="absolute inset-x-0 bottom-0 p-3 pb-4 bg-gradient-to-t from-black via-black/80 to-transparent">
+            <p className="font-ball-pill text-sm text-white line-clamp-2 leading-snug">{shoe.name}</p>
             <p className="font-sora text-[10px] text-neutral-400 truncate uppercase tracking-wider">{shoe.brand}</p>
           </div>
 
