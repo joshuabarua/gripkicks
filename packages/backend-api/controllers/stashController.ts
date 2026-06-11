@@ -19,7 +19,7 @@ async function validateUserShoeAccess(c: Context, paramName: string = 'userShoeI
   const paramError = validateRequiredParam(userShoeId, 'User shoe ID', c);
   if (paramError) return { error: paramError };
 
-  await verifyOwnership(c, userShoeId);
+  await verifyOwnership(c, userShoeId!);
 
   return { user, userShoeId };
 }
@@ -69,7 +69,7 @@ export const removeFromStash = async (c: Context): Promise<Response> => {
   const paramError = validateRequiredParam(userShoeId, 'Shoe ID', c);
   if (paramError) return paramError;
 
-  await verifyOwnership(c, userShoeId);
+  await verifyOwnership(c, userShoeId!);
 
   const result = await ResultAsync.fromPromise(
     authenticatedConvexRequest(c, '/api/stash/deleteUserShoe', 'POST', { userShoeId }),

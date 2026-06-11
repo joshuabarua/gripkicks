@@ -8,6 +8,16 @@ const convexUrl =
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
+// Derive auth base URL: explicit env var, then FRONTEND_URL-derived API URL,
+// then localhost fallback.  This prevents Better Auth from generating
+// localhost OAuth redirect URIs in production when BETTER_AUTH_URL is missing.
+const authBaseUrl =
+  process.env.BETTER_AUTH_URL ||
+  (process.env.FRONTEND_URL
+    ? `https://api.${process.env.FRONTEND_URL.replace(/^https?:\/\//, "").split(",")[0]}`
+    : undefined) ||
+  "http://localhost:3001";
+
 if (!googleClientId || !googleClientSecret) {
   // Google OAuth disabled — missing env vars
 }
@@ -29,6 +39,7 @@ export const auth = betterAuth({
           google: {
             clientId: googleClientId,
             clientSecret: googleClientSecret,
+            redirectURI: `${authBaseUrl}/api/auth/callback/google`,
           },
         }
       : {},
@@ -52,8 +63,12 @@ export const auth = betterAuth({
   advanced: {
     crossSubDomainCookies: {
       enabled: true,
-      domain: process.env.NODE_ENV === "production" ? "grip-kicks.com" : undefined,
-    }
+      domain:
+        process.env.NODE_ENV === "production" ||
+        !authBaseUrl.includes("localhost")
+          ? "grip-kicks.com"
+          : undefined,
+    },
   },
   trustedOrigins: [
     ...getAllowedOrigins(),
@@ -61,7 +76,7 @@ export const auth = betterAuth({
     "http://192.168.0.71:8000",
   ],
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
+  baseURL: authBaseUrl,
   rateLimit: {
     window: 60,
     max: process.env.NODE_ENV === "production" ? 20 : 1000,

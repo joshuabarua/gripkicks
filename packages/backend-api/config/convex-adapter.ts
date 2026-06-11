@@ -674,9 +674,8 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
             // For account model
             if (model === "account") {
               const userIdWhere = where.find(
-                (w): w is { field: string; value: unknown } => 
-                  typeof w === 'object' && w !== null && 'field' in w && w.field === "userId",
-              );
+                (w) => typeof w === 'object' && w !== null && 'field' in w && (w as any).field === "userId",
+              ) as { field: string; value: unknown } | undefined;
               if (userIdWhere) {
                 const result = await callConvex(model, "findByUserId", {
                   userId: userIdWhere.value,

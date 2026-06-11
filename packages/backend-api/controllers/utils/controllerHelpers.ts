@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import { UnauthenticatedError } from '../../src/lib/errors';
+import { UnauthenticatedError, UnexpectedError, AppError } from '../../src/lib/errors';
 
 export function checkUserAuthentication(c: Context) {
   const user = c.get('user');
@@ -43,12 +43,15 @@ export async function verifyOwnership(c: Context, userShoeId: string) {
   }
 }
 
-export function handleControllerError(error: unknown, action: string, method: string, path: string, userId: string) {
+export function handleControllerError(error: unknown, action: string, method: string, path: string, userId: string): AppError {
   console.error(`[${method}] ${path} - Error ${action} for user ${userId}:`, error);
-  if (error instanceof Error) {
+  if (error instanceof AppError) {
     return error;
   }
-  return new Error('An unexpected error occurred');
+  if (error instanceof Error) {
+    return new UnexpectedError(error.message);
+  }
+  return new UnexpectedError('An unexpected error occurred');
 }
 
 export async function authenticatedConvexRequest(c: Context, endpoint: string, method: string, body: Record<string, unknown>) {
