@@ -129,7 +129,7 @@ if (process.env.NODE_ENV !== "test") {
       : 3001;
   const hostname = process.env.HOST || "0.0.0.0";
 
-  if (process.env.DEBUG_ROUTES === "true") {
+  if (process.env.NODE_ENV !== "production") {
     console.log("Registered routes:");
     showRoutes(app);
   }

@@ -13,7 +13,6 @@ import { KonamiGrippy, RunningGrippy } from "@/components/GrippyKickkyy";
 import BootLoader from "@/components/BootLoader";
 import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
-import MobileComingSoon from "@/components/MobileComingSoon";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -72,7 +71,6 @@ export default function AppShell({ children }: AppShellProps) {
 
   return (
     <>
-      <MobileComingSoon />
       <div className="hidden md:block">
         <BootLoader visible={showBootLoader} />
         {cloudflareBeaconToken ? (

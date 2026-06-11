@@ -232,7 +232,6 @@ export default function ShoeSanctuaryPage() {
         track(analyticsEvents.stashShoeAdded, { shoe_id: shoeId });
       },
       (error) => {
-        console.error("Failed to add shoe:", error);
         toast.error("Failed to add shoe to sanctuary");
         captureError(error, { source: "stash_add", shoe_id: shoeId });
       },
@@ -251,7 +250,6 @@ export default function ShoeSanctuaryPage() {
         track(analyticsEvents.stashShoeRemoved, { shoe_id: shoeId });
       },
       (error) => {
-        console.error("Failed to remove shoe:", error);
         toast.error("Failed to remove shoe from sanctuary");
         captureError(error, { source: "stash_remove", shoe_id: shoeId });
       },
@@ -263,8 +261,6 @@ export default function ShoeSanctuaryPage() {
 
     const validationResult = editFormSchema.safeParse(editForm);
     if (!validationResult.success) {
-      const errors = validationResult.error.flatten();
-      console.error("Validation errors:", errors);
       toast.error("Please check your input values");
       return;
     }
@@ -279,8 +275,8 @@ export default function ShoeSanctuaryPage() {
         toast.success("Shoe updated successfully!");
       },
       (error) => {
-        console.error("Failed to update shoe:", error);
         toast.error("Failed to update shoe");
+        captureError(error, { source: "stash_update", shoe_id: editingShoe._id });
       },
     );
   };
@@ -530,7 +526,6 @@ export default function ShoeSanctuaryPage() {
                   });
                 },
                 (error) => {
-                  console.error("Failed to update favourite status:", error);
                   toast.error("Failed to update favourite status");
                   captureError(error, {
                     source: "stash_toggle_favourite",

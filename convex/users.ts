@@ -287,11 +287,9 @@ export const backfillUserNames = mutation({
         });
 
         results.usersUpdated++;
-        console.log(`Updated user ${user.email} with name: ${generatedName}`);
       }
     }
 
-    console.log(`Backfill complete. Updated ${results.usersUpdated}/${results.totalUsers} users`);
     return results;
   },
 });
@@ -305,8 +303,6 @@ export const removeIndoorOutdoorField = mutation({
       documentsUpdated: 0,
       errors: [] as string[],
     };
-
-    console.log("Starting migration to remove indoorOutdoor field from userShoes");
 
     try {
       // Get all userShoes documents
@@ -332,20 +328,15 @@ export const removeIndoorOutdoorField = mutation({
             const newId = await ctx.db.insert("userShoes", fieldsToKeep);
 
             results.documentsUpdated++;
-            console.log(`Recreated userShoe without indoorOutdoor field. Old ID: ${userShoe._id}, New ID: ${newId}`);
           }
         } catch (error) {
           const errorMsg = `Failed to update userShoe ${userShoe._id}: ${error}`;
-          console.error(errorMsg);
           results.errors.push(errorMsg);
         }
       }
 
-      console.log(`Migration complete. Updated ${results.documentsUpdated}/${results.totalDocuments} documents`);
-
       return results;
     } catch (error) {
-      console.error("Migration failed:", error);
       results.errors.push(`Migration failed: ${error}`);
       return results;
     }

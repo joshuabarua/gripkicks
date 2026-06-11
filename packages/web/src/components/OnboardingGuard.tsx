@@ -34,7 +34,6 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
     if (!sessionLoading) return
 
     const timer = setTimeout(() => {
-      console.warn('[OnboardingGuard] Session loading timed out — rendering anyway')
       setSessionTimedOut(true)
     }, SESSION_TIMEOUT_MS)
 

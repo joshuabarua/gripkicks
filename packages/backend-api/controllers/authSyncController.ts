@@ -14,8 +14,6 @@ export const syncUserToConvex = async (c: Context) => {
   try {
     const { id, email, name, image, emailVerified } = await c.req.json();
     
-    console.log('Backend: Syncing user to Convex:', { id, email, name, image, emailVerified });
-    
     // Prefer an explicit HTTP base if provided.
     // Otherwise derive the correct HTTP base from CONVEX_URL (convex.cloud -> convex.site).
     const derivedFromConvexUrl = process.env.CONVEX_URL
@@ -35,8 +33,6 @@ export const syncUserToConvex = async (c: Context) => {
     
     for (const convexUrl of possibleUrls) {
       try {
-        console.log(`Backend: Trying Convex at ${convexUrl}`);
-        
         const convexResponse = await fetch(`${convexUrl}/api/sync-user`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -51,8 +47,6 @@ export const syncUserToConvex = async (c: Context) => {
         
         if (convexResponse.ok) {
           const result = await convexResponse.json();
-          console.log('Backend: Convex sync successful:', result);
-          
           return c.json({ 
             success: true, 
             message: 'User synced to Convex successfully',

@@ -113,11 +113,14 @@ export const list = query({
 });
 
 export const listAll = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
     const shoes = await ctx.db.query("shoes").collect();
     const shoesWithRubber = await enrichShoesWithRubber(ctx, shoes);
-    return sortShoesByName(shoesWithRubber);
+    const sorted = sortShoesByName(shoesWithRubber);
+    return args.limit ? sorted.slice(0, args.limit) : sorted;
   },
 });
 

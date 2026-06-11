@@ -9,9 +9,7 @@ const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
 if (!googleClientId || !googleClientSecret) {
-  console.warn(
-    "[auth] Google OAuth is disabled. Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET.",
-  );
+  // Google OAuth disabled — missing env vars
 }
 
 export const auth = betterAuth({
@@ -21,8 +19,8 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    async sendResetPassword(data, request) {
-      console.log("Password reset requested for:", data.user.email);
+    async sendResetPassword() {
+      // Password reset email logic goes here
     },
   },
   socialProviders:
