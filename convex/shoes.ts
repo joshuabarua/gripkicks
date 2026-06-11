@@ -121,6 +121,56 @@ export const listAll = query({
   },
 });
 
+export const listBrands = query({
+  args: {},
+  handler: async (ctx) => {
+    const shoes = await ctx.db.query("shoes").collect();
+    return [...new Set(shoes.map((shoe) => shoe.brand))].sort();
+  },
+});
+
+const CATALOG_SEARCH_LIMIT = 100;
+
+export const searchCatalog = query({
+  args: {
+    searchTerm: v.optional(v.string()),
+    brand: v.optional(v.string()),
+    gender: v.optional(v.string()),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const limit = Math.min(200, Math.max(1, args.limit ?? CATALOG_SEARCH_LIMIT));
+    const searchTerm = args.searchTerm?.trim();
+
+    let results;
+    if (searchTerm) {
+      results = await ctx.db
+        .query("shoes")
+        .withSearchIndex("search_shoes", (q) => q.search("name", searchTerm))
+        .take(500);
+    } else if (args.brand) {
+      results = await ctx.db
+        .query("shoes")
+        .withIndex("by_brand", (q) => q.eq("brand", args.brand!))
+        .collect();
+    } else {
+      results = await ctx.db.query("shoes").collect();
+    }
+
+    let filtered = results;
+    if (args.brand) {
+      filtered = filtered.filter((shoe) => shoe.brand === args.brand);
+    }
+    if (args.gender) {
+      filtered = filtered.filter(
+        (shoe) => (shoe.gender ?? "").toLowerCase() === args.gender,
+      );
+    }
+
+    return sortShoesByName(filtered).slice(0, limit);
+  },
+});
+
 export const getById = query({
   args: { id: v.id("shoes") },
   handler: async (ctx, args) => {

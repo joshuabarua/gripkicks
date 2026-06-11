@@ -22,7 +22,6 @@ class SyncDeduplicator {
 
     // Check if there's already a sync operation in progress
     if (syncOperations.has(syncKey)) {
-      console.log(`Sync already in progress for ${betterAuthId}, waiting...`);
       return syncOperations.get(syncKey) as Promise<T>;
     }
 
@@ -179,7 +178,6 @@ export const createOrUpdateFromBetterAuth = mutation({
         emailVerified: args.emailVerified,
       });
 
-      console.log("Convex: Updated existing user:", existingUser._id);
       return existingUser._id;
     } else {
       // Create new user
@@ -193,7 +191,6 @@ export const createOrUpdateFromBetterAuth = mutation({
         onboardingComplete: false,
       });
 
-      console.log("Convex: Created new user:", userId);
       return userId;
     }
   },
@@ -224,8 +221,6 @@ export const syncUserDeduplicated = mutation({
     emailVerified: v.boolean(),
   },
   handler: async (ctx, args) => {
-    console.log(`Starting deduplicated sync for user: ${args.email}`);
-
     // Use the deduplicator to prevent duplicate syncs
     return await SyncDeduplicator.executeSync(
       args.betterAuthId,
@@ -237,8 +232,6 @@ export const syncUserDeduplicated = mutation({
           .first();
 
         if (existingUser) {
-          console.log(`User ${args.email} already exists, updating...`);
-
           // Update existing user if needed
           const updates: any = {};
           if (existingUser.email !== args.email) updates.email = args.email;
@@ -248,14 +241,12 @@ export const syncUserDeduplicated = mutation({
 
           if (Object.keys(updates).length > 0) {
             await ctx.db.patch(existingUser._id, updates);
-            console.log(`Updated user ${args.email} with:`, updates);
           }
 
           return existingUser._id;
         }
 
         // Create new user
-        console.log(`Creating new user: ${args.email}`);
         const emailPrefix = args.email.split("@")[0] ?? args.email;
         const name = args.name?.trim() || emailPrefix;
         const userId = await ctx.db.insert("users", {
@@ -267,7 +258,6 @@ export const syncUserDeduplicated = mutation({
           onboardingComplete: false,
         });
 
-        console.log(`Created user ${args.email} with ID: ${userId}`);
         return userId;
       }
     );

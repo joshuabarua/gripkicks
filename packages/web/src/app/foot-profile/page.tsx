@@ -213,7 +213,7 @@ export default function FootProfilePage() {
                       handleSubmit();
                       if (selectedShape && selectedVolume) {
                         // Show success animation
-                        router.push('/foot-lab');
+                        router.push('/dashboard');
                       }
                     }}
                     disabled={!selectedVolume}

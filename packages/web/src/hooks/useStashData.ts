@@ -6,9 +6,16 @@ import type { UserShoe } from "@/types/api";
 import { shoeCache } from "@/lib/cache";
 import { getUserStash } from "@/services/stash";
 
+interface CatalogFilters {
+  enabled: boolean;
+  searchTerm: string;
+  brand: string;
+  gender: string;
+}
+
 interface UseStashDataOptions {
   enabled?: boolean;
-  loadAllShoes?: boolean;
+  catalog?: CatalogFilters;
   onError?: (message: string) => void;
 }
 
@@ -45,7 +52,7 @@ export function useStashData(
   const hasAttemptedFallbackRef = useRef(false);
   const onErrorRef = useRef<UseStashDataOptions["onError"]>(undefined);
 
-  const { enabled = true, loadAllShoes = false, onError } = options ?? {};
+  const { enabled = true, catalog, onError } = options ?? {};
 
   useEffect(() => {
     onErrorRef.current = onError;
@@ -71,8 +78,22 @@ export function useStashData(
   // Only fetch popularity data if we have user shoes (cached for 10 minutes)
   const popularityData = useQuery(api.popularity.getAllShoesPopularity);
 
-  // Only fetch all shoes when explicitly requested (e.g. Add dialog open)
-  const shoesData = useQuery(api.shoes.listAll, loadAllShoes ? {} : "skip");
+  // Only fetch catalog shoes when explicitly requested (e.g. Add dialog open),
+  // filtered server-side so the full table never reaches the client
+  const shoesData = useQuery(
+    api.shoes.searchCatalog,
+    catalog?.enabled
+      ? {
+        ...(catalog.searchTerm.trim() ? { searchTerm: catalog.searchTerm } : {}),
+        ...(catalog.brand !== "all" ? { brand: catalog.brand } : {}),
+        ...(catalog.gender !== "all" ? { gender: catalog.gender } : {}),
+      }
+      : "skip",
+  );
+  const brandsData = useQuery(
+    api.shoes.listBrands,
+    catalog?.enabled ? {} : "skip",
+  );
 
   const allShoes = useMemo(() => shoesData ?? [], [shoesData]);
   const popularityMap = useMemo(
@@ -86,10 +107,7 @@ export function useStashData(
     () => popularityData?.reduce((sum, p) => sum + p.count, 0) ?? 0,
     [popularityData],
   );
-  const uniqueBrands = useMemo(
-    () => [...new Set(allShoes.map((shoe) => shoe.brand))].sort(),
-    [allShoes],
-  );
+  const uniqueBrands = useMemo(() => brandsData ?? [], [brandsData]);
 
   const fetchUserStash = useCallback(async () => {
     if (!sessionUserId || !enabled) return;

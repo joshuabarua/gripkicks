@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useSession } from '@/lib/auth'
-import { fetchApi } from '@/lib/api-client'
 import { useLoading } from '@/contexts/LoadingContext'
 
 interface OnboardingGuardProps {
@@ -23,7 +22,7 @@ const SESSION_TIMEOUT_MS = 5_000
 
 export function OnboardingGuard({ children }: OnboardingGuardProps) {
   const pathname = usePathname()
-  const { data: session, isPending: sessionLoading } = useSession()
+  const { isPending: sessionLoading } = useSession()
   const [sessionTimedOut, setSessionTimedOut] = useState(false)
   const { showLoader, hideLoader } = useLoading()
 
@@ -42,38 +41,16 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
     return () => clearTimeout(timer)
   }, [sessionLoading])
 
-  const checkOnboarding = useCallback(async () => {
-    if (!session?.user || isPublic) {
-      return
-    }
-
-    showLoader('onboarding')
-    try {
-      const result = await fetchApi('/api/v1/profile');
-      if (result.isOk()) {
-        const profileData = result.value as { onboardingComplete?: boolean };
-        if (!profileData.onboardingComplete) {
-          console.log('[OnboardingGuard] Onboarding incomplete — allowing access anyway');
-        }
-      }
-    } catch (error) {
-      console.error('Failed to check onboarding status:', error)
-    } finally {
-      hideLoader('onboarding')
-    }
-  }, [session?.user, isPublic, showLoader, hideLoader])
-
   useEffect(() => {
-    // Wait for session to resolve (or time out) before checking onboarding
+    // Wait for session to resolve (or time out) before rendering gated content
     if (sessionLoading && !sessionTimedOut) {
       showLoader('session')
       return
     }
-    
+
     if (sessionLoading) return
     hideLoader('session')
-    checkOnboarding()
-  }, [sessionLoading, sessionTimedOut, checkOnboarding, showLoader, hideLoader])
+  }, [sessionLoading, sessionTimedOut, showLoader, hideLoader])
 
   // Public pages: always render immediately
   if (isPublic) {

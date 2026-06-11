@@ -30,11 +30,6 @@ export function useUserSync() {
 
         const syncUserToConvex = async () => {
           try {
-            console.log(
-              "useUserSync: Syncing user to Convex:",
-              session.user.email,
-            );
-
             // Call backend which will sync to Convex
             const response = await fetch(
               `${process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:3001"}/api/v1/sync-user`,
@@ -52,11 +47,7 @@ export function useUserSync() {
                 errorData,
               );
             } else {
-              const result = await response.json();
-              console.log(
-                "useUserSync: User synced to Convex successfully:",
-                result,
-              );
+              await response.json();
               syncedUserIdRef.current = session.user.id; // Mark as synced
             }
           } catch (error) {

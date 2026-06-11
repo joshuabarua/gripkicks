@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import type { Id } from "convex/_generated/dataModel";
 import { Footprints } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSession } from "@/lib/auth";
@@ -102,9 +105,25 @@ export default function ShoeSanctuaryPage() {
     uniqueBrands,
     userData,
   } = useStashData(session?.user?.id, {
-    loadAllShoes: isAddDialogOpen,
+    catalog: {
+      enabled: isAddDialogOpen,
+      searchTerm: dialogSearchQuery,
+      brand: dialogSelectedBrand,
+      gender: dialogSelectedGender,
+    },
     onError: (message) => toast.error(message),
   });
+
+  const [backgroundFxReady, setBackgroundFxReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window.requestIdleCallback === "function") {
+      const idleId = window.requestIdleCallback(() => setBackgroundFxReady(true));
+      return () => window.cancelIdleCallback(idleId);
+    }
+    const timerId = window.setTimeout(() => setBackgroundFxReady(true), 200);
+    return () => window.clearTimeout(timerId);
+  }, []);
 
   const shoeRankings = useMemo(() => {
     const withStats = userShoes.map((shoe) => {
@@ -143,39 +162,11 @@ export default function ShoeSanctuaryPage() {
 
   const brandGroups = useBrandGroups(userShoes);
 
-  // Search for shoes with advanced filters
+  // Catalog is filtered server-side; only exclude shoes already in the stash
   const dialogSearchResults = useMemo(() => {
     const userShoeIds = new Set(userShoes.map((shoe) => shoe.shoeId));
-
-    let results = allShoes.filter((shoe) => !userShoeIds.has(shoe._id));
-
-    if (dialogSelectedBrand !== "all") {
-      results = results.filter((shoe) => shoe.brand === dialogSelectedBrand);
-    }
-
-    if (dialogSelectedGender !== "all") {
-      results = results.filter(
-        (shoe) => (shoe.gender ?? "").toLowerCase() === dialogSelectedGender,
-      );
-    }
-
-    if (dialogSearchQuery.trim().length > 0) {
-      const normalizedQuery = dialogSearchQuery.toLowerCase();
-      results = results.filter(
-        (shoe) =>
-          shoe.name.toLowerCase().includes(normalizedQuery) ||
-          shoe.brand.toLowerCase().includes(normalizedQuery),
-      );
-    }
-
-    return results;
-  }, [
-    allShoes,
-    dialogSearchQuery,
-    dialogSelectedBrand,
-    dialogSelectedGender,
-    userShoes,
-  ]);
+    return allShoes.filter((shoe) => !userShoeIds.has(shoe._id));
+  }, [allShoes, userShoes]);
 
   // Calculate active filters count
   const activeFiltersCount = useMemo(() => {
@@ -294,17 +285,20 @@ export default function ShoeSanctuaryPage() {
     );
   };
 
+  const selectedBaseShoe = useQuery(
+    api.shoes.getById,
+    selectedShoe ? { id: selectedShoe.shoeId as Id<"shoes"> } : "skip",
+  );
+
   const selectedFullShoe = useMemo(() => {
-    if (!selectedShoe) return undefined;
-    const baseShoe = allShoes.find((s) => s._id === selectedShoe.shoeId);
-    if (!baseShoe) return undefined;
+    if (!selectedShoe || !selectedBaseShoe) return undefined;
     const popularityCount = popularityMap.get(selectedShoe.shoeId);
     return {
-      ...baseShoe,
+      ...selectedBaseShoe,
       ...(popularityCount !== undefined ? { popularityCount } : {}),
       totalShoesInDatabase,
     };
-  }, [selectedShoe, allShoes, popularityMap, totalShoesInDatabase]);
+  }, [selectedShoe, selectedBaseShoe, popularityMap, totalShoesInDatabase]);
 
   useEffect(() => {
     if (sessionLoading) {
@@ -335,18 +329,22 @@ export default function ShoeSanctuaryPage() {
 
   return (
     <div className="relative min-h-svh w-full bg-black overflow-x-hidden">
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <CloudShader
-          className="absolute inset-0 w-full h-full"
-          density={5}
-          speed={0.6}
-          layers={3}
-          skyColor="#1a2740"
-          cloudColor="#e6dccb"
-        />
-      </div>
+      {backgroundFxReady && (
+        <>
+          <div className="fixed inset-0 pointer-events-none z-0">
+            <CloudShader
+              className="absolute inset-0 w-full h-full"
+              density={5}
+              speed={0.6}
+              layers={3}
+              skyColor="#1a2740"
+              cloudColor="#e6dccb"
+            />
+          </div>
 
-      <CloudBackground />
+          <CloudBackground />
+        </>
+      )}
 
       <div className="fixed inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/85 pointer-events-none z-0" />
 

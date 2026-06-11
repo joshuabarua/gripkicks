@@ -4,8 +4,8 @@ import { api } from 'convex/_generated/api';
 import type { Doc } from 'convex/_generated/dataModel';
 import { useUserStore } from '@/stores/userStore';
 
-type UserShoe = Doc<'userShoes'>;
 type Shoe = Doc<'shoes'>;
+type StashEntry = Doc<'userShoes'> & { shoe?: Shoe | null };
 
 interface UserPreferenceProfile {
   comfort: number;
@@ -51,27 +51,20 @@ export function useUserPreferenceLearning() {
   const userShoes = useQuery(api.stash.getUserStash,
     userData ? { userId: userData._id } : "skip"
   );
-  const shoes = useQuery(api.shoes.listAll);
 
   const userPreferenceProfile = useMemo(() => {
-    if (!userShoes || !shoes || !userData) return null;
+    if (!userShoes || !userData) return null;
 
-    // getUserStash already returns only shoes for this user
-    const myShoes = userShoes;
+    if (userShoes.length === 0) return null;
 
-    if (myShoes.length === 0) return null;
-
-    return calculateUserPreferenceProfile(myShoes, shoes);
-  }, [userShoes, shoes, userData]);
+    return calculateUserPreferenceProfile(userShoes);
+  }, [userShoes, userData]);
 
   const learningInsights = useMemo(() => {
-    if (!userPreferenceProfile || !userShoes || !shoes) return null;
+    if (!userPreferenceProfile || !userShoes) return null;
 
-    // getUserStash already returns only shoes for this user
-    const myShoes = userShoes;
-
-    return generateLearningInsights(userPreferenceProfile, myShoes, shoes);
-  }, [userPreferenceProfile, userShoes, shoes]);
+    return generateLearningInsights(userPreferenceProfile, userShoes);
+  }, [userPreferenceProfile, userShoes]);
 
   return {
     userPreferenceProfile,
@@ -80,7 +73,7 @@ export function useUserPreferenceLearning() {
   };
 }
 
-function calculateUserPreferenceProfile(userShoes: UserShoe[], allShoes: Shoe[]): UserPreferenceProfile {
+function calculateUserPreferenceProfile(userShoes: StashEntry[]): UserPreferenceProfile {
   const ratedShoes = userShoes.filter(shoe =>
     shoe.comfortScore && shoe.performanceRating && shoe.durabilityRating
   );
@@ -111,10 +104,9 @@ function calculateUserPreferenceProfile(userShoes: UserShoe[], allShoes: Shoe[])
   const avgDurability = totalDurability / ratedShoes.length;
 
   // Calculate aggressiveness and versatility from shoe attributes
-  const shoeDetails = ratedShoes.map(userShoe => {
-    const shoe = allShoes.find(s => s._id === userShoe.shoeId);
-    return shoe;
-  }).filter(Boolean) as Shoe[];
+  const shoeDetails = ratedShoes
+    .map(userShoe => userShoe.shoe)
+    .filter(Boolean) as Shoe[];
 
   const aggressivenessScores = shoeDetails.map(shoe => {
     if (shoe.aggressiveness === 'very_high') return 5;
@@ -194,16 +186,15 @@ function calculateUserPreferenceProfile(userShoes: UserShoe[], allShoes: Shoe[])
 
 function generateLearningInsights(
   profile: UserPreferenceProfile,
-  userShoes: UserShoe[],
-  allShoes: Shoe[]
+  userShoes: StashEntry[]
 ): LearningInsights {
   const ratedShoes = userShoes.filter(shoe =>
     shoe.comfortScore && shoe.performanceRating && shoe.durabilityRating
   );
 
-  const shoeDetails = ratedShoes.map(userShoe => {
-    return allShoes.find(s => s._id === userShoe.shoeId);
-  }).filter(Boolean) as Shoe[];
+  const shoeDetails = ratedShoes
+    .map(userShoe => userShoe.shoe)
+    .filter(Boolean) as Shoe[];
 
   // Calculate preference ranges
   const comfortRange = {
@@ -273,8 +264,8 @@ function generateLearningInsights(
   const increasingPerformance = secondHalfAvgPerformance > firstHalfAvgPerformance + 0.2;
   const durabilityFocus = profile.durability > (profile.comfort + profile.performance) / 2 + 0.5;
 
-  const calculateAggressivenessScore = (userShoe: UserShoe): number => {
-    const shoe = allShoes.find(s => s._id === userShoe.shoeId);
+  const calculateAggressivenessScore = (userShoe: StashEntry): number => {
+    const shoe = userShoe.shoe;
     if (!shoe) return 3;
     if (shoe.aggressiveness === 'very_high') return 5;
     if (shoe.aggressiveness === 'high') return 4;

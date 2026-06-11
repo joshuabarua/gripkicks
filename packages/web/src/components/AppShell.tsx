@@ -31,6 +31,7 @@ export default function AppShell({ children }: AppShellProps) {
   useEffect(() => {
     const apiUrl = process.env["NEXT_PUBLIC_API_URL"];
     if (!apiUrl) return;
+    if (sessionStorage.getItem("backend-warmed")) return;
 
     const warmBackend = async () => {
       try {
@@ -38,6 +39,7 @@ export default function AppShell({ children }: AppShellProps) {
           method: "GET",
           cache: "no-store",
         });
+        sessionStorage.setItem("backend-warmed", "1");
       } catch {
         return;
       }
@@ -61,7 +63,7 @@ export default function AppShell({ children }: AppShellProps) {
 
     const minTimer = setTimeout(() => {
       setShowBootLoader(false);
-    }, 1200);
+    }, 300);
 
     return () => {
       clearTimeout(minTimer);

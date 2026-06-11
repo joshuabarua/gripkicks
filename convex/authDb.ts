@@ -447,33 +447,22 @@ export const deleteExpired = mutation({
     const { expiresBefore } = args;
     const now = Date.now();
 
-    console.log('[deleteExpired] Called with expiresBefore:', new Date(expiresBefore), 'current time:', new Date(now));
-
     // Find all expired verifications (only those actually expired)
     const expiredVerifications = await ctx.db
       .query("verifications")
       .withIndex("by_expiresAt", (q) => q.lt("expiresAt", expiresBefore))
       .collect();
 
-    console.log('[deleteExpired] Found', expiredVerifications.length, 'potentially expired verifications');
-
     // Only delete verifications that are actually expired (add a larger safety buffer)
     let deletedCount = 0;
     for (const verification of expiredVerifications) {
-      const timeDiff = now - verification.expiresAt;
-      console.log('[deleteExpired] Verification expiresAt:', new Date(verification.expiresAt), 'timeDiff:', timeDiff + 'ms');
-
       // Double-check that this verification is actually expired with a 30-second buffer
       if (verification.expiresAt < now - 30000) { // 30 second buffer
-        console.log('[deleteExpired] Deleting verification:', verification.identifier);
         await ctx.db.delete(verification._id);
         deletedCount++;
-      } else {
-        console.log('[deleteExpired] Skipping verification (within buffer):', verification.identifier);
       }
     }
 
-    console.log('[deleteExpired] Deleted', deletedCount, 'verifications');
     return { count: deletedCount };
   },
 });

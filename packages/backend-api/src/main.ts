@@ -129,9 +129,10 @@ if (process.env.NODE_ENV !== "test") {
       : 3001;
   const hostname = process.env.HOST || "0.0.0.0";
 
-  // Show all routes
-  console.log("Registered routes:");
-  console.log(showRoutes(app));
+  if (process.env.DEBUG_ROUTES === "true") {
+    console.log("Registered routes:");
+    showRoutes(app);
+  }
 
   // Start Node.js server using @hono/node-server
   serve(

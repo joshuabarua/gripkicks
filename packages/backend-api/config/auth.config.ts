@@ -3,7 +3,7 @@ import convexAdapter from "./convex-adapter";
 import { getAllowedOrigins } from "./cors-origins";
 
 const convexUrl =
-  process.env.CONVEX_URL || "https://peaceful-marten-189.convex.cloud";
+  process.env.CONVEX_URL || "https://decisive-ermine-92.convex.cloud";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -17,7 +17,7 @@ if (!googleClientId || !googleClientSecret) {
 export const auth = betterAuth({
   database: convexAdapter({
     convexUrl,
-    debugLogs: true,
+    debugLogs: process.env.AUTH_DEBUG_LOGS === "true",
   }),
   emailAndPassword: {
     enabled: true,
