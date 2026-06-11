@@ -285,7 +285,6 @@ function TileGrid({ shoes, mode, footProfile }: { shoes: DisplayShoe[]; mode: Mo
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
       {shoes.map((shoe, idx) => {
-        const trait = topTrait(shoe.metrics);
         const showTrait = !hasProfile && mode === "personal";
         return (
         <motion.div
