@@ -2,8 +2,10 @@ import { betterAuth } from "better-auth";
 import convexAdapter from "./convex-adapter";
 import { getAllowedOrigins } from "./cors-origins";
 
-const convexUrl =
-  process.env.CONVEX_URL || "https://decisive-ermine-92.convex.cloud";
+const convexUrl = process.env.CONVEX_URL;
+if (!convexUrl) {
+  throw new Error("CONVEX_URL is required");
+}
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;

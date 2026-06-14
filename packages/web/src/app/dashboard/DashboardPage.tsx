@@ -24,8 +24,7 @@ export default function DashboardPage() {
 
   const { userData, userStashData } = useUserData(session);
 
-  const isLoadingData =
-    !!session?.user && (userStashData === undefined || userData === undefined);
+  const isLoadingData = !!session?.user && userData === undefined;
 
   // Move useMemo before early returns to satisfy Rules of Hooks
   const userShoes = useMemo(() => userStashData ?? [], [userStashData]);

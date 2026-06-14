@@ -108,7 +108,11 @@ export default function NavLinks({ footerAction }: NavLinksProps) {
                             </Link>
                         </motion.div>
                     ))}
-                    {footerAction}
+                    {footerAction && (
+                        <div className="ml-auto pl-4 border-l border-black/10">
+                            {footerAction}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

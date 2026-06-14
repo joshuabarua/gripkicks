@@ -127,7 +127,7 @@ const Navigation: React.FC = () => {
   return (
     <motion.nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 px-6 py-3 bg-black/90 backdrop-blur-md border-b border-white/[0.06]"
+      className="fixed top-0 left-0 right-0 z-50 px-6 py-3 bg-black/90 backdrop-blur-md"
       initial={{ y: 0 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
