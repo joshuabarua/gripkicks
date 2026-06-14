@@ -6,6 +6,8 @@ import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
 import { CommunityMilestone } from "@/components/CommunityMilestone";
 
@@ -21,8 +23,10 @@ const EtherField = dynamic(() => import("@/components/3d/EtherField"), {
 
 function HeroSection({
   isReducedEffects,
+  userCount,
 }: {
   isReducedEffects: boolean;
+  userCount: number;
 }) {
   return (
     <section className="relative flex items-center justify-center h-svh overflow-hidden">
@@ -56,7 +60,15 @@ function HeroSection({
           transition={{ duration: 1.2, delay: 0.6 }}
           className="px-6 md:px-12 lg:px-16 pb-28 md:pb-20 max-w-3xl pointer-events-auto"
         >
-       
+          <div className="flex items-center gap-3">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-red" />
+            </span>
+            <span className="font-sora text-xs text-neutral-400">
+              {userCount} {userCount === 1 ? "climber" : "climbers"} building the database
+            </span>
+          </div>
         </motion.div>
       </div>
 
@@ -84,15 +96,17 @@ export default function HomeCreative() {
   const router = useRouter();
   const isReducedEffects = useReducedEffects();
   const isAuthenticated = !!session?.user;
+  const countData = useQuery(api.users.getCount);
+  const userCount = countData?.count ?? 0;
 
   return (
     <main className="min-h-screen bg-black text-brand-chalk selection:bg-brand-red selection:text-black antialiased relative">
-      <HeroSection isReducedEffects={isReducedEffects} />
+      <HeroSection isReducedEffects={isReducedEffects} userCount={userCount} />
 
       <PitchSection />
       <HowItWorksSection />
       <FeaturesSection />
-      <CommunityMilestone />
+      <CommunityMilestone userCount={userCount} />
       <FinalCtaSection isAuthenticated={isAuthenticated} onEnter={() => router.push(isAuthenticated ? "/dashboard" : "/auth/signup")} />
     </main>
   );
