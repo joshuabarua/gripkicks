@@ -12,6 +12,14 @@ import { UserAvatar } from "@/components/ui/UserAvatar";
 import { SignOutButton } from "@/components/signout-button";
 import { User } from "lucide-react";
 import { useOrientationScale } from "@/hooks/useOrientationScale";
+import dynamic from "next/dynamic";
+
+const NavLogo = dynamic(() => import("@/components/3d/NavLogo"), {
+  ssr: false,
+  loading: () => (
+    <span className="font-ball-pill text-fluid-2xl whitespace-nowrap">GripKicks</span>
+  ),
+});
 
 const menu = {
   open: {
@@ -136,9 +144,7 @@ const Navigation: React.FC = () => {
                 className="inline-block"
               >
                 <Link href="/" className="inline-block">
-                  <h1 className="font-ball-pill text-fluid-2xl whitespace-nowrap transition-transform duration-700 ease-in-out hover:scale-105">
-                    Grip Kicks
-                  </h1>
+                  <NavLogo />
                 </Link>
               </motion.div>
             )}
