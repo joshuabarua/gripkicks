@@ -31,10 +31,10 @@ function MiniShoe() {
   if (!shoeNode) return null;
 
   return (
-    <group ref={mesh} scale={1.2} position={[0, -0.15, 0]}>
+    <group scale={1.2} position={[0, -0.15, 0]}>
       <Text
-        fontSize={0.15}
-        position={[0, 0.35, 0]}
+        fontSize={0.35}
+        position={[0, 0.5, 0]}
         font="fonts/BallPill-regular.otf"
         color="rgb(255, 252, 242)"
         letterSpacing={-0.08}
@@ -42,25 +42,27 @@ function MiniShoe() {
         GRIP
       </Text>
       <Text
-        fontSize={0.15}
-        position={[0, -0.1, 0]}
+        fontSize={0.35}
+        position={[0, -0.15, 0]}
         font="fonts/BallPill-regular.otf"
         color="rgb(255, 252, 242)"
         letterSpacing={-0.08}
       >
         KICKS
       </Text>
-      <mesh geometry={shoeNode.geometry}>
-        <MeshTransmissionMaterial
-          thickness={0.2}
-          roughness={0.1}
-          chromaticAberration={0.08}
-          ior={1.2}
-          backside
-          transmission={1}
-          samples={2}
-        />
-      </mesh>
+      <group ref={mesh}>
+        <mesh geometry={shoeNode.geometry}>
+          <MeshTransmissionMaterial
+            thickness={0.2}
+            roughness={0.1}
+            chromaticAberration={0.08}
+            ior={1.2}
+            backside
+            transmission={1}
+            samples={2}
+          />
+        </mesh>
+      </group>
     </group>
   );
 }
