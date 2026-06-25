@@ -3,7 +3,15 @@
 import { motion } from "framer-motion";
 import { Check, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useSession } from "@/lib/auth";
+import AmbientField from "@/components/brand/AmbientField";
+import WordmarkWatermark from "@/components/brand/WordmarkWatermark";
+
+const ChromaticGlassMark = dynamic(
+  () => import("@/components/brand/ChromaticGlassMark"),
+  { ssr: false, loading: () => null },
+);
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
@@ -23,14 +31,23 @@ export default function PricingPage() {
   const isAuthenticated = !!session?.user;
 
   return (
-    <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      <section className="relative px-6 md:px-12 lg:px-16 pt-32 pb-16">
+    <main className="min-h-screen bg-black text-brand-chalk overflow-x-hidden selection:bg-brand-red selection:text-black">
+      <section className="relative px-6 md:px-12 lg:px-16 pt-32 pb-16 overflow-hidden">
+        <AmbientField intensity={0.3} />
+        <WordmarkWatermark lines={["FREE"]} align="center" />
         <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-white/[0.06]" />
         <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-white/[0.06]" />
 
-        <div className="max-w-5xl mx-auto text-center">
-          <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8 text-white">
+        <div className="relative z-10 max-w-5xl mx-auto text-center">
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.8 }}
+            className="flex justify-center mb-8"
+          >
+            <ChromaticGlassMark size={200} />
+          </motion.div>
+          <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
+            <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8 text-brand-chalk">
               $0 forever
             </h1>
           </motion.div>
@@ -44,20 +61,20 @@ export default function PricingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-neutral-900 border border-white/10 rounded-3xl p-8 md:p-10"
+            className="bg-brand-surface border border-white/[0.06] rounded-3xl p-8 md:p-10"
           >
             <div className="flex items-baseline gap-3 mb-6">
-              <h3 className="font-ball-pill text-6xl text-white">$0</h3>
-              <span className="font-sora text-neutral-500 text-sm">forever</span>
+              <h3 className="font-ball-pill text-6xl text-brand-chalk">$0</h3>
+              <span className="font-sora text-brand-putty/50 text-sm">forever</span>
             </div>
 
             <ul className="space-y-3 mb-10">
               {features.map((feature) => (
                 <li key={feature} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <Check className="w-3 h-3 text-white/50" />
+                  <div className="w-5 h-5 rounded-full bg-brand-red/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Check className="w-3 h-3 text-brand-red" />
                   </div>
-                  <span className="font-sora text-sm text-neutral-300">
+                  <span className="font-sora text-sm text-brand-putty/80">
                     {feature}
                   </span>
                 </li>
@@ -68,7 +85,7 @@ export default function PricingPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="relative w-full bg-white hover:bg-white/80 text-black font-ball-pill text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
+                className="relative w-full bg-brand-chalk hover:bg-brand-red text-black font-ball-pill text-xl py-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
               >
                 {isAuthenticated ? "Dashboard" : "Enter"}
                 <ArrowUpRight className="w-5 h-5" />
@@ -76,8 +93,8 @@ export default function PricingPage() {
             </Link>
           </motion.div>
 
-          <p className="font-sora text-sm text-neutral-500 mt-8 text-center">
-            Layout test. No marketing copy.
+          <p className="font-sora text-sm text-brand-putty/50 mt-8 text-center">
+            Everything, free. Built by climbers, for the community.
           </p>
         </div>
       </section>
