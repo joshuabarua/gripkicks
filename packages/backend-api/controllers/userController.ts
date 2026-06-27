@@ -41,7 +41,13 @@ export const getProfile = async (c: Context): Promise<Response> => {
   const auth = getAuthenticatedUser(c);
   if (auth.error) return auth.error;
 
-  const result = await userService.getUserById(auth.user.id);
+  const result = await userService.getUserById(auth.user.id, {
+    id: auth.user.id,
+    email: auth.user.email,
+    name: auth.user.name,
+    image: auth.user.image,
+    emailVerified: auth.user.emailVerified,
+  });
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
@@ -71,7 +77,13 @@ export const editProfile = async (c: Context): Promise<Response> => {
     );
   }
 
-  const result = await userService.updateProfile(auth.user.id, updateFields);
+  const result = await userService.updateProfile(auth.user.id, updateFields, {
+    id: auth.user.id,
+    email: auth.user.email,
+    name: auth.user.name,
+    image: auth.user.image,
+    emailVerified: auth.user.emailVerified,
+  });
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 

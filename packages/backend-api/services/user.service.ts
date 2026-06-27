@@ -21,6 +21,14 @@ interface User {
   favoriteShoe?: any;
 }
 
+interface SessionUser {
+  id: string;
+  email: string;
+  name?: string;
+  image?: string;
+  emailVerified?: boolean;
+}
+
 interface UpdateProfileData {
   name?: string;
   phone?: string;
@@ -31,13 +39,20 @@ interface UpdateProfileData {
 }
 
 class UserService {
-  async getUserById(id: string): Promise<Result<User, AppError>> {
+  async getUserById(id: string, sessionUser?: SessionUser): Promise<Result<User, AppError>> {
     if (!id) {
       return err(new ValidationError('User ID is required'));
     }
 
     try {
-      const user = await this.findUserById(id);
+      let user = await this.findUserById(id);
+
+      if (!user && sessionUser) {
+        console.log('[UserService] User not found in Convex; syncing from session:', sessionUser.id);
+        await this.syncUserToConvex(sessionUser);
+        user = await this.findUserById(id);
+      }
+
       if (!user) {
         return err(new NotFoundError('User not found'));
       }
@@ -53,7 +68,8 @@ class UserService {
 
   async updateProfile(
     userId: string,
-    data: UpdateProfileData
+    data: UpdateProfileData,
+    sessionUser?: SessionUser
   ): Promise<Result<User, AppError>> {
     // Check authentication
     if (!userId) {
@@ -72,7 +88,7 @@ class UserService {
     }
 
     try {
-      const updatedUser = await this.performUpdate(userId, data);
+      const updatedUser = await this.performUpdate(userId, data, sessionUser);
       return ok(updatedUser);
     } catch (error) {
       if (error instanceof RangeError) {
@@ -240,9 +256,39 @@ class UserService {
     }
   }
 
-  private async performUpdate(userId: string, data: UpdateProfileData): Promise<User> {
+  private async syncUserToConvex(sessionUser: SessionUser): Promise<void> {
+    const convexUrl = getConvexUrl();
+    const response = await fetch(`${convexUrl}/api/sync-user-deduplicated`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        betterAuthId: sessionUser.id,
+        email: sessionUser.email,
+        name: sessionUser.name,
+        image: sessionUser.image,
+        emailVerified: sessionUser.emailVerified ?? false,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || 'Failed to sync user to Convex');
+    }
+  }
+
+  private async performUpdate(
+    userId: string,
+    data: UpdateProfileData,
+    sessionUser?: SessionUser
+  ): Promise<User> {
     try {
-      const existingUser = await this.findUserById(userId);
+      let existingUser = await this.findUserById(userId);
+
+      if (!existingUser && sessionUser) {
+        console.log('[UserService] User not found in Convex; syncing from session:', sessionUser.id);
+        await this.syncUserToConvex(sessionUser);
+        existingUser = await this.findUserById(userId);
+      }
 
       if (!existingUser) {
         throw new Error('User not found for profile update');

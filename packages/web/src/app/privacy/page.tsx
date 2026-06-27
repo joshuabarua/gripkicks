@@ -3,14 +3,8 @@
 import { motion } from 'framer-motion';
 import { Shield, Trash2, Lock, Eye, EyeOff, Database, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import AmbientField from '@/components/brand/AmbientField';
+import LiquidGlassBackdrop from '@/components/brand/LiquidGlassBackdrop';
 import WordmarkWatermark from '@/components/brand/WordmarkWatermark';
-
-const ChromaticGlassMark = dynamic(
-  () => import('@/components/brand/ChromaticGlassMark'),
-  { ssr: false, loading: () => null },
-);
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
@@ -66,20 +60,13 @@ export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-black text-brand-chalk overflow-x-hidden selection:bg-brand-red selection:text-black">
       {/* Hero */}
-      <section className="relative px-6 md:px-12 lg:px-16 pt-32 pb-24 overflow-hidden">
-        <AmbientField intensity={0.3} />
+      <section className="relative flex min-h-[80vh] items-center px-6 md:px-12 lg:px-16 pt-32 pb-24 overflow-hidden">
+        <LiquidGlassBackdrop align="right" />
         <WordmarkWatermark lines={['PRIVACY']} align="right" />
         <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-white/[0.06]" />
         <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-white/[0.06]" />
 
         <div className="relative z-10 max-w-4xl mx-auto">
-          <motion.div
-            {...fadeUp}
-            transition={{ duration: 0.8 }}
-            className="mb-10"
-          >
-            <ChromaticGlassMark size={180} />
-          </motion.div>
           <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-putty/40 mb-4">Privacy Promise</p>
             <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8 text-brand-chalk">

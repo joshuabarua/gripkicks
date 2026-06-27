@@ -18,10 +18,14 @@ export async function findUserByBetterAuthId(
 }
 
 export async function findUserByIdOrBetterAuthId(c: HttpContext, id: string) {
-  return (
-    (await findUserByBetterAuthId(c, id)) ||
-    (await c.env.runQuery(api.users.getById, { id: id as Id<"users"> }))
-  );
+  const byBetterAuthId = await findUserByBetterAuthId(c, id);
+  if (byBetterAuthId) return byBetterAuthId;
+
+  try {
+    return await c.env.runQuery(api.users.getById, { id: id as Id<"users"> });
+  } catch {
+    return null;
+  }
 }
 
 export function handleError(c: HttpContext, error: unknown, context: string) {

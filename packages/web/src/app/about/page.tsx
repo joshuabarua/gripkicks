@@ -1,14 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import AmbientField from '@/components/brand/AmbientField';
+import LiquidGlassBackdrop from '@/components/brand/LiquidGlassBackdrop';
 import WordmarkWatermark from '@/components/brand/WordmarkWatermark';
-
-const ChromaticGlassMark = dynamic(
-  () => import('@/components/brand/ChromaticGlassMark'),
-  { ssr: false, loading: () => null },
-);
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
@@ -19,19 +13,11 @@ const fadeUp = {
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-black text-brand-chalk overflow-x-hidden selection:bg-brand-red selection:text-black">
-      <section className="relative flex min-h-[80vh] items-center px-6 md:px-12 lg:px-16 pt-32 pb-24 overflow-hidden">
-        <AmbientField intensity={0.3} />
+      <section className="relative flex min-h-[90vh] items-center px-6 md:px-12 lg:px-16 pt-32 pb-24 overflow-hidden">
+        <LiquidGlassBackdrop align="center" />
         <WordmarkWatermark lines={['ABOUT']} align="right" />
 
         <div className="relative z-10 max-w-4xl mx-auto w-full">
-          <motion.div
-            {...fadeUp}
-            transition={{ duration: 0.8 }}
-            className="flex justify-center mb-10"
-          >
-            <ChromaticGlassMark size={220} />
-          </motion.div>
-
           <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
             <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-putty/40 mb-4 text-center">
               The mission
