@@ -132,9 +132,7 @@ const Navigation: React.FC = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
     >
-      <div className="flex-1" />
-
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
+      <div className="flex items-center justify-start z-10">
         <AnimatePresence>
           {showLogo && (
             <motion.div
@@ -142,9 +140,9 @@ const Navigation: React.FC = () => {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -100, opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="inline-block"
+              className="flex items-center"
             >
-              <Link href="/" className="inline-block">
+              <Link href="/" className="flex items-center">
                 <NavLogo />
               </Link>
             </motion.div>

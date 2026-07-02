@@ -31,7 +31,7 @@ function MiniShoe() {
   if (!shoeNode) return null;
 
   return (
-    <group scale={1.6} position={[0, -0.1, 0]}>
+    <group scale={1.35} position={[0, -0.05, 0]}>
       <Text
         fontSize={0.5}
         position={[0, 0.35, 0]}
