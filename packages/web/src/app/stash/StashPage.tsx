@@ -5,7 +5,6 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
-import { Footprints } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSession } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
@@ -451,13 +450,6 @@ export default function ShoeSanctuaryPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col items-center justify-center py-fluid-3xl text-center"
               >
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="w-20 h-20 bg-brand-red/10 rounded-full flex items-center justify-center mb-fluid-md"
-                >
-                  <Footprints className="w-10 h-10 text-brand-red" />
-                </motion.div>
                 <h3 className="font-ball-pill text-fluid-3xl text-white mb-fluid-xs">
                   YOUR SANCTUARY AWAITS
                 </h3>

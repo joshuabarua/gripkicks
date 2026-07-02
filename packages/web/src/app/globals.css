@@ -214,8 +214,8 @@ a {
 
 .nav-button {
 	position: relative;
-	width: 80px;
-	height: 35px;
+	width: 72px;
+	height: 28px;
 	cursor: pointer;
 	border-radius: 25px;
 	overflow: hidden;
@@ -270,13 +270,16 @@ a {
 	transform-style: preserve-3d;
 	transition: transform 0.75s cubic-bezier(0.76, 0, 0.24, 1);
 	p {
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: 0.05em;
 		transition: all 0.75s cubic-bezier(0.76, 0, 0.24, 1);
 		pointer-events: none;
 		text-transform: uppercase;
 		&:nth-of-type(2) {
 			position: absolute;
 			transform-origin: bottom center;
-			transform: rotateX(-90deg) translateY(var(--space-xs));
+			transform: rotateX(-90deg) translateY(10px);
 			opacity: 0;
 		}
 	}

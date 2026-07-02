@@ -30,8 +30,8 @@ const menu = {
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] },
   },
   closed: {
-    width: "80px",
-    height: " 35px",
+    width: "72px",
+    height: "28px",
     top: "-0px",
     right: "-0px",
     transition: {
@@ -42,8 +42,8 @@ const menu = {
     },
   },
   closedText: {
-    width: "80px",
-    height: " 35px",
+    width: "72px",
+    height: "28px",
     top: "-0px",
     right: "-0px",
     transition: {
@@ -127,7 +127,7 @@ const Navigation: React.FC = () => {
   return (
     <motion.nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 px-6 py-3 bg-black/90 backdrop-blur-md"
+      className="fixed top-0 left-0 right-0 z-50 px-6 py-2 bg-black/90 backdrop-blur-md"
       initial={{ y: 0 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.15, ease: "easeOut" }}

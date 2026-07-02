@@ -79,12 +79,12 @@ export default function NavLogo() {
   }
 
   return (
-    <div className="w-14 h-14 relative">
+    <div className="w-11 h-11 relative">
       <Canvas
         gl={{ antialias: false, alpha: true }}
         dpr={[1, 1.5] as [number, number]}
         camera={{ position: [0, 0, 3.2], fov: 35 }}
-        style={{ width: 56, height: 56 }}
+        style={{ width: 44, height: 44 }}
       >
         <ambientLight intensity={1} />
         <directionalLight intensity={2} position={[0, 3, 4]} />
