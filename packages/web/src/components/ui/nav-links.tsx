@@ -87,7 +87,7 @@ export default function NavLinks({ footerAction }: NavLinksProps) {
                         exit="exit"
                         variants={perspective}
                     >
-                        <Link href={link.href} className="font-sora nav-link-item group">
+                        <Link href={link.href} className="font-ball-pill text-xl uppercase tracking-wider nav-link-item group">
                             {link.title}
                         </Link>
                     </motion.div>
@@ -103,15 +103,22 @@ export default function NavLinks({ footerAction }: NavLinksProps) {
                             animate="enter"
                             exit="exit"
                         >
-                            <Link href={link.href} className="nav-secondary-link group">
+                            <Link href={link.href} className="font-sora text-[10px] font-semibold uppercase tracking-wider nav-secondary-link group">
                                 {link.title}
                             </Link>
                         </motion.div>
                     ))}
                     {footerAction && (
-                        <div className="ml-auto pl-4 border-l border-black/10">
+                        <motion.div
+                            variants={slideIn}
+                            custom={secondaryLinks.length + (isAdmin ? 1 : 0)}
+                            initial="initial"
+                            animate="enter"
+                            exit="exit"
+                            className="ml-auto pl-4 border-l border-black/10"
+                        >
                             {footerAction}
-                        </div>
+                        </motion.div>
                     )}
                 </div>
             </div>

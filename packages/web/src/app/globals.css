@@ -304,7 +304,7 @@ a {
 	*/
 
 	.nav-menu {
-	width: 520px;
+	width: 360px;
 	background-color: var(--brand-release-red);
 	border-radius: 25px;
 	position: absolute;
@@ -371,7 +371,7 @@ a {
 			display: flex;
 			align-items: center;
 			gap: 6px;
-	        font-size: 12px;
+	        font-size: 10px;
 			color: rgba(0, 0, 0, 0.45);
 			cursor: pointer;
 			transition: color 0.2s;
