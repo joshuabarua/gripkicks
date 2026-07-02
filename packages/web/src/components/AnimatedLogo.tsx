@@ -38,8 +38,6 @@ export function AnimatedLogoImage({ currentImageIndex, transitionImages }: Anima
             maxHeight: "480px",
             minWidth: "240px",
             minHeight: "240px",
-            maskImage: "radial-gradient(circle at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 85%)",
-            WebkitMaskImage: "radial-gradient(circle at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 85%)",
           }}
         >
           <AnimatePresence mode="popLayout">
@@ -50,6 +48,10 @@ export function AnimatedLogoImage({ currentImageIndex, transitionImages }: Anima
               animate={{ scale: 1, opacity: 1, rotateY: 0, filter: "blur(0px)" }}
               exit={{ scale: 0.72, opacity: 0, rotateY: 16, filter: "blur(6px)" }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                maskImage: "radial-gradient(circle at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 65%)",
+                WebkitMaskImage: "radial-gradient(circle at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 65%)",
+              }}
             >
               <motion.img
                 src={src}
@@ -57,22 +59,22 @@ export function AnimatedLogoImage({ currentImageIndex, transitionImages }: Anima
                 className="relative z-10 w-4/5 h-4/5 object-contain"
                 animate={{
                   filter: [
-                    `grayscale(100%) contrast(1.15) ${CHROMATIC}`,
-                    `grayscale(100%) contrast(1.15) ${CHROMATIC.replace(/2px/g, "3.2px")}`,
-                    `grayscale(100%) contrast(1.15) ${CHROMATIC}`,
+                    `grayscale(65%) saturate(45%) contrast(1.1) ${CHROMATIC}`,
+                    `grayscale(65%) saturate(45%) contrast(1.1) ${CHROMATIC.replace(/2px/g, "3.2px")}`,
+                    `grayscale(65%) saturate(45%) contrast(1.1) ${CHROMATIC}`,
                   ],
                 }}
                 transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
               />
+
+              <div
+                className="pointer-events-none absolute inset-0 mix-blend-overlay opacity-[0.25] z-20"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+                }}
+              />
             </motion.div>
           </AnimatePresence>
-
-          <div
-            className="pointer-events-none absolute inset-0 mix-blend-overlay opacity-[0.22] z-20"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-            }}
-          />
         </div>
       </motion.div>
     </div>
