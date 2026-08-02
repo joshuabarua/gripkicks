@@ -57,7 +57,7 @@ export default function ShoeModel() {
         <Text
           fontSize={0.7}
           position={[0.01, 0.45, 0]}
-          font="fonts/BallPill-regular.otf"
+          font="/fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
           letterSpacing={-0.08}
         >
@@ -67,7 +67,7 @@ export default function ShoeModel() {
         <Text
           fontSize={0.7}
           position={[0, -0.2, 0]}
-          font="fonts/BallPill-regular.otf"
+          font="/fonts/BallPill-regular.otf"
           color="rgb(255, 252, 242)"
           letterSpacing={-0.08}
         >

@@ -2,6 +2,7 @@
 
 import React, { Suspense, useState, useCallback, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
+import { Environment } from "@react-three/drei";
 import ShoeModel from "./ShoeModel";
 
 const Scene = () => {
@@ -64,6 +65,7 @@ const Scene = () => {
       >
         <directionalLight intensity={2} position={[0, 3, 4]} />
         <ambientLight intensity={1} />
+        <Environment preset="city" />
         <Suspense fallback={null}>
           <ShoeModel />
         </Suspense>
