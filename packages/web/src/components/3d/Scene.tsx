@@ -1,14 +1,12 @@
 "use client";
 
-import React, { Suspense, useState, useCallback, useMemo, useRef, useEffect } from "react";
+import React, { Suspense, useState, useCallback, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import ShoeModel from "./ShoeModel";
 
 const Scene = () => {
   const [contextLost, setContextLost] = useState(false);
   const [canvasKey, setCanvasKey] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const canvasConfig = useMemo(
     () => ({
@@ -19,17 +17,6 @@ const Scene = () => {
     }),
     [],
   );
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry?.isIntersecting ?? false),
-      { threshold: 0 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   const handleContextLost = useCallback((event: WebGLContextEvent) => {
     event.preventDefault();
@@ -53,10 +40,10 @@ const Scene = () => {
   }
 
   return (
-    <div ref={containerRef} className="w-full h-full">
+    <div className="w-full h-full">
       <Canvas
         key={canvasKey}
-        frameloop={isVisible ? "always" : "demand"}
+        frameloop="always"
         style={{
           backgroundColor: "transparent",
           pointerEvents: "none",
