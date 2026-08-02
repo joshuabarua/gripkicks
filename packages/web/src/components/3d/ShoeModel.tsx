@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, Suspense, useMemo } from "react";
+import React, { useRef, useCallback, useMemo } from "react";
 import { useGLTF, Text, MeshTransmissionMaterial } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Mesh } from "three";
@@ -53,8 +53,7 @@ export default function ShoeModel() {
   });
 
   return (
-    <Suspense fallback={null}>
-      <group dispose={null} scale={viewport.width / 3.5}>
+    <group dispose={null} scale={viewport.width / 3.5}>
         <Text
           fontSize={0.7}
           position={[0.01, 0.45, 0]}
@@ -88,7 +87,6 @@ export default function ShoeModel() {
             </mesh>
           )}
         </group>
-      </group >
-    </Suspense>
+      </group>
   );
 }

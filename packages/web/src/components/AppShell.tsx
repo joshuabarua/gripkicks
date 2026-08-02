@@ -71,7 +71,7 @@ export default function AppShell({ children }: AppShellProps) {
 
   return (
     <>
-      <div className="hidden md:block">
+      <div>
         <BootLoader visible={showBootLoader} />
         {cloudflareBeaconToken ? (
           <Script

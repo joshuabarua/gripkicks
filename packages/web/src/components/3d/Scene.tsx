@@ -54,33 +54,33 @@ const Scene = () => {
 
   return (
     <div ref={containerRef} className="w-full h-full">
-      <Suspense fallback={null}>
-        <Canvas
-          key={canvasKey}
-          frameloop={isVisible ? "always" : "demand"}
-          style={{
-            backgroundColor: "transparent",
-            pointerEvents: "none",
-            touchAction: "pan-y",
-          }}
-          gl={canvasConfig.gl}
-          dpr={canvasConfig.dpr}
-          onCreated={({ gl }) => {
-            gl.domElement.addEventListener(
-              "webglcontextlost",
-              handleContextLost as EventListener,
-            );
-            gl.domElement.addEventListener(
-              "webglcontextrestored",
-              handleContextRestored,
-            );
-          }}
-        >
-          <directionalLight intensity={2} position={[0, 3, 4]} />
-          <ambientLight intensity={1} />
+      <Canvas
+        key={canvasKey}
+        frameloop={isVisible ? "always" : "demand"}
+        style={{
+          backgroundColor: "transparent",
+          pointerEvents: "none",
+          touchAction: "pan-y",
+        }}
+        gl={canvasConfig.gl}
+        dpr={canvasConfig.dpr}
+        onCreated={({ gl }) => {
+          gl.domElement.addEventListener(
+            "webglcontextlost",
+            handleContextLost as EventListener,
+          );
+          gl.domElement.addEventListener(
+            "webglcontextrestored",
+            handleContextRestored,
+          );
+        }}
+      >
+        <directionalLight intensity={2} position={[0, 3, 4]} />
+        <ambientLight intensity={1} />
+        <Suspense fallback={null}>
           <ShoeModel />
-        </Canvas>
-      </Suspense>
+        </Suspense>
+      </Canvas>
     </div>
   );
 };
