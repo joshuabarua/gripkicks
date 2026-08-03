@@ -29,7 +29,7 @@ function HeroSection({
   userCount: number;
 }) {
   return (
-    <section className="relative flex items-center justify-center h-svh overflow-hidden">
+    <section id="home-hero" className="relative flex items-center justify-center h-svh overflow-hidden">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -135,10 +135,10 @@ function PitchSection() {
           className="md:col-span-7 md:pt-4 space-y-6 font-sora text-brand-putty/70 text-base md:text-lg leading-relaxed"
         >
           <p>
-            Track every shoe you climb in. Rate comfort, performance, and durability the way you actually feel them. Build a profile of what works on your foot, on your style, on your wall.
+            Track every shoe you climb in. Rate comfort, performance, and durability the way YOU feel them. Build a profile of what works on your foot, on your style, on your wall.
           </p>
           <p>
-            Then let the data find shoes you&rsquo;d never have picked off the rack &mdash; matched by climbers who share your exact foot shape and volume.
+            Then let the data find shoes you&rsquo;d have passed on &mdash; matched by climbers.
           </p>
         </motion.div>
       </div>

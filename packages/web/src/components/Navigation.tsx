@@ -91,15 +91,24 @@ const Navigation: React.FC = () => {
       return;
     }
 
-    const handleScroll = () => {
-      const heroHeight = window.innerHeight;
-      setShowLogo(window.scrollY > heroHeight * 0.5);
-    };
+    const hero = document.getElementById("home-hero");
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
+    if (!hero) {
+      setShowLogo(true);
+      return;
+    }
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowLogo(!(entry?.isIntersecting ?? false));
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(hero);
+    setShowLogo(false);
+
+    return () => observer.disconnect();
   }, [isHomePage]);
 
   const closeMenu = () => setIsActive(false);
