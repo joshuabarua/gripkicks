@@ -41,6 +41,12 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
   }, [sessionLoading])
 
   useEffect(() => {
+    // Public pages never show the session loader overlay
+    if (isPublic) {
+      hideLoader('session')
+      return
+    }
+
     // Show loader only while actively loading and not timed out
     if (sessionLoading && !sessionTimedOut) {
       showLoader('session')
@@ -49,7 +55,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
 
     // Hide loader once loading finishes OR we time out
     hideLoader('session')
-  }, [sessionLoading, sessionTimedOut, showLoader, hideLoader])
+  }, [isPublic, sessionLoading, sessionTimedOut, showLoader, hideLoader])
 
   // Public pages: always render immediately
   if (isPublic) {
