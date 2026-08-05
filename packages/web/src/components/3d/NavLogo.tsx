@@ -35,7 +35,7 @@ function MiniShoe() {
       <Text
         fontSize={0.5}
         position={[0, 0.35, 0]}
-        font="fonts/BallPill-regular.otf"
+        font="/fonts/BallPill-regular.otf"
         color="rgb(255, 252, 242)"
         letterSpacing={-0.08}
       >
@@ -44,7 +44,7 @@ function MiniShoe() {
       <Text
         fontSize={0.5}
         position={[0, 0.05, 0]}
-        font="fonts/BallPill-regular.otf"
+        font="/fonts/BallPill-regular.otf"
         color="rgb(255, 252, 242)"
         letterSpacing={-0.08}
       >
@@ -53,6 +53,9 @@ function MiniShoe() {
       <group ref={mesh}>
         <mesh geometry={shoeNode.geometry} position={[0, -0.3, 0]}>
           <MeshTransmissionMaterial
+            color="rgb(255, 252, 242)"
+            attenuationColor="rgb(244, 91, 91)"
+            attenuationDistance={0.5}
             thickness={0.2}
             roughness={0.1}
             chromaticAberration={0.08}

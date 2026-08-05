@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from "react";
+import React, { Suspense, useRef, useCallback, useMemo } from "react";
 import { useGLTF, Text, MeshTransmissionMaterial } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Mesh } from "three";
@@ -6,6 +6,31 @@ import { useHighPerformanceMode, useAnimationsEnabled } from "@/stores/useAppSto
 
 // Preload the model for better performance
 useGLTF.preload("/glb/HeroShoe.glb");
+
+function ShoeLabels() {
+  return (
+    <>
+      <Text
+        fontSize={0.7}
+        position={[0.01, 0.45, 0]}
+        font="/fonts/BallPill-regular.otf"
+        color="rgb(255, 252, 242)"
+        letterSpacing={-0.08}
+      >
+        GRIP
+      </Text>
+      <Text
+        fontSize={0.7}
+        position={[0, -0.2, 0]}
+        font="/fonts/BallPill-regular.otf"
+        color="rgb(255, 252, 242)"
+        letterSpacing={-0.08}
+      >
+        KICKS
+      </Text>
+    </>
+  );
+}
 
 export default function ShoeModel() {
   const { nodes } = useGLTF("/glb/HeroShoe.glb");
@@ -18,6 +43,9 @@ export default function ShoeModel() {
   // Adaptive material settings based on device performance and user preferences
   const materialSettings = useMemo(() => {
     return {
+      color: "rgb(255, 252, 242)",
+      attenuationColor: "rgb(244, 91, 91)",
+      attenuationDistance: 0.5,
       thickness: 0.2,
       roughness: 0.1,
       chromaticAberration: 0.08,
@@ -54,25 +82,9 @@ export default function ShoeModel() {
 
   return (
     <group dispose={null} scale={viewport.width / 3.5}>
-        <Text
-          fontSize={0.7}
-          position={[0.01, 0.45, 0]}
-          font="/fonts/BallPill-regular.otf"
-          color="rgb(255, 252, 242)"
-          letterSpacing={-0.08}
-        >
-          GRIP
-        </Text>
-
-        <Text
-          fontSize={0.7}
-          position={[0, -0.2, 0]}
-          font="/fonts/BallPill-regular.otf"
-          color="rgb(255, 252, 242)"
-          letterSpacing={-0.08}
-        >
-          KICKS
-        </Text>
+        <Suspense fallback={null}>
+          <ShoeLabels />
+        </Suspense>
 
         <group
           ref={mesh}

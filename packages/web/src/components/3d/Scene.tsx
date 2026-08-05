@@ -65,7 +65,9 @@ const Scene = () => {
       >
         <directionalLight intensity={2} position={[0, 3, 4]} />
         <ambientLight intensity={1} />
-        <Environment preset="city" />
+        <Suspense fallback={null}>
+          <Environment preset="city" />
+        </Suspense>
         <Suspense fallback={null}>
           <ShoeModel />
         </Suspense>
