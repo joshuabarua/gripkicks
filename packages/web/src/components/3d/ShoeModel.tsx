@@ -12,7 +12,7 @@ function ShoeLabels() {
     <>
       <Text
         fontSize={0.7}
-        position={[0.01, 0.45, -0.6]}
+        position={[0.01, 0.45, 0]}
         font="/fonts/BallPill-regular.otf"
         color="rgb(255, 252, 242)"
         letterSpacing={-0.08}
@@ -21,7 +21,7 @@ function ShoeLabels() {
       </Text>
       <Text
         fontSize={0.7}
-        position={[0, -0.2, -0.6]}
+        position={[0, -0.2, 0]}
         font="/fonts/BallPill-regular.otf"
         color="rgb(255, 252, 242)"
         letterSpacing={-0.08}
@@ -35,6 +35,10 @@ function ShoeLabels() {
 export default function ShoeModel() {
   const { nodes } = useGLTF("/glb/HeroShoe.glb");
   const { viewport } = useThree();
+  const responsiveScale = useMemo(
+    () => Math.min(Math.max(viewport.width / 3.5, 1), 2.4),
+    [viewport.width],
+  );
 
   // Get performance settings from store
   const highPerformanceMode = useHighPerformanceMode();
@@ -81,7 +85,7 @@ export default function ShoeModel() {
   });
 
   return (
-    <group dispose={null} scale={viewport.width / 3.5}>
+    <group dispose={null} scale={responsiveScale}>
         <Suspense fallback={null}>
           <ShoeLabels />
         </Suspense>
