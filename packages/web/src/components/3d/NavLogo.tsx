@@ -2,9 +2,10 @@
 
 import React, { Suspense, useRef, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, MeshTransmissionMaterial, Text } from "@react-three/drei";
+import { useGLTF, MeshTransmissionMaterial } from "@react-three/drei";
 import { Mesh } from "three";
 import { useHighPerformanceMode, useAnimationsEnabled } from "@/stores/useAppStore";
+import CanvasTextPlane from "./CanvasTextPlane";
 
 useGLTF.preload("/glb/HeroShoe.glb");
 
@@ -32,24 +33,8 @@ function MiniShoe() {
 
   return (
     <group scale={1.35} position={[0, -0.05, 0]}>
-      <Text
-        fontSize={0.5}
-        position={[0, 0.35, 0]}
-        font="/fonts/BallPill-regular.otf"
-        color="rgb(255, 252, 242)"
-        letterSpacing={-0.08}
-      >
-        GRIP
-      </Text>
-      <Text
-        fontSize={0.5}
-        position={[0, 0.05, 0]}
-        font="/fonts/BallPill-regular.otf"
-        color="rgb(255, 252, 242)"
-        letterSpacing={-0.08}
-      >
-        KICKS
-      </Text>
+      <CanvasTextPlane text="GRIP" position={[0, 0.35, 0]} height={0.5} />
+      <CanvasTextPlane text="KICKS" position={[0, 0.05, 0]} height={0.5} />
       <group ref={mesh}>
         <mesh geometry={shoeNode.geometry} position={[0, -0.3, 0]}>
           <MeshTransmissionMaterial
