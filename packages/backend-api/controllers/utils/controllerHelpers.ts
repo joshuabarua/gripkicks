@@ -1,5 +1,6 @@
 import { Context } from 'hono';
 import { UnauthenticatedError, UnexpectedError, AppError } from '../../src/lib/errors';
+import { getConvexUrl } from '../../utils/convexHelper';
 
 export function checkUserAuthentication(c: Context) {
   const user = c.get('user');
@@ -30,7 +31,7 @@ export function validateRequiredParam(value: string | undefined, paramName: stri
 export async function verifyOwnership(c: Context, userShoeId: string) {
   const user = c.get('user');
   const userId = user?.id;
-  const stash = await fetch(`${process.env.CONVEX_URL}/api/stash/isInStash`, {
+  const stash = await fetch(`${getConvexUrl()}/api/stash/isInStash`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userId, shoeId: userShoeId }),
@@ -55,10 +56,7 @@ export function handleControllerError(error: unknown, action: string, method: st
 }
 
 export async function authenticatedConvexRequest(c: Context, endpoint: string, method: string, body: Record<string, unknown>) {
-  const convexUrl = process.env.CONVEX_URL;
-  if (!convexUrl) {
-    throw new Error('CONVEX_URL is not configured');
-  }
+  const convexUrl = getConvexUrl();
 
   const user = c.get('user');
   if (!user) {
