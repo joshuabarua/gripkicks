@@ -106,7 +106,7 @@ function FilterButtonGroup({ options, selectedValue, onChange, layout = 'grid' }
           type="button"
           onClick={() => onChange(option.value)}
           className={`px-3 py-1.5 rounded-full text-xs font-sora transition-all border ${selectedValue === option.value
-            ? 'bg-brand-red text-black border-brand-red shadow-lg shadow-brand-red/20'
+            ? 'bg-brand-red text-black border-brand-red'
             : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-brand-red/40 hover:text-white'
             }`}
         >

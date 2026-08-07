@@ -68,12 +68,12 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
       className="relative cursor-pointer group"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
+      transition={{ duration: 0.2, delay: Math.min(index, 10) * 0.04 }}
       onClick={onClick}
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.015 }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="monolith-card relative flex flex-col justify-center items-center gap-fluid-sm p-fluid-md rounded-lg border border-white/[0.06] bg-brand-charcoal hal-glow-hover transition-all duration-500 group-hover:border-brand-red/20">
+      <div className="monolith-card relative flex flex-col justify-center items-center gap-fluid-sm rounded-lg border border-white/[0.09] bg-black/65 p-fluid-md transition-colors duration-300 group-hover:border-brand-red/35">
         {(shoe.isFavourite || specialLabel) && (
           <div className="absolute top-fluid-sm left-fluid-sm z-20 flex gap-fluid-xs">
             {shoe.isFavourite && (
@@ -93,8 +93,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
         )}
 
         <div className="absolute top-fluid-sm right-fluid-sm z-20">
-          <div className="bg-black/40 backdrop-blur-sm rounded-sm px-2 py-0.5 border border-white/[0.06]">
-            <span className="font-sora text-[10px] text-brand-red font-bold tracking-wider">{avgScore}</span>
+          <div className="bg-black/70 rounded-sm px-2 py-0.5 border border-white/[0.09]">
+            <span className="font-sora text-[10px] text-brand-chalk/70 font-semibold tracking-wider">{avgScore}</span>
           </div>
         </div>
 
@@ -122,7 +122,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
         </div>
 
         <div className="w-full text-center space-y-0.5">
-          <p className="font-sora uppercase text-brand-chalk text-sm font-medium leading-tight truncate group-hover:text-brand-red transition-colors duration-500">
+          <p className="font-sora uppercase text-brand-chalk text-sm font-medium leading-tight truncate group-hover:text-white transition-colors duration-300">
             {name}
           </p>
           <p className="font-sora text-[10px] text-brand-putty/30 truncate">
