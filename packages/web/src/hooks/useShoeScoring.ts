@@ -99,7 +99,12 @@ export function useShoeScoring(userPreferences?: {
   );
 
   const soleMateMap = useMemo(() => {
-    if (!soleMateData) return new Map<string, SoleMateAggregate>();
+    if (!Array.isArray(soleMateData)) {
+      if (soleMateData !== undefined) {
+        console.error("Invalid Sole Mate response: expected an array");
+      }
+      return new Map<string, SoleMateAggregate>();
+    }
     return new Map(soleMateData.map((s) => [s.shoeId, s]));
   }, [soleMateData]);
 

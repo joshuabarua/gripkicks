@@ -96,15 +96,20 @@ export function useStashData(
   );
 
   const allShoes = useMemo(() => shoesData ?? [], [shoesData]);
-  const popularityMap = useMemo(
-    () =>
-      popularityData
-        ? new Map(popularityData.map((p) => [p.shoeId, p.count]))
-        : new Map<string, number>(),
-    [popularityData],
-  );
+  const popularityMap = useMemo(() => {
+    if (!Array.isArray(popularityData)) {
+      if (popularityData !== undefined) {
+        console.error("Invalid popularity response: expected an array");
+      }
+      return new Map<string, number>();
+    }
+    return new Map(popularityData.map((p) => [p.shoeId, p.count]));
+  }, [popularityData]);
   const totalShoesInDatabase = useMemo(
-    () => popularityData?.reduce((sum, p) => sum + p.count, 0) ?? 0,
+    () =>
+      Array.isArray(popularityData)
+        ? popularityData.reduce((sum, p) => sum + p.count, 0)
+        : 0,
     [popularityData],
   );
   const uniqueBrands = useMemo(() => brandsData ?? [], [brandsData]);
@@ -140,6 +145,13 @@ export function useStashData(
   useEffect(() => {
     if (realtimeStashData !== undefined) {
       hasAttemptedFallbackRef.current = false;
+      if (!Array.isArray(realtimeStashData)) {
+        console.error("Invalid stash response: expected an array");
+        setUserShoes([]);
+        setRealtimeEnabled(true);
+        setIsLoading(false);
+        return;
+      }
       const mappedUserShoes: UserShoe[] = realtimeStashData.map(
         (item: ConvexUserShoe) => ({
           _id: item._id,

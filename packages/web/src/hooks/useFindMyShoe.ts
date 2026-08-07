@@ -118,10 +118,15 @@ export function useFindMyShoe(
   const userShoeCount = userStash?.length ?? 0;
 
   const formattedRecommendations: AggregatedRating[] = useMemo(() => {
-    if (!paginatedResult?.items) return [];
+    const items = (paginatedResult as unknown as PaginatedResult | undefined)?.items;
+    if (!Array.isArray(items)) {
+      if (items !== undefined) {
+        console.error("Invalid recommendation response: items must be an array");
+      }
+      return [];
+    }
 
-    return (paginatedResult as unknown as PaginatedResult).items.map(
-      (shoe) => ({
+    return items.map((shoe) => ({
         shoe: {
           _id: shoe._id,
           name: shoe.name,
