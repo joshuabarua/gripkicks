@@ -95,7 +95,15 @@ export function useStashData(
     catalog?.enabled ? {} : "skip",
   );
 
-  const allShoes = useMemo(() => shoesData ?? [], [shoesData]);
+  const allShoes = useMemo(() => {
+    if (!Array.isArray(shoesData)) {
+      if (shoesData !== undefined) {
+        console.error("Invalid catalog response: expected an array");
+      }
+      return [];
+    }
+    return shoesData;
+  }, [shoesData]);
   const popularityMap = useMemo(() => {
     if (!Array.isArray(popularityData)) {
       if (popularityData !== undefined) {
@@ -112,7 +120,15 @@ export function useStashData(
         : 0,
     [popularityData],
   );
-  const uniqueBrands = useMemo(() => brandsData ?? [], [brandsData]);
+  const uniqueBrands = useMemo(() => {
+    if (!Array.isArray(brandsData)) {
+      if (brandsData !== undefined) {
+        console.error("Invalid brands response: expected an array");
+      }
+      return [];
+    }
+    return brandsData;
+  }, [brandsData]);
 
   const fetchUserStash = useCallback(async () => {
     if (!sessionUserId || !enabled) return;
@@ -121,7 +137,7 @@ export function useStashData(
 
     setIsLoading(true);
     const cachedData = shoeCache.get<UserShoe[]>(cacheKey);
-    if (cachedData) {
+    if (Array.isArray(cachedData)) {
       setUserShoes(cachedData);
       setIsLoading(false);
       return;
@@ -130,6 +146,11 @@ export function useStashData(
     const result = await getUserStash();
     result.match(
       (value) => {
+        if (!Array.isArray(value)) {
+          console.error("Invalid stash response: expected an array");
+          setUserShoes([]);
+          return;
+        }
         setUserShoes(value);
         shoeCache.set(cacheKey, value, 5 * 60 * 1000);
       },
