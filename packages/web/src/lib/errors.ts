@@ -142,7 +142,16 @@ export class ErrorFactory {
     };
 
     const category = categoryMap[status] ?? "unknown";
-    const code = `HTTP_${status}`;
+    const codeByCategory: Record<ErrorCategory, string> = {
+      network: "NETWORK_ERROR",
+      authentication: "UNAUTHENTICATED_ERROR",
+      authorization: "UNAUTHORIZED_ERROR",
+      validation: "VALIDATION_ERROR",
+      not_found: "NOT_FOUND_ERROR",
+      server: "INTERNAL_SERVER_ERROR",
+      unknown: "UNKNOWN_ERROR",
+    };
+    const code = codeByCategory[category];
 
     return new AppError({
       code,
@@ -151,6 +160,19 @@ export class ErrorFactory {
       severity: status >= 500 ? "high" : "medium",
       category,
       retryable: status >= 500,
+    });
+  }
+
+  static fromNetwork(error: unknown): AppError {
+    const message = error instanceof Error ? error.message : "Network request failed";
+
+    return new AppError({
+      code: "NETWORK_ERROR",
+      message,
+      userMessage: "Unable to connect. Please check your connection and try again.",
+      severity: "medium",
+      category: "network",
+      retryable: true,
     });
   }
 

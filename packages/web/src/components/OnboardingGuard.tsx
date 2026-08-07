@@ -18,7 +18,7 @@ function isPublicPath(pathname: string): boolean {
 }
 
 /** Max time (ms) to wait for session before giving up and rendering anyway */
-const SESSION_TIMEOUT_MS = 15_000
+const SESSION_TIMEOUT_MS = 5_000
 
 export function OnboardingGuard({ children }: OnboardingGuardProps) {
   const pathname = usePathname()
@@ -34,6 +34,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
     if (!sessionLoading) return
 
     const timer = setTimeout(() => {
+      console.warn('[OnboardingGuard] Session loading timed out — rendering anyway')
       setSessionTimedOut(true)
     }, SESSION_TIMEOUT_MS)
 

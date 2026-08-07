@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ResultAsync } from 'neverthrow';
+import { errAsync, ResultAsync } from 'neverthrow';
 import { ApiError } from '@/lib/errors';
 
 interface UseAsyncState<T> {
@@ -62,9 +62,17 @@ export function useAsync<T>() {
   const execute = useCallback(
     async (asyncOperation: () => ResultAsync<T, ApiError>) => {
       setLoading();
-      const result = await asyncOperation();
-      result.match(setSuccess, setError);
-      return result;
+      try {
+        const result = await asyncOperation();
+        result.match(setSuccess, setError);
+        return result;
+      } catch (error) {
+        const apiError = error instanceof ApiError
+          ? error
+          : new ApiError({ type: 'UNEXPECTED_ERROR', message: 'Async operation failed' });
+        setError(apiError);
+        return errAsync(apiError);
+      }
     },
     [setLoading, setSuccess, setError]
   );
@@ -84,9 +92,17 @@ export function useMutation<T, P = void>(
   const mutate = useCallback(
     async (params: P) => {
       setLoading();
-      const result = await mutationFn(params);
-      result.match(setSuccess, setError);
-      return result;
+      try {
+        const result = await mutationFn(params);
+        result.match(setSuccess, setError);
+        return result;
+      } catch (error) {
+        const apiError = error instanceof ApiError
+          ? error
+          : new ApiError({ type: 'UNEXPECTED_ERROR', message: 'Mutation failed' });
+        setError(apiError);
+        return errAsync(apiError);
+      }
     },
     [mutationFn, setLoading, setSuccess, setError]
   );

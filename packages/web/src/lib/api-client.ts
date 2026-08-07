@@ -105,7 +105,7 @@ export function fetchApi<T>(
       if (error instanceof AppError) {
         return error;
       }
-      return ErrorFactory.fromUnknown(error);
+      return ErrorFactory.fromNetwork(error);
     },
   );
 
