@@ -521,6 +521,7 @@ userShoes: defineTable({
 - **Loading States**: Improve UX with loading indicators
 - **Shoe Rankings**: Game-like stats display for shoes
 - **Brand Filters**: Quick brand filtering in search
+- **Brands Page**: Scattered/painted brand logos across the page; clicking a logo goes to the brand's bio/history. Future: use logos in place of plain text on individual brand pages
 
 ---
 
