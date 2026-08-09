@@ -19,7 +19,7 @@ export function AnimatedLogoImage({ currentImageIndex, transitionImages }: Anima
           background:
             "radial-gradient(circle at 38% 32%, rgba(244,91,91,0.22), transparent 55%), radial-gradient(circle at 65% 70%, rgba(106,155,204,0.2), transparent 55%)",
         }}
-        animate={{ opacity: [0.55, 0.9, 0.55], scale: [0.95, 1.05, 0.95] }}
+        animate={{ opacity: [0.25, 0.45, 0.25], scale: [0.98, 1.02, 0.98] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       />
 
@@ -44,19 +44,19 @@ export function AnimatedLogoImage({ currentImageIndex, transitionImages }: Anima
             <motion.div
               key={currentImageIndex}
               className="absolute inset-0 flex items-center justify-center"
-              initial={{ scale: 1.25, opacity: 0, rotateY: -16, filter: "blur(6px)" }}
+              initial={{ scale: 1.1, opacity: 0, rotateY: -8, filter: "blur(2px)" }}
               animate={{ scale: 1, opacity: 1, rotateY: 0, filter: "blur(0px)" }}
-              exit={{ scale: 0.72, opacity: 0, rotateY: 16, filter: "blur(6px)" }}
+              exit={{ scale: 0.86, opacity: 0, rotateY: 8, filter: "blur(2px)" }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                maskImage: "radial-gradient(circle at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 65%)",
-                WebkitMaskImage: "radial-gradient(circle at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 65%)",
+                maskImage: "radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 24%, rgba(0,0,0,0) 58%)",
+                WebkitMaskImage: "radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 24%, rgba(0,0,0,0) 58%)",
               }}
             >
               <motion.img
                 src={src}
                 alt=""
-                className="relative z-10 w-4/5 h-4/5 object-contain"
+                className="relative z-10 w-4/5 h-4/5 object-contain mix-blend-screen"
                 animate={{
                   filter: [
                     `grayscale(65%) saturate(45%) contrast(1.1) ${CHROMATIC}`,

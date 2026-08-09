@@ -87,7 +87,7 @@ export default function AppShell({ children }: AppShellProps) {
               <PageTransition>
                 <Navigation />
                 <OnboardingGuard>
-                  <div>{children}</div>
+                  <div className="pt-16">{children}</div>
                   <Footer />
                   <KonamiGrippy />
                   <RunningGrippy />

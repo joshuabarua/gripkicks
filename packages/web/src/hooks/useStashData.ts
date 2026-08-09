@@ -131,7 +131,7 @@ export function useStashData(
   }, [brandsData]);
 
   const fetchUserStash = useCallback(async () => {
-    if (!sessionUserId || !enabled) return;
+    if (!sessionUserId || !enabled || realtimeEnabled) return;
 
     const cacheKey = `user-stash-${sessionUserId}`;
 
@@ -160,7 +160,7 @@ export function useStashData(
       },
     );
     setIsLoading(false);
-  }, [sessionUserId, enabled]);
+  }, [sessionUserId, enabled, realtimeEnabled]);
 
   // Use real-time data when available, fallback to REST API
   useEffect(() => {
