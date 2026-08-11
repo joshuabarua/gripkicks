@@ -21,19 +21,18 @@
     "noFallthroughCasesInSwitch": true,
     "allowUnreachableCode": false,
     "noUncheckedIndexedAccess": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "erasableSyntaxOnly": true,
     "noImplicitOverride": true,
     "noErrorTruncation": false, //change this when debugging
     "exactOptionalPropertyTypes": true,
 
-    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
       "@/types/*": ["./src/types/*"],

@@ -15,7 +15,7 @@ const authRoutes = [
   '/auth/signup',
 ];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const callbackUrl = request.nextUrl.searchParams.get('callbackUrl');
   const safeCallbackUrl = callbackUrl?.startsWith('/') ? callbackUrl : '/dashboard';

@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
+import dotenv from "dotenv";
 import path from "path";
 
+dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
+
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY:
+      process.env["NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY"],
+    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT:
+      process.env["NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT"],
+  },
+
   /* config options here */
 
   async headers() {
@@ -28,7 +38,10 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    domains: ["images.unsplash.com", "images.pexels.com"],
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "images.pexels.com" },
+    ],
   },
 
   async rewrites() {

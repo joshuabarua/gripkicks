@@ -2,8 +2,9 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "moduleResolution": "Bundler",
+    "types": ["node"],
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "convex/*": ["../../convex/*"]

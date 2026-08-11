@@ -1,6 +1,6 @@
 {
   "name": "gripkicks",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.17.1",
   "workspaces": [
     "packages/web",
     "packages/app",
@@ -18,7 +18,7 @@
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.3"
+    "typescript": "^7.0.2"
   },
   "scripts": {
     "lint": "eslint .",
@@ -43,5 +43,8 @@
     "convex-helpers": "^0.1.111",
     "dotenv": "^16.4.7",
     "zustand": "^5.0.3"
+  },
+  "resolutions": {
+    "typescript": "npm:7.0.2"
   }
 }
