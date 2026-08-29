@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
@@ -13,11 +14,6 @@ import { editFormSchema, type EditFormData } from "@/schemas/shoe-schema";
 import EditShoeDialog from "@/components/EditShoeDialog";
 import ShoeStatsModal from "@/components/ShoeStatsModal";
 import dynamic from "next/dynamic";
-
-const CloudShader = dynamic(() => import("@/components/3d/CloudShader"), {
-  ssr: false,
-  loading: () => null,
-});
 
 const CloudBackground = dynamic(() => import("@/components/CloudBackground"), {
   ssr: false,
@@ -326,18 +322,40 @@ export default function ShoeSanctuaryPage() {
     <div className="relative min-h-svh w-full bg-black overflow-x-hidden">
       {backgroundFxReady && (
         <>
-          <div className="fixed inset-0 pointer-events-none z-0">
-            <CloudShader
-              className="absolute inset-0 w-full h-full"
-              density={5}
-              speed={0.6}
-              layers={3}
-              skyColor="#1a2740"
-              cloudColor="#e6dccb"
+          <div
+            className="sanctuary-cloud-backdrop fixed -inset-[4vw] pointer-events-none z-0"
+            aria-hidden="true"
+          >
+            <Image
+              src="/imgs/clouds/clouds 4.png"
+              alt=""
+              fill
+              sizes="110vw"
+              quality={72}
+              className="object-cover"
             />
           </div>
 
           <CloudBackground />
+          <style jsx>{`
+            .sanctuary-cloud-backdrop {
+              animation: sanctuary-cloud-drift 44s ease-in-out infinite alternate;
+              transform: translate3d(-1.5%, -1%, 0) scale(1.06);
+              will-change: transform;
+            }
+
+            @keyframes sanctuary-cloud-drift {
+              to {
+                transform: translate3d(1.5%, 1%, 0) scale(1.1);
+              }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+              .sanctuary-cloud-backdrop {
+                animation: none;
+              }
+            }
+          `}</style>
         </>
       )}
 

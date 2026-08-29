@@ -62,7 +62,7 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
         const timeout = setTimeout(() => {
           setIsNavigating(false);
           setPrevPathname(pathname);
-        }, 2000);
+        }, 450);
 
         return () => clearTimeout(timeout);
       } else {
