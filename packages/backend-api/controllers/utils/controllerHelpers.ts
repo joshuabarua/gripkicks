@@ -1,6 +1,6 @@
 import { Context } from 'hono';
 import { UnauthenticatedError, UnexpectedError, AppError } from '../../src/lib/errors';
-import { getConvexUrl } from '../../utils/convexHelper';
+import { getConvexServiceHeaders, getConvexUrl } from '../../utils/convexHelper';
 
 export function checkUserAuthentication(c: Context) {
   const user = c.get('user');
@@ -30,18 +30,24 @@ export function validateRequiredParam(value: string | undefined, paramName: stri
 
 export async function verifyOwnership(c: Context, userShoeId: string) {
   const user = c.get('user');
-  const userId = user?.id;
-  const stash = await fetch(`${getConvexUrl()}/api/stash/isInStash`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, shoeId: userShoeId }),
-  });
-  const data = await stash.json();
-  if (!data) {
-    const error = new Error('Shoe not found in your stash');
-    c.status(404);
-    return c.json({ error: error.message });
+  if (!user?.id) {
+    return c.json({ error: 'Authentication required' }, 401);
   }
+
+  const response = await fetch(`${getConvexUrl()}/api/stash/verifyOwnership`, {
+    method: 'POST',
+    headers: getConvexServiceHeaders(),
+    body: JSON.stringify({
+      userShoeId,
+      betterAuthUserId: user.id,
+    }),
+  });
+  const result = await response.json();
+  if (!response.ok || result?.data?.owned !== true) {
+    return c.json({ error: 'Shoe not found in your stash' }, 404);
+  }
+
+  return null;
 }
 
 export function handleControllerError(error: unknown, action: string, method: string, path: string, userId: string): AppError {
@@ -65,9 +71,7 @@ export async function authenticatedConvexRequest(c: Context, endpoint: string, m
 
   const response = await fetch(`${convexUrl}${endpoint}`, {
     method,
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getConvexServiceHeaders(),
     body: JSON.stringify(body),
   });
 

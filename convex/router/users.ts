@@ -1,12 +1,13 @@
 import type { HonoWithConvex } from "convex-helpers/server/hono";
 import type { ActionCtx } from "../_generated/server";
-import { api } from "../_generated/api";
+import { internal } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
 import {
   HttpContext,
   findUserByBetterAuthId,
   handleError,
   handleValidationError,
+  requireServiceToken,
   withUserIdValidation,
 } from "./helpers";
 
@@ -38,10 +39,14 @@ async function syncUserHandler(
 }
 
 export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
+  app.use("/api/sync-user", requireServiceToken);
+  app.use("/api/sync-user-deduplicated", requireServiceToken);
+  app.use("/api/users/*", requireServiceToken);
+
   app.post("/api/sync-user", async (c) => {
     const { id, email, name, image, emailVerified } = await c.req.json();
     return syncUserHandler(c, "User synced to Convex successfully", () =>
-      c.env.runMutation(api.users.createOrUpdateFromBetterAuth, {
+      c.env.runMutation(internal.users.createOrUpdateFromBetterAuth, {
         betterAuthId: id,
         email,
         name: name || "",
@@ -58,7 +63,7 @@ export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
       c,
       "User synced to Convex successfully (deduplicated)",
       () =>
-        c.env.runMutation(api.users.syncUserDeduplicated, {
+        c.env.runMutation(internal.users.syncUserDeduplicated, {
           betterAuthId,
           email,
           name: name || "",
@@ -66,6 +71,16 @@ export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
           emailVerified: emailVerified || false,
         }),
     );
+  });
+
+  app.post("/api/users/list", async (c) => {
+    const users = await c.env.runQuery(internal.users.serviceList, {});
+    return c.json({ success: true, data: users });
+  });
+
+  app.post("/api/users/getCount", async (c) => {
+    const count = await c.env.runQuery(internal.users.serviceGetCount, {});
+    return c.json({ success: true, data: count });
   });
 
   app.post("/api/users/findByBetterAuthId", async (c) => {
@@ -92,7 +107,7 @@ export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
         return handleValidationError(c, "Email");
       }
 
-      const user = await c.env.runQuery(api.users.getByEmail, { email });
+      const user = await c.env.runQuery(internal.users.serviceGetByEmail, { email });
 
       return c.json({ success: true, data: user });
     } catch (error) {
@@ -104,7 +119,7 @@ export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
     const { id, name, image, emailVerified, footShape, footVolume, favoriteShoeId } =
       await c.req.json();
     return withUserIdValidation(c, id, async (user) => {
-      return await c.env.runMutation(api.users.update, {
+      return await c.env.runMutation(internal.users.serviceUpdate, {
         id: user._id,
         ...(name !== undefined ? { name } : {}),
         ...(image !== undefined ? { image } : {}),
@@ -126,7 +141,7 @@ export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
   app.post("/api/users/completeOnboarding", async (c) => {
     const { userId, footShape, favoriteShoeId } = await c.req.json();
     return withUserIdValidation(c, userId, async (user) => {
-      return await c.env.runMutation(api.users.completeOnboarding, {
+      return await c.env.runMutation(internal.users.serviceCompleteOnboarding, {
         userId: user._id,
         ...(footShape !== undefined ? { footShape } : {}),
         ...(favoriteShoeId !== undefined
@@ -139,7 +154,7 @@ export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
   app.post("/api/users/delete", async (c) => {
     const { id } = await c.req.json();
     return withUserIdValidation(c, id, async (user) => {
-      await c.env.runMutation(api.authDb.deleteUser, { id: user._id });
+      await c.env.runMutation(internal.authDb.deleteUser, { id: user._id });
       return { message: "User deleted successfully" };
     });
   });

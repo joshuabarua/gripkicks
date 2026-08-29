@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { backlogStatusValidator } from "./schema";
+import { requireAdmin } from "./authorization";
 
 export const createBacklogItem = mutation({
   args: {
@@ -9,6 +10,7 @@ export const createBacklogItem = mutation({
     status: backlogStatusValidator,
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const backlogItem = await ctx.db.insert("backlogItems", {
       title: args.title,
       status: args.status,
@@ -29,6 +31,7 @@ export const updateBacklogItem = mutation({
     status: v.optional(backlogStatusValidator),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const { id, ...updateData } = args;
 
     const existingItem = await ctx.db.get(id);
@@ -54,6 +57,7 @@ export const deleteBacklogItem = mutation({
     id: v.id("backlogItems"),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const existingItem = await ctx.db.get(args.id);
     if (!existingItem) {
       throw new Error("Backlog item not found");
@@ -69,6 +73,7 @@ export const listBacklogItems = query({
     statusFilter: v.optional(backlogStatusValidator),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     let items = await ctx.db.query("backlogItems").order("desc").collect();
 
     if (args.statusFilter) {

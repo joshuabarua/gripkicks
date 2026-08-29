@@ -9,6 +9,7 @@ import { createAdapterFactory } from "better-auth/adapters";
 
 interface ConvexAdapterConfig {
   convexUrl: string;
+  serviceToken: string;
   debugLogs?: boolean;
 }
 
@@ -92,10 +93,25 @@ function sanitizeCreatePayload(
     ]);
   }
 
+  if (model === "jwks") {
+    return pickFields(normalizedData, [
+      "publicKey",
+      "privateKey",
+      "createdAt",
+      "expiresAt",
+      "alg",
+      "crv",
+    ]);
+  }
+
   return normalizedData;
 }
 
 const toTimestamp = (value: unknown) => {
+  if (value instanceof Date) {
+    return value.getTime();
+  }
+
   if (typeof value === "string") {
     return new Date(value).getTime();
   }
@@ -125,9 +141,10 @@ function sanitizeUpdatePayload(
     };
   }
 
-  if (model === "verification") {
+  if (model === "verification" || model === "jwks") {
     return {
       ...sanitizedData,
+      createdAt: toTimestamp(sanitizedData.createdAt),
       expiresAt: toTimestamp(sanitizedData.expiresAt),
     };
   }
@@ -137,17 +154,21 @@ function sanitizeUpdatePayload(
 
 function getConvexBaseUrls(url: string): string[] {
   const normalized = withNoTrailingSlash(url);
-  const urls = [normalized];
-
   if (normalized.includes(".convex.cloud")) {
-    urls.push(normalized.replace(".convex.cloud", ".convex.site"));
+    return [
+      normalized.replace(".convex.cloud", ".convex.site"),
+      normalized,
+    ];
   }
 
   if (normalized.includes(".convex.site")) {
-    urls.push(normalized.replace(".convex.site", ".convex.cloud"));
+    return [
+      normalized,
+      normalized.replace(".convex.site", ".convex.cloud"),
+    ];
   }
 
-  return Array.from(new Set(urls));
+  return [normalized];
 }
 
 // Map Better Auth model names to our Convex model names
@@ -156,6 +177,7 @@ const modelMap: Record<string, string> = {
   session: "session",
   account: "account",
   verification: "verification",
+  jwks: "jwks",
 };
 
 const convexAdapter = (config: ConvexAdapterConfig) => {
@@ -186,7 +208,10 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
       try {
         const response = await fetch(url, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${config.serviceToken}`,
+          },
           body: JSON.stringify(data),
         });
 
@@ -283,6 +308,14 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
                 expiresAt && typeof expiresAt === "string"
                   ? new Date(expiresAt).getTime()
                   : expiresAt,
+            };
+          } else if (model === "jwks") {
+            const { id, updatedAt, createdAt, expiresAt, ...rest } =
+              sanitizedData as Record<string, unknown>;
+            finalData = {
+              ...rest,
+              createdAt: toTimestamp(createdAt),
+              expiresAt: toTimestamp(expiresAt),
             };
           }
 
@@ -483,8 +516,46 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
             }
           }
 
+          if (model === "account" && where[0]?.field === "userId") {
+            const accounts = await callConvex(model, "findByUserId", {
+              userId: where[0].value,
+            });
+            if (!Array.isArray(accounts)) return 0;
+            for (const account of accounts) {
+              await callConvex(model, "delete", { id: account.id });
+            }
+            return accounts.length;
+          }
+
+          if (model === "user") {
+            const field = where[0]?.field;
+            const value = where[0]?.value;
+            const user =
+              field === "email"
+                ? await callConvex(model, "findByEmail", { email: value })
+                : field === "id" || field === "_id"
+                  ? await callConvex(model, "findById", { id: value })
+                  : null;
+            if (!user?.id) return 0;
+            await callConvex(model, "delete", { id: user.id });
+            return 1;
+          }
+
           // Handle verification deletion by expiresAt (for cleanup)
           if (model === "verification" && where.length > 0) {
+            const identifierWhere = where.find(
+              (entry: { field: string; value: unknown }) =>
+                entry.field === "identifier",
+            );
+            if (identifierWhere) {
+              const verification = await callConvex(model, "findByIdentifier", {
+                identifier: identifierWhere.value,
+              });
+              if (!verification?.id) return 0;
+              await callConvex(model, "delete", { id: verification.id });
+              return 1;
+            }
+
             const expiresWhere = where.find(
               (w: { field: string; value: unknown; operator?: string }) =>
                 w.field === "expiresAt" && w.operator === "lt",
@@ -518,13 +589,8 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
             }
           }
 
-          // TODO: Implement deleteMany for other models
-          console.warn(
-            `[ConvexAdapter] deleteMany not fully implemented for model: ${model}, where:`,
-            where,
-          );
           throw new Error(
-            `deleteMany operation not supported for this configuration`,
+            `deleteMany does not support ${model} with the supplied filters`,
           );
         },
 
@@ -577,6 +643,11 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
 
         findMany: async ({ model, where, limit, offset, sortBy }) => {
           try {
+            if (model === "jwks") {
+              const keys = await callConvex(model, "list", {});
+              return Array.isArray(keys) ? keys : [];
+            }
+
             // Handle verification queries by identifier
             if (model === "verification" && where && where.length > 0) {
               const identifierWhere = where.find(

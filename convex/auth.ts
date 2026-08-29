@@ -1,8 +1,8 @@
-import { query, action } from "./_generated/server";
+import { internalAction, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 
 // Validate session with Better Auth
-export const validateSession = action({
+export const validateSession = internalAction({
   args: {
     token: v.string(),
   },
@@ -54,7 +54,7 @@ export const validateSession = action({
 // ============ OWNERSHIP VERIFICATION ============
 
 // Query to check if a userShoe belongs to a user
-export const verifyUserShoeOwnership = query({
+export const verifyUserShoeOwnership = internalQuery({
   args: {
     userShoeId: v.id("userShoes"),
     betterAuthUserId: v.string(),
@@ -82,7 +82,7 @@ export const verifyUserShoeOwnership = query({
 });
 
 // Query to check if a user owns a specific shoe in their stash
-export const verifyShoeOwnership = query({
+export const verifyShoeOwnership = internalQuery({
   args: {
     shoeId: v.id("shoes"),
     betterAuthUserId: v.string(),

@@ -1,9 +1,18 @@
-// Convex auth is handled via the Better Auth backend (Hono). No Convex auth providers are used here.
-// This placeholder config keeps convex build happy without @convex-dev/auth.
 import type { AuthConfig } from "convex/server";
 
-const authConfig: AuthConfig = {
-  providers: [],
-};
+const issuer = process.env["BETTER_AUTH_URL"];
+if (!issuer) {
+  throw new Error("BETTER_AUTH_URL is required for Convex authentication");
+}
 
-export default authConfig;
+export default {
+  providers: [
+    {
+      type: "customJwt",
+      applicationID: "convex",
+      issuer,
+      jwks: `${issuer.replace(/\/$/, "")}/api/auth/jwks`,
+      algorithm: "RS256",
+    },
+  ],
+} satisfies AuthConfig;

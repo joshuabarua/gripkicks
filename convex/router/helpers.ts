@@ -1,20 +1,20 @@
-import type { Context } from "hono";
+import type { Context, Next } from "hono";
 import type { FunctionReturnType } from "convex/server";
 import type { ActionCtx } from "../_generated/server";
-import { api } from "../_generated/api";
+import { internal } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
 
 export type HttpContext = Context<{ Bindings: ActionCtx }>;
 
 export type UserResult = NonNullable<
-  FunctionReturnType<typeof api.users.findByBetterAuthId>
+  FunctionReturnType<typeof internal.users.serviceFindByBetterAuthId>
 >;
 
 export async function findUserByBetterAuthId(
   c: HttpContext,
   betterAuthId: string,
 ) {
-  return await c.env.runQuery(api.users.findByBetterAuthId, { betterAuthId });
+  return await c.env.runQuery(internal.users.serviceFindByBetterAuthId, { betterAuthId });
 }
 
 export async function findUserByIdOrBetterAuthId(c: HttpContext, id: string) {
@@ -22,10 +22,33 @@ export async function findUserByIdOrBetterAuthId(c: HttpContext, id: string) {
   if (byBetterAuthId) return byBetterAuthId;
 
   try {
-    return await c.env.runQuery(api.users.getById, { id: id as Id<"users"> });
+    return await c.env.runQuery(internal.users.serviceGetById, { id: id as Id<"users"> });
   } catch {
     return null;
   }
+}
+
+function tokensMatch(provided: string, expected: string) {
+  if (provided.length !== expected.length) return false;
+  let mismatch = 0;
+  for (let index = 0; index < provided.length; index += 1) {
+    mismatch |= provided.charCodeAt(index) ^ expected.charCodeAt(index);
+  }
+  return mismatch === 0;
+}
+
+export async function requireServiceToken(c: HttpContext, next: Next) {
+  const expected = process.env["CONVEX_SERVICE_TOKEN"];
+  const authorization = c.req.header("Authorization");
+  const provided = authorization?.startsWith("Bearer ")
+    ? authorization.slice("Bearer ".length)
+    : "";
+
+  if (!expected || !provided || !tokensMatch(provided, expected)) {
+    return c.json({ success: false, message: "Unauthorized" }, 401);
+  }
+
+  await next();
 }
 
 export function handleError(c: HttpContext, error: unknown, context: string) {

@@ -8,7 +8,7 @@ import {
   UnauthenticatedError,
   UnexpectedError
 } from '../src/lib/errors';
-import { getConvexUrl } from '../utils/convexHelper';
+import { getConvexServiceHeaders, getConvexUrl } from '../utils/convexHelper';
 
 interface User {
   id: string;
@@ -39,6 +39,14 @@ interface UpdateProfileData {
 }
 
 class UserService {
+  async getUsers(): Promise<Result<User[], AppError>> {
+    try {
+      return ok(await this.findUsers());
+    } catch {
+      return err(new UnexpectedError('Failed to fetch users'));
+    }
+  }
+
   async getUserById(id: string, sessionUser?: SessionUser): Promise<Result<User, AppError>> {
     if (!id) {
       return err(new ValidationError('User ID is required'));
@@ -221,12 +229,31 @@ class UserService {
     };
   }
 
+  private async findUsers(): Promise<User[]> {
+    const response = await fetch(`${getConvexUrl()}/api/users/list`, {
+      method: 'POST',
+      headers: getConvexServiceHeaders(),
+      body: JSON.stringify({}),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch users: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    if (!result.success || !Array.isArray(result.data)) {
+      throw new Error(result.error || 'Invalid users response from Convex');
+    }
+
+    return result.data.map((user: unknown) => this.mapUserFromConvex(user));
+  }
+
   private async findUserById(id: string): Promise<User | null> {
     try {
       const convexUrl = getConvexUrl();
       const response = await fetch(`${convexUrl}/api/users/findByBetterAuthId`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getConvexServiceHeaders(),
         body: JSON.stringify({ betterAuthId: id })
       });
 
@@ -260,7 +287,7 @@ class UserService {
     const convexUrl = getConvexUrl();
     const response = await fetch(`${convexUrl}/api/sync-user-deduplicated`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getConvexServiceHeaders(),
       body: JSON.stringify({
         betterAuthId: sessionUser.id,
         email: sessionUser.email,
@@ -297,7 +324,7 @@ class UserService {
       const convexUrl = getConvexUrl();
       const response = await fetch(`${convexUrl}/api/users/update`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getConvexServiceHeaders(),
         body: JSON.stringify({
           id: userId,
           ...data
@@ -328,7 +355,7 @@ class UserService {
       const convexUrl = getConvexUrl();
       const response = await fetch(`${convexUrl}/api/users/completeOnboarding`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getConvexServiceHeaders(),
         body: JSON.stringify({
           userId,
           footShape,
@@ -370,7 +397,7 @@ class UserService {
       const convexUrl = getConvexUrl();
       const response = await fetch(`${convexUrl}/api/users/delete`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getConvexServiceHeaders(),
         body: JSON.stringify({ id: userId })
       });
 

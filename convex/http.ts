@@ -10,7 +10,13 @@ import { registerAuthDbRoutes } from "./router/authDb";
 const app: HonoWithConvex<ActionCtx> = new Hono();
 
 app.use("/*", cors({
-  origin: ["http://localhost:3000", "http://localhost:3001"],
+  origin: [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "https://grip-kicks.com",
+    "https://www.grip-kicks.com",
+  ],
   allowHeaders: ["Content-Type", "Authorization"],
   allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,

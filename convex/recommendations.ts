@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { query } from "./_generated/server";
 import { footShapeValidator } from "./schema";
 import type { CommunitySignal, ShoeRecommendation } from "../types/shoe";
+import { requireUserAccess } from "./authorization";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -141,6 +142,7 @@ export const getShoeRecommendations = query({
     ctx,
     args,
   ): Promise<PaginatedResult<ShoeRecommendation>> => {
+    await requireUserAccess(ctx, args.userId);
     const page = Math.max(1, args.page ?? 1);
     const pageSize = Math.min(
       MAX_PAGE_SIZE,
@@ -556,7 +558,8 @@ export const getRecommendationCount = query({
     footShape: footShapeValidator,
     footVolume: v.string(),
   },
-  handler: async (ctx, _args) => {
+  handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.userId);
     const allShoes = await ctx.db.query("shoes").collect();
     const allUserShoes = await ctx.db.query("userShoes").collect();
 

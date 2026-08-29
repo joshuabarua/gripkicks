@@ -1,15 +1,18 @@
 import type { HonoWithConvex } from "convex-helpers/server/hono";
 import type { ActionCtx } from "../_generated/server";
-import { api } from "../_generated/api";
+import { internal } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
 import {
   handleError,
+  requireServiceToken,
   withIdValidation,
   withUserAndShoeValidation,
   withUserValidation,
 } from "./helpers";
 
 export function registerStashRoutes(app: HonoWithConvex<ActionCtx>) {
+  app.use("/api/stash/*", requireServiceToken);
+
   app.get("/api/v1/stash", async (c) => {
     return c.json(
       { success: false, message: "Use backend-api for stash endpoints" },
@@ -34,7 +37,7 @@ export function registerStashRoutes(app: HonoWithConvex<ActionCtx>) {
   app.post("/api/stash/getUserStash", async (c) => {
     const { betterAuthId } = await c.req.json();
     return withUserValidation(c, betterAuthId, async (user) => {
-      return await c.env.runQuery(api.stash.getUserStash, {
+      return await c.env.runQuery(internal.stash.serviceGetUserStash, {
         userId: user._id,
       });
     });
@@ -43,7 +46,7 @@ export function registerStashRoutes(app: HonoWithConvex<ActionCtx>) {
   app.post("/api/stash/addToStash", async (c) => {
     const { betterAuthId, shoeId } = await c.req.json();
     return withUserAndShoeValidation(c, betterAuthId, shoeId, async (user, validShoeId) => {
-      const userShoeId = await c.env.runMutation(api.stash.addToStash, {
+      const userShoeId = await c.env.runMutation(internal.stash.serviceAddToStash, {
         userId: user._id,
         shoeId: validShoeId,
       });
@@ -54,7 +57,7 @@ export function registerStashRoutes(app: HonoWithConvex<ActionCtx>) {
   app.post("/api/stash/removeFromStash", async (c) => {
     const { betterAuthId, shoeId } = await c.req.json();
     return withUserAndShoeValidation(c, betterAuthId, shoeId, async (user, validShoeId) => {
-      const removed = await c.env.runMutation(api.stash.removeFromStash, {
+      const removed = await c.env.runMutation(internal.stash.serviceRemoveFromStash, {
         userId: user._id,
         shoeId: validShoeId,
       });
@@ -65,6 +68,7 @@ export function registerStashRoutes(app: HonoWithConvex<ActionCtx>) {
   app.post("/api/stash/updateUserShoeStats", async (c) => {
     const {
       userShoeId,
+      betterAuthUserId,
       size,
       purchaseDate,
       condition,
@@ -78,8 +82,9 @@ export function registerStashRoutes(app: HonoWithConvex<ActionCtx>) {
       userShoeId,
       "User shoe ID",
       async (validUserShoeId) => {
-        return await c.env.runMutation(api.stash.updateUserShoeStats, {
+        return await c.env.runMutation(internal.stash.serviceUpdateUserShoeStats, {
           userShoeId: validUserShoeId,
+          betterAuthUserId,
           size,
           purchaseDate,
           condition,
@@ -93,14 +98,15 @@ export function registerStashRoutes(app: HonoWithConvex<ActionCtx>) {
   });
 
   app.post("/api/stash/toggleFavourite", async (c) => {
-    const { userShoeId } = await c.req.json();
+    const { userShoeId, betterAuthUserId } = await c.req.json();
     return withIdValidation<Id<"userShoes">>(
       c,
       userShoeId,
       "User shoe ID",
       async (validUserShoeId) => {
-        return await c.env.runMutation(api.stash.toggleFavourite, {
+        return await c.env.runMutation(internal.stash.serviceToggleFavourite, {
           userShoeId: validUserShoeId,
+          betterAuthUserId,
         });
       },
     );
@@ -118,7 +124,7 @@ export function registerStashRoutes(app: HonoWithConvex<ActionCtx>) {
       );
     }
     try {
-      const ownership = await c.env.runQuery(api.auth.verifyUserShoeOwnership, {
+      const ownership = await c.env.runQuery(internal.stash.serviceVerifyUserShoeOwnership, {
         userShoeId: userShoeId as Id<"userShoes">,
         betterAuthUserId,
       });
@@ -129,14 +135,15 @@ export function registerStashRoutes(app: HonoWithConvex<ActionCtx>) {
   });
 
   app.post("/api/stash/deleteUserShoe", async (c) => {
-    const { userShoeId } = await c.req.json();
+    const { userShoeId, betterAuthUserId } = await c.req.json();
     return withIdValidation<Id<"userShoes">>(
       c,
       userShoeId,
       "User shoe ID",
       async (validUserShoeId) => {
-        await c.env.runMutation(api.stash.deleteUserShoe, {
+        await c.env.runMutation(internal.stash.serviceDeleteUserShoe, {
           userShoeId: validUserShoeId,
+          betterAuthUserId,
         });
         return { deleted: true };
       },

@@ -35,6 +35,7 @@ export function useUserSync() {
               `${process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:3001"}/api/v1/sync-user`,
               {
                 method: "POST",
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(currentUser),
               },

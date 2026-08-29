@@ -1,10 +1,12 @@
 import type { HonoWithConvex } from "convex-helpers/server/hono";
 import type { ActionCtx } from "../_generated/server";
-import { api } from "../_generated/api";
+import { api, internal } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
-import { handleError } from "./helpers";
+import { handleError, requireServiceToken } from "./helpers";
 
 export function registerShoeRoutes(app: HonoWithConvex<ActionCtx>) {
+  app.use("/api/shoes/*", requireServiceToken);
+
   app.get("/api/v1/shoes", async (c) => {
     const shoes = await c.env.runQuery(api.shoes.list, {});
     return c.json({ success: true, data: shoes });
@@ -46,7 +48,7 @@ export function registerShoeRoutes(app: HonoWithConvex<ActionCtx>) {
       );
     }
     try {
-      const result = await c.env.runMutation(api.seed.deleteShoeByName, {
+      const result = await c.env.runMutation(internal.seed.deleteShoeByName, {
         name,
         brand,
       });
@@ -65,7 +67,7 @@ export function registerShoeRoutes(app: HonoWithConvex<ActionCtx>) {
       );
     }
     try {
-      const updated = await c.env.runMutation(api.seed.updateShoeImageUrl, {
+      const updated = await c.env.runMutation(internal.seed.updateShoeImageUrl, {
         id: id as Id<"shoes">,
         imageUrl,
       });

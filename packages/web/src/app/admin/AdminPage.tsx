@@ -139,8 +139,7 @@ export default function AdminDashboard() {
         shoe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         shoe.brand.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesBrand = brandFilter === "all" || shoe.brand === brandFilter;
-      const matchesLaSportiva = shoe.brand === "La Sportiva";
-      return matchesSearch && matchesBrand && matchesLaSportiva;
+      return matchesSearch && matchesBrand;
     }) || [];
 
   const filteredUsers =

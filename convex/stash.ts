@@ -1,13 +1,34 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { filterUndefinedValues, userShoeFieldsValidator } from "./utils/helpers";
+import { requireUserAccess, requireUserShoeAccess } from "./authorization";
 
-async function getUserShoe(ctx: any, userShoeId: any) {
+async function getServiceUserShoe(
+  ctx: any,
+  userShoeId: any,
+  betterAuthUserId: string,
+) {
   const userShoe = await ctx.db.get(userShoeId);
-  if (!userShoe) {
-    throw new Error("User shoe not found");
-  }
-  return userShoe;
+  if (!userShoe) return null;
+  const user = await ctx.db.get(userShoe.userId);
+  if (!user) return null;
+  const owned =
+    user._id === betterAuthUserId || user.betterAuthId === betterAuthUserId;
+  return owned ? { userShoe, user } : null;
+}
+
+async function requireServiceUserShoe(
+  ctx: any,
+  userShoeId: any,
+  betterAuthUserId: string,
+) {
+  const ownership = await getServiceUserShoe(
+    ctx,
+    userShoeId,
+    betterAuthUserId,
+  );
+  if (!ownership) throw new Error("Access denied");
+  return ownership.userShoe;
 }
 
 async function getUserShoesByUserId(ctx: any, userId: any) {
@@ -117,39 +138,45 @@ async function updateShoeRatingAverages(ctx: any, shoeId: any) {
   }
 }
 
+async function hydrateUserStash(ctx: any, userId: any) {
+  const userShoes = await getUserShoesByUserId(ctx, userId);
+
+  if (userShoes.length === 0) {
+    return [];
+  }
+
+  // Collect all shoe IDs and fetch them in a single batch
+  const shoeIds = userShoes.map((entry: any) => entry.shoeId);
+  const shoes = await Promise.all(
+    shoeIds.map((shoeId: any) => ctx.db.get(shoeId))
+  );
+
+  // Create a map for O(1) lookup instead of array search
+  const shoeMap = new Map(
+    shoes.filter(shoe => shoe !== null).map(shoe => [shoe!._id, shoe!])
+  );
+
+  // Combine userShoes with their corresponding shoe data
+  return userShoes
+    .map((entry: any) => ({
+      ...entry,
+      shoe: shoeMap.get(entry.shoeId) || null
+    }))
+    .filter((entry: any) => entry.shoe !== null);
+}
+
 export const getUserStash = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
-    const userShoes = await getUserShoesByUserId(ctx, args.userId);
-
-    if (userShoes.length === 0) {
-      return [];
-    }
-
-    // Collect all shoe IDs and fetch them in a single batch
-    const shoeIds = userShoes.map((entry: any) => entry.shoeId);
-    const shoes = await Promise.all(
-      shoeIds.map((shoeId: any) => ctx.db.get(shoeId))
-    );
-
-    // Create a map for O(1) lookup instead of array search
-    const shoeMap = new Map(
-      shoes.filter(shoe => shoe !== null).map(shoe => [shoe!._id, shoe!])
-    );
-
-    // Combine userShoes with their corresponding shoe data
-    return userShoes
-      .map((entry: any) => ({
-        ...entry,
-        shoe: shoeMap.get(entry.shoeId) || null
-      }))
-      .filter((entry: any) => entry.shoe !== null);
+    await requireUserAccess(ctx, args.userId);
+    return await hydrateUserStash(ctx, args.userId);
   },
 });
 
 export const addToStash = mutation({
   args: userShoeMutationArgs,
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.userId);
     return await withExistingUserShoe(
       ctx,
       args.userId,
@@ -166,6 +193,7 @@ export const addToStash = mutation({
 export const removeFromStash = mutation({
   args: userShoeMutationArgs,
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.userId);
     return await withExistingUserShoe(
       ctx,
       args.userId,
@@ -185,6 +213,7 @@ export const isInStash = query({
     shoeId: v.id("shoes"),
   },
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.userId);
     const existing = await findExistingUserShoe(ctx, args.userId, args.shoeId);
     return existing !== null;
   },
@@ -198,7 +227,7 @@ export const updateUserShoeStats = mutation({
   handler: async (ctx, args) => {
     const { userShoeId, ...updateFields } = args;
 
-    const userShoe = await getUserShoe(ctx, userShoeId);
+    const userShoe = await requireUserShoeAccess(ctx, userShoeId);
 
     const fieldsToUpdate = filterUndefinedValues(updateFields);
 
@@ -218,7 +247,7 @@ export const toggleFavourite = mutation({
     userShoeId: v.id("userShoes"),
   },
   handler: async (ctx, args) => {
-    const userShoe = await getUserShoe(ctx, args.userShoeId);
+    const userShoe = await requireUserShoeAccess(ctx, args.userShoeId);
     await ctx.db.patch(args.userShoeId, {
       isFavourite: !userShoe.isFavourite,
     });
@@ -231,6 +260,7 @@ export const deleteUserShoe = mutation({
     userShoeId: v.id("userShoes"),
   },
   handler: async (ctx, args) => {
+    await requireUserShoeAccess(ctx, args.userShoeId);
     // Delete the userShoe document
     await ctx.db.delete(args.userShoeId);
   },
@@ -351,5 +381,110 @@ export const getSoleMateAggregates = query({
       avgSizingDeviationScore:
         agg.sizingDeviationCount > 0 ? agg.sizingDeviationTotal / agg.sizingDeviationCount : null,
     }));
+  },
+});
+
+export const serviceGetUserStash = internalQuery({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => await hydrateUserStash(ctx, args.userId),
+});
+
+export const serviceAddToStash = internalMutation({
+  args: userShoeMutationArgs,
+  handler: async (ctx, args) => {
+    return await withExistingUserShoe(
+      ctx,
+      args.userId,
+      args.shoeId,
+      async (existing) => existing._id,
+      async () => ctx.db.insert("userShoes", args),
+    );
+  },
+});
+
+export const serviceRemoveFromStash = internalMutation({
+  args: userShoeMutationArgs,
+  handler: async (ctx, args) => {
+    return await withExistingUserShoe(
+      ctx,
+      args.userId,
+      args.shoeId,
+      async (existing) => {
+        await ctx.db.delete(existing._id);
+        return true;
+      },
+      async () => false,
+    );
+  },
+});
+
+export const serviceUpdateUserShoeStats = internalMutation({
+  args: {
+    userShoeId: v.id("userShoes"),
+    betterAuthUserId: v.string(),
+    ...userShoeFieldsValidator,
+  },
+  handler: async (ctx, args) => {
+    const { userShoeId, betterAuthUserId, ...updateFields } = args;
+    const userShoe = await requireServiceUserShoe(
+      ctx,
+      userShoeId,
+      betterAuthUserId,
+    );
+    const fieldsToUpdate = filterUndefinedValues(updateFields);
+    if (Object.keys(fieldsToUpdate).length === 0) return null;
+    await ctx.db.patch(userShoeId, fieldsToUpdate);
+    await updateShoeRatingAverages(ctx, userShoe.shoeId);
+    return await ctx.db.get(userShoeId);
+  },
+});
+
+export const serviceToggleFavourite = internalMutation({
+  args: {
+    userShoeId: v.id("userShoes"),
+    betterAuthUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userShoe = await requireServiceUserShoe(
+      ctx,
+      args.userShoeId,
+      args.betterAuthUserId,
+    );
+    await ctx.db.patch(args.userShoeId, {
+      isFavourite: !userShoe.isFavourite,
+    });
+    return await ctx.db.get(args.userShoeId);
+  },
+});
+
+export const serviceDeleteUserShoe = internalMutation({
+  args: {
+    userShoeId: v.id("userShoes"),
+    betterAuthUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await requireServiceUserShoe(
+      ctx,
+      args.userShoeId,
+      args.betterAuthUserId,
+    );
+    await ctx.db.delete(args.userShoeId);
+  },
+});
+
+export const serviceVerifyUserShoeOwnership = internalQuery({
+  args: {
+    userShoeId: v.id("userShoes"),
+    betterAuthUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const ownership = await getServiceUserShoe(
+      ctx,
+      args.userShoeId,
+      args.betterAuthUserId,
+    );
+    return ownership
+      ? { owned: true, ...ownership }
+      : { owned: false, reason: "Access denied" };
   },
 });

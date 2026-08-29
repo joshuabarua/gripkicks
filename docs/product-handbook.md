@@ -420,6 +420,7 @@ userShoes: defineTable({
    NEXT_PUBLIC_CONVEX_URL=your-convex-url
    NEXT_PUBLIC_API_URL=http://localhost:3001
    BETTER_AUTH_SECRET=your-secret
+   CONVEX_SERVICE_TOKEN=your-service-token
    GOOGLE_CLIENT_ID=your-google-client-id
    GOOGLE_CLIENT_SECRET=your-google-client-secret
    ```
@@ -469,6 +470,10 @@ userShoes: defineTable({
   - `BETTER_AUTH_URL=https://api.grip-kicks.com`
   - `BETTER_AUTH_SECRET=<strong_secret>`
   - `CONVEX_URL=<convex_prod_url>`
+  - `CONVEX_SERVICE_TOKEN=<shared_convex_service_token>`
+- **Required Convex deployment env vars**:
+  - `BETTER_AUTH_URL=https://api.grip-kicks.com`
+  - `CONVEX_SERVICE_TOKEN=<same_shared_convex_service_token>`
 - **Optional rate-limit env vars** (defaults shown):
   - `RATE_LIMIT_API_WINDOW_MS=60000`, `RATE_LIMIT_API_MAX=120`
   - `RATE_LIMIT_AUTH_WINDOW_MS=60000`, `RATE_LIMIT_AUTH_MAX=30`
@@ -498,30 +503,7 @@ userShoes: defineTable({
 
 ## Roadmap
 
-### Completed
-
-- **Convex Migration**: Full migration from Supabase/Prisma to Convex
-- **Shoe Sanctuary**: Shoe collection management with 70+ shoes
-- **Foot Lab**: Foot shape analysis and recommendations
-- **User Profiles**: Profile management with onboarding
-- **3D Visualization**: WebGL shoe model with context recovery
-- **Authentication**: Better Auth integration with Google OAuth
-
-### In Progress
-
-- **Stash Persistence**: Connecting shoe collection to user accounts
-- **Real-time Updates**: Leveraging Convex real-time capabilities
-
-### TODO
-
-- **Admin Panel**: Manage shoe database
-- **Image Upload**: Add shoe images to database
-- **Advanced Filters**: More granular shoe filtering
-- **Community Features**: Share collections and reviews
-- **Loading States**: Improve UX with loading indicators
-- **Shoe Rankings**: Game-like stats display for shoes
-- **Brand Filters**: Quick brand filtering in search
-- **Brands Page**: Scattered/painted brand logos across the page; clicking a logo goes to the brand's bio/history. Future: use logos in place of plain text on individual brand pages
+The canonical roadmap and backlog are stored in Convex and managed from the **Backlog** tab at `/admin`. Repository documentation describes the current product and architecture but does not track task status.
 
 ---
 

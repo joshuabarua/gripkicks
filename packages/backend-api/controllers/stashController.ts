@@ -19,7 +19,8 @@ async function validateUserShoeAccess(c: Context, paramName: string = 'userShoeI
   const paramError = validateRequiredParam(userShoeId, 'User shoe ID', c);
   if (paramError) return { error: paramError };
 
-  await verifyOwnership(c, userShoeId!);
+  const ownershipError = await verifyOwnership(c, userShoeId!);
+  if (ownershipError) return { error: ownershipError };
 
   return { user, userShoeId };
 }
@@ -65,15 +66,16 @@ export const removeFromStash = async (c: Context): Promise<Response> => {
   if (authError) return authError;
 
   const user = c.get('user');
-  const userShoeId = c.req.param('shoeId');
-  const paramError = validateRequiredParam(userShoeId, 'Shoe ID', c);
+  const shoeId = c.req.param('shoeId');
+  const paramError = validateRequiredParam(shoeId, 'Shoe ID', c);
   if (paramError) return paramError;
 
-  await verifyOwnership(c, userShoeId!);
-
   const result = await ResultAsync.fromPromise(
-    authenticatedConvexRequest(c, '/api/stash/deleteUserShoe', 'POST', { userShoeId }),
-    (error) => handleControllerError(error, 'remove from stash', 'DELETE', `/api/v1/stash/${userShoeId}`, user.id)
+    authenticatedConvexRequest(c, '/api/stash/removeFromStash', 'POST', {
+      betterAuthId: user.id,
+      shoeId,
+    }),
+    (error) => handleControllerError(error, 'remove from stash', 'DELETE', `/api/v1/stash/${shoeId}`, user.id)
   );
 
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
@@ -89,6 +91,7 @@ export const updateUserShoeStats = async (c: Context): Promise<Response> => {
   const result = await ResultAsync.fromPromise(
     authenticatedConvexRequest(c, '/api/stash/updateUserShoeStats', 'POST', {
       userShoeId,
+      betterAuthUserId: user.id,
       size: body.size,
       purchaseDate: body.purchaseDate,
       condition: body.condition,
@@ -110,7 +113,10 @@ export const toggleFavourite = async (c: Context): Promise<Response> => {
   const { user, userShoeId } = validation;
 
   const result = await ResultAsync.fromPromise(
-    authenticatedConvexRequest(c, '/api/stash/toggleFavourite', 'POST', { userShoeId }),
+    authenticatedConvexRequest(c, '/api/stash/toggleFavourite', 'POST', {
+      userShoeId,
+      betterAuthUserId: user.id,
+    }),
     (error) => handleControllerError(error, 'toggle favourite', 'PATCH', `/api/v1/stash/${userShoeId}/favourite`, user.id)
   );
 

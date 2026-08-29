@@ -35,13 +35,25 @@ export function getConvexUrl(): string {
   return convexUrl;
 }
 
+export function getConvexServiceHeaders(): Record<string, string> {
+  const serviceToken = process.env.CONVEX_SERVICE_TOKEN;
+  if (!serviceToken) {
+    throw new Error('CONVEX_SERVICE_TOKEN is required');
+  }
+
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${serviceToken}`,
+  };
+}
+
 async function findUserByBetterAuthId(betterAuthId: string): Promise<{ success: boolean; data?: any; error?: string }> {
   const convexUrl = getConvexUrl();
 
   try {
     const response = await fetchWithTimeout(`${convexUrl}/api/users/findByBetterAuthId`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getConvexServiceHeaders(),
       body: JSON.stringify({ betterAuthId })
     });
 

@@ -2,7 +2,7 @@
 
 **Status:** Active  
 **Last Updated:** 2026-03-25  
-**Purpose:** Single source of truth for platform architecture, business model, and implementation roadmap.
+**Purpose:** Single source of truth for platform architecture and business model.
 
 ---
 
@@ -99,44 +99,7 @@ All core features shipped. Schema, scoring algorithm, and all UI components are 
 
 ## 4. Implementation Roadmap
 
-### Phase 1: Foundation (Complete ✓)
-
-- [x] B2C paywall removal — full recommendations open to all users
-- [x] Sole Mate Gear Lab shipped
-- [x] Scoring algorithm with 3x weighting
-- [x] Reality Check UI components
-
-### Phase 2: Data Enrichment (In Progress)
-
-- [x] **Task 2.1: Schema Signal Enrichment**
-
-  - Add `fitLongevity` to `userShoes` — how long before shoe degraded
-  - Add `sizingDeviation` to `userShoes` — size deviation from user's standard
-  - Weight enrichment signals into Matcher, Sole Mate aggregates, and recommendation ranking
-  - Add per-shoe aggregate signal chips for community recommendations and Sole Mate results
-
-- [ ] **Task 2.2: Data Contribution Nudge**
-  - Create `DataContributionNudge.tsx` — progress indicator showing profile completeness
-  - Metrics: foot shape set, foot volume set, ≥1 shoe in stash, ≥1 shoe rated
-
-### Phase 3: Community Layer (Next)
-
-- [ ] Expand Sanctuary — wear tracking, rotation logging
-- [ ] More "people like you also chose X" signals
-- [ ] User profiles with climbing style tags
-- [ ] Helpful reviewer leaderboard
-
-### Phase 4: B2B Platform (Future)
-
-- [ ] **Task 4.1: Brand Dashboard Scaffolding**
-
-  - Create `convex/dataReports.ts` with `getBrandPerceptionReport` query
-  - Create protected `/brand/dashboard` route
-  - Add `role: "brand"` field to users table
-
-- [ ] **Task 4.2: Polar Integration**
-  - Set up B2B subscription tiers (monthly, per-report)
-  - Connect to existing Polar.sh SDK
+The canonical roadmap and backlog are stored in Convex and managed from the **Backlog** tab at `/admin`. This document records platform architecture only; task status belongs in the admin backlog.
 
 ---
 
@@ -157,6 +120,8 @@ All core features shipped. Schema, scoring algorithm, and all UI components are 
 
 - `NEXT_PUBLIC_CONVEX_URL` → `https://decisive-ermine-92.convex.cloud`
 - `NEXT_PUBLIC_API_URL` → production backend URL
+- `CONVEX_SERVICE_TOKEN` → the same high-entropy value in Render and Convex
+- `BETTER_AUTH_URL` → production auth issuer in Convex
 - Better Auth, Database, Polar, ImageKit variables set
 
 **Deploy sequence:**

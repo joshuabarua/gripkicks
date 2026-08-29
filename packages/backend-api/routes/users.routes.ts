@@ -46,6 +46,6 @@ Users.post("/stash/:userShoeId/favourite", protect, toggleFavourite);
 Users.delete("/stash/:shoeId", protect, removeFromStash);
 
 // Get Single User
-Users.get("/:id", protect, getUserById);
+Users.get("/:id", isAdmin, getUserById);
 
 export default Users;

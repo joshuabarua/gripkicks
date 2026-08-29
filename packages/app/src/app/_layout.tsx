@@ -1,14 +1,15 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ConvexProvider } from 'convex/react';
+import { ConvexProviderWithAuth } from 'convex/react';
 import { colors } from '@/theme/colors';
 import { convex } from '@/lib/convex';
+import { useBetterAuthForConvex } from '@/lib/auth';
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-      <ConvexProvider client={convex}>
+      <ConvexProviderWithAuth client={convex} useAuth={useBetterAuthForConvex}>
         <Stack
           screenOptions={{
             headerStyle: { backgroundColor: colors.background },
@@ -22,7 +23,7 @@ export default function RootLayout() {
             options={{ title: 'Sign In', presentation: 'modal' }}
           />
         </Stack>
-      </ConvexProvider>
+      </ConvexProviderWithAuth>
       <StatusBar style="light" />
     </SafeAreaProvider>
   );

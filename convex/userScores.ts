@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 import { scoreHistoryEntryValidator, preferenceProfileValidator, learnedPreferencesValidator, footProfileValidator } from './utils/helpers';
+import { requireAdmin, requireUserAccess } from './authorization';
 
 // Update or create user score profile
 export const updateScoreProfile = mutation({
@@ -14,6 +15,7 @@ export const updateScoreProfile = mutation({
     version: v.number(),
   },
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.userId);
     const { userId, ...profileData } = args;
 
     // Check if score profile already exists
@@ -42,6 +44,7 @@ export const getScoreProfile = query({
     userId: v.id('users'),
   },
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.userId);
     return await ctx.db
       .query('userScoreProfiles')
       .withIndex('by_userId', (q) => q.eq('userId', args.userId))
@@ -56,6 +59,7 @@ export const addScoreHistory = mutation({
     history: scoreHistoryEntryValidator,
   },
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.userId);
     const scoreProfile = await ctx.db
       .query('userScoreProfiles')
       .withIndex('by_userId', (q) => q.eq('userId', args.userId))
@@ -83,6 +87,7 @@ export const getTopUsers = query({
     offset: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const limit = args.limit || 50;
     const offset = args.offset || 0;
 
@@ -116,6 +121,7 @@ export const getUsersWithinScoreRange = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const rangePercentage = args.rangePercentage || 1;
     const limit = args.limit || 20;
 
@@ -151,6 +157,7 @@ export const getScoreProgression = query({
     days: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.userId);
     const days = args.days || 30;
     const cutoffTime = Date.now() - (days * 24 * 60 * 60 * 1000);
 

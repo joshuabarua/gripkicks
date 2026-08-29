@@ -1,0 +1,112 @@
+name: P0 CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p0-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  p0:
+    name: Unit, build, and public smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run unit tests
+        run: yarn test:run
+
+      - name: Build backend API
+        run: yarn workspace backend-api build
+
+      - name: Build web app
+        run: yarn workspace web build
+
+      - name: Install Playwright Chromium
+        run: yarn workspace web playwright install --with-deps chromium
+
+      - name: Run local public smoke tests
+        run: yarn workspace web test:e2e:public
+
+      - name: Upload public smoke artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-smoke-artifacts
+          path: |
+            packages/web/playwright-report
+            packages/web/test-results
+          if-no-files-found: ignore
+          retention-days: 7
+
+  staging-e2e:
+    name: Authenticated staging smoke
+    needs: p0
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      E2E_RUN_AUTHENTICATED: ${{ vars.E2E_RUN_AUTHENTICATED }}
+      E2E_BASE_URL: ${{ vars.E2E_BASE_URL }}
+      E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL }}
+      E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      E2E_SHOE_QUERY: ${{ vars.E2E_SHOE_QUERY }}
+    steps:
+      - name: Check staging configuration
+        id: staging
+        shell: bash
+        run: |
+          if [[ "$E2E_RUN_AUTHENTICATED" == "true" && -n "$E2E_BASE_URL" && -n "$E2E_USER_EMAIL" && -n "$E2E_USER_PASSWORD" && -n "$E2E_ADMIN_EMAIL" && -n "$E2E_ADMIN_PASSWORD" ]]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Authenticated staging smoke tests are not configured; skipping."
+          fi
+
+      - name: Check out repository
+        if: ${{ steps.staging.outputs.enabled == 'true' }}
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        if: ${{ steps.staging.outputs.enabled == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Enable Corepack
+        if: ${{ steps.staging.outputs.enabled == 'true' }}
+        run: corepack enable
+
+      - name: Install dependencies
+        if: ${{ steps.staging.outputs.enabled == 'true' }}
+        run: yarn install --immutable
+
+      - name: Install Playwright Chromium
+        if: ${{ steps.staging.outputs.enabled == 'true' }}
+        run: yarn workspace web playwright install --with-deps chromium
+
+      - name: Run authenticated staging smoke tests
+        if: ${{ steps.staging.outputs.enabled == 'true' }}
+        run: yarn workspace web test:e2e:authenticated

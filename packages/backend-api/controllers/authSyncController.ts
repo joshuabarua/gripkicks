@@ -1,4 +1,5 @@
 import { Context } from 'hono';
+import { getConvexServiceHeaders } from '../utils/convexHelper';
 
 function toConvexHttpBaseUrl(url: string): string {
   // Convex client URL is typically https://<deployment>.convex.cloud
@@ -12,7 +13,7 @@ function toConvexHttpBaseUrl(url: string): string {
 // Sync user to Convex after authentication
 export const syncUserToConvex = async (c: Context) => {
   try {
-    const { id, email, name, image, emailVerified } = await c.req.json();
+    const { id, email, name, image, emailVerified } = c.get('user');
     
     // Prefer an explicit HTTP base if provided.
     // Otherwise derive the correct HTTP base from CONVEX_URL (convex.cloud -> convex.site).
@@ -35,7 +36,7 @@ export const syncUserToConvex = async (c: Context) => {
       try {
         const convexResponse = await fetch(`${convexUrl}/api/sync-user`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getConvexServiceHeaders(),
           body: JSON.stringify({
             id,
             email,

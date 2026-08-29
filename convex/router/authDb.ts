@@ -1,9 +1,9 @@
 import type { HonoWithConvex } from "convex-helpers/server/hono";
 import type { FunctionArgs } from "convex/server";
 import type { ActionCtx } from "../_generated/server";
-import { api } from "../_generated/api";
+import { internal } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
-import type { HttpContext } from "./helpers";
+import { requireServiceToken, type HttpContext } from "./helpers";
 
 type AuthDbBody = Record<string, unknown> & {
   id?: string;
@@ -17,29 +17,29 @@ async function handleUserOperation(
 ): Promise<unknown> {
   if (operation === "create") {
     return await c.env.runMutation(
-      api.authDb.createUser,
-      body as unknown as FunctionArgs<typeof api.authDb.createUser>,
+      internal.authDb.createUser,
+      body as unknown as FunctionArgs<typeof internal.authDb.createUser>,
     );
   }
   if (operation === "update") {
-    return await c.env.runMutation(api.authDb.updateUser, {
+    return await c.env.runMutation(internal.authDb.updateUser, {
       id: body.id as Id<"users">,
       ...body.data,
     });
   }
   if (operation === "delete") {
-    await c.env.runMutation(api.authDb.deleteUser, {
+    await c.env.runMutation(internal.authDb.deleteUser, {
       id: body.id as Id<"users">,
     });
     return { success: true };
   }
   if (operation === "findById") {
-    return await c.env.runQuery(api.authDb.findUserById, {
+    return await c.env.runQuery(internal.authDb.findUserById, {
       id: body.id as Id<"users">,
     });
   }
   if (operation === "findByEmail") {
-    return await c.env.runQuery(api.authDb.findUserByEmail, {
+    return await c.env.runQuery(internal.authDb.findUserByEmail, {
       email: body["email"] as string,
     });
   }
@@ -52,47 +52,47 @@ async function handleSessionOperation(
   body: AuthDbBody,
 ): Promise<unknown> {
   if (operation === "create") {
-    return await c.env.runMutation(api.authDb.createSession, {
+    return await c.env.runMutation(internal.authDb.createSession, {
       ...body,
       userId: body["userId"] as Id<"users">,
-    } as unknown as FunctionArgs<typeof api.authDb.createSession>);
+    } as unknown as FunctionArgs<typeof internal.authDb.createSession>);
   }
   if (operation === "update") {
-    return await c.env.runMutation(api.authDb.updateSession, {
+    return await c.env.runMutation(internal.authDb.updateSession, {
       id: body.id as Id<"sessions">,
       ...body.data,
     });
   }
   if (operation === "delete") {
-    await c.env.runMutation(api.authDb.deleteSession, {
+    await c.env.runMutation(internal.authDb.deleteSession, {
       id: body.id as Id<"sessions">,
     });
     return { success: true };
   }
   if (operation === "deleteByToken") {
-    await c.env.runMutation(api.authDb.deleteSessionByToken, {
+    await c.env.runMutation(internal.authDb.deleteSessionByToken, {
       token: body["token"] as string,
     });
     return { success: true };
   }
   if (operation === "deleteByUserId") {
-    const count = await c.env.runMutation(api.authDb.deleteSessionsByUserId, {
+    const count = await c.env.runMutation(internal.authDb.deleteSessionsByUserId, {
       userId: body["userId"] as Id<"users">,
     });
     return { success: true, count };
   }
   if (operation === "findById") {
-    return await c.env.runQuery(api.authDb.findSessionById, {
+    return await c.env.runQuery(internal.authDb.findSessionById, {
       id: body.id as Id<"sessions">,
     });
   }
   if (operation === "findByToken") {
-    return await c.env.runQuery(api.authDb.findSessionByToken, {
+    return await c.env.runQuery(internal.authDb.findSessionByToken, {
       token: body["token"] as string,
     });
   }
   if (operation === "findByUserId") {
-    return await c.env.runQuery(api.authDb.findSessionsByUserId, {
+    return await c.env.runQuery(internal.authDb.findSessionsByUserId, {
       userId: body["userId"] as Id<"users">,
     });
   }
@@ -105,35 +105,35 @@ async function handleAccountOperation(
   body: AuthDbBody,
 ): Promise<unknown> {
   if (operation === "create") {
-    return await c.env.runMutation(api.authDb.createAccount, {
+    return await c.env.runMutation(internal.authDb.createAccount, {
       ...body,
       userId: body["userId"] as Id<"users">,
-    } as unknown as FunctionArgs<typeof api.authDb.createAccount>);
+    } as unknown as FunctionArgs<typeof internal.authDb.createAccount>);
   }
   if (operation === "update") {
-    return await c.env.runMutation(api.authDb.updateAccount, {
+    return await c.env.runMutation(internal.authDb.updateAccount, {
       id: body.id as Id<"accounts">,
       ...body.data,
     });
   }
   if (operation === "delete") {
-    await c.env.runMutation(api.authDb.deleteAccount, {
+    await c.env.runMutation(internal.authDb.deleteAccount, {
       id: body.id as Id<"accounts">,
     });
     return { success: true };
   }
   if (operation === "findById") {
-    return await c.env.runQuery(api.authDb.findAccountById, {
+    return await c.env.runQuery(internal.authDb.findAccountById, {
       id: body.id as Id<"accounts">,
     });
   }
   if (operation === "findByUserId") {
-    return await c.env.runQuery(api.authDb.findAccountByUserId, {
+    return await c.env.runQuery(internal.authDb.findAccountByUserId, {
       userId: body["userId"] as Id<"users">,
     });
   }
   if (operation === "findByProviderAccountId") {
-    return await c.env.runQuery(api.authDb.findAccountByProviderAndAccountId, {
+    return await c.env.runQuery(internal.authDb.findAccountByProviderAndAccountId, {
       providerId: body["providerId"] as string,
       accountId: body["accountId"] as string,
     });
@@ -159,28 +159,45 @@ async function handleVerificationOperation(
           : body["expiresAt"],
     };
     return await c.env.runMutation(
-      api.authDb.createVerification,
+      internal.authDb.createVerification,
       validFields as unknown as FunctionArgs<
-        typeof api.authDb.createVerification
+        typeof internal.authDb.createVerification
       >,
     );
   }
   if (operation === "update") {
-    return await c.env.runMutation(api.authDb.updateVerification, {
+    return await c.env.runMutation(internal.authDb.updateVerification, {
       id: body.id as Id<"verifications">,
       ...body.data,
     });
   }
   if (operation === "delete") {
-    await c.env.runMutation(api.authDb.deleteVerification, {
+    await c.env.runMutation(internal.authDb.deleteVerification, {
       id: body.id as Id<"verifications">,
     });
     return { success: true };
   }
   if (operation === "findByIdentifier") {
-    return await c.env.runQuery(api.authDb.findVerificationByIdentifier, {
+    return await c.env.runQuery(internal.authDb.findVerificationByIdentifier, {
       identifier: body["identifier"] as string,
     });
+  }
+  return null;
+}
+
+async function handleJwkOperation(
+  c: HttpContext,
+  operation: string,
+  body: AuthDbBody,
+): Promise<unknown> {
+  if (operation === "create") {
+    return await c.env.runMutation(
+      internal.authDb.createJwk,
+      body as unknown as FunctionArgs<typeof internal.authDb.createJwk>,
+    );
+  }
+  if (operation === "list") {
+    return await c.env.runQuery(internal.authDb.listJwks, {});
   }
   return null;
 }
@@ -193,9 +210,11 @@ const modelHandlers: Record<
   session: handleSessionOperation,
   account: handleAccountOperation,
   verification: handleVerificationOperation,
+  jwks: handleJwkOperation,
 };
 
 export function registerAuthDbRoutes(app: HonoWithConvex<ActionCtx>) {
+  app.use("/api/auth-db/*", requireServiceToken);
   app.post("/api/auth-db/:model/:operation", async (c) => {
     try {
       const model = c.req.param("model");

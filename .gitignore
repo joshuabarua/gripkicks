@@ -26,6 +26,8 @@ jspm_packages/
 
 # testing
 /coverage
+/packages/web/playwright-report/
+/packages/web/test-results/
 
 # next.js
 /.next/

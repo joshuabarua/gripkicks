@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
+import { requireAdmin } from "./authorization";
 
 export const getShoePopularity = query({
   args: { shoeId: v.id("shoes") },
@@ -49,6 +50,7 @@ export const getAllShoesPopularity = query({
 
 export const list = query({
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     // Get all user shoes
     return await ctx.db.query("userShoes").collect();
   },

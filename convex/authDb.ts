@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internalMutation, internalQuery } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { formatEntityWithId, filterUndefinedValues, accountFieldsValidator } from "./utils/helpers";
 
@@ -35,7 +35,7 @@ async function queryByIndexFirst(ctx: any, tableName: string, indexName: string,
 
 // ============ USERS ============
 
-export const createUser = mutation({
+export const createUser = internalMutation({
   args: {
     id: v.optional(v.string()),
     betterAuthId: v.string(),
@@ -104,7 +104,7 @@ export const createUser = mutation({
   },
 });
 
-export const updateUser = mutation({
+export const updateUser = internalMutation({
   args: {
     id: v.id("users"),
     name: v.optional(v.string()),
@@ -121,17 +121,19 @@ export const updateUser = mutation({
   },
 });
 
-export const deleteUser = mutation({
+export const deleteUser = internalMutation({
   args: { id: v.id("users") },
   handler: async (ctx, args) => {
-    deleteByIndex(ctx, "sessions", "by_userId", "userId", args.id);
-    deleteByIndex(ctx, "accounts", "by_userId", "userId", args.id);
-    deleteByIndex(ctx, "userShoes", "by_userId", "userId", args.id);
+    await Promise.all([
+      deleteByIndex(ctx, "sessions", "by_userId", "userId", args.id),
+      deleteByIndex(ctx, "accounts", "by_userId", "userId", args.id),
+      deleteByIndex(ctx, "userShoes", "by_userId", "userId", args.id),
+    ]);
     await ctx.db.delete(args.id);
   },
 });
 
-export const findUserById = query({
+export const findUserById = internalQuery({
   args: { id: v.id("users") },
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.id);
@@ -139,7 +141,7 @@ export const findUserById = query({
   },
 });
 
-export const findUserByEmail = query({
+export const findUserByEmail = internalQuery({
   args: { email: v.string() },
   handler: async (ctx, args) => {
     const user = await queryByIndexFirst(ctx, "users", "by_email", "email", args.email);
@@ -149,7 +151,7 @@ export const findUserByEmail = query({
 
 // ============ SESSIONS ============
 
-export const createSession = mutation({
+export const createSession = internalMutation({
   args: {
     id: v.optional(v.string()),
     token: v.string(),
@@ -193,7 +195,7 @@ export const createSession = mutation({
   },
 });
 
-export const updateSession = mutation({
+export const updateSession = internalMutation({
   args: {
     id: v.id("sessions"),
     token: v.optional(v.string()),
@@ -215,14 +217,14 @@ export const updateSession = mutation({
   },
 });
 
-export const deleteSession = mutation({
+export const deleteSession = internalMutation({
   args: { id: v.id("sessions") },
   handler: async (ctx, args) => {
     await ctx.db.delete(args.id);
   },
 });
 
-export const deleteSessionByToken = mutation({
+export const deleteSessionByToken = internalMutation({
   args: { token: v.string() },
   handler: async (ctx, args) => {
     const session = await queryByIndexFirst(ctx, "sessions", "by_token", "token", args.token);
@@ -232,14 +234,14 @@ export const deleteSessionByToken = mutation({
   },
 });
 
-export const deleteSessionsByUserId = mutation({
+export const deleteSessionsByUserId = internalMutation({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
     return deleteByIndex(ctx, "sessions", "by_userId", "userId", args.userId);
   },
 });
 
-export const findSessionById = query({
+export const findSessionById = internalQuery({
   args: { id: v.id("sessions") },
   handler: async (ctx, args) => {
     const session = await ctx.db.get(args.id);
@@ -247,7 +249,7 @@ export const findSessionById = query({
   },
 });
 
-export const findSessionByToken = query({
+export const findSessionByToken = internalQuery({
   args: { token: v.string() },
   handler: async (ctx, args) => {
     const session = await queryByIndexFirst(ctx, "sessions", "by_token", "token", args.token);
@@ -255,7 +257,7 @@ export const findSessionByToken = query({
   },
 });
 
-export const findSessionsByUserId = query({
+export const findSessionsByUserId = internalQuery({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
     const sessions = await ctx.db
@@ -268,7 +270,7 @@ export const findSessionsByUserId = query({
 
 // ============ ACCOUNTS ============
 
-export const createAccount = mutation({
+export const createAccount = internalMutation({
   args: {
     id: v.optional(v.string()),
     accountId: v.string(),
@@ -353,7 +355,7 @@ export const createAccount = mutation({
   },
 });
 
-export const updateAccount = mutation({
+export const updateAccount = internalMutation({
   args: {
     id: v.id("accounts"),
     ...accountFieldsValidator,
@@ -367,14 +369,14 @@ export const updateAccount = mutation({
   },
 });
 
-export const deleteAccount = mutation({
+export const deleteAccount = internalMutation({
   args: { id: v.id("accounts") },
   handler: async (ctx, args) => {
     await ctx.db.delete(args.id);
   },
 });
 
-export const findAccountById = query({
+export const findAccountById = internalQuery({
   args: { id: v.id("accounts") },
   handler: async (ctx, args) => {
     const account = await ctx.db.get(args.id);
@@ -382,7 +384,7 @@ export const findAccountById = query({
   },
 });
 
-export const findAccountByUserId = query({
+export const findAccountByUserId = internalQuery({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
     const accounts = await ctx.db
@@ -393,7 +395,7 @@ export const findAccountByUserId = query({
   },
 });
 
-export const findAccountByProviderAndAccountId = query({
+export const findAccountByProviderAndAccountId = internalQuery({
   args: { providerId: v.string(), accountId: v.string() },
   handler: async (ctx, args) => {
     const accounts = await queryByIndexFirst(ctx, "accounts", "by_provider_accountId", ["providerId", "accountId"], { providerId: args.providerId, accountId: args.accountId });
@@ -403,7 +405,7 @@ export const findAccountByProviderAndAccountId = query({
 
 // ============ VERIFICATIONS ============
 
-export const createVerification = mutation({
+export const createVerification = internalMutation({
   args: {
     id: v.optional(v.string()),
     identifier: v.string(),
@@ -423,7 +425,7 @@ export const createVerification = mutation({
   },
 });
 
-export const updateVerification = mutation({
+export const updateVerification = internalMutation({
   args: {
     id: v.id("verifications"),
     identifier: v.optional(v.string()),
@@ -439,7 +441,7 @@ export const updateVerification = mutation({
   },
 });
 
-export const deleteExpired = mutation({
+export const deleteExpired = internalMutation({
   args: {
     expiresBefore: v.number(),
   },
@@ -467,7 +469,7 @@ export const deleteExpired = mutation({
   },
 });
 
-export const deleteVerification = mutation({
+export const deleteVerification = internalMutation({
   args: {
     id: v.id("verifications"),
   },
@@ -477,10 +479,33 @@ export const deleteVerification = mutation({
   },
 });
 
-export const findVerificationByIdentifier = query({
+export const findVerificationByIdentifier = internalQuery({
   args: { identifier: v.string() },
   handler: async (ctx, args) => {
     const verification = await queryByIndexFirst(ctx, "verifications", "by_identifier", "identifier", args.identifier);
     return formatEntityWithId(verification);
+  },
+});
+
+export const createJwk = internalMutation({
+  args: {
+    publicKey: v.string(),
+    privateKey: v.string(),
+    createdAt: v.number(),
+    expiresAt: v.optional(v.number()),
+    alg: v.optional(v.string()),
+    crv: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const id = await ctx.db.insert("jwks", args);
+    return formatEntityWithId(await ctx.db.get(id));
+  },
+});
+
+export const listJwks = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const keys = await ctx.db.query("jwks").withIndex("by_createdAt").collect();
+    return keys.map((key) => formatEntityWithId(key));
   },
 });

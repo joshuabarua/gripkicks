@@ -2,11 +2,12 @@
 
 import React, { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConvexProvider, ConvexReactClient } from "convex/react";
+import { ConvexProviderWithAuth, ConvexReactClient } from "convex/react";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { LoadingProvider } from "@/contexts/LoadingContext";
 import FootProfileSync from "@/components/FootProfileSync";
+import { useBetterAuthForConvex } from "@/lib/auth";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,12 +39,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PostHogProvider client={posthog}>
       <LoadingProvider>
-        <ConvexProvider client={convex}>
+        <ConvexProviderWithAuth client={convex} useAuth={useBetterAuthForConvex}>
           <QueryClientProvider client={queryClient}>
             <FootProfileSync />
             {children}
           </QueryClientProvider>
-        </ConvexProvider>
+        </ConvexProviderWithAuth>
       </LoadingProvider>
     </PostHogProvider>
   );

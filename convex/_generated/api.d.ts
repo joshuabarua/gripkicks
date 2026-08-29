@@ -11,6 +11,7 @@
 import type * as app from "../app.js";
 import type * as auth from "../auth.js";
 import type * as authDb from "../authDb.js";
+import type * as authorization from "../authorization.js";
 import type * as backlog from "../backlog.js";
 import type * as http from "../http.js";
 import type * as popularity from "../popularity.js";
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   app: typeof app;
   auth: typeof auth;
   authDb: typeof authDb;
+  authorization: typeof authorization;
   backlog: typeof backlog;
   http: typeof http;
   popularity: typeof popularity;

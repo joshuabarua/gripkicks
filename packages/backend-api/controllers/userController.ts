@@ -1,22 +1,13 @@
 import { Context } from 'hono';
-import { ResultAsync, err, ok } from 'neverthrow';
-import { 
-  UnauthenticatedError, 
-  ValidationError, 
-  NotFoundError,
-  UnexpectedError 
-} from '../src/lib/errors';
+import { err } from 'neverthrow';
+import { ValidationError, UnexpectedError } from '../src/lib/errors';
 import { resultAsyncToHonoResponse } from '../utils/response';
-import { checkUserAuthentication, handleControllerError, getAuthenticatedUser } from './utils/controllerHelpers';
+import { getAuthenticatedUser } from './utils/controllerHelpers';
 import { userService } from '../services/user.service';
-import { getConvexUrl } from "../utils/convexHelper";
+import { getConvexServiceHeaders, getConvexUrl } from "../utils/convexHelper";
 
 export const getUsers = async (c: Context): Promise<Response> => {
-  const result = await ResultAsync.fromPromise(
-    Promise.resolve([]), // TODO: Replace with Convex when ready
-    (error: any) => new UnexpectedError("Failed to fetch users"),
-  );
-
+  const result = await userService.getUsers();
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
@@ -29,11 +20,7 @@ export const getUserById = async (c: Context): Promise<Response> => {
     );
   }
 
-  const result = await ResultAsync.fromPromise(
-    Promise.reject(new NotFoundError("User not found")), // TODO: Replace with Convex query
-    (error: any) => new UnexpectedError("Failed to fetch user"),
-  );
-
+  const result = await userService.getUserById(id);
   return resultAsyncToHonoResponse(c, Promise.resolve(result));
 };
 
@@ -126,7 +113,7 @@ export const getUsersCount = async (c: Context): Promise<Response> => {
     const convexUrl = getConvexUrl();
     const response = await fetch(
       `${convexUrl}/api/users/getCount`,
-      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) },
+      { method: "POST", headers: getConvexServiceHeaders(), body: JSON.stringify({}) },
     );
 
     if (!response.ok) {

@@ -1,10 +1,22 @@
 import { betterAuth } from "better-auth";
+import { jwt } from "better-auth/plugins";
+import { expo } from "@better-auth/expo";
 import convexAdapter from "./convex-adapter";
 import { getAllowedOrigins } from "./cors-origins";
 
 const convexUrl = process.env.CONVEX_URL;
 if (!convexUrl) {
   throw new Error("CONVEX_URL is required");
+}
+
+const convexServiceToken = process.env.CONVEX_SERVICE_TOKEN;
+if (!convexServiceToken) {
+  throw new Error("CONVEX_SERVICE_TOKEN is required");
+}
+
+const betterAuthSecret = process.env.BETTER_AUTH_SECRET;
+if (!betterAuthSecret) {
+  throw new Error("BETTER_AUTH_SECRET is required");
 }
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
@@ -27,6 +39,7 @@ if (!googleClientId || !googleClientSecret) {
 export const auth = betterAuth({
   database: convexAdapter({
     convexUrl,
+    serviceToken: convexServiceToken,
     debugLogs: process.env.AUTH_DEBUG_LOGS === "true",
   }),
   emailAndPassword: {
@@ -46,6 +59,9 @@ export const auth = betterAuth({
         }
       : {},
   user: {
+    deleteUser: {
+      enabled: true,
+    },
     additionalFields: {
       isAdmin: {
         type: "boolean",
@@ -54,6 +70,23 @@ export const auth = betterAuth({
       },
     },
   },
+  plugins: [
+    expo(),
+    jwt({
+      jwks: {
+        keyPairConfig: { alg: "RS256" },
+      },
+      jwt: {
+        issuer: authBaseUrl,
+        audience: "convex",
+        expirationTime: "15m",
+        definePayload: ({ user }) => ({
+          email: user.email,
+          isAdmin: user.isAdmin ?? false,
+        }),
+      },
+    }),
+  ],
   session: {
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,
@@ -77,7 +110,7 @@ export const auth = betterAuth({
     "http://localhost:8000",
     "http://192.168.0.71:8000",
   ],
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: betterAuthSecret,
   baseURL: authBaseUrl,
   rateLimit: {
     window: 60,

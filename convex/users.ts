@@ -1,6 +1,7 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { footShapeValidator } from "./schema";
+import { requireAdmin, requireUserAccess } from "./authorization";
 
 // In-memory store for tracking ongoing sync operations
 // In production, you might want to use a more robust solution like Redis
@@ -50,6 +51,7 @@ class SyncDeduplicator {
 export const getByEmail = query({
   args: { email: v.string() },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     return await ctx.db
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", args.email))
@@ -60,6 +62,7 @@ export const getByEmail = query({
 export const getById = query({
   args: { id: v.id("users") },
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.id);
     const user = await ctx.db.get(args.id);
     if (!user) return null;
 
@@ -82,6 +85,7 @@ export const create = mutation({
     isAdmin: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     return await ctx.db.insert("users", {
       ...args,
       isAdmin: args.isAdmin ?? false,
@@ -101,6 +105,7 @@ export const update = mutation({
     favoriteShoeId: v.optional(v.union(v.id("shoes"), v.null())),
   },
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.id);
     const { id, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, v]) => v !== undefined)
@@ -118,6 +123,7 @@ export const completeOnboarding = mutation({
     favoriteShoeId: v.optional(v.id("shoes")),
   },
   handler: async (ctx, args) => {
+    await requireUserAccess(ctx, args.userId);
     const updates = Object.fromEntries(
       Object.entries({
         footShape: args.footShape,
@@ -135,6 +141,7 @@ export const completeOnboarding = mutation({
 export const list = query({
   args: {},
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     return await ctx.db.query("users").collect();
   },
 });
@@ -148,7 +155,7 @@ export const getCount = query({
 });
 
 // Create or update user from Better Auth
-export const createOrUpdateFromBetterAuth = mutation({
+export const createOrUpdateFromBetterAuth = internalMutation({
   args: {
     betterAuthId: v.string(),
     email: v.string(),
@@ -209,18 +216,23 @@ export const findByBetterAuthId = query({
     betterAuthId: v.string(),
   },
   handler: async (ctx, args) => {
-    // Find user by their Better Auth ID using the index
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
-      .first();
+    const normalizedId = ctx.db.normalizeId("users", args.betterAuthId);
+    const user = normalizedId
+      ? await ctx.db.get(normalizedId)
+      : await ctx.db
+          .query("users")
+          .withIndex("by_betterAuthId", (q) =>
+            q.eq("betterAuthId", args.betterAuthId),
+          )
+          .first();
 
+    if (user) await requireUserAccess(ctx, user._id);
     return user;
   },
 });
 
 // Enhanced user sync with deduplication
-export const syncUserDeduplicated = mutation({
+export const syncUserDeduplicated = internalMutation({
   args: {
     betterAuthId: v.string(),
     email: v.string(),
@@ -276,6 +288,7 @@ export const syncUserDeduplicated = mutation({
 export const backfillUserNames = mutation({
   args: {},
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     const results = {
       totalUsers: 0,
       usersUpdated: 0,
@@ -306,6 +319,7 @@ export const backfillUserNames = mutation({
 export const removeIndoorOutdoorField = mutation({
   args: {},
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     const results = {
       totalDocuments: 0,
       documentsUpdated: 0,
@@ -348,5 +362,95 @@ export const removeIndoorOutdoorField = mutation({
       results.errors.push(`Migration failed: ${error}`);
       return results;
     }
+  },
+});
+
+export const serviceGetByEmail = internalQuery({
+  args: { email: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_email", (query) => query.eq("email", args.email))
+      .first();
+  },
+});
+
+export const serviceGetById = internalQuery({
+  args: { id: v.id("users") },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.get(args.id);
+    if (!user) return null;
+    const favoriteShoe = user.favoriteShoeId
+      ? await ctx.db.get(user.favoriteShoeId)
+      : null;
+    return { ...user, favoriteShoe };
+  },
+});
+
+export const serviceFindByBetterAuthId = internalQuery({
+  args: { betterAuthId: v.string() },
+  handler: async (ctx, args) => {
+    const normalizedId = ctx.db.normalizeId("users", args.betterAuthId);
+    if (normalizedId) return await ctx.db.get(normalizedId);
+    return await ctx.db
+      .query("users")
+      .withIndex("by_betterAuthId", (query) =>
+        query.eq("betterAuthId", args.betterAuthId),
+      )
+      .first();
+  },
+});
+
+export const serviceList = internalQuery({
+  args: {},
+  handler: async (ctx) => await ctx.db.query("users").collect(),
+});
+
+export const serviceGetCount = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    return { count: users.length };
+  },
+});
+
+export const serviceUpdate = internalMutation({
+  args: {
+    id: v.id("users"),
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    emailVerified: v.optional(v.boolean()),
+    footShape: v.optional(footShapeValidator),
+    footVolume: v.optional(v.string()),
+    favoriteShoeId: v.optional(v.union(v.id("shoes"), v.null())),
+  },
+  handler: async (ctx, args) => {
+    const { id, ...updates } = args;
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([, value]) => value !== undefined),
+    );
+    await ctx.db.patch(id, filteredUpdates);
+    return await ctx.db.get(id);
+  },
+});
+
+export const serviceCompleteOnboarding = internalMutation({
+  args: {
+    userId: v.id("users"),
+    footShape: v.optional(footShapeValidator),
+    footVolume: v.optional(v.string()),
+    favoriteShoeId: v.optional(v.id("shoes")),
+  },
+  handler: async (ctx, args) => {
+    const updates = Object.fromEntries(
+      Object.entries({
+        footShape: args.footShape,
+        footVolume: args.footVolume,
+        favoriteShoeId: args.favoriteShoeId,
+        onboardingComplete: true,
+      }).filter(([, value]) => value !== undefined),
+    );
+    await ctx.db.patch(args.userId, updates);
+    return await ctx.db.get(args.userId);
   },
 });

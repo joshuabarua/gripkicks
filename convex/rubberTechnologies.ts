@@ -1,5 +1,4 @@
-import { query } from "./_generated/server";
-import { mutation } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const list = query({
@@ -14,7 +13,7 @@ export const list = query({
   },
 });
 
-export const createOrGet = mutation({
+export const createOrGet = internalMutation({
   args: {
     brand: v.string(),
     compound: v.string(),

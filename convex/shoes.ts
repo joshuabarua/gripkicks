@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { footShapeValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, commonShoeFieldsValidator, optionalShoeFieldsValidator } from "./utils/helpers";
 import { findParentModel } from "./shoeHelpers";
+import { requireAdmin } from "./authorization";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -231,6 +232,7 @@ export const create = mutation({
     footShapeCompat: v.optional(v.array(footShapeValidator)),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const {
       footShapeCompat,
       modelName,
@@ -316,6 +318,7 @@ export const update = mutation({
     rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const { id, modelName, variantLabel, parentModelId, ...updates } = args;
 
     const shoe = await ctx.db.get(id);
@@ -366,6 +369,7 @@ export const update = mutation({
 export const backfillVariantMetadata = mutation({
   args: {},
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     const shoes = await ctx.db.query("shoes").collect();
     let updatedCount = 0;
 
@@ -398,6 +402,7 @@ export const backfillVariantMetadata = mutation({
 export const getMissingRubberTechnologyReport = query({
   args: {},
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     const shoes = await ctx.db.query("shoes").collect();
     const rubberTechnologies = await ctx.db.query("rubberTechnologies").collect();
 
@@ -427,6 +432,7 @@ export const getMissingRubberTechnologyReport = query({
 export const backfillMissingRubberTechnology = mutation({
   args: {},
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     const shoes = await ctx.db.query("shoes").collect();
     const rubberTechnologies = await ctx.db.query("rubberTechnologies").collect();
 
@@ -473,6 +479,7 @@ export const backfillMissingRubberTechnology = mutation({
 export const remove = mutation({
   args: { id: v.id("shoes") },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const shoe = await ctx.db.get(args.id);
     if (!shoe) {
       throw new Error("Shoe not found");
@@ -514,6 +521,7 @@ export const bulkUpsertByBrand = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     const updated: string[] = [];
     const created: string[] = [];
 

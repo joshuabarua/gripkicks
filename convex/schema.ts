@@ -99,6 +99,15 @@ export default defineSchema({
     .index("by_identifier", ["identifier"])
     .index("by_expiresAt", ["expiresAt"]),
 
+  jwks: defineTable({
+    publicKey: v.string(),
+    privateKey: v.string(),
+    createdAt: v.number(),
+    expiresAt: v.optional(v.number()),
+    alg: v.optional(v.string()),
+    crv: v.optional(v.string()),
+  }).index("by_createdAt", ["createdAt"]),
+
   // User's shoe collection (stash)
   userShoes: defineTable({
     userId: v.id("users"),

@@ -1,4 +1,4 @@
-import { mutation } from "./_generated/server";
+import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { deriveModelName, deriveVariantLabel } from "./utils/helpers";
 import { findParentModel } from "./shoeHelpers";
@@ -8,7 +8,7 @@ const climbingShoes = seedShoes;
 
 type FootShape = "egyptian" | "roman" | "greek" | "germanic" | "celtic";
 
-export const seedDatabase = mutation({
+export const seedDatabase = internalMutation({
   args: {},
   handler: async (ctx) => {
     const existingShoes = await ctx.db.query("shoes").first();
@@ -73,7 +73,7 @@ export const seedDatabase = mutation({
   },
 });
 
-export const deleteShoeByName = mutation({
+export const deleteShoeByName = internalMutation({
   args: {
     name: v.string(),
     brand: v.string(),
@@ -122,7 +122,7 @@ export const deleteShoeByName = mutation({
   },
 });
 
-export const updateShoeImageUrl = mutation({
+export const updateShoeImageUrl = internalMutation({
   args: {
     id: v.id("shoes"),
     imageUrl: v.string(),
@@ -138,7 +138,7 @@ export const updateShoeImageUrl = mutation({
   },
 });
 
-export const clearDatabase = mutation({
+export const clearDatabase = internalMutation({
   args: {},
   handler: async (ctx) => {
     // Delete all data (use with caution!)
