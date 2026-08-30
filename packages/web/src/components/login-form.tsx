@@ -19,10 +19,9 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestedCallbackUrl = searchParams.get("callbackUrl");
-  const callbackUrl = new URL(
-    requestedCallbackUrl?.startsWith("/") ? requestedCallbackUrl : "/dashboard",
-    typeof window !== "undefined" ? window.location.origin : "",
-  ).toString();
+  const callbackUrl = requestedCallbackUrl?.startsWith("/")
+    ? requestedCallbackUrl
+    : "/dashboard";
   const signupHref = requestedCallbackUrl
     ? `/auth/signup?callbackUrl=${encodeURIComponent(requestedCallbackUrl)}`
     : "/auth/signup";
@@ -131,8 +130,11 @@ export function LoginForm() {
             setError(null);
             await signIn.social({
               provider: "google",
-              callbackURL: callbackUrl,
-              errorCallbackURL: new URL("/auth/login?error=oauth", typeof window !== "undefined" ? window.location.origin : "").toString(),
+              callbackURL: new URL(callbackUrl, window.location.origin).toString(),
+              errorCallbackURL: new URL(
+                "/auth/login?error=oauth",
+                window.location.origin,
+              ).toString(),
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
