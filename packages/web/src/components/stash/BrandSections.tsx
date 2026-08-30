@@ -76,9 +76,17 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
     if (prevGroup.brand !== nextGroup.brand) return false;
     if (prevGroup.models.length !== nextGroup.models.length) return false;
 
-    const prevModelKeys = prevGroup.models.map((model) => model.groupKey).sort().join(",");
-    const nextModelKeys = nextGroup.models.map((model) => model.groupKey).sort().join(",");
-    if (prevModelKeys !== nextModelKeys) return false;
+    for (let j = 0; j < prevGroup.models.length; j++) {
+      const prevModel = prevGroup.models[j];
+      const nextModel = nextGroup.models[j];
+      if (!prevModel || !nextModel) return false;
+      if (prevModel.groupKey !== nextModel.groupKey) return false;
+      if (prevModel.variants.length !== nextModel.variants.length) return false;
+
+      const prevVariantIds = prevModel.variants.map((v) => v.item._id).sort().join(",");
+      const nextVariantIds = nextModel.variants.map((v) => v.item._id).sort().join(",");
+      if (prevVariantIds !== nextVariantIds) return false;
+    }
   }
 
   return true;
