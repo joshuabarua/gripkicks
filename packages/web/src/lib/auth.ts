@@ -38,16 +38,22 @@ export function useSession() {
   const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
-    if (!session.isPending) {
+    const resetTimer = window.setTimeout(() => {
       setTimedOut(false);
-      return;
+    }, 0);
+
+    if (!session.isPending) {
+      return () => window.clearTimeout(resetTimer);
     }
 
-    const timer = window.setTimeout(() => {
+    const timeoutTimer = window.setTimeout(() => {
       setTimedOut(true);
     }, SESSION_TIMEOUT_MS);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(resetTimer);
+      window.clearTimeout(timeoutTimer);
+    };
   }, [session.isPending]);
 
   if (!timedOut) {

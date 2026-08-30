@@ -56,17 +56,24 @@ const menu = {
 };
 
 const Navigation: React.FC = () => {
-  const [isActive, setIsActive] = useState(false);
-  const [showLogo, setShowLogo] = useState(true);
-  const navRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const isHomePage = pathname === "/";
+  const [isActive, setIsActive] = useState(false);
+  const [showLogo, setShowLogo] = useState(!isHomePage);
+  const [previousPathname, setPreviousPathname] = useState(pathname);
+  const navRef = useRef<HTMLDivElement>(null);
+
+  if (pathname !== previousPathname) {
+    setPreviousPathname(pathname);
+    setIsActive(false);
+    setShowLogo(!isHomePage);
+  }
   const { orientation, screenWidth } = useOrientationScale();
 
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
   const isPhonePortrait =
     orientation === "portrait" && screenWidth > 0 && screenWidth < 768;
-  const isHomePage = pathname === "/";
   const menuVariants = isPhonePortrait
     ? {
         open: {
@@ -86,16 +93,12 @@ const Navigation: React.FC = () => {
     : menu;
 
   useEffect(() => {
-    if (!isHomePage) {
-      setShowLogo(true);
-      return;
-    }
+    if (!isHomePage) return;
 
     const hero = document.getElementById("home-hero");
-
     if (!hero) {
-      setShowLogo(true);
-      return;
+      const frameId = requestAnimationFrame(() => setShowLogo(true));
+      return () => cancelAnimationFrame(frameId);
     }
 
     const observer = new IntersectionObserver(
@@ -106,16 +109,10 @@ const Navigation: React.FC = () => {
     );
 
     observer.observe(hero);
-    setShowLogo(false);
-
     return () => observer.disconnect();
   }, [isHomePage]);
 
   const closeMenu = () => setIsActive(false);
-
-  useEffect(() => {
-    setIsActive(false);
-  }, [pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

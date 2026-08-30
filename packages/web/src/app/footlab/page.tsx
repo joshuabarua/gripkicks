@@ -163,9 +163,10 @@ export default function FootLabPage() {
   }, [setProfile]);
 
   useEffect(() => {
-    if (session?.user) {
-      loadUserFootProfile();
-    }
+    if (!session?.user) return;
+
+    const loadTimer = window.setTimeout(loadUserFootProfile, 0);
+    return () => window.clearTimeout(loadTimer);
   }, [loadUserFootProfile, session]);
 
   const saveFootProfile = async () => {

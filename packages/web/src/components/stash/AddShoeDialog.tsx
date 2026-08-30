@@ -7,7 +7,7 @@ import ShoeImage from '@/components/ShoeImage';
 import { PaginatedList } from '@/components/ui/PaginatedList';
 import { Footprints, Plus, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { groupShoesByModel } from '@/utils/shoeVariants';
 import type { Shoe } from '@/types/api';
 
@@ -41,15 +41,10 @@ export function AddShoeDialog({
   onSelectShoe,
 }: AddShoeDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [inputValue, setInputValue] = useState(searchQuery);
   const groupedSearchResults = useMemo(
     () => Array.from(groupShoesByModel(searchResults).values()),
     [searchResults],
   );
-
-  useEffect(() => {
-    setInputValue(searchQuery);
-  }, [searchQuery]);
 
   const genderOptions: { label: string; value: GenderFilter }[] = [
     { label: 'All', value: 'all' },
@@ -81,7 +76,6 @@ export function AddShoeDialog({
         if (!next) {
           onBrandChange('all');
           onGenderChange('all');
-          setInputValue('');
           onSearchChange('');
         }
       }}
@@ -111,11 +105,8 @@ export function AddShoeDialog({
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-500" />
             <Input
               placeholder="Search for shoes..."
-              value={inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-                onSearchChange(e.target.value);
-              }}
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
               className="pl-12 bg-neutral-900 text-white placeholder:text-neutral-600 border-neutral-800 focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20 rounded-xl h-12 text-fluid-base"
             />
           </div>

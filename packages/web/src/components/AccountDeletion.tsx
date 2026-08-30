@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useMutation } from '@/hooks/useAsync';
 import { fetchApi } from '@/lib/api-client';
 import { z } from 'zod';
@@ -26,6 +27,7 @@ type DeletionFormData = {
 };
 
 export function AccountDeletion() {
+  const router = useRouter();
   const [formData, setFormData] = useState<DeletionFormData>({
     password: '',
     confirmation: '',
@@ -59,7 +61,7 @@ export function AccountDeletion() {
     if (result.isOk()) {
       // Account deleted successfully, redirect to login or home
       setTimeout(() => {
-        window.location.href = '/auth/login';
+        router.push('/auth/login');
       }, 2000);
     }
   };

@@ -33,42 +33,42 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
 
   // Handle navigation-based loading
   useEffect(() => {
-    if (pathname !== prevPathname) {
-      const shouldShowNavigationLoader = () => {
-        const nextTopLevel = pathname.split("/")[1] || "home";
-        const prevTopLevel = prevPathname.split("/")[1] || "home";
+    if (pathname === prevPathname) return;
 
-        // Only show for top-level navigation
-        if (nextTopLevel === prevTopLevel) {
-          return false;
-        }
+    let navigationTimeout: ReturnType<typeof setTimeout> | undefined;
+    const transitionTimeout = setTimeout(() => {
+      const nextTopLevel = pathname.split("/")[1] || "home";
+      const prevTopLevel = prevPathname.split("/")[1] || "home";
 
-        // Shorter cooldown for navigation (1.5 seconds instead of 10)
-        const now = Date.now();
-        const lastNavAt = Number(
-          window.sessionStorage.getItem("gk:lastNavigationAt") || 0,
-        );
-
-        if (now - lastNavAt < 1500) {
-          return false;
-        }
-
-        window.sessionStorage.setItem("gk:lastNavigationAt", String(now));
-        return true;
-      };
-
-      if (shouldShowNavigationLoader()) {
-        setIsNavigating(true);
-        const timeout = setTimeout(() => {
-          setIsNavigating(false);
-          setPrevPathname(pathname);
-        }, 450);
-
-        return () => clearTimeout(timeout);
-      } else {
+      if (nextTopLevel === prevTopLevel) {
         setPrevPathname(pathname);
+        return;
       }
-    }
+
+      const now = Date.now();
+      const lastNavAt = Number(
+        window.sessionStorage.getItem("gk:lastNavigationAt") || 0,
+      );
+
+      if (now - lastNavAt < 1500) {
+        setPrevPathname(pathname);
+        return;
+      }
+
+      window.sessionStorage.setItem("gk:lastNavigationAt", String(now));
+      setIsNavigating(true);
+      navigationTimeout = setTimeout(() => {
+        setIsNavigating(false);
+        setPrevPathname(pathname);
+      }, 450);
+    }, 0);
+
+    return () => {
+      clearTimeout(transitionTimeout);
+      if (navigationTimeout !== undefined) {
+        clearTimeout(navigationTimeout);
+      }
+    };
   }, [pathname, prevPathname]);
 
   return (

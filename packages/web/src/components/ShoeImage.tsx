@@ -75,25 +75,30 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
   };
 
   const optimizedTransformation = getOptimalTransformation(context);
-  const [imageError, setImageError] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
-  const [loadingTimeout, setLoadingTimeout] = useState(false);
+  const imageKey = `${imageUrl ?? ""}:${brand}:${shoeName ?? ""}:${slug ?? ""}`;
+  const [imageState, setImageState] = useState({
+    key: imageKey,
+    error: false,
+    loading: true,
+    timedOut: false,
+  });
+  const currentImageState = imageState.key === imageKey
+    ? imageState
+    : { key: imageKey, error: false, loading: true, timedOut: false };
+  const { error: imageError, loading: imageLoading, timedOut: loadingTimeout } = currentImageState;
 
-  useEffect(() => {
-    setImageError(false);
-    setImageLoading(true);
-    setLoadingTimeout(false);
-  }, [imageUrl, brand, shoeName, slug]);
+  if (imageState.key !== imageKey) {
+    setImageState(currentImageState);
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (imageLoading) {
-        setLoadingTimeout(true);
-        setImageLoading(false);
-      }
+      setImageState((current) => current.key === imageKey && current.loading
+        ? { ...current, loading: false, timedOut: true }
+        : current);
     }, 5000);
     return () => clearTimeout(timer);
-  }, [imageLoading, imageUrl, brand, shoeName, slug]);
+  }, [imageKey]);
 
   // Normalize brand name for folder structure (underscores)
   const normalizeBrand = (brand: string): string => {
@@ -132,13 +137,16 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
 
   // Handle image error
   const handleError = () => {
-    setImageError(true);
-    setImageLoading(false);
+    setImageState((current) => current.key === imageKey
+      ? { ...current, error: true, loading: false }
+      : current);
   };
 
   // Handle image load
   const handleLoad = () => {
-    setImageLoading(false);
+    setImageState((current) => current.key === imageKey
+      ? { ...current, loading: false }
+      : current);
   };
 
   // If image failed to load or timed out, show fallback

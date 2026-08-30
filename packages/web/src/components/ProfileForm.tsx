@@ -44,21 +44,23 @@ export function ProfileForm({
   onProfileUpdated,
   onSuccess,
 }: ProfileFormProps) {
+  const initialProfileName = initialProfile?.name ?? null;
   const { formData, setFormData, handleChange } = useFormChange<ProfileData>({
-    name: "",
+    name: initialProfileName ?? "",
   });
+  const [appliedInitialProfileName, setAppliedInitialProfileName] = useState(initialProfileName);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  if (initialProfileName !== null && initialProfileName !== appliedInitialProfileName) {
+    setAppliedInitialProfileName(initialProfileName);
+    setFormData({ name: initialProfileName });
+  }
 
   const profileLoader = useAsync<ProfileData>();
   const { execute: loadProfileData } = profileLoader;
 
   useEffect(() => {
-    if (initialProfile) {
-      setFormData({
-        name: initialProfile.name || "",
-      });
-      return;
-    }
+    if (initialProfile) return;
 
     const loadProfile = async () => {
       const result = await loadProfileData(() =>
@@ -74,7 +76,7 @@ export function ProfileForm({
     };
 
     loadProfile();
-  }, [initialProfile, loadProfileData]);
+  }, [initialProfile, loadProfileData, setFormData]);
 
   const updateProfile = (data: ProfileData): ResultAsync<ProfileData, ApiError> =>
     ResultAsync.fromPromise(

@@ -51,7 +51,6 @@ export default function OnboardingPage() {
   const router = useRouter();
   const { data: session, isPending: sessionLoading } = useSession();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>("welcome");
-  const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedShoe, setSelectedShoe] = useState<Shoe | null>(null);
   const [shoeFormData, setShoeFormData] = useState({
@@ -94,15 +93,13 @@ export default function OnboardingPage() {
     [],
   );
 
+  const progress = ((steps.findIndex((step) => step.key === currentStep) + 1) / steps.length) * 100;
+
   useEffect(() => {
     if (!sessionLoading && !session?.user) {
       router.push("/auth");
-      return;
     }
-
-    const stepIndex = steps.findIndex((s) => s.key === currentStep);
-    setProgress(((stepIndex + 1) / steps.length) * 100);
-  }, [currentStep, session, sessionLoading, router, steps]);
+  }, [session?.user, sessionLoading, router]);
 
   useEffect(() => {
     if (!session?.user) return;

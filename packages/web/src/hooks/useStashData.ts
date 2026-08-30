@@ -59,8 +59,16 @@ export function useStashData(
   }, [onError]);
 
   useEffect(() => {
-    hasAttemptedFallbackRef.current = false;
-    setRealtimeEnabled(false);
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled) return;
+      hasAttemptedFallbackRef.current = false;
+      setRealtimeEnabled(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [sessionUserId]);
 
   // Consolidated queries - only fetch what's needed
@@ -164,17 +172,21 @@ export function useStashData(
 
   // Use real-time data when available, fallback to REST API
   useEffect(() => {
-    if (realtimeStashData !== undefined) {
-      hasAttemptedFallbackRef.current = false;
-      if (!Array.isArray(realtimeStashData)) {
-        console.error("Invalid stash response: expected an array");
-        setUserShoes([]);
-        setRealtimeEnabled(true);
-        setIsLoading(false);
-        return;
-      }
-      const mappedUserShoes: UserShoe[] = realtimeStashData.map(
-        (item: ConvexUserShoe) => ({
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled) return;
+
+      if (realtimeStashData !== undefined) {
+        hasAttemptedFallbackRef.current = false;
+        if (!Array.isArray(realtimeStashData)) {
+          console.error("Invalid stash response: expected an array");
+          setUserShoes([]);
+          setRealtimeEnabled(true);
+          setIsLoading(false);
+          return;
+        }
+        const mappedUserShoes: UserShoe[] = realtimeStashData.map(
+          (item: ConvexUserShoe) => ({
           _id: item._id,
           shoeId: item.shoeId,
           ...(item.size !== undefined ? { size: item.size } : {}),
@@ -210,22 +222,27 @@ export function useStashData(
         }),
       );
 
-      setUserShoes(mappedUserShoes);
-      setRealtimeEnabled(true);
-      setIsLoading(false);
-    } else if (
-      userData &&
-      !realtimeEnabled &&
-      !hasAttemptedFallbackRef.current
-    ) {
-      hasAttemptedFallbackRef.current = true;
-      void fetchUserStash();
-    } else if (!sessionUserId) {
-      setUserShoes([]);
-      setIsLoading(false);
-      setRealtimeEnabled(false);
-      hasAttemptedFallbackRef.current = false;
-    }
+        setUserShoes(mappedUserShoes);
+        setRealtimeEnabled(true);
+        setIsLoading(false);
+      } else if (
+        userData &&
+        !realtimeEnabled &&
+        !hasAttemptedFallbackRef.current
+      ) {
+        hasAttemptedFallbackRef.current = true;
+        void fetchUserStash();
+      } else if (!sessionUserId) {
+        setUserShoes([]);
+        setIsLoading(false);
+        setRealtimeEnabled(false);
+        hasAttemptedFallbackRef.current = false;
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     realtimeStashData,
     userData,

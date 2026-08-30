@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 interface PaginatedListProps<T> {
   items: T[];
@@ -25,8 +25,15 @@ export function PaginatedList<T>({
   isLoading,
   completedIndicator,
 }: PaginatedListProps<T>) {
-  const [visibleCount, setVisibleCount] = useState(itemsPerPage);
+  const [pagination, setPagination] = useState({ items, itemsPerPage, visibleCount: itemsPerPage });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const inputsChanged = pagination.items !== items || pagination.itemsPerPage !== itemsPerPage;
+  const visibleCount = inputsChanged ? itemsPerPage : pagination.visibleCount;
+
+  if (inputsChanged) {
+    setPagination({ items, itemsPerPage, visibleCount: itemsPerPage });
+  }
 
   const visibleItems = items.slice(0, visibleCount);
   const computedHasMore = hasMore ?? visibleCount < items.length;
@@ -35,7 +42,10 @@ export function PaginatedList<T>({
   const showCompletedIndicator = !computedHasMore && !computedIsLoading && items.length > 0;
 
   const loadMoreItems = useCallback(() => {
-    setVisibleCount((prev: number) => Math.min(prev + itemsPerPage, items.length));
+    setPagination((current) => ({
+      ...current,
+      visibleCount: Math.min(current.visibleCount + itemsPerPage, items.length),
+    }));
     onEndReached?.();
   }, [items.length, itemsPerPage, onEndReached]);
 
@@ -49,10 +59,6 @@ export function PaginatedList<T>({
       loadMoreItems();
     }
   }, [computedIsLoading, computedHasMore, loadMoreItems]);
-
-  useEffect(() => {
-    setVisibleCount(itemsPerPage);
-  }, [items, itemsPerPage]);
 
   return (
     <div

@@ -18,11 +18,8 @@ const stagingConfigured = Boolean(
 
 test.use({ screenshot: "off", trace: "off", video: "off" });
 
-const footShapes = ["Egyptian", "Roman", "Greek", "Germanic", "Celtic"] as const;
-const footVolumes = ["Low Volume", "Medium Volume", "High Volume"] as const;
-
-type FootShape = (typeof footShapes)[number];
-type FootVolume = (typeof footVolumes)[number];
+type FootShape = "Egyptian" | "Roman" | "Greek" | "Germanic" | "Celtic";
+type FootVolume = "Low Volume" | "Medium Volume" | "High Volume";
 
 async function login(
   page: Page,

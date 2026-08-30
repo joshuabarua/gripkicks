@@ -63,7 +63,7 @@ export default function ProfilePage() {
   const hasShoesInStash = userStashData && userStashData.length > 0;
   const shouldSkipOnboarding = hasFootProfile && hasShoesInStash;
 
-  const favouriteUserShoe = userStashData?.find((item: any) => item.isFavourite);
+  const favouriteUserShoe = userStashData?.find((item) => item.isFavourite);
   const favouriteShoe = favouriteUserShoe?.shoe;
 
   const toggleSection = (section: string) => {
@@ -111,19 +111,17 @@ export default function ProfilePage() {
     if (!sessionLoading) {
       if (session?.user) {
         loadProfile();
-      } else {
-        setIsLoading(false);
       }
     }
   }, [session, sessionLoading]);
 
   useEffect(() => {
-    if (sessionLoading || isLoading) {
+    if (sessionLoading || (session?.user && isLoading)) {
       showLoader('profile');
     } else {
       hideLoader('profile');
     }
-  }, [sessionLoading, isLoading, showLoader, hideLoader]);
+  }, [session?.user, sessionLoading, isLoading, showLoader, hideLoader]);
 
   if (!session?.user) {
     return (

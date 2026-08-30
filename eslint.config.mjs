@@ -27,14 +27,6 @@ const eslintConfig = [
   },
   ...nextCoreWebVitals.map(withWebScope),
   ...nextTypeScript.map(withWebScope),
-  {
-    files: webFiles,
-    rules: {
-      "@typescript-eslint/no-explicit-any": "warn",
-      "react-hooks/purity": "warn",
-      "react-hooks/set-state-in-effect": "warn",
-    },
-  },
 ];
 
 export default eslintConfig;

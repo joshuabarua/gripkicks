@@ -1,5 +1,5 @@
 import { IKUpload } from "imagekitio-react";
-import { useState, useRef } from "react";
+import { useId, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 
@@ -20,7 +20,9 @@ const ShoeImageUpload: React.FC<ShoeImageUploadProps> = ({
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+  const [uploadRevision, setUploadRevision] = useState(0);
   const uploadRef = useRef<HTMLInputElement>(null);
+  const uploadId = useId().replaceAll(":", "");
 
   // Normalize brand and shoe name for folder structure
   const normalizeBrand = (brand: string): string => {
@@ -46,7 +48,7 @@ const ShoeImageUpload: React.FC<ShoeImageUploadProps> = ({
   const folderPath = `gripkicks/imgs/shoes/${normalizedBrand}`;
   
   // Generate filename
-  const fileName = `${normalizedShoeName}-${Date.now()}`;
+  const fileName = `${normalizedShoeName}-${uploadId}-${uploadRevision}`;
 
   const handleUploadStart = () => {
     setIsUploading(true);
@@ -68,6 +70,7 @@ const ShoeImageUpload: React.FC<ShoeImageUploadProps> = ({
 
   const handleRemoveImage = () => {
     setUploadedUrl(null);
+    setUploadRevision((current) => current + 1);
     onUploadSuccess("");
   };
 
@@ -102,7 +105,6 @@ const ShoeImageUpload: React.FC<ShoeImageUploadProps> = ({
             customMetadata={{
               brand,
               shoeName,
-              uploadedAt: new Date().toISOString(),
             }}
             style={{ display: 'none' }}
             id={`ik-upload-${brand}-${shoeName}`}

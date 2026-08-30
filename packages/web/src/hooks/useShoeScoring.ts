@@ -74,11 +74,12 @@ export function useShoeScoring(userPreferences?: {
     convexUser ? { userId: convexUser._id } : "skip",
   );
 
-  const stashCount = userShoes?.length ?? 0;
+  const typedUserShoes = userShoes as
+    | Array<{ comfortScore?: number }>
+    | undefined;
+  const stashCount = typedUserShoes?.length ?? 0;
   const ratedCount =
-    userShoes?.filter(
-      (s: any) => s.comfortScore !== undefined,
-    ).length ?? 0;
+    typedUserShoes?.filter((shoe) => shoe.comfortScore !== undefined).length ?? 0;
 
   const effectivePreferences = useMemo(() => {
     if (isLearningReady && userPreferenceProfile) {

@@ -35,7 +35,10 @@ function renderWithWrapper(content: React.ReactNode) {
   return render(content, { wrapper });
 }
 
-function setupMockSession(data: any = null, isPending: boolean = false) {
+function setupMockSession(
+  data: { user: { id: string } } | null = null,
+  isPending = false,
+) {
   mockUseSession.mockReturnValue({ data, isPending });
 }
 
