@@ -175,8 +175,8 @@ function HowItWorksSection() {
           transition={{ duration: 0.9 }}
           className="mb-fluid-2xl"
         >
-          <h2 className="font-ball-pill text-4xl md:text-5xl leading-[0.9] text-brand-chalk max-w-2xl">
-            Three steps. <span className="text-brand-red">No guesswork.</span>
+          <h2 className="font-ball-pill text-4xl md:text-5xl text-brand-red leading-[0.9] text-brand-chalk max-w-2xl">
+            Three steps.
           </h2>
         </motion.div>
 
@@ -237,7 +237,7 @@ function FeaturesSection() {
           className="mb-fluid-2xl"
         >
           <h2 className="font-ball-pill text-4xl md:text-5xl leading-[0.9] text-brand-chalk max-w-2xl">
-            Built for the way<br />climbers actually shop.
+            Built for <br />climbers.
           </h2>
         </motion.div>
 

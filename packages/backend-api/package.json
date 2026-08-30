@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node dist/src/main.js",
     "build": "tsc",
-    "dev": "cross-env NODE_ENV=production tsx watch src/main.ts",
+    "dev": "cross-env NODE_ENV=development tsx watch src/main.ts",
     "dev:ngrok": "concurrently \"yarn dev\" \"ngrok http 3001 --log=stdout\""
   },
   "dependencies": {

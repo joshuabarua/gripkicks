@@ -7,7 +7,9 @@ import { AnimatedLogoImage } from "./AnimatedLogo";
 
 const transitionImages = [
   "/imgs/transition/blue_hold.png",
+  "/imgs/transition/green_hold.png",
   "/imgs/transition/yellow_hold.png",
+  "/imgs/transition/dark_blue.png",
 ];
 
 export function PageTransition({ children }: { children: React.ReactNode }) {
