@@ -15,6 +15,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  lint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: corepack enable
+      - run: yarn install --immutable
+      - run: yarn lint
+
   p0:
     name: Unit, build, and public smoke
     runs-on: ubuntu-latest

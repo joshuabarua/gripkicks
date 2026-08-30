@@ -78,11 +78,6 @@ export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
     return c.json({ success: true, data: users });
   });
 
-  app.post("/api/users/getCount", async (c) => {
-    const count = await c.env.runQuery(internal.users.serviceGetCount, {});
-    return c.json({ success: true, data: count });
-  });
-
   app.post("/api/users/findByBetterAuthId", async (c) => {
     try {
       const { betterAuthId } = await c.req.json();

@@ -6,7 +6,6 @@ import {
   editProfile,
   completeOnboarding,
   getShoes,
-  getUsersCount,
 } from "../controllers/userController";
 import {
   getUserStash,
@@ -33,10 +32,6 @@ Users.post("/onboarding", protect, completeOnboarding);
 
 // Get All Shoes (for onboarding selection)
 Users.get("/shoes", getShoes);
-
-// Public user count (for marketing/founder meter)
-Users.get("/count", getUsersCount);
-Users.get("/users/count", getUsersCount);
 
 // User Stash (shoe collection)
 Users.get("/stash", protect, getUserStash);

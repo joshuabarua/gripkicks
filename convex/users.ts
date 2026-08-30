@@ -406,14 +406,6 @@ export const serviceList = internalQuery({
   handler: async (ctx) => await ctx.db.query("users").collect(),
 });
 
-export const serviceGetCount = internalQuery({
-  args: {},
-  handler: async (ctx) => {
-    const users = await ctx.db.query("users").collect();
-    return { count: users.length };
-  },
-});
-
 export const serviceUpdate = internalMutation({
   args: {
     id: v.id("users"),

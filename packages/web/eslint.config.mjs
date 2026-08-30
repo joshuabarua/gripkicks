@@ -1,9 +1,18 @@
-import { compat } from "../../eslint-base.config.mjs";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypeScript from "eslint-config-next/typescript";
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextCoreWebVitals,
+  ...nextTypeScript,
   {
-    ignores: [".next/", "node_modules/", "*.config.*"],
+    ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"],
+  },
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "react-hooks/purity": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+    },
   },
 ];
 

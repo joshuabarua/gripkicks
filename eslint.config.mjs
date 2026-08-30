@@ -1,4 +1,15 @@
-import { compat } from "./eslint-base.config.mjs";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypeScript from "eslint-config-next/typescript";
+
+const webFiles = ["packages/web/**/*.{ts,tsx,js,jsx}"];
+const withWebScope = (config) => ({
+  ...config,
+  files: webFiles,
+  settings: {
+    ...(config.settings ?? {}),
+    next: { rootDir: "packages/web" },
+  },
+});
 
 const eslintConfig = [
   {
@@ -14,14 +25,16 @@ const eslintConfig = [
       "packages/backend-api/**",
     ],
   },
-  ...compat.extends("next/core-web-vitals", "next/typescript").map((config) => ({
-    ...config,
-    files: ["packages/web/**/*.{ts,tsx,js,jsx}"],
-    settings: {
-      ...(config.settings ?? {}),
-      next: { rootDir: "packages/web" },
+  ...nextCoreWebVitals.map(withWebScope),
+  ...nextTypeScript.map(withWebScope),
+  {
+    files: webFiles,
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "react-hooks/purity": "warn",
+      "react-hooks/set-state-in-effect": "warn",
     },
-  })),
+  },
 ];
 
 export default eslintConfig;

@@ -4,7 +4,7 @@ import { ValidationError, UnexpectedError } from '../src/lib/errors';
 import { resultAsyncToHonoResponse } from '../utils/response';
 import { getAuthenticatedUser } from './utils/controllerHelpers';
 import { userService } from '../services/user.service';
-import { getConvexServiceHeaders, getConvexUrl } from "../utils/convexHelper";
+import { getConvexUrl } from "../utils/convexHelper";
 
 export const getUsers = async (c: Context): Promise<Response> => {
   const result = await userService.getUsers();
@@ -104,28 +104,6 @@ export const getShoes = async (c: Context): Promise<Response> => {
     return resultAsyncToHonoResponse(
       c,
       Promise.resolve(err(new UnexpectedError("Failed to fetch shoes"))),
-    );
-  }
-};
-
-export const getUsersCount = async (c: Context): Promise<Response> => {
-  try {
-    const convexUrl = getConvexUrl();
-    const response = await fetch(
-      `${convexUrl}/api/users/getCount`,
-      { method: "POST", headers: getConvexServiceHeaders(), body: JSON.stringify({}) },
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch users count: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return c.json(data);
-  } catch (error) {
-    return resultAsyncToHonoResponse(
-      c,
-      Promise.resolve(err(new UnexpectedError("Failed to fetch users count"))),
     );
   }
 };
