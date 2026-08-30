@@ -79,5 +79,25 @@ export async function authenticatedConvexRequest(c: Context, endpoint: string, m
     throw new Error(`Convex request failed: ${response.statusText}`);
   }
 
-  return response.json();
+  const json = await response.json();
+  if (
+    json &&
+    typeof json === "object" &&
+    "success" in json &&
+    json.success === true &&
+    "data" in json
+  ) {
+    return json.data;
+  }
+  if (
+    json &&
+    typeof json === "object" &&
+    "success" in json &&
+    json.success === false
+  ) {
+    throw new Error(
+      typeof json.message === "string" ? json.message : "Convex request failed",
+    );
+  }
+  return json;
 }
