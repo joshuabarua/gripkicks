@@ -1,0 +1,106 @@
+[
+  {
+    "brand": "Evolv",
+    "name": "Defy",
+    "officialUrl": "https://www.evolvsports.com/en-us/defy_-66-0000000055",
+    "description": "All-around shoe with a perforated synthetic upper, slightly asymmetric toe, full-length midsole and 4.2 mm TRAX SAS outsole.",
+    "officialSpecs": {
+      "closure": "Strap",
+      "upper": "Synthetic",
+      "midsole": "1.4 mm sensitive full-length",
+      "sole": "4.2 mm TRAX SAS"
+    },
+    "confidence": 0.98,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Evolv",
+    "name": "Elektra",
+    "officialUrl": "https://www.evolvsports.com/en-us/elektra_-66-0000000065",
+    "description": "Low-volume all-around shoe with a perforated synthetic upper, slightly asymmetric toe, full-length midsole and 4.2 mm TRAX SAS outsole.",
+    "officialSpecs": {
+      "closure": "Strap",
+      "upper": "Synthetic",
+      "midsole": "1.4 mm sensitive full-length",
+      "sole": "4.2 mm TRAX SAS"
+    },
+    "confidence": 0.98,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Evolv",
+    "name": "Kira",
+    "officialUrl": "https://www.evolvsports.com/en-us/kira-66-0000002485",
+    "description": "Low-volume all-around shoe for vertical and off-vertical faces, with a synthetic upper, asymmetric toe profile and full-length midsole.",
+    "officialSpecs": {
+      "closure": "Strap",
+      "upper": "Synthetic",
+      "midsole": "1.0 mm full-length",
+      "sole": "4.2 mm TRAX SAS",
+      "weight": "6.8 oz per shoe (US women's 7)"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Evolv",
+    "name": "Kronos",
+    "officialUrl": "https://www.evolvsports.com/en-us/kronos-66-0000002475",
+    "description": "All-around, slightly down-cambered shoe with a synthetic upper, full-length midsole and adjustable strap closure.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop strap with adjustable finish-pull strap",
+      "upper": "Synthetic",
+      "midsole": "1.2 mm full-length",
+      "sole": "4.2 mm TRAX SAS",
+      "weight": "9.3 oz per shoe (US men's 9)"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Evolv",
+    "name": "Phantom",
+    "officialUrl": "https://www.evolvsports.com/en-us/phantom-66-0000003645",
+    "description": "Aggressively cambered synthetic shoe for steep bouldering, using combined plastic and tensioned-rubber midsoles with a 4.2 mm outsole.",
+    "officialSpecs": {
+      "closure": "Lace",
+      "upper": "Synthetic",
+      "midsole": "MX-P 1.6 mm, AVT and TPS rubber",
+      "sole": "4.2 mm TRAX SAS",
+      "sensitivity": "AVT midsole cut out beneath the big toe"
+    },
+    "confidence": 0.98,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Evolv",
+    "name": "Shaman",
+    "officialUrl": "https://www.evolvsports.com/en-us/shaman-66-0000000825",
+    "description": "Downturned asymmetric shoe with a synthetic upper, half-length Love Bump midsole, split outsole and three-strap closure.",
+    "officialSpecs": {
+      "closure": "Three straps",
+      "upper": "Synthetic Synthratek VX",
+      "lining": "Unlined",
+      "midsole": "MX-P 1.6 mm half-length Love Bump",
+      "sole": "4.2 mm TRAX SAS split outsole",
+      "weight": "9.5 oz per shoe (US men's 9)"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Evolv",
+    "name": "Zenist",
+    "officialUrl": "https://www.evolvsports.com/en-us/zenist-66-0000062120",
+    "description": "Aggressively profiled synthetic shoe for bouldering and training, with a half-length rubber midsole and 4.2 mm outsole.",
+    "officialSpecs": {
+      "closure": "Strap",
+      "upper": "Synthetic",
+      "midsole": "MX-R 1.0 mm half-length rubber midsole",
+      "sole": "4.2 mm TRAX SAS outsole",
+      "sensitivity": "Half-length rubber midsole"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "approved"
+  }
+]

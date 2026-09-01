@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useQuery } from "convex/react";
+import { usePaginatedQuery, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Doc, Id } from "convex/_generated/dataModel";
 import type { UserShoe } from "@/types/api";
@@ -10,7 +10,7 @@ interface CatalogFilters {
   enabled: boolean;
   searchTerm: string;
   brand: string;
-  gender: string;
+  gender: "all" | "men" | "women" | "kids" | "unisex";
 }
 
 interface UseStashDataOptions {
@@ -88,7 +88,11 @@ export function useStashData(
 
   // Only fetch catalog shoes when explicitly requested (e.g. Add dialog open),
   // filtered server-side so the full table never reaches the client
-  const shoesData = useQuery(
+  const {
+    results: shoesData,
+    status: catalogStatus,
+    loadMore: loadMoreCatalog,
+  } = usePaginatedQuery(
     api.shoes.searchCatalog,
     catalog?.enabled
       ? {
@@ -97,6 +101,7 @@ export function useStashData(
         ...(catalog.gender !== "all" ? { gender: catalog.gender } : {}),
       }
       : "skip",
+    { initialNumItems: 40 },
   );
   const brandsData = useQuery(
     api.shoes.listBrands,
@@ -199,26 +204,7 @@ export function useStashData(
           ...(item.isFavourite !== undefined ? { isFavourite: item.isFavourite } : {}),
           ...(item.fitLongevity !== undefined ? { fitLongevity: item.fitLongevity } : {}),
           ...(item.sizingDeviation !== undefined ? { sizingDeviation: item.sizingDeviation } : {}),
-          ...(item.shoe
-            ? {
-              shoe: {
-                _id: item.shoe._id,
-                name: item.shoe.name,
-                brand: item.shoe.brand,
-                modelName: item.shoe.modelName,
-                ...(item.shoe.variantLabel !== undefined ? { variantLabel: item.shoe.variantLabel } : {}),
-                ...(item.shoe.parentModelId !== undefined ? { parentModelId: item.shoe.parentModelId } : {}),
-                ...(item.shoe.imageUrl !== undefined ? { imageUrl: item.shoe.imageUrl } : {}),
-                ...(item.shoe.slug !== undefined ? { slug: item.shoe.slug } : {}),
-                ...(item.shoe.gender !== undefined ? { gender: item.shoe.gender } : {}),
-                aggressiveness: item.shoe.aggressiveness,
-                stiffness: item.shoe.stiffness,
-                climbingDiscipline: item.shoe.climbingDiscipline,
-                volume: item.shoe.volume,
-                ...(item.shoe.rubberTechnologyId !== undefined ? { rubberTechnologyId: item.shoe.rubberTechnologyId } : {}),
-              },
-            }
-            : {}),
+          ...(item.shoe ? { shoe: item.shoe } : {}),
         }),
       );
 
@@ -269,5 +255,8 @@ export function useStashData(
     totalShoesInDatabase,
     uniqueBrands,
     userData,
+    catalogHasMore: catalogStatus === "CanLoadMore",
+    catalogIsLoadingMore: catalogStatus === "LoadingMore",
+    loadMoreCatalog,
   } as const;
 }

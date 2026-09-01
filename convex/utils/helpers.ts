@@ -178,6 +178,40 @@ export const userShoeFieldsValidator = {
   sizingDeviation: v.optional(v.number()),
 };
 
+export const shoeDefaultScoresValidator = v.object({
+  comfort: v.number(),
+  performance: v.number(),
+  durability: v.number(),
+  sensitivity: v.optional(v.number()),
+  edging: v.optional(v.number()),
+  smearing: v.optional(v.number()),
+  toeHooking: v.optional(v.number()),
+  heelHooking: v.optional(v.number()),
+});
+
+export const shoeOfficialSpecsValidator = v.object({
+  closure: v.optional(v.string()),
+  upper: v.optional(v.string()),
+  lining: v.optional(v.string()),
+  midsole: v.optional(v.string()),
+  sole: v.optional(v.string()),
+  weight: v.optional(v.string()),
+  sensitivity: v.optional(v.string()),
+  rigidity: v.optional(v.string()),
+});
+
+export const shoeEnrichmentValidator = v.object({
+  sourceUrl: v.string(),
+  sourceName: v.string(),
+  extractedAt: v.number(),
+  confidence: v.number(),
+  reviewStatus: v.union(
+    v.literal("pending"),
+    v.literal("approved"),
+    v.literal("rejected"),
+  ),
+});
+
 const baseShoeFieldsValidator = {
   modelName: v.optional(v.string()),
   variantLabel: v.optional(v.string()),
@@ -185,6 +219,11 @@ const baseShoeFieldsValidator = {
   imageUrl: v.optional(v.string()),
   slug: v.optional(v.string()),
   gender: v.optional(genderValidator),
+  description: v.optional(v.string()),
+  officialUrl: v.optional(v.string()),
+  officialSpecs: v.optional(shoeOfficialSpecsValidator),
+  defaultScores: v.optional(shoeDefaultScoresValidator),
+  enrichment: v.optional(shoeEnrichmentValidator),
 };
 
 export const commonShoeFieldsValidator = {

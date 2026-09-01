@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useDeferredValue, useState, useEffect } from "react";
+import { usePaginatedQuery, useQuery, useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Doc, Id } from "convex/_generated/dataModel";
 import { useSession } from "@/lib/auth";
@@ -37,17 +37,8 @@ type EditingShoe = Partial<Shoe> & { _id: Id<"shoes"> };
 export default function AdminDashboard() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const shoes = useQuery(api.shoes.listAll, {});
-  const updateShoe = useMutation(api.shoes.update).withOptimisticUpdate(
-    (localStore, args) => {
-      const shoe = localStore
-        .getQuery(api.shoes.listAll, {})
-        ?.find((s: Shoe) => s._id === args.id);
-      if (shoe) {
-        Object.assign(shoe, args);
-      }
-    },
-  );
+  const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
+  const updateShoe = useMutation(api.shoes.update);
   const deleteShoe = useMutation(api.shoes.remove);
   const createShoe = useMutation(api.shoes.create);
   const backfillVariantMetadata = useMutation(
@@ -93,12 +84,24 @@ export default function AdminDashboard() {
   const [rubberBackfillResult, setRubberBackfillResult] = useState<
     string | null
   >(null);
-
-  const uniqueBrands = [...new Set(shoes?.map((s) => s.brand) || [])].sort();
-
+  const deferredSearchTerm = useDeferredValue(searchTerm);
+  const {
+    results: shoes,
+    status: shoesStatus,
+    loadMore: loadMoreShoes,
+  } = usePaginatedQuery(
+    api.shoes.searchCatalog,
+    isAdmin
+      ? {
+        ...(deferredSearchTerm.trim() ? { searchTerm: deferredSearchTerm } : {}),
+        ...(brandFilter !== "all" ? { brand: brandFilter } : {}),
+      }
+      : "skip",
+    { initialNumItems: 50 },
+  );
+  const uniqueBrands = useQuery(api.shoes.listBrands, isAdmin ? {} : "skip") ?? [];
   const users = useQuery(api.users.list);
   const rubberTechnologies = useQuery(api.rubberTechnologies.list);
-  const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
   const shouldLoadMissingRubberTechnologyReport =
     !isPending && !!session?.user && !!isAdmin;
   const missingRubberTechnologyReport = useQuery(
@@ -133,14 +136,7 @@ export default function AdminDashboard() {
     );
   }
 
-  const filteredShoes =
-    shoes?.filter((shoe) => {
-      const matchesSearch =
-        shoe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        shoe.brand.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesBrand = brandFilter === "all" || shoe.brand === brandFilter;
-      return matchesSearch && matchesBrand;
-    }) || [];
+  const filteredShoes = shoes;
 
   const filteredUsers =
     users?.filter(
@@ -286,7 +282,7 @@ export default function AdminDashboard() {
             }`}
           >
             <Footprints className="w-4 h-4" />
-            Shoes ({shoes?.length || 0})
+            Shoes ({shoes.length})
           </button>
           <button
             onClick={() => setActiveTab("users")}
@@ -316,7 +312,7 @@ export default function AdminDashboard() {
           <>
             <div className="flex justify-between items-center mb-4">
               <div className="text-white/60">
-                {filteredShoes.length} shoes in database
+                {filteredShoes.length} shoes loaded
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex flex-col items-end">
@@ -1206,7 +1202,9 @@ export default function AdminDashboard() {
                   );
                 }}
                 className="flex-1 min-h-0 space-y-2"
-                itemsPerPage={15}
+                hasMore={shoesStatus === "CanLoadMore"}
+                isLoading={shoesStatus === "LoadingMore"}
+                onEndReached={() => loadMoreShoes(50)}
                 loadingIndicator={
                   <div className="text-center py-4">
                     <div className="inline-flex items-center gap-2 text-neutral-500 text-sm">

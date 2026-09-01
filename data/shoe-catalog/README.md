@@ -54,6 +54,12 @@ Each file is `data/shoe-catalog/<brand-key>.json`:
 2. (Once images uploaded) run `node scripts/sync-shoe-images.mjs <brand-key> --dry-run`.
 3. If it looks right: `node scripts/sync-shoe-images.mjs <brand-key>`.
 
+## Enrichment Workflow
+
+Verified manufacturer facts are stored separately in `data/shoe-enrichment/<brand-key>.json`. Each entry is keyed by the exact live `brand` and `name` and includes an original factual description, official URL, available specifications, confidence, and review status.
+
+Run `yarn enrich:shoes` to validate all enrichment files. Use `yarn enrich:shoes --apply` to sync them to the development deployment after review, or add `--prod` for production. Pending records are stored for review but are not used as scoring defaults until approved.
+
 ## Image Filename Convention
 
 `<slug>_<m|w|k|u><N>.<ext>` — `m`=men, `w`=women, `k`=kids, `u`=unisex. Gender suffixes (Women's / Kids) are applied automatically when a `_w*` or `_k*` image is detected.

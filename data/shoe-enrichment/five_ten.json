@@ -1,0 +1,56 @@
+[
+  {
+    "brand": "Five Ten",
+    "name": "Hiangle",
+    "officialUrl": "https://www.adidas.com/us/five-ten-hiangle-climbing-shoes/EE9033.html",
+    "description": "A moderately downturned climbing shoe with a synthetic upper, hook-and-loop closure and high-friction rubber outsole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Synthetic",
+      "sole": "Stealth rubber",
+      "rigidity": "Moderate"
+    },
+    "confidence": 0.9,
+    "reviewStatus": "rejected"
+  },
+  {
+    "brand": "Five Ten",
+    "name": "Hiangle Pro",
+    "officialUrl": "https://www.adidas.com/us/five-ten-hiangle-pro-competition-climbing-shoes/FV4744.html",
+    "description": "A competition climbing shoe with a moderate profile, hook-and-loop closure and a split rubber outsole for underfoot flex.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "sole": "Split rubber outsole",
+      "rigidity": "Moderate"
+    },
+    "confidence": 0.88,
+    "reviewStatus": "rejected"
+  },
+  {
+    "brand": "Five Ten",
+    "name": "Kirigami",
+    "officialUrl": "https://www.adidas.com/us/five-ten-kirigami-climbing-shoes/EE8935.html",
+    "description": "A neutral climbing shoe with a synthetic upper and hook-and-loop closure, intended for indoor and outdoor climbing.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Synthetic",
+      "sole": "Stealth rubber"
+    },
+    "confidence": 0.9,
+    "reviewStatus": "rejected"
+  },
+  {
+    "brand": "Five Ten",
+    "name": "Niad VCS",
+    "officialUrl": "https://www.adidas.com/us/five-ten-niad-vcs-climbing-shoes/FW2849.html",
+    "description": "A flat-lasted climbing shoe with a synthetic upper, hook-and-loop closure and rubber outsole for edging and smearing.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Synthetic",
+      "sole": "Stealth rubber",
+      "rigidity": "Medium-stiff"
+    },
+    "confidence": 0.9,
+    "reviewStatus": "rejected"
+  }
+]

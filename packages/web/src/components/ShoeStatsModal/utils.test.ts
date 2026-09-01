@@ -39,6 +39,18 @@ describe("getEffectiveShoeStats", () => {
     expect(result.average).toBe(6.3);
   });
 
+  it("calculates catalog defaults from normalized lowercase values", () => {
+    expect(calculateDefaultStats({
+      aggressiveness: "aggressive",
+      climbingDiscipline: "competition",
+      stiffness: "soft",
+    })).toEqual({
+      comfort: 4,
+      performance: 9.5,
+      durability: 5,
+    });
+  });
+
   it("uses all user-provided ratings when available", () => {
     const result = getEffectiveShoeStats(
       {

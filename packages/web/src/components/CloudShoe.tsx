@@ -1,44 +1,41 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState, useRef, useEffect } from 'react';
-import { memo } from 'react';
-import { Star } from 'lucide-react';
+import { memo, useEffect, useRef, useState } from 'react';
+import { Check, Pencil, Star } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
 import type { UserShoe } from "@/types/api";
-import { getEffectiveShoeStats } from '@/components/ShoeStatsModal/utils';
+import { getShoeProfileCompletion } from "@/utils/shoeProfile";
 
 interface CloudShoeProps {
   shoe: UserShoe;
   onClick: () => void;
+  onEdit: () => void;
   index: number;
   specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode } | undefined;
 }
 
-const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) => {
-  const details = shoe?.shoe ?? shoe?.shoeDetails;
+function formatCondition(condition?: string) {
+  if (!condition) return 'Not set';
+  return condition.replaceAll('-', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialLabel }) => {
+  const details = shoe.shoe ?? shoe.shoeDetails;
   const brand = details?.brand ?? 'Unknown Brand';
   const name = details?.name ?? 'Unknown Shoe';
   const imageUrl = details?.imageUrl;
   const slug = details?.slug;
   const gender = details?.gender;
-  const characteristicSource = shoe?.shoe;
-
   const [isInView, setIsInView] = useState(false);
-  const imgRef = useRef<HTMLDivElement>(null);
-
-  const avgScore = getEffectiveShoeStats(
-    {
-      aggressiveness: characteristicSource?.aggressiveness,
-      climbingDiscipline: characteristicSource?.climbingDiscipline,
-      stiffness: characteristicSource?.stiffness,
-    },
-    {
-      comfortScore: shoe.comfortScore,
-      performanceRating: shoe.performanceRating,
-      durabilityRating: shoe.durabilityRating,
-    },
-  ).average.toFixed(1);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const profileCompletion = getShoeProfileCompletion(shoe);
+  const { completed, total, missing: missingFields, isComplete } = profileCompletion;
+  const ratingItems = [
+    ['COM', shoe.comfortScore],
+    ['PER', shoe.performanceRating],
+    ['DUR', shoe.durabilityRating],
+  ] as const;
 
   useEffect(() => {
     if (isInView) return;
@@ -46,102 +43,155 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, index, specialLabel }) 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return;
-
-        if (entry.isIntersecting && !isInView) {
+        if (entry.isIntersecting) {
           setIsInView(true);
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
-    }
-
+    if (cardRef.current) observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, [isInView]);
 
   return (
     <motion.div
-      ref={imgRef}
-      className="relative cursor-pointer group"
+      ref={cardRef}
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${brand} ${name}`}
+      className="group relative w-full cursor-pointer outline-none"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, delay: Math.min(index, 10) * 0.04 }}
+      transition={{ duration: 0.28, delay: Math.min(index, 10) * 0.035 }}
       onClick={onClick}
-      whileHover={{ scale: 1.015 }}
-      whileTap={{ scale: 0.98 }}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onClick();
+        }
+      }}
+      whileHover={{ y: -3 }}
+      whileTap={{ scale: 0.99 }}
     >
-      <div className="monolith-card relative flex flex-col justify-center items-center gap-fluid-sm rounded-lg border border-white/[0.09] bg-black/65 p-fluid-md transition-colors duration-300 group-hover:border-brand-red/35">
-        {(shoe.isFavourite || specialLabel) && (
-          <div className="absolute top-fluid-sm left-fluid-sm z-20 flex gap-fluid-xs">
-            {shoe.isFavourite && (
-              <div className="bg-brand-red text-black rounded-sm w-6 h-6 flex items-center justify-center">
-                <Star className="w-3 h-3 fill-current" />
-              </div>
-            )}
+      <article className="relative overflow-hidden rounded-xl border border-white/[0.09] bg-neutral-950/90 transition-colors duration-300 group-hover:border-white/20 group-focus-visible:border-brand-red">
+        <div className="flex min-h-11 items-center justify-between border-b border-white/[0.07] px-4 py-2.5">
+          <span className="max-w-[70%] truncate font-sora text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-putty/55">
+            {brand}
+          </span>
+          <div className="flex items-center gap-1.5">
             {specialLabel && (
-              <div className={`rounded-full w-7 h-7 flex items-center justify-center ${specialLabel.type === 'most-comfy' ? 'bg-pink-500/90 text-white' :
-                specialLabel.type === 'oldest' ? 'bg-blue-500/90 text-white' :
-                  'bg-purple-500/90 text-white'
-                }`}>
+              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-brand-chalk">
                 {specialLabel.icon}
-              </div>
+              </span>
             )}
-          </div>
-        )}
-
-        <div className="absolute top-fluid-sm right-fluid-sm z-20">
-          <div className="bg-black/70 rounded-sm px-2 py-0.5 border border-white/[0.09]">
-            <span className="font-sora text-[10px] text-brand-chalk/70 font-semibold tracking-wider">{avgScore}</span>
+            {shoe.isFavourite && (
+              <span className="flex h-6 w-6 items-center justify-center rounded-sm bg-brand-red text-black">
+                <Star className="h-3 w-3 fill-current" />
+              </span>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center justify-center w-[min(48vw,220px)] h-[min(55vw,240px)]">
+        <div className="relative flex aspect-[4/3] items-center justify-center border-b border-white/[0.07] bg-black/35 p-4">
+          <div className="absolute left-3 top-3 rounded-sm border border-white/[0.09] bg-black/65 px-2 py-1 font-sora text-[9px] uppercase tracking-[0.14em] text-brand-putty/55">
+            {gender ?? 'unisex'}
+          </div>
           {isInView && (
             <ShoeImage
               brand={brand}
               shoeName={name}
               imageUrl={imageUrl}
               slug={slug}
-              className="object-contain"
-              transformation={[
-                {
-                  height: 200,
-                  width: 200,
-                  crop: "at_max",
-                  cropMode: "pad_resize",
-                  format: "png",
-                  quality: 80
-                }
-              ]}
+              className="object-contain transition-transform duration-500 group-hover:scale-[1.035]"
+              transformation={[{
+                height: 260,
+                width: 320,
+                crop: "at_max",
+                cropMode: "pad_resize",
+                format: "png",
+                quality: 82,
+              }]}
               gender={gender}
             />
           )}
         </div>
 
-        <div className="w-full text-center space-y-0.5">
-          <p className="font-sora uppercase text-brand-chalk text-sm font-medium leading-tight truncate group-hover:text-white transition-colors duration-300">
-            {name}
-          </p>
-          <p className="font-sora text-[10px] text-brand-putty/30 truncate">
-            {brand}
-          </p>
+        <div className="space-y-4 p-4">
+          <div className="min-w-0">
+            <h3 className="truncate font-sora text-base font-semibold text-brand-chalk transition-colors group-hover:text-white">
+              {name}
+            </h3>
+            <p className="mt-1 truncate font-sora text-[10px] uppercase tracking-[0.14em] text-brand-putty/35">
+              {details?.variantLabel || details?.modelName || 'Standard'}
+            </p>
+          </div>
+
+          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-white/[0.07] bg-white/[0.07]">
+            <div className="bg-neutral-950 px-3 py-2.5">
+              <dt className="font-sora text-[9px] uppercase tracking-[0.13em] text-brand-putty/35">Size</dt>
+              <dd className="mt-1 truncate font-sora text-xs font-medium text-brand-chalk">{shoe.size || 'Not set'}</dd>
+            </div>
+            <div className="bg-neutral-950 px-3 py-2.5">
+              <dt className="font-sora text-[9px] uppercase tracking-[0.13em] text-brand-putty/35">Condition</dt>
+              <dd className="mt-1 truncate font-sora text-xs font-medium text-brand-chalk">{formatCondition(shoe.condition)}</dd>
+            </div>
+          </dl>
+
+          <div>
+            <p className="mb-2 font-sora text-[9px] uppercase tracking-[0.16em] text-brand-putty/35">Your ratings</p>
+            <div className="grid grid-cols-3 gap-2">
+              {ratingItems.map(([label, value]) => (
+                <div key={label} className="rounded-md border border-white/[0.07] bg-white/[0.025] px-2 py-2 text-center">
+                  <span className="block font-sora text-[9px] tracking-[0.12em] text-brand-putty/35">{label}</span>
+                  <strong className="mt-0.5 block font-ball-pill text-lg font-normal text-brand-chalk">{value ?? '—'}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            title={isComplete ? 'Size, condition, and ratings added' : `Missing: ${missingFields.join(', ')}`}
+            aria-label={isComplete ? `${name} profile complete` : `Complete ${name} profile. Missing ${missingFields.join(', ')}`}
+            onClick={(event) => {
+              event.stopPropagation();
+              onEdit();
+            }}
+            className={`flex min-h-11 w-full items-center justify-between rounded-md border px-3 py-2 text-left transition-colors ${
+              isComplete
+                ? 'border-white/[0.07] bg-white/[0.025] hover:bg-white/[0.05]'
+                : 'border-brand-red/35 bg-brand-red/[0.08] hover:bg-brand-red/[0.14]'
+            }`}
+          >
+            <span className="flex min-w-0 items-center gap-2.5">
+              <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-sm ${isComplete ? 'bg-white/10 text-brand-chalk' : 'bg-brand-red text-black'}`}>
+                {isComplete ? <Check className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate font-sora text-[11px] font-medium text-brand-chalk">
+                  {isComplete ? 'Profile complete' : 'Add your fit'}
+                </span>
+                <span className="block truncate font-sora text-[9px] text-brand-putty/40">
+                  {completed} of {total} details added
+                </span>
+              </span>
+            </span>
+            <span className="ml-2 font-sora text-[10px] text-brand-putty/35">Edit</span>
+          </button>
         </div>
-      </div>
-    </motion.div >
+      </article>
+    </motion.div>
   );
 }, (prevProps, nextProps) => {
   // Only re-render if essential props changed
   return (
-    prevProps.shoe._id === nextProps.shoe._id &&
-    prevProps.shoe.isFavourite === nextProps.shoe.isFavourite &&
-    prevProps.shoe.comfortScore === nextProps.shoe.comfortScore &&
-    prevProps.shoe.performanceRating === nextProps.shoe.performanceRating &&
-    prevProps.shoe.durabilityRating === nextProps.shoe.durabilityRating &&
+    prevProps.shoe === nextProps.shoe &&
     prevProps.index === nextProps.index &&
     prevProps.onClick === nextProps.onClick &&
+    prevProps.onEdit === nextProps.onEdit &&
     prevProps.specialLabel?.type === nextProps.specialLabel?.type
   );
 });

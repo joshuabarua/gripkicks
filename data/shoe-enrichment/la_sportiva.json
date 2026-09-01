@@ -1,0 +1,639 @@
+[
+  {
+    "brand": "La Sportiva",
+    "name": "Aragon M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-aragon-man-zfcs064",
+    "description": "A men's climbing shoe with a suede tubular upper, unlined interior, 1.1 mm LaspoFlex midsole and 4 mm FriXion Black sole.",
+    "officialSpecs": {
+      "closure": "Double hook-and-loop",
+      "upper": "Suede leather, tubular construction",
+      "lining": "None",
+      "midsole": "LaspoFlex 1.1 mm",
+      "sole": "FriXion® Black 4 mm"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Aragon W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-aragon-woman-woman-zfcs065",
+    "description": "A women's climbing shoe with a suede tubular upper, unlined interior, 0.8 mm LaspoFlex midsole and 4 mm FriXion Black sole.",
+    "officialSpecs": {
+      "closure": "Double hook-and-loop",
+      "upper": "Suede leather, tubular construction",
+      "lining": "None",
+      "midsole": "LaspoFlex 0.8 mm",
+      "sole": "FriXion® Black 4 mm"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Cobra U",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-cobra-unisex-zfcs052",
+    "description": "A unisex slip-on climbing shoe with a suede upper, unlined interior, forefoot-only 0.8 mm LaspoFlex midsole and 3.5 mm Vibram XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Slip-on",
+      "upper": "Suede leather, slip lasted",
+      "lining": "None",
+      "midsole": "LaSpoFlex 0.8 mm, forefoot only",
+      "sole": "Vibram® XS Grip2 3.5 mm"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Finale Lace M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-finale-man-zfcs069",
+    "description": "A men's lace-up climbing shoe with a suede tubular upper, full-length 1.1 mm LaspoFlex midsole and 5 mm Vibram XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Suede leather, tubular construction",
+      "lining": "None",
+      "midsole": "LaSpoFlex 1.1 mm, full length",
+      "sole": "Vibram® XS Edge 5 mm",
+      "weight": "240 g",
+      "sensitivity": "3/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Finale Lace W",
+    "officialUrl": "https://www.lasportivausa.com/products/finale-womens",
+    "description": "A women's lace-up climbing shoe with a leather and microfiber upper, full-length 1.1 mm LaspoFlex midsole and 5 mm Vibram XS Edge half sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Leather / Microfiber",
+      "lining": "Unlined",
+      "midsole": "1.1 mm full-length LaspoFlex",
+      "sole": "5 mm Vibram® XS Edge™ half sole",
+      "weight": "7.9 oz / 225 g",
+      "sensitivity": "3/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Genius U",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-genius-unisex-zfcs042",
+    "description": "A unisex lace-up No-Edge climbing shoe with a suede and microfiber upper, 1.1 mm LaspoFlex midsole with P3 and 3 mm Vibram XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Suede leather / Microfiber",
+      "lining": "Unlined",
+      "midsole": "1.1 mm LaspoFlex with P3®",
+      "sole": "3 mm Vibram® XS Grip2™",
+      "weight": "7.8 oz / 220 g",
+      "sensitivity": "4/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Katana Lace M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-katana-laces-man-zfcs071",
+    "description": "A men's lace-up climbing shoe with a microfiber and leather upper, full-length 1.1 mm LaspoFlex midsole with P3 and 4 mm Vibram XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Microfiber and leather",
+      "lining": "Pacific, forefoot and back",
+      "midsole": "1.1 mm full-length LaspoFlex with P3® System",
+      "sole": "4 mm Vibram® XS Edge™",
+      "weight": "8.8 oz / 250 g",
+      "sensitivity": "3/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Katana Lace W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-katana-laces-woman-woman-zfcs072",
+    "description": "A women's lace-up climbing shoe with a microfiber and leather upper, 1.1 mm LaspoFlex midsole with P3 and a 4 mm Vibram XS Grip2 half sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Microfiber and leather",
+      "lining": "Pacific, forefoot and back",
+      "midsole": "1.1 mm full-length LaspoFlex with P3® System",
+      "sole": "4 mm Vibram® XS Grip2™ half sole",
+      "weight": "7.5 oz / 215 g",
+      "sensitivity": "3/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Kubo M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-kubo-man-zfcs024",
+    "description": "A men's dual-strap climbing shoe with an unlined microfiber and suede upper, P3 system and 4 mm Vibram XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Dual hook-and-loop",
+      "upper": "Unlined microfiber and suede insole",
+      "lining": "None",
+      "midsole": "P3 System™",
+      "sole": "Vibram® XS Edge 4 mm",
+      "weight": "7.0 oz / 200 g",
+      "sensitivity": "3/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Kubo W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-kubo-woman-woman-zfcs067",
+    "description": "A women's dual-strap climbing shoe with an unlined microfiber and suede upper, full-length 0.8 mm LaspoFlex midsole with P3 and Vibram XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Dual hook-and-loop",
+      "upper": "Unlined microfiber and suede calf insole",
+      "lining": "None",
+      "midsole": "0.8 mm full-length LaSpoFlex with P3 System",
+      "sole": "Vibram® XS Grip2"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Mandala M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-mandala-unisex-zfcs041",
+    "description": "A No-Edge climbing shoe with a microfiber upper, unlined interior, 1.1 mm LaspoFlex midsole with P3 and 3 mm Vibram XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop",
+      "upper": "Microfiber",
+      "lining": "Unlined",
+      "midsole": "1.1 mm LaspoFlex with P3 System™",
+      "sole": "3 mm Vibram® XS Grip2™",
+      "weight": "240 g",
+      "sensitivity": "4/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.84,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Mistral M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-mistral-man-zfcs076",
+    "description": "A men's dual-strap climbing shoe with a microfiber upper, forefoot Pacific lining and full-length 1.1 mm LaspoFlex midsole with P3.",
+    "officialSpecs": {
+      "closure": "Dual hook-and-loop",
+      "upper": "Microfiber with Microbase SkinLike® insole",
+      "lining": "Pacific, forefoot only",
+      "midsole": "LaSpoFlex 1.1 mm, full length, with P3 system",
+      "sole": "4 mm FriXion® ECO",
+      "weight": "7.0 oz / 200 g",
+      "sensitivity": "2/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.94,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Mistral W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-mistral-woman-woman-zfcs077",
+    "description": "A women's dual-strap climbing shoe with a microfiber upper, forefoot Pacific lining and full-length 1.1 mm LaspoFlex midsole with P3.",
+    "officialSpecs": {
+      "closure": "Dual hook-and-loop",
+      "upper": "Microfiber with Microbase SkinLike® insole",
+      "lining": "Pacific, forefoot only",
+      "midsole": "LaSpoFlex 1.1 mm, full length, with P3 system",
+      "sole": "FriXion® ECO"
+    },
+    "confidence": 0.93,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Miura M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-miura-man-zfcs053",
+    "description": "A men's lace-up climbing shoe with a suede upper, Dentex lining, forefoot-only 1.1 mm LaspoFlex midsole and 4 mm Vibram XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Suede leather, slip lasted",
+      "lining": "Dentex",
+      "midsole": "1.1 mm LaspoFlex, forefoot only",
+      "sole": "Vibram® XS Edge 4 mm",
+      "weight": "8.4 oz / 239 g",
+      "sensitivity": "2/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Miura Vs M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-miura-vs-man-zfcs078",
+    "description": "A men's triple-strap climbing shoe with a leather upper, Pacific lining, forefoot 1.1 mm LaspoFlex midsole with P3 and 4 mm Vibram XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Triple hook-and-loop",
+      "upper": "Leather",
+      "lining": "Unlined underfoot / Pacific in upper",
+      "midsole": "1.1 mm LaspoFlex at toe with P3® System",
+      "sole": "4 mm Vibram® XS Edge™",
+      "weight": "9.1 oz / 260 g",
+      "sensitivity": "2/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Miura Vs W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-miura-vs-woman-woman-zfcs079",
+    "description": "A women's triple-strap climbing shoe with a leather upper, Pacific lining, forefoot 1.1 mm LaspoFlex midsole with P3 and 4 mm Vibram XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Triple hook-and-loop",
+      "upper": "Leather",
+      "lining": "Unlined underfoot / Pacific in upper",
+      "midsole": "1.1 mm LaspoFlex at toe with P3® System",
+      "sole": "4 mm Vibram® XS Grip2™",
+      "weight": "8.2 oz / 235 g",
+      "sensitivity": "2/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Mythos Eco M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-mythos-eco-man-zfcs006",
+    "description": "A men's lace-up climbing shoe with an eco-tanned leather upper, unlined interior, full-length 1.1 mm LaspoFlex midsole and 4 mm recycled rubber sole.",
+    "officialSpecs": {
+      "closure": "Mythos lace-up system",
+      "upper": "ECO Idro-Perwanger® biodegradable leather, metal-free tanning",
+      "lining": "Unlined",
+      "midsole": "1.1 mm full-length LaspoFlex",
+      "sole": "4 mm La Sportiva ECO rubber, recycled",
+      "weight": "8.2 oz / 233 g"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Mythos Eco W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-mythos-eco-woman-woman-zfcs007",
+    "description": "A women's lace-up climbing shoe with an eco-tanned leather upper, unlined interior, full-length 1.1 mm LaspoFlex midsole and 4 mm recycled rubber sole.",
+    "officialSpecs": {
+      "closure": "Mythos lace-up system",
+      "upper": "ECO Idro-Perwanger® biodegradable leather, metal-free tanning",
+      "lining": "Unlined",
+      "midsole": "1.1 mm full-length LaspoFlex",
+      "sole": "4 mm La Sportiva ECO rubber, recycled",
+      "weight": "6.6 oz / 186 g"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Futura M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-futura-unisex-zfcs044",
+    "description": "A No-Edge climbing shoe with a microfiber upper, unlined interior, toe-only 1.1 mm LaspoFlex midsole with P3 and 3 mm Vibram XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Fast Lacing System™",
+      "upper": "Microfiber",
+      "lining": "Unlined",
+      "midsole": "Leather insole / 1.1 mm LaspoFlex at toe / P3 System™",
+      "sole": "3 mm Vibram® XS Grip2™",
+      "weight": "7.7 oz / 220 g",
+      "sensitivity": "4/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.88,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Ondra Comp U",
+    "officialUrl": "https://www.lasportivausa.com/products/ondra-comp",
+    "description": "A climbing shoe with a microfiber upper, unlined interior, toe-only 1.1 mm LaspoFlex midsole with P3 and 3.5 mm Vibram XS Grip2 sole with SenseGrip.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop",
+      "upper": "Microfiber / Recycled heel pull-tabs / 44% recycled elastic insert",
+      "lining": "Unlined",
+      "midsole": "1.1 mm LaspoFlex at toe with P3® System / Leather insole",
+      "sole": "3.5 mm Vibram® XS Grip2™ with SenseGrip™ Technology",
+      "weight": "7.4 oz / 210 g",
+      "sensitivity": "4/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.94,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Otaki M",
+    "officialUrl": "https://www.lasportivausa.com/products/otaki",
+    "description": "A men's dual-strap climbing shoe with a leather and microfiber upper, forefoot Pacific lining, 1.1 mm LaspoFlex midsole with P3 and 4 mm XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Dual hook-and-loop",
+      "upper": "Leather / Microfiber",
+      "lining": "Pacific, forefoot",
+      "midsole": "1.1 mm LaspoFlex with P3®",
+      "sole": "4 mm Vibram® XS Edge™",
+      "weight": "7.7 oz / 218 g",
+      "sensitivity": "4/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Otaki W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-otaki-woman-woman-zfcs050",
+    "description": "A women's dual-strap climbing shoe with a leather and microfiber upper, forefoot Pacific lining, 1.1 mm LaspoFlex midsole with P3 and 4 mm XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Dual hook-and-loop",
+      "upper": "Leather / Microfiber",
+      "lining": "Pacific, forefoot",
+      "midsole": "1.1 mm LaspoFlex with P3®",
+      "sole": "4 mm Vibram® XS Grip2™",
+      "weight": "6.1 oz / 175 g",
+      "sensitivity": "4/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Skwama M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-skwama-man-zfcs051",
+    "description": "A men's single-strap climbing shoe with a microfiber and suede upper, rear Dentex lining, 0.8 mm LaspoFlex midsole with P3 and 3.5 mm XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop",
+      "upper": "Microfiber and suede leather",
+      "lining": "Dentex, rear",
+      "midsole": "0.8 mm full-length LaspoFlex with P3 System",
+      "sole": "Vibram® XS Grip2 3.5 mm"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Skwama Vegan M",
+    "officialUrl": "https://www.lasportivausa.com/products/skwama-vegan",
+    "description": "A men's single-strap vegan climbing shoe with a microfiber upper, heel Dentex lining, 0.8 mm LaspoFlex midsole with P3 and 4 mm XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop",
+      "upper": "Microfiber / Rubber toe cap / Vibram® rubber rands",
+      "lining": "Dentex, heel",
+      "midsole": "0.8 mm LaspoFlex with P3® System",
+      "sole": "4 mm Vibram® XS Grip2™ / S-Heel™",
+      "weight": "8.1 oz / 230 g",
+      "sensitivity": "4/5",
+      "rigidity": "2/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Skwama Vegan W",
+    "officialUrl": "https://www.lasportivausa.com/products/skwama-vegan-womens",
+    "description": "A women's single-strap vegan climbing shoe with a microfiber upper, heel Dentex lining, 0.8 mm LaspoFlex midsole with P3 and 4 mm XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop",
+      "upper": "Microfiber / Rubber toe cap / Vibram® rubber rands",
+      "lining": "Dentex, heel",
+      "midsole": "0.8 mm LaspoFlex with P3® System",
+      "sole": "4 mm Vibram® XS Grip2™ / S-Heel™",
+      "weight": "7.1 oz / 200 g",
+      "sensitivity": "4/5",
+      "rigidity": "2/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Solution Comp U",
+    "officialUrl": "https://www.lasportivausa.com/products/solution-comp",
+    "description": "A climbing shoe with a leather and microfiber upper, partial Pacific lining, toe-only 0.9 mm LaspoFlex midsole with P3 and 3.5 mm XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Fast Lacing System™ / Harness Lock™",
+      "upper": "Leather / Microfiber",
+      "lining": "Pacific at toe and heel / Lycra tongue / Unlined leather at midfoot",
+      "midsole": "0.9 mm LaspoFlex at toe with P3®",
+      "sole": "3.5 mm Vibram® XS Grip2™",
+      "weight": "8.9 oz / 258 g",
+      "sensitivity": "4/5",
+      "rigidity": "2/5"
+    },
+    "confidence": 0.86,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Solution M",
+    "officialUrl": "https://www.lasportivausa.com/products/solution",
+    "description": "A men's climbing shoe with a leather and Lorica upper, partial HF lining, toe-only 1.1 mm LaspoFlex midsole and 3.5 mm Vibram XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Fast Lacing System™ / Heel-Lock harness",
+      "upper": "Leather / Lorica®",
+      "lining": "HF, toe box and arch only",
+      "midsole": "1.1 mm LaspoFlex, toe only",
+      "sole": "3.5 mm Vibram® XS Grip2™",
+      "weight": "8.9 oz / 258 g",
+      "sensitivity": "4/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Solution W",
+    "officialUrl": "https://www.lasportivausa.com/products/solution-womens",
+    "description": "A women's climbing shoe with a leather and Lorica upper, partial HF lining, toe-only 0.9 mm LaspoFlex midsole with P3 and 3.5 mm XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Fast Lacing System™ / Heel-Lock harness",
+      "upper": "Leather / Lorica®",
+      "lining": "HF, toe box and arch only",
+      "midsole": "0.9 mm LaspoFlex at toe with P3®",
+      "sole": "3.5 mm Vibram® XS Grip2™",
+      "weight": "7.9 oz / 225 g",
+      "sensitivity": "4/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Tarantula  Boulder M",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-tarantula-boulder-man-zfcs143",
+    "description": "A men's dual-strap climbing shoe with a leather upper, forefoot Pacific lining, full-length 1.1 mm LaspoFlex midsole and 5 mm FriXion RS sole.",
+    "officialSpecs": {
+      "closure": "Dual hook-and-loop",
+      "upper": "Leather",
+      "lining": "Pacific, forefoot",
+      "midsole": "1.1 mm full-length LaspoFlex",
+      "sole": "5 mm FriXion® RS",
+      "weight": "8.1 oz / 230 g",
+      "sensitivity": "2/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Tarantula Kids",
+    "officialUrl": "https://www.lasportivausa.com/products/tarantula-jr",
+    "description": "A kids' single-strap climbing shoe with an unlined leather upper, no midsole and a 5 mm FriXion RS sole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop",
+      "upper": "Leather",
+      "lining": "Unlined",
+      "midsole": "None",
+      "sole": "5 mm FriXion® RS",
+      "weight": "4.2 oz / 120 g"
+    },
+    "confidence": 0.89,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Tarantula W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-tarantula-woman-woman-zfcs132",
+    "description": "A women's strap climbing shoe with a suede tubular upper, forefoot sweat-absorbing lining, 1.8 mm LaspoFlex midsole and 4 mm FriXion Black sole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Suede, tubular construction",
+      "lining": "Forefoot sweat-absorbing insert",
+      "midsole": "LaSpoFlex 1.8 mm",
+      "sole": "FriXion® Black 4 mm"
+    },
+    "confidence": 0.94,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Tarantulace M",
+    "officialUrl": "https://www.lasportivausa.com/products/tarantulace",
+    "description": "A men's lace-up climbing shoe with a leather upper, unlined interior, 1.8 mm LaspoFlex midsole and 5 mm FriXion RS sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Leather / Microfiber lacing harness",
+      "lining": "Unlined",
+      "midsole": "1.8 mm LaspoFlex",
+      "sole": "5 mm FriXion® RS",
+      "weight": "8.6 oz / 245 g",
+      "sensitivity": "1/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Tarantulace W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-tarantulace-woman-woman-zfcs135",
+    "description": "A women's lace-up climbing shoe with a suede tubular upper, forefoot sweat-absorbing lining, 1.8 mm LaspoFlex midsole and 4 mm FriXion Black sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Suede, tubular construction",
+      "lining": "Forefoot sweat-absorbing insert",
+      "midsole": "LaSpoFlex 1.8 mm",
+      "sole": "FriXion® Black 4 mm",
+      "weight": "7.7 oz / 220 g",
+      "sensitivity": "1/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "TC Extreme U",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-tc-extreme-unisex-zfcs082",
+    "description": "A unisex cold-weather climbing shoe with a thermal gaiter and lining, suede calf leather upper, full-length 1.1 mm LaspoFlex midsole with P3 and 4 mm XS Grip2 sole.",
+    "officialSpecs": {
+      "closure": "Lace-up with water-repellent zip gaiter",
+      "upper": "Suede calf leather, tubular construction",
+      "lining": "Thermal material",
+      "midsole": "1.1 mm full-length LaSpoFlex with P3 System™",
+      "sole": "Vibram® XS Grip2 4 mm",
+      "weight": "10.9 oz / 310 g"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "TC Pro U",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-tc-pro-man-zfcs068",
+    "description": "A mid-cut lace-up climbing shoe with an eco-leather upper, partial Sentex lining, 1.1 mm LaspoFlex midsole with P3 and 4 mm Vibram XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "ECO leather / Microfiber lacing reinforcement",
+      "lining": "Unlined underfoot / Sentex / PU foam / AirMesh tongue",
+      "midsole": "P3® with 1.1 mm LaspoFlex",
+      "sole": "4 mm Vibram® XS Edge™",
+      "weight": "8.7 oz / 247 g",
+      "sensitivity": "1/5",
+      "rigidity": "5/5"
+    },
+    "confidence": 0.88,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Theory M",
+    "officialUrl": "https://www.lasportivausa.com/products/theory",
+    "description": "A men's single-strap climbing shoe with a microfiber and leather upper, unlined interior, P3 midsole and differentiated 1.9-4 mm Vibram XS Grip2 half sole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop",
+      "upper": "Microfiber and leather",
+      "lining": "Unlined",
+      "midsole": "P3 System™",
+      "sole": "No-Edge™ D-Tech™ half sole / 1.9-4 mm Vibram® XS Grip2™",
+      "weight": "7.5 oz / 215 g",
+      "sensitivity": "4/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Theory W",
+    "officialUrl": "https://www.lasportiva.com/en/shoes-climbing-theory-woman-woman-zfcs063",
+    "description": "A women's single-strap climbing shoe with a microfiber and leather upper, unlined interior, P3 midsole and differentiated 1.9-4 mm Vibram XS Grip2 half sole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop",
+      "upper": "Microfiber and leather",
+      "lining": "Unlined",
+      "midsole": "P3® System",
+      "sole": "No-Edge™ D-Tech™ half sole / 1.9-4 mm Vibram® XS Grip2™",
+      "weight": "6.1 oz / 175 g",
+      "sensitivity": "4/5",
+      "rigidity": "3/5"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  }
+]

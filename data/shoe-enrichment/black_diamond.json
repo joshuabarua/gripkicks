@@ -1,0 +1,48 @@
+[
+  {
+    "brand": "Black Diamond",
+    "name": "Momentum",
+    "officialUrl": "https://blackdiamondequipment.com/products/mens-momentum-climbing-shoe",
+    "description": "Neutral, flat-lasted shoe with a micro-suede upper, engineered-knit tongue, mid-flex TPU midsole and Black Label rubber outsole.",
+    "officialSpecs": {
+      "closure": "Two hook-and-loop straps",
+      "upper": "55% polyester, 45% rubber",
+      "lining": "60% polyester, 40% suede",
+      "midsole": "100% TPU; mid flex",
+      "sole": "100% rubber; Black Label rubber",
+      "weight": "581 g"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Black Diamond",
+    "name": "Shadow",
+    "officialUrl": "https://eu.blackdiamondequipment.com/products/shadow-climbing-shoes",
+    "description": "Aggressively downturned unisex shoe for steep routes and bouldering, with a microfiber upper, minimalist midsole and 4.3 mm printed and molded rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop strap",
+      "upper": "Stretch-resistant microfiber with Engineered Knit Technology tongue",
+      "midsole": "Minimalist midsole",
+      "sole": "4.3 mm printed and molded rubber",
+      "sensitivity": "Extra sensitivity on steep terrain"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Black Diamond",
+    "name": "Shadow LV",
+    "officialUrl": "https://blackdiamondequipment.com/products/shadow-lv-climbing-shoes",
+    "description": "Low-volume, aggressively downturned unisex shoe for steep routes and bouldering, with a microfiber upper, minimalist midsole and 4.3 mm molded outsole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop strap",
+      "upper": "Stretch-resistant microfiber with Engineered Knit Technology tongue",
+      "midsole": "Minimalist midsole",
+      "sole": "4.3 mm molded rubber outsole",
+      "sensitivity": "Extra sensitivity on steep terrain"
+    },
+    "confidence": 0.98,
+    "reviewStatus": "approved"
+  }
+]

@@ -1,0 +1,83 @@
+[
+  {
+    "brand": "Tenaya",
+    "name": "Iati",
+    "officialUrl": "https://tenaya.net/en/iati/",
+    "description": "A curved climbing shoe for sport routes and bouldering, built with a leather and microfiber upper and independently adjustable hook-and-loop closure.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop, patented Draxtor system",
+      "upper": "Microfiber and leather",
+      "lining": "TXT-treated cotton",
+      "midsole": "Double midsole GI 1.8 and TST 150",
+      "sole": "Vibram XS Grip, 3.5 mm",
+      "weight": "340 g"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Tenaya",
+    "name": "Mastia",
+    "officialUrl": "https://tenaya.net/en/mastia/",
+    "description": "A curved, split-sole shoe for vertical and overhanging routes and bouldering, with rubber covering the toe box and instep for hooking.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microfiber",
+      "lining": "Unlined",
+      "midsole": "Double midsole GI 1.8 and TST 150",
+      "sole": "Vibram XS Grip, 3.5 mm",
+      "weight": "330 g"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Tenaya",
+    "name": "Mundaka",
+    "officialUrl": "https://tenaya.net/en/mundaka/",
+    "description": "A wide-fitting, curved shoe with a two-part sole for overhanging climbing, bouldering and lower-angle smearing.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop, patented Draxtor system",
+      "upper": "Microfiber",
+      "lining": "TXT-treated cotton",
+      "midsole": "Double midsole GI 1.8 and TST 150",
+      "sole": "Vibram XS Grip, 3.5 mm",
+      "weight": "340 g"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Tenaya",
+    "name": "Oasi",
+    "officialUrl": "https://tenaya.net/en/oasi/",
+    "description": "A curved shoe for vertical and overhanging routes and bouldering, using an independently adjustable Draxtor closure and multilayer midsole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop, patented Draxtor system",
+      "upper": "Microfiber",
+      "lining": "TXT-treated cotton",
+      "midsole": "Double midsole GI 1.8 and TST 150",
+      "sole": "Vibram XS Grip, 3.5 mm",
+      "weight": "340 g"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Tenaya",
+    "name": "Tarifa",
+    "officialUrl": "https://tenaya.net/en/tarifa/",
+    "description": "A curved lace-up shoe for sport climbing across overhanging, vertical and slab terrain, with a perforated microfiber upper and rubber-coated toe box.",
+    "officialSpecs": {
+      "closure": "Lacing",
+      "upper": "Microfiber",
+      "lining": "TXT-treated cotton",
+      "midsole": "Double midsole GI 1.8 and TST 150",
+      "sole": "Vibram XS Grip, 3.5 mm",
+      "weight": "340 g",
+      "rigidity": "Stiffer in the forefoot and heel than Oasi"
+    },
+    "confidence": 0.98,
+    "reviewStatus": "pending"
+  }
+]

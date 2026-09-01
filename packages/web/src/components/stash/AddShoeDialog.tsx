@@ -7,7 +7,7 @@ import ShoeImage from '@/components/ShoeImage';
 import { PaginatedList } from '@/components/ui/PaginatedList';
 import { Footprints, Plus, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState, useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { groupShoesByModel } from '@/utils/shoeVariants';
 import type { Shoe } from '@/types/api';
 
@@ -25,6 +25,9 @@ interface AddShoeDialogProps {
   uniqueBrands: string[];
   searchResults: Shoe[];
   onSelectShoe: (shoeId: string) => void;
+  hasMore: boolean;
+  isLoadingMore: boolean;
+  onLoadMore: () => void;
 }
 
 export function AddShoeDialog({
@@ -39,8 +42,10 @@ export function AddShoeDialog({
   uniqueBrands,
   searchResults,
   onSelectShoe,
+  hasMore,
+  isLoadingMore,
+  onLoadMore,
 }: AddShoeDialogProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const groupedSearchResults = useMemo(
     () => Array.from(groupShoesByModel(searchResults).values()),
     [searchResults],
@@ -53,13 +58,6 @@ export function AddShoeDialog({
     { label: 'Kids', value: 'kids' },
     { label: 'Unisex', value: 'unisex' },
   ];
-
-  const handleEndReached = useCallback(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
-  }, []);
 
   const loadingIndicator = (
     <div className="inline-flex items-center gap-2 text-neutral-500 text-sm">
@@ -198,13 +196,13 @@ export function AddShoeDialog({
             )}
             className="max-h-96 space-y-fluid-xs pr-2 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent"
             loadingIndicator={loadingIndicator}
-            onEndReached={handleEndReached}
-            hasMore={groupedSearchResults.length > 0}
-            isLoading={isLoading}
+            onEndReached={onLoadMore}
+            hasMore={hasMore}
+            isLoading={isLoadingMore}
             completedIndicator={<span className="font-sora text-xs text-neutral-500">All shoes loaded</span>}
           />
 
-          {groupedSearchResults.length === 0 && !isLoading && (
+          {groupedSearchResults.length === 0 && !isLoadingMore && (
             <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 px-6 py-10 text-center">
               <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-brand-red/10 flex items-center justify-center">
                 <Footprints className="w-6 h-6 text-brand-red" />

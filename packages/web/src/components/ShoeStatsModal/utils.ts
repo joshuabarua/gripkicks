@@ -8,50 +8,56 @@ interface ShoeCharacteristics {
   aggressiveness?: string | undefined;
   climbingDiscipline?: string | undefined;
   stiffness?: string | undefined;
+  defaultScores?: DefaultStats | undefined;
 }
 
 export const calculateDefaultStats = (shoe: ShoeCharacteristics): DefaultStats => {
+  if (shoe.defaultScores) return shoe.defaultScores;
+
   let comfort = 5;
   let performance = 5;
   let durability = 5;
+  const aggressiveness = shoe.aggressiveness?.toLowerCase();
+  const discipline = shoe.climbingDiscipline?.toLowerCase();
+  const stiffness = shoe.stiffness?.toLowerCase();
 
-  if (shoe.aggressiveness === 'Moderate') {
+  if (aggressiveness === 'moderate') {
     comfort = 6;
     performance = 6;
-  } else if (shoe.aggressiveness === 'Aggressive') {
+  } else if (aggressiveness === 'aggressive') {
     comfort = 4;
     performance = 8;
-  } else if (shoe.aggressiveness === 'Neutral') {
+  } else if (aggressiveness === 'flat' || aggressiveness === 'neutral') {
     comfort = 7;
     performance = 5;
   }
 
-  if (shoe.climbingDiscipline === 'Sport') {
+  if (discipline === 'sport') {
     performance += 1;
     durability -= 0.5;
-  } else if (shoe.climbingDiscipline === 'Bouldering') {
+  } else if (discipline === 'bouldering') {
     performance += 0.5;
     comfort += 0.5;
-  } else if (shoe.climbingDiscipline === 'Trad') {
+  } else if (discipline === 'trad') {
     comfort += 1;
     durability += 1;
     performance -= 0.5;
-  } else if (shoe.climbingDiscipline === 'Competition') {
+  } else if (discipline === 'competition') {
     performance += 2;
     comfort -= 1;
-  } else if (shoe.climbingDiscipline === 'Indoor') {
+  } else if (discipline === 'indoor' || discipline === 'gym') {
     comfort += 0.5;
     durability -= 0.5;
-  } else if (shoe.climbingDiscipline === 'All-Around') {
+  } else if (discipline === 'all-around') {
     comfort += 0.5;
     performance += 0.5;
     durability += 0.5;
   }
 
-  if (shoe.stiffness === 'Soft') {
+  if (stiffness === 'soft') {
     comfort += 1;
     performance -= 0.5;
-  } else if (shoe.stiffness === 'Stiff') {
+  } else if (stiffness === 'stiff') {
     comfort -= 0.5;
     performance += 1;
     durability += 0.5;

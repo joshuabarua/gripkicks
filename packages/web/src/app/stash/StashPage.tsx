@@ -99,6 +99,9 @@ export default function ShoeSanctuaryPage() {
     totalShoesInDatabase,
     uniqueBrands,
     userData,
+    catalogHasMore,
+    catalogIsLoadingMore,
+    loadMoreCatalog,
   } = useStashData(session?.user?.id, {
     catalog: {
       enabled: isAddDialogOpen,
@@ -126,6 +129,9 @@ export default function ShoeSanctuaryPage() {
         ...(shoe.shoe?.aggressiveness ? { aggressiveness: shoe.shoe.aggressiveness } : {}),
         ...(shoe.shoe?.climbingDiscipline ? { climbingDiscipline: shoe.shoe.climbingDiscipline } : {}),
         ...(shoe.shoe?.stiffness ? { stiffness: shoe.shoe.stiffness } : {}),
+        ...(shoe.shoe?.defaultScores && shoe.shoe.enrichment?.reviewStatus === "approved"
+          ? { defaultScores: shoe.shoe.defaultScores }
+          : {}),
       };
       const stats = getEffectiveShoeStats(characteristics, {
         ...(shoe.comfortScore !== undefined ? { comfortScore: shoe.comfortScore } : {}),
@@ -211,6 +217,23 @@ export default function ShoeSanctuaryPage() {
   const handleSelectShoe = useCallback((shoe: UserShoe) => {
     setSelectedShoe(shoe);
     setIsStatsModalOpen(true);
+  }, []);
+
+  const openShoeEditor = useCallback((shoe: UserShoe) => {
+    setEditingShoe(shoe);
+    setEditForm({
+      size: shoe.size || undefined,
+      purchaseDate: shoe.purchaseDate || undefined,
+      condition: shoe.condition || undefined,
+      notes: shoe.notes || undefined,
+      showNotes: false,
+      comfortScore: shoe.comfortScore,
+      performanceRating: shoe.performanceRating,
+      durabilityRating: shoe.durabilityRating,
+      fitLongevity: shoe.fitLongevity || undefined,
+      sizingDeviation: shoe.sizingDeviation,
+    });
+    setIsStatsModalOpen(false);
   }, []);
 
   const addShoeToSanctuary = async (shoeId: string) => {
@@ -394,6 +417,9 @@ export default function ShoeSanctuaryPage() {
                 uniqueBrands={uniqueBrands}
                 searchResults={dialogSearchResults}
                 onSelectShoe={addShoeToSanctuary}
+                hasMore={catalogHasMore}
+                isLoadingMore={catalogIsLoadingMore}
+                onLoadMore={() => loadMoreCatalog(40)}
               />
             </motion.div>
 
@@ -483,6 +509,7 @@ export default function ShoeSanctuaryPage() {
                 groups={brandGroups}
                 specialLabels={specialLabels}
                 onSelect={handleSelectShoe}
+                onEdit={openShoeEditor}
               />
             )}
           </div>
@@ -546,55 +573,7 @@ export default function ShoeSanctuaryPage() {
             }
             : undefined
         }
-        onEditShoe={
-          selectedShoe
-            ? () => {
-              const defaultCharacteristics = {
-                ...(selectedShoe.shoe?.aggressiveness
-                  ? { aggressiveness: selectedShoe.shoe.aggressiveness }
-                  : {}),
-                ...(selectedShoe.shoe?.climbingDiscipline
-                  ? {
-                    climbingDiscipline:
-                      selectedShoe.shoe.climbingDiscipline,
-                  }
-                  : {}),
-                ...(selectedShoe.shoe?.stiffness
-                  ? { stiffness: selectedShoe.shoe.stiffness }
-                  : {}),
-              };
-
-              const defaultStats = getEffectiveShoeStats(
-                defaultCharacteristics,
-                {
-                  ...(selectedShoe.comfortScore !== undefined
-                    ? { comfortScore: selectedShoe.comfortScore }
-                    : {}),
-                  ...(selectedShoe.performanceRating !== undefined
-                    ? { performanceRating: selectedShoe.performanceRating }
-                    : {}),
-                  ...(selectedShoe.durabilityRating !== undefined
-                    ? { durabilityRating: selectedShoe.durabilityRating }
-                    : {}),
-                },
-              );
-              setEditingShoe(selectedShoe);
-              setEditForm({
-                size: selectedShoe.size || undefined,
-                purchaseDate: selectedShoe.purchaseDate || undefined,
-                condition: selectedShoe.condition || undefined,
-                notes: selectedShoe.notes || undefined,
-                showNotes: false,
-                comfortScore: defaultStats.comfort,
-                performanceRating: defaultStats.performance,
-                durabilityRating: defaultStats.durability,
-                fitLongevity: selectedShoe.fitLongevity || undefined,
-                sizingDeviation: selectedShoe.sizingDeviation || undefined,
-              });
-              setIsStatsModalOpen(false);
-            }
-            : undefined
-        }
+        onEditShoe={selectedShoe ? () => openShoeEditor(selectedShoe) : undefined}
         onRemoveShoe={
           selectedShoe
             ? () => {

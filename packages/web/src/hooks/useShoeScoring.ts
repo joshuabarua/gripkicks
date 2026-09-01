@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { useQuery } from "convex/react";
+import { useEffect, useMemo } from "react";
+import { usePaginatedQuery, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Doc } from "convex/_generated/dataModel";
 import { useFootProfileStore } from "@/stores/footProfileStore";
@@ -58,8 +58,16 @@ export function useShoeScoring(userPreferences?: {
   performance: number;
   durability: number;
 }) {
-  const shoes = useQuery(api.shoes.listAll, {});
+  const {
+    results: shoes,
+    status: shoesStatus,
+    loadMore: loadMoreShoes,
+  } = usePaginatedQuery(api.shoes.list, {}, { initialNumItems: 100 });
   const popularityData = useQuery(api.popularity.getAllShoesPopularity);
+
+  useEffect(() => {
+    if (shoesStatus === "CanLoadMore") loadMoreShoes(100);
+  }, [shoesStatus, loadMoreShoes]);
   const { profile: footProfile } = useFootProfileStore();
   const { userPreferenceProfile, isLearningReady } =
     useUserPreferenceLearning();
@@ -134,7 +142,7 @@ export function useShoeScoring(userPreferences?: {
     soleMateMap,
   ]);
 
-  const isLoading = shoes === undefined || popularityData === undefined;
+  const isLoading = shoesStatus !== "Exhausted" || popularityData === undefined;
 
   return { scoredShoes, isLoading, isLearningReady, userPreferenceProfile, stashCount, ratedCount };
 }
@@ -296,6 +304,16 @@ function calculateVolumeCompatibility(
   return volumeMapping[footProfile.volume]?.[shoeVolume] || 2.5;
 }
 
+function getCatalogBaseline(
+  shoe: Shoe,
+  field: "comfort" | "performance" | "durability",
+) {
+  if (shoe.enrichment?.reviewStatus !== "approved") return 2.5;
+  return shoe.defaultScores?.[field] !== undefined
+    ? shoe.defaultScores[field] / 2
+    : 2.5;
+}
+
 function calculatePreferenceMatch(
   shoe: Shoe,
   preferences:
@@ -304,9 +322,9 @@ function calculatePreferenceMatch(
 ): number {
   if (!preferences) return 2.5;
 
-  const shoeComfort = shoe.avgComfortScore || 2.5;
-  const shoePerformance = shoe.avgPerformanceRating || 2.5;
-  const shoeDurability = shoe.avgDurabilityRating || 2.5;
+  const shoeComfort = shoe.avgComfortScore ?? getCatalogBaseline(shoe, "comfort");
+  const shoePerformance = shoe.avgPerformanceRating ?? getCatalogBaseline(shoe, "performance");
+  const shoeDurability = shoe.avgDurabilityRating ?? getCatalogBaseline(shoe, "durability");
 
   // Calculate how well the shoe matches user preferences (inverse of difference)
   const comfortDiff = Math.abs(shoeComfort - preferences.comfort);
@@ -339,15 +357,20 @@ function calculateCommunityApproval(
   const shoePopularity = popularityData.find((p) => p.shoeId === shoe._id);
 
   if (!shoePopularity || shoePopularity.count === 0) {
-    return { communityScore: 2.5, soleMateMatch: 0 };
+    const baseline = (
+      getCatalogBaseline(shoe, "comfort") +
+      getCatalogBaseline(shoe, "performance") +
+      getCatalogBaseline(shoe, "durability")
+    ) / 3;
+    return { communityScore: baseline, soleMateMatch: 0 };
   }
 
   const soleMate = soleMateMap?.get(shoe._id) ?? null;
   const soleMateMatch = soleMate?.ownerCount ?? 0;
 
-  const generalComfort = shoe.avgComfortScore ?? 2.5;
-  const generalPerformance = shoe.avgPerformanceRating ?? 2.5;
-  const generalDurability = shoe.avgDurabilityRating ?? 2.5;
+  const generalComfort = shoe.avgComfortScore ?? getCatalogBaseline(shoe, "comfort");
+  const generalPerformance = shoe.avgPerformanceRating ?? getCatalogBaseline(shoe, "performance");
+  const generalDurability = shoe.avgDurabilityRating ?? getCatalogBaseline(shoe, "durability");
 
   const blendedComfort = blend(generalComfort, soleMate?.avgComfort ?? null);
   const blendedPerformance = blend(generalPerformance, soleMate?.avgPerformance ?? null);
@@ -418,9 +441,9 @@ function calculateLearnedPreferenceBonus(
 }
 
 function calculateOverallRating(shoe: Shoe, fitLongevityScore: number | null): number {
-  const comfort = shoe.avgComfortScore || 2.5;
-  const performance = shoe.avgPerformanceRating || 2.5;
-  const durability = shoe.avgDurabilityRating || 2.5;
+  const comfort = shoe.avgComfortScore ?? getCatalogBaseline(shoe, "comfort");
+  const performance = shoe.avgPerformanceRating ?? getCatalogBaseline(shoe, "performance");
+  const durability = shoe.avgDurabilityRating ?? getCatalogBaseline(shoe, "durability");
   const enrichedDurability =
     fitLongevityScore === null ? durability : durability * 0.85 + fitLongevityScore * 0.15;
 
@@ -434,9 +457,18 @@ function calculateRadarMetrics(
   preferenceScore: number,
   soleMate?: SoleMateAggregate,
 ): ShoeScore["metrics"] {
-  const baseComfort = blend(shoe.avgComfortScore ?? 2.5, soleMate?.avgComfort ?? null);
-  const basePerformance = blend(shoe.avgPerformanceRating ?? 2.5, soleMate?.avgPerformance ?? null);
-  const baseDurability = blend(shoe.avgDurabilityRating ?? 2.5, soleMate?.avgDurability ?? null);
+  const baseComfort = blend(
+    shoe.avgComfortScore ?? getCatalogBaseline(shoe, "comfort"),
+    soleMate?.avgComfort ?? null,
+  );
+  const basePerformance = blend(
+    shoe.avgPerformanceRating ?? getCatalogBaseline(shoe, "performance"),
+    soleMate?.avgPerformance ?? null,
+  );
+  const baseDurability = blend(
+    shoe.avgDurabilityRating ?? getCatalogBaseline(shoe, "durability"),
+    soleMate?.avgDurability ?? null,
+  );
   const enrichedDurability =
     soleMate?.avgFitLongevityScore === null || soleMate?.avgFitLongevityScore === undefined
       ? baseDurability

@@ -53,6 +53,14 @@ interface ShoeStatsModalProps {
     totalRatings?: number;
     popularityCount?: number;
     totalShoesInDatabase?: number;
+    defaultScores?: {
+      comfort: number;
+      performance: number;
+      durability: number;
+    };
+    enrichment?: {
+      reviewStatus: "pending" | "approved" | "rejected";
+    };
   } | null | undefined;
   isOpen: boolean;
   onClose: () => void;
@@ -93,7 +101,27 @@ export default function ShoeStatsModal({
   const popularityCount = hasFullShoe ? fullShoe?.popularityCount : undefined;
   const totalShoesInDatabase = hasFullShoe ? fullShoe?.totalShoesInDatabase : undefined;
 
-  const defaultStats = calculateDefaultStats({ aggressiveness, climbingDiscipline, stiffness });
+  const fullShoeDefaults = fullShoe?.enrichment?.reviewStatus === "approved"
+    ? fullShoe.defaultScores
+    : undefined;
+  const stashShoeDefaults = shoe.shoe?.enrichment?.reviewStatus === "approved"
+    ? shoe.shoe.defaultScores
+    : undefined;
+  const defaultScores = fullShoeDefaults ?? stashShoeDefaults;
+  const defaultStats = calculateDefaultStats({
+    aggressiveness,
+    climbingDiscipline,
+    stiffness,
+    ...(defaultScores
+      ? {
+        defaultScores: {
+          comfort: defaultScores.comfort,
+          performance: defaultScores.performance,
+          durability: defaultScores.durability,
+        },
+      }
+      : {}),
+  });
   const showCommunityAverages = !!(totalRatings && totalRatings >= 3);
   const personalStats = getEffectiveShoeStats(
     { aggressiveness, climbingDiscipline, stiffness },
@@ -105,16 +133,19 @@ export default function ShoeStatsModal({
   );
 
   const comfortScore = showCommunityAverages
-    ? avgComfortScore || defaultStats.comfort
+    ? avgComfortScore ?? defaultStats.comfort
     : personalStats.comfort;
   const performanceRating = showCommunityAverages
-    ? avgPerformanceRating || defaultStats.performance
+    ? avgPerformanceRating ?? defaultStats.performance
     : personalStats.performance;
   const durabilityRating = showCommunityAverages
-    ? avgDurabilityRating || defaultStats.durability
+    ? avgDurabilityRating ?? defaultStats.durability
     : personalStats.durability;
 
-  const hasUserRatings = !!(shoe.comfortScore || shoe.performanceRating || shoe.durabilityRating);
+  const hasUserRatings =
+    shoe.comfortScore !== undefined ||
+    shoe.performanceRating !== undefined ||
+    shoe.durabilityRating !== undefined;
 
   return (
     <TooltipProvider>

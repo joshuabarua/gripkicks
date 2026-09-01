@@ -1,0 +1,117 @@
+[
+  {
+    "brand": "Scarpa",
+    "name": "Chimera",
+    "officialUrl": "https://us.scarpa.com/products/chimera",
+    "description": "A downturned lace-up shoe for steep bouldering and sport climbing, with a forefoot support plate, extensive toe rubber and a tensioned heel.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Hyperskin + leather footbed + Alcantara toe pocket",
+      "midsole": "Flexan Dynamic 1.4 mm + PCB Tension",
+      "sole": "Vibram XS Grip2, 3.5 mm"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Drago",
+    "officialUrl": "https://us.scarpa.com/products/drago",
+    "description": "A soft, aggressively downturned shoe for steep bouldering and competition-style movement, with SRT forefoot rubber and a PCB-Tension platform.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop strap",
+      "upper": "Microsuede + leather",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram XS Grip2, 3.5 mm"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Drago LV",
+    "officialUrl": "https://us.scarpa.com/products/drago-lv",
+    "description": "A low-volume version of the soft Drago for steep bouldering and competition-style movement, with SRT forefoot rubber and a PAF heel.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop strap",
+      "upper": "Microsuede + leather",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram XS Grip2, 3.5 mm"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Furia Air",
+    "officialUrl": "https://us.scarpa.com/products/furia-air",
+    "description": "An ultralight, soft shoe for steep bouldering and competition-style movement, using a flexible construction, Z-strap and high-friction outsole.",
+    "officialSpecs": {
+      "closure": "Z-strap hook-and-loop",
+      "upper": "Microsuede",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram XS Grip2, 3.0 mm",
+      "rigidity": "Soft"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Instinct VS",
+    "officialUrl": "https://us.scarpa.com/products/instinct-vs",
+    "description": "A moderately downturned shoe for bouldering and sport climbing, with a hook-and-loop closure, Bi-Tension support and an edging-focused outsole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop strap",
+      "upper": "Microsuede",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram XS Edge, 4 mm"
+    },
+    "confidence": 0.93,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Instinct VSR",
+    "officialUrl": "https://us.scarpa.com/products/instinct-vsr",
+    "description": "A softer Instinct variant for steep bouldering and sport climbing, with Bi-Tension support, toe and heel rubber, and a friction-focused outsole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop strap",
+      "upper": "Microsuede",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram XS Grip2, 3.5 mm",
+      "rigidity": "Softer than Instinct VS"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Vapor V",
+    "officialUrl": "https://us.scarpa.com/products/vapor-v",
+    "description": "A moderately downturned all-around shoe for gym and outdoor climbing, with dual hook-and-loop straps and Bi-Tension forefoot support.",
+    "officialSpecs": {
+      "closure": "Dual hook-and-loop straps",
+      "upper": "Microsuede + fabric",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram XS Edge, 3.5 mm"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Veloce",
+    "officialUrl": "https://scarpa.com/products/veloce-climbing-shoe-for-indoor-use-70065-001-1",
+    "description": "A soft indoor climbing shoe with a slightly downturned shape, roomy toe box, Z-strap closure and a half-length outsole.",
+    "officialSpecs": {
+      "closure": "Z-strap hook-and-loop",
+      "upper": "Seamless microfiber at the toe",
+      "midsole": "Flexan 1.0",
+      "sole": "S72 half sole, 4 mm",
+      "rigidity": "Soft"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "pending"
+  }
+]

@@ -26,6 +26,7 @@
   "scripts": {
     "lint": "eslint .",
     "format": "eslint --fix && prettier --write .",
+    "enrich:shoes": "node scripts/sync-shoe-enrichment.mjs",
     "test": "yarn workspace web test",
     "test:run": "yarn workspace web test:run && yarn test:authorization",
     "test:authorization": "vitest run convex/authorization.test.ts",

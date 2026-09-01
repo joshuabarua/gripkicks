@@ -7,8 +7,22 @@ import { handleError, requireServiceToken } from "./helpers";
 export function registerShoeRoutes(app: HonoWithConvex<ActionCtx>) {
   app.use("/api/shoes/*", requireServiceToken);
 
+  app.post("/api/shoes/applyEnrichment", async (c) => {
+    const { entries } = await c.req.json();
+    const result = await c.env.runMutation(internal.shoes.serviceApplyEnrichment, {
+      entries,
+    });
+    return c.json({ success: true, data: result });
+  });
+
   app.get("/api/v1/shoes", async (c) => {
-    const shoes = await c.env.runQuery(api.shoes.list, {});
+    const numItems = Math.min(100, Math.max(1, Number(c.req.query("limit")) || 50));
+    const shoes = await c.env.runQuery(api.shoes.list, {
+      paginationOpts: {
+        numItems,
+        cursor: c.req.query("cursor") ?? null,
+      },
+    });
     return c.json({ success: true, data: shoes });
   });
 
@@ -35,7 +49,14 @@ export function registerShoeRoutes(app: HonoWithConvex<ActionCtx>) {
 
   app.get("/api/v1/shoes/search/:term", async (c) => {
     const term = c.req.param("term");
-    const shoes = await c.env.runQuery(api.shoes.search, { searchTerm: term });
+    const numItems = Math.min(100, Math.max(1, Number(c.req.query("limit")) || 50));
+    const shoes = await c.env.runQuery(api.shoes.search, {
+      searchTerm: term,
+      paginationOpts: {
+        numItems,
+        cursor: c.req.query("cursor") ?? null,
+      },
+    });
     return c.json({ success: true, data: shoes });
   });
 

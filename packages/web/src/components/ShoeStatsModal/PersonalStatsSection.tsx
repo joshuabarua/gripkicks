@@ -17,15 +17,18 @@ export default function PersonalStatsSection({
   durabilityRating,
   defaultStats
 }: PersonalStatsSectionProps) {
-  const hasDefaultScore = !comfortScore && !performanceRating && !durabilityRating;
+  const hasPersonalScores =
+    comfortScore !== undefined ||
+    performanceRating !== undefined ||
+    durabilityRating !== undefined;
 
   return (
     <div className="mb-6">
       <h3 className="font-ball-pill text-lg text-white mb-3">
-        Personal Rank
-        {hasDefaultScore && (
+        Your Ratings
+        {!hasPersonalScores && (
           <span className="text-sm font-normal text-neutral-500 font-sora ml-2">
-            (Default: {((defaultStats.comfort + defaultStats.performance + defaultStats.durability) / 3).toFixed(1)})
+            Catalog baseline
           </span>
         )}
       </h3>
@@ -41,8 +44,11 @@ export default function PersonalStatsSection({
             <span className="text-xs text-neutral-400 font-sora">Comfort</span>
           </div>
           <div className="text-2xl font-ball-pill text-white">
-            {(comfortScore || defaultStats.comfort).toFixed(1)}
+            {(comfortScore ?? defaultStats.comfort).toFixed(1)}
           </div>
+          <span className="font-sora text-[9px] uppercase tracking-wider text-neutral-600">
+            {comfortScore !== undefined ? 'Personal' : 'Baseline'}
+          </span>
         </motion.div>
 
         <motion.div
@@ -56,8 +62,11 @@ export default function PersonalStatsSection({
             <span className="text-xs text-neutral-400 font-sora">Performance</span>
           </div>
           <div className="text-2xl font-ball-pill text-white">
-            {(performanceRating || defaultStats.performance).toFixed(1)}
+            {(performanceRating ?? defaultStats.performance).toFixed(1)}
           </div>
+          <span className="font-sora text-[9px] uppercase tracking-wider text-neutral-600">
+            {performanceRating !== undefined ? 'Personal' : 'Baseline'}
+          </span>
         </motion.div>
 
         <motion.div
@@ -71,8 +80,11 @@ export default function PersonalStatsSection({
             <span className="text-xs text-neutral-400 font-sora">Durability</span>
           </div>
           <div className="text-2xl font-ball-pill text-white">
-            {(durabilityRating || defaultStats.durability).toFixed(1)}
+            {(durabilityRating ?? defaultStats.durability).toFixed(1)}
           </div>
+          <span className="font-sora text-[9px] uppercase tracking-wider text-neutral-600">
+            {durabilityRating !== undefined ? 'Personal' : 'Baseline'}
+          </span>
         </motion.div>
       </div>
     </div>

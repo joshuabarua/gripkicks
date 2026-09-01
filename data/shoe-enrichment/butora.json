@@ -1,0 +1,53 @@
+[
+  {
+    "brand": "Butora",
+    "name": "Acro",
+    "officialUrl": "https://butoraeurope.com/product/acro/",
+    "description": "Shoe for technical sport climbing and bouldering, offered in low- and regular-volume fits with a leather upper and tensioned half-length midsole.",
+    "officialSpecs": {
+      "upper": "German leather with knit tongue",
+      "midsole": "Tensioned rubber and half-length 3D injection-molded Pebax",
+      "sole": "Neo Fuse rubber"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Butora",
+    "name": "Acro Comp",
+    "officialUrl": "https://butorausa.com/products/acro-comp",
+    "description": "Soft, downturned shoe for steep sport climbing, bouldering and gym climbing, with a large thin toe patch, molded heel cup and 4 mm outsole.",
+    "officialSpecs": {
+      "closure": "Adjustable triple-fork closure system",
+      "sole": "4 mm NEO Fuse rubber outsole",
+      "sensitivity": "Large, thin rubber toe patch"
+    },
+    "confidence": 0.98,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Butora",
+    "name": "Endeavor",
+    "officialUrl": "https://butorausa.com/products/endeavor",
+    "description": "Slightly asymmetric all-around shoe with a near-neutral last, microsuede upper and an ABS midsole extended toward the toe for edging support.",
+    "officialSpecs": {
+      "closure": "Triple-fork webbing system",
+      "upper": "Microsuede",
+      "midsole": "ABS midsole extended toward the front"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Butora",
+    "name": "Gomi",
+    "officialUrl": "https://butorausa.com/products/gomi-1",
+    "description": "Downturned sport and bouldering shoe with a 4 mm outsole, large thin toe patch, high-tension heel rand and 3D-molded heel cup.",
+    "officialSpecs": {
+      "sole": "4 mm NEO Fuse rubber outsole",
+      "sensitivity": "Large, thin rubber toe patch"
+    },
+    "confidence": 0.98,
+    "reviewStatus": "approved"
+  }
+]

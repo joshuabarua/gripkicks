@@ -17,6 +17,41 @@ export interface Shoe {
   volume: string;
   rubberTechnologyId?: string | undefined;
   rubberTechnology?: RubberTechnology | null | undefined;
+  description?: string | undefined;
+  officialUrl?: string | undefined;
+  officialSpecs?: ShoeOfficialSpecs | undefined;
+  defaultScores?: ShoeDefaultScores | undefined;
+  enrichment?: ShoeEnrichment | undefined;
+}
+
+export interface ShoeOfficialSpecs {
+  closure?: string | undefined;
+  upper?: string | undefined;
+  lining?: string | undefined;
+  midsole?: string | undefined;
+  sole?: string | undefined;
+  weight?: string | undefined;
+  sensitivity?: string | undefined;
+  rigidity?: string | undefined;
+}
+
+export interface ShoeDefaultScores {
+  comfort: number;
+  performance: number;
+  durability: number;
+  sensitivity?: number | undefined;
+  edging?: number | undefined;
+  smearing?: number | undefined;
+  toeHooking?: number | undefined;
+  heelHooking?: number | undefined;
+}
+
+export interface ShoeEnrichment {
+  sourceUrl: string;
+  sourceName: string;
+  extractedAt: number;
+  confidence: number;
+  reviewStatus: "pending" | "approved" | "rejected";
 }
 
 // fallow-ignore-next-line unused-type

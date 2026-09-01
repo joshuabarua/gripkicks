@@ -1,0 +1,63 @@
+[
+  {
+    "brand": "Mad Rock",
+    "name": "Drifter",
+    "officialUrl": "https://www.madrock.ca/products/drifter",
+    "description": "A flat-profile climbing shoe with a slightly asymmetric last, leather upper, hook-and-loop closure and polyester midsole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Leather",
+      "midsole": "1.8mm polyester",
+      "sole": "Science Friction 3.0 rubber with Science Friction R2 rand",
+      "rigidity": "Medium"
+    },
+    "confidence": 0.91,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Mad Rock",
+    "name": "Remora",
+    "officialUrl": "https://madrock.com/products/remora-hv",
+    "description": "A soft, moderately asymmetric slipper with an elastic closure, no midsole and Science Friction rubber components.",
+    "officialSpecs": {
+      "closure": "Elastic",
+      "upper": "Syn Flex",
+      "lining": "Rima footbed",
+      "midsole": "None",
+      "sole": "Science Friction 3.0 rubber with Science Friction R2 heel rand",
+      "rigidity": "Soft"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Mad Rock",
+    "name": "Shark 2.0",
+    "officialUrl": "https://www.madrock.ca/products/shark-2-0",
+    "description": "An aggressive, moderately asymmetric climbing shoe with a hook-and-loop closure, Syn Flex upper and concave polycarbonate midsole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Syn Flex",
+      "midsole": "Concave polycarbonate",
+      "sole": "Science Friction 3.0 rubber with R2 rand rubber",
+      "rigidity": "Soft/Medium"
+    },
+    "confidence": 0.92,
+    "reviewStatus": "approved"
+  },
+  {
+    "brand": "Mad Rock",
+    "name": "Weaver",
+    "officialUrl": "https://www.madrock.ca/products/weaver",
+    "description": "A comfort-profile climbing shoe with a flexible FloKnit upper, heat-fused TPU structure and hook-and-loop closure.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "FloKnit with heat-fused TPU",
+      "midsole": "1.4mm polycarbonate",
+      "sole": "Science Friction 3.0 rubber with Science Friction R2 rand",
+      "rigidity": "Soft/Medium"
+    },
+    "confidence": 0.96,
+    "reviewStatus": "approved"
+  }
+]

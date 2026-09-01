@@ -1,44 +1,9 @@
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
-import { footShapeValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, commonShoeFieldsValidator, optionalShoeFieldsValidator } from "./utils/helpers";
+import { internalMutation, query, mutation } from "./_generated/server";
+import { footShapeValidator, genderValidator, shoeOfficialSpecsValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, commonShoeFieldsValidator, optionalShoeFieldsValidator } from "./utils/helpers";
 import { findParentModel } from "./shoeHelpers";
 import { requireAdmin } from "./authorization";
-
-interface PaginatedResult<T> {
-  items: T[];
-  totalCount: number;
-  hasMore: boolean;
-  nextCursor: string | null;
-}
-
-const DEFAULT_PAGE_SIZE = 50;
-const MAX_PAGE_SIZE = 100;
-
-const paginationQueryArgs = {
-  cursor: v.optional(v.string()),
-  pageSize: v.optional(v.number()),
-};
-
-function calculatePageSize(pageSize?: number): number {
-  return Math.min(MAX_PAGE_SIZE, Math.max(1, pageSize ?? DEFAULT_PAGE_SIZE));
-}
-
-function paginateResults<T extends { _id: any }>(results: T[], pageSize: number, cursor?: string | null): { items: T[]; hasMore: boolean; nextCursor: string | null } {
-  let startIndex = 0;
-  if (cursor) {
-    const idx = results.findIndex((s) => s._id === JSON.parse(cursor).id);
-    startIndex = idx >= 0 ? idx + 1 : 0;
-  }
-
-  const paginatedResults = results.slice(startIndex, startIndex + pageSize + 1);
-  const hasMore = paginatedResults.length > pageSize;
-  const items = hasMore ? paginatedResults.slice(0, pageSize) : paginatedResults;
-
-  const lastItem = items[items.length - 1];
-  const nextCursor = hasMore && lastItem ? JSON.stringify({ id: lastItem._id }) : null;
-
-  return { items, hasMore, nextCursor };
-}
 
 async function enrichShoesWithRubber(ctx: any, shoes: any[]) {
   return await Promise.all(
@@ -57,6 +22,85 @@ function sortShoesByName(shoes: any[]) {
     if (brandCompare !== 0) return brandCompare;
     return a.name.localeCompare(b.name);
   });
+}
+
+function clampScore(value: number) {
+  return Math.max(1, Math.min(10, Number(value.toFixed(1))));
+}
+
+function getSoleThickness(sole?: string) {
+  const match = sole?.match(/(\d+(?:\.\d+)?)\s*mm/i);
+  return match?.[1] ? Number(match[1]) : undefined;
+}
+
+function calculateEnrichmentScores(
+  shoe: {
+    aggressiveness: string;
+    stiffness: string;
+    climbingDiscipline: string;
+  },
+  specs: {
+    closure?: string;
+    sole?: string;
+    rigidity?: string;
+  },
+) {
+  const aggressiveness = shoe.aggressiveness.toLowerCase();
+  const stiffness = shoe.stiffness.toLowerCase();
+  const discipline = shoe.climbingDiscipline.toLowerCase();
+  const thickness = getSoleThickness(specs.sole);
+  let comfort = aggressiveness === "aggressive" ? 4 : aggressiveness === "moderate" ? 6 : 7;
+  let performance = aggressiveness === "aggressive" ? 8 : aggressiveness === "moderate" ? 6 : 5;
+  let durability = 5;
+
+  if (discipline === "competition") {
+    comfort -= 1;
+    performance += 2;
+  } else if (discipline === "bouldering") {
+    comfort += 0.5;
+    performance += 0.5;
+  } else if (discipline === "sport") {
+    performance += 1;
+    durability -= 0.5;
+  } else if (discipline === "trad") {
+    comfort += 1;
+    performance -= 0.5;
+    durability += 1;
+  } else if (discipline === "gym") {
+    comfort += 0.5;
+    durability -= 0.5;
+  }
+
+  if (stiffness === "soft") {
+    comfort += 1;
+    performance -= 0.5;
+  } else if (stiffness === "stiff") {
+    comfort -= 0.5;
+    performance += 1;
+    durability += 0.5;
+  }
+
+  if (thickness !== undefined) {
+    if (thickness <= 3) durability -= 0.5;
+    if (thickness >= 4.5) durability += 0.5;
+  }
+
+  const stiffnessScore = stiffness === "soft" ? 3 : stiffness === "stiff" ? 8 : 5.5;
+  const aggressionScore = aggressiveness === "aggressive" ? 9 : aggressiveness === "moderate" ? 6 : 3;
+  const sensitivity = thickness !== undefined
+    ? 10 - Math.min(7, thickness * 1.4) + (stiffness === "soft" ? 1 : 0)
+    : 10 - stiffnessScore;
+
+  return {
+    comfort: clampScore(comfort),
+    performance: clampScore(performance),
+    durability: clampScore(durability),
+    sensitivity: clampScore(sensitivity),
+    edging: clampScore(stiffnessScore * 0.7 + aggressionScore * 0.3),
+    smearing: clampScore((10 - stiffnessScore) * 0.65 + (10 - aggressionScore) * 0.35),
+    toeHooking: clampScore(aggressionScore * 0.75 + (stiffness === "soft" ? 2 : 1)),
+    heelHooking: clampScore(aggressionScore * 0.7 + performance * 0.3),
+  };
 }
 
 async function resolveParentModelId(
@@ -86,29 +130,17 @@ async function resolveParentModelId(
 }
 
 export const list = query({
-  args: paginationQueryArgs,
-  handler: async (ctx, args): Promise<PaginatedResult<any>> => {
-    const pageSize = calculatePageSize(args.pageSize);
-    const cursor = args.cursor;
-
-    let query = ctx.db.query("shoes").order("asc");
-
-    if (cursor) {
-      query = query.filter((q) => q.gt(q.field("_id"), JSON.parse(cursor).id));
-    }
-
-    const allShoes = await query.collect();
-    const totalCount = allShoes.length;
-    const { items, hasMore, nextCursor } = paginateResults(allShoes, pageSize, cursor);
-
-    const shoesWithRubber = await enrichShoesWithRubber(ctx, items);
-    const sortedItems = sortShoesByName(shoesWithRubber);
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
+    const result = await ctx.db
+      .query("shoes")
+      .withIndex("by_brand_name")
+      .order("asc")
+      .paginate(args.paginationOpts);
 
     return {
-      items: sortedItems,
-      totalCount,
-      hasMore,
-      nextCursor,
+      ...result,
+      page: await enrichShoesWithRubber(ctx, result.page),
     };
   },
 });
@@ -133,45 +165,59 @@ export const listBrands = query({
   },
 });
 
-const CATALOG_SEARCH_LIMIT = 100;
-
 export const searchCatalog = query({
   args: {
+    paginationOpts: paginationOptsValidator,
     searchTerm: v.optional(v.string()),
     brand: v.optional(v.string()),
-    gender: v.optional(v.string()),
-    limit: v.optional(v.number()),
+    gender: v.optional(genderValidator),
   },
   handler: async (ctx, args) => {
-    const limit = Math.min(200, Math.max(1, args.limit ?? CATALOG_SEARCH_LIMIT));
     const searchTerm = args.searchTerm?.trim();
+    let result;
 
-    let results;
     if (searchTerm) {
-      results = await ctx.db
+      result = await ctx.db
         .query("shoes")
-        .withSearchIndex("search_shoes", (q) => q.search("name", searchTerm))
-        .take(500);
+        .withSearchIndex("search_shoes", (q) => {
+          let search = q.search("name", searchTerm);
+          if (args.brand) search = search.eq("brand", args.brand);
+          if (args.gender) search = search.eq("gender", args.gender);
+          return search;
+        })
+        .paginate(args.paginationOpts);
+    } else if (args.brand && args.gender) {
+      result = await ctx.db
+        .query("shoes")
+        .withIndex("by_brand_gender_name", (q) =>
+          q.eq("brand", args.brand!).eq("gender", args.gender!),
+        )
+        .order("asc")
+        .paginate(args.paginationOpts);
     } else if (args.brand) {
-      results = await ctx.db
+      result = await ctx.db
         .query("shoes")
-        .withIndex("by_brand", (q) => q.eq("brand", args.brand!))
-        .collect();
+        .withIndex("by_brand_name", (q) => q.eq("brand", args.brand!))
+        .order("asc")
+        .paginate(args.paginationOpts);
+    } else if (args.gender) {
+      result = await ctx.db
+        .query("shoes")
+        .withIndex("by_gender_name", (q) => q.eq("gender", args.gender!))
+        .order("asc")
+        .paginate(args.paginationOpts);
     } else {
-      results = await ctx.db.query("shoes").collect();
+      result = await ctx.db
+        .query("shoes")
+        .withIndex("by_brand_name")
+        .order("asc")
+        .paginate(args.paginationOpts);
     }
 
-    let filtered = results;
-    if (args.brand) {
-      filtered = filtered.filter((shoe) => shoe.brand === args.brand);
-    }
-    if (args.gender) {
-      filtered = filtered.filter(
-        (shoe) => (shoe.gender ?? "").toLowerCase() === args.gender,
-      );
-    }
-
-    return sortShoesByName(filtered).slice(0, limit);
+    return {
+      ...result,
+      page: await enrichShoesWithRubber(ctx, result.page),
+    };
   },
 });
 
@@ -275,33 +321,139 @@ export const create = mutation({
 export const search = query({
   args: {
     searchTerm: v.string(),
-    ...paginationQueryArgs,
+    paginationOpts: paginationOptsValidator,
   },
-  handler: async (ctx, args): Promise<PaginatedResult<any>> => {
-    const pageSize = calculatePageSize(args.pageSize);
-    const cursor = args.cursor;
-
-    let results;
-    if (!args.searchTerm) {
-      results = await ctx.db.query("shoes").collect();
-    } else {
-      results = await ctx.db
+  handler: async (ctx, args) => {
+    if (!args.searchTerm.trim()) {
+      return await ctx.db
         .query("shoes")
-        .withSearchIndex("search_shoes", (q) =>
-          q.search("name", args.searchTerm),
-        )
-        .collect();
+        .withIndex("by_brand_name")
+        .order("asc")
+        .paginate(args.paginationOpts);
     }
 
-    const totalCount = results.length;
-    const { items, hasMore, nextCursor } = paginateResults(results, pageSize, cursor);
+    return await ctx.db
+      .query("shoes")
+      .withSearchIndex("search_shoes", (q) =>
+        q.search("name", args.searchTerm.trim()),
+      )
+      .paginate(args.paginationOpts);
+  },
+});
 
-    return {
-      items,
-      totalCount,
-      hasMore,
-      nextCursor,
+const shoeEnrichmentEntryValidator = v.object({
+  brand: v.string(),
+  name: v.string(),
+  officialUrl: v.string(),
+  description: v.string(),
+  officialSpecs: shoeOfficialSpecsValidator,
+  confidence: v.number(),
+  reviewStatus: v.union(
+    v.literal("pending"),
+    v.literal("approved"),
+    v.literal("rejected"),
+  ),
+});
+
+async function applyEnrichmentEntries(
+  ctx: any,
+  entries: Array<{
+    brand: string;
+    name: string;
+    officialUrl: string;
+    description: string;
+    officialSpecs: {
+      closure?: string;
+      upper?: string;
+      lining?: string;
+      midsole?: string;
+      sole?: string;
+      weight?: string;
+      sensitivity?: string;
+      rigidity?: string;
     };
+    confidence: number;
+    reviewStatus: "pending" | "approved" | "rejected";
+  }>,
+) {
+  const updated: string[] = [];
+  const missing: string[] = [];
+  const extractedAt = Date.now();
+
+  for (const entry of entries) {
+    let shoe = await ctx.db
+      .query("shoes")
+      .withIndex("by_brand_name", (q: any) =>
+        q.eq("brand", entry.brand).eq("name", entry.name),
+      )
+      .first();
+
+    if (!shoe) {
+      const normalizedName = entry.name.toLowerCase().replace(/^n\/a:\s*/, "").trim();
+      const brandShoes = await ctx.db
+        .query("shoes")
+        .withIndex("by_brand", (q: any) => q.eq("brand", entry.brand))
+        .collect();
+      shoe = brandShoes.find(
+        (candidate: any) =>
+          candidate.name.toLowerCase().replace(/^n\/a:\s*/, "").trim() === normalizedName,
+      ) ?? null;
+    }
+
+    if (!shoe) {
+      missing.push(`${entry.brand}: ${entry.name}`);
+      continue;
+    }
+
+    await ctx.db.patch(shoe._id, {
+      description: entry.description,
+      officialUrl: entry.officialUrl,
+      officialSpecs: entry.officialSpecs,
+      defaultScores: calculateEnrichmentScores(shoe, entry.officialSpecs),
+      enrichment: {
+        sourceUrl: entry.officialUrl,
+        sourceName: `${entry.brand} official product page`,
+        extractedAt,
+        confidence: entry.confidence,
+        reviewStatus: entry.reviewStatus,
+      },
+    });
+    updated.push(`${entry.brand}: ${entry.name}`);
+  }
+
+  return { updated, missing };
+}
+
+export const applyEnrichment = mutation({
+  args: { entries: v.array(shoeEnrichmentEntryValidator) },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    return await applyEnrichmentEntries(ctx, args.entries);
+  },
+});
+
+export const serviceApplyEnrichment = internalMutation({
+  args: { entries: v.array(shoeEnrichmentEntryValidator) },
+  handler: async (ctx, args) => await applyEnrichmentEntries(ctx, args.entries),
+});
+
+export const reviewEnrichment = mutation({
+  args: {
+    id: v.id("shoes"),
+    reviewStatus: v.union(
+      v.literal("pending"),
+      v.literal("approved"),
+      v.literal("rejected"),
+    ),
+  },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    const shoe = await ctx.db.get(args.id);
+    if (!shoe?.enrichment) throw new Error("Shoe enrichment not found");
+    await ctx.db.patch(args.id, {
+      enrichment: { ...shoe.enrichment, reviewStatus: args.reviewStatus },
+    });
+    return args.id;
   },
 });
 

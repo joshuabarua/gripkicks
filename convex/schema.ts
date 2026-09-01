@@ -21,11 +21,14 @@ export default defineSchema({
   })
     .index("by_brand", ["brand"])
     .index("by_name", ["name"])
+    .index("by_brand_name", ["brand", "name"])
+    .index("by_gender_name", ["gender", "name"])
+    .index("by_brand_gender_name", ["brand", "gender", "name"])
     .index("by_brand_modelName", ["brand", "modelName"])
     .index("by_parentModelId", ["parentModelId"])
     .searchIndex("search_shoes", {
       searchField: "name",
-      filterFields: ["brand"],
+      filterFields: ["brand", "gender"],
     }),
 
   // Rubber Technologies

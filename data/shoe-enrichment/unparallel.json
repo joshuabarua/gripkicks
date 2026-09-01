@@ -1,0 +1,77 @@
+[
+  {
+    "brand": "Unparallel",
+    "name": "Flagship",
+    "officialUrl": "https://www.unparallelsports.com/product/flagship/",
+    "description": "An aggressively downturned shoe with a single strap, molded toe rubber and a split outsole using different rubber compounds at the front and rear.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop strap",
+      "upper": "Lined Micro Synthetic",
+      "sole": "Split sole: 3.5 mm RS front and 4.2 mm RH rear",
+      "weight": "474 g per pair",
+      "rigidity": "Hard"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Unparallel",
+    "name": "Regulus",
+    "officialUrl": "https://www.unparallelsports.com/product/regulus/",
+    "description": "An aggressively downturned shoe with a single strap, extended toe rubber, tensioned heel and a full-length RH rubber outsole.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop strap",
+      "upper": "Unlined Synthetic Suede",
+      "sole": "RH rubber, 4.2 mm",
+      "weight": "483 g per pair",
+      "rigidity": "Hard"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Unparallel",
+    "name": "Sirius",
+    "officialUrl": "https://www.unparallelsports.com/product/sirius/",
+    "description": "An aggressively downturned lace-up shoe for vertical and overhanging terrain, with extended toe rubber, a full RS outsole and a medium-stiff midsole.",
+    "officialSpecs": {
+      "closure": "Offset lacing",
+      "upper": "Lined SOLO Suede",
+      "sole": "RS rubber, 3.5 mm",
+      "weight": "434 g per pair",
+      "rigidity": "Medium"
+    },
+    "confidence": 0.97,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Unparallel",
+    "name": "TN Pro",
+    "officialUrl": "https://www.unparallelsports.com/product/tn-pro/",
+    "description": "Tomoa Narasaki's aggressively downturned signature shoe, with a single strap, rounded toe, slingshot heel and RH rubber wrapping the heel exterior.",
+    "officialSpecs": {
+      "closure": "Single hook-and-loop strap",
+      "upper": "Unlined synthetic",
+      "sole": "RH rubber, 4.2 mm",
+      "weight": "476 g per pair",
+      "rigidity": "Hard"
+    },
+    "confidence": 0.98,
+    "reviewStatus": "pending"
+  },
+  {
+    "brand": "Unparallel",
+    "name": "Up Lace",
+    "officialUrl": "https://www.unparallelsports.com/product/up-lace/",
+    "description": "A moderately asymmetric lace-up shoe with lace protection for crack climbing, a stiff midsole and a full-length RH rubber outsole.",
+    "officialSpecs": {
+      "closure": "Fast lacing system",
+      "upper": "Lined SOLO Suede",
+      "sole": "RH rubber, 4.2 mm",
+      "weight": "510 g per pair",
+      "rigidity": "Hard"
+    },
+    "confidence": 0.99,
+    "reviewStatus": "pending"
+  }
+]

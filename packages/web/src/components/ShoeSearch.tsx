@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useDeferredValue, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Search } from 'lucide-react'
 import ShoeImage from '@/components/ShoeImage'
-import { useQuery } from "convex/react"
+import { usePaginatedQuery } from "convex/react"
 import { api } from "convex/_generated/api"
 import type { Shoe } from '@/types/api'
 
@@ -16,36 +16,17 @@ interface ShoeSearchProps {
 
 export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<Shoe[]>([])
+  const deferredSearchQuery = useDeferredValue(searchQuery)
   
-  // Use Convex to fetch all shoes instead of legacy REST API
-  const shoesData = useQuery(api.shoes.listAll, {})
-  const shoes = useMemo(() => shoesData ?? [], [shoesData])
-  const isLoading = shoesData === undefined
-
-  useEffect(() => {
-    if (shoes.length === 0) return;
-    
-    // We can use a simple timeout instead of the debounce utility to avoid closure compilation issues inside useEffect
-    const timeoutId = setTimeout(() => {
-      if (searchQuery) {
-        const results = shoes.filter(shoe => 
-          shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          shoe.brand.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        setSearchResults(results)
-      } else {
-        // Show only La Sportiva shoes when no search query is active
-        const laSportivaShoes = shoes.filter(shoe => 
-          shoe.brand.toLowerCase() === 'la sportiva'
-        );
-        // Show up to 10 La Sportiva shoes, or fallback to first 10 shoes if none found
-        setSearchResults(laSportivaShoes.length > 0 ? laSportivaShoes.slice(0, 10) : shoes.slice(0, 10));
-      }
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery, shoes])
+  // Use Convex to fetch filtered shoes instead of loading the full catalog
+  const { results: searchResults, status } = usePaginatedQuery(
+    api.shoes.searchCatalog,
+    deferredSearchQuery.trim()
+      ? { searchTerm: deferredSearchQuery }
+      : { brand: 'La Sportiva' },
+    { initialNumItems: 20 },
+  )
+  const isLoading = status === 'LoadingFirstPage'
 
   return (
     <div className="space-y-4">
