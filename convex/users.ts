@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
 import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { footShapeValidator } from "./schema";
 import { requireAdmin, requireUserAccess } from "./authorization";
@@ -139,10 +140,10 @@ export const completeOnboarding = mutation({
 });
 
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
     await requireAdmin(ctx);
-    return await ctx.db.query("users").collect();
+    return await ctx.db.query("users").paginate(args.paginationOpts);
   },
 });
 

@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { filterUndefinedValues, userShoeFieldsValidator } from "./utils/helpers";
 import { requireUserAccess, requireUserShoeAccess } from "./authorization";
+import { adjustShoePopularity } from "./shoeHelpers";
 
 async function getServiceUserShoe(
   ctx: any,
@@ -182,10 +183,14 @@ export const addToStash = mutation({
       args.userId,
       args.shoeId,
       async (existing) => existing._id,
-      async () => ctx.db.insert("userShoes", {
-        userId: args.userId,
-        shoeId: args.shoeId,
-      }),
+      async () => {
+        const id = await ctx.db.insert("userShoes", {
+          userId: args.userId,
+          shoeId: args.shoeId,
+        });
+        await adjustShoePopularity(ctx, args.shoeId, 1);
+        return id;
+      },
     );
   },
 });
@@ -200,6 +205,7 @@ export const removeFromStash = mutation({
       args.shoeId,
       async (existing) => {
         await ctx.db.delete(existing._id);
+        await adjustShoePopularity(ctx, existing.shoeId, -1);
         return true;
       },
       async () => false,
@@ -260,9 +266,10 @@ export const deleteUserShoe = mutation({
     userShoeId: v.id("userShoes"),
   },
   handler: async (ctx, args) => {
-    await requireUserShoeAccess(ctx, args.userShoeId);
+    const userShoe = await requireUserShoeAccess(ctx, args.userShoeId);
     // Delete the userShoe document
     await ctx.db.delete(args.userShoeId);
+    await adjustShoePopularity(ctx, userShoe.shoeId, -1);
   },
 });
 
@@ -397,7 +404,11 @@ export const serviceAddToStash = internalMutation({
       args.userId,
       args.shoeId,
       async (existing) => existing._id,
-      async () => ctx.db.insert("userShoes", args),
+      async () => {
+        const id = await ctx.db.insert("userShoes", args);
+        await adjustShoePopularity(ctx, args.shoeId, 1);
+        return id;
+      },
     );
   },
 });
@@ -411,6 +422,7 @@ export const serviceRemoveFromStash = internalMutation({
       args.shoeId,
       async (existing) => {
         await ctx.db.delete(existing._id);
+        await adjustShoePopularity(ctx, existing.shoeId, -1);
         return true;
       },
       async () => false,
@@ -463,12 +475,13 @@ export const serviceDeleteUserShoe = internalMutation({
     betterAuthUserId: v.string(),
   },
   handler: async (ctx, args) => {
-    await requireServiceUserShoe(
+    const userShoe = await requireServiceUserShoe(
       ctx,
       args.userShoeId,
       args.betterAuthUserId,
     );
     await ctx.db.delete(args.userShoeId);
+    await adjustShoePopularity(ctx, userShoe.shoeId, -1);
   },
 });
 

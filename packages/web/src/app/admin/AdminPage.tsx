@@ -100,7 +100,15 @@ export default function AdminDashboard() {
     { initialNumItems: 50 },
   );
   const uniqueBrands = useQuery(api.shoes.listBrands, isAdmin ? {} : "skip") ?? [];
-  const users = useQuery(api.users.list);
+  const {
+    results: users,
+    status: usersStatus,
+    loadMore: loadMoreUsers,
+  } = usePaginatedQuery(
+    api.users.list,
+    isAdmin ? {} : "skip",
+    { initialNumItems: 50 },
+  );
   const rubberTechnologies = useQuery(api.rubberTechnologies.list);
   const shouldLoadMissingRubberTechnologyReport =
     !isPending && !!session?.user && !!isAdmin;
@@ -1314,6 +1322,21 @@ export default function AdminDashboard() {
                 </tbody>
               </table>
             </div>
+
+            {(usersStatus === "CanLoadMore" ||
+              usersStatus === "LoadingMore") && (
+              <div className="flex justify-center py-4">
+                <button
+                  onClick={() => loadMoreUsers(50)}
+                  disabled={usersStatus === "LoadingMore"}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                >
+                  {usersStatus === "LoadingMore"
+                    ? "Loading..."
+                    : "Load more users"}
+                </button>
+              </div>
+            )}
           </>
         )}
 
