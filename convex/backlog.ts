@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { backlogStatusValidator } from "./schema";
 import { requireAdmin } from "./authorization";
 
@@ -81,5 +81,44 @@ export const listBacklogItems = query({
     }
 
     return items;
+  },
+});
+
+export const serviceCreateBacklogItem = internalMutation({
+  args: {
+    title: v.string(),
+    notes: v.optional(v.string()),
+    status: backlogStatusValidator,
+  },
+  handler: async (ctx, args) => {
+    const backlogItem = await ctx.db.insert("backlogItems", {
+      title: args.title,
+      status: args.status,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      ...(args.notes !== undefined ? { notes: args.notes } : {}),
+    });
+
+    return backlogItem;
+  },
+});
+
+export const serviceSetBacklogStatus = internalMutation({
+  args: {
+    id: v.id("backlogItems"),
+    status: backlogStatusValidator,
+  },
+  handler: async (ctx, args) => {
+    const existingItem = await ctx.db.get(args.id);
+    if (!existingItem) {
+      throw new Error("Backlog item not found");
+    }
+
+    await ctx.db.patch(args.id, {
+      status: args.status,
+      updatedAt: Date.now(),
+    });
+
+    return args.id;
   },
 });
