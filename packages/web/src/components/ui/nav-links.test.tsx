@@ -20,10 +20,6 @@ vi.mock("@/lib/auth", () => ({
   useSession: () => ({ data: null }),
 }));
 
-vi.mock("@/components/ui/AnimatedNavIcon", () => ({
-  AnimatedNavIcon: ({ icon }: { icon: ReactNode }) => <span>{icon}</span>,
-}));
-
 import NavLinks from "@/components/ui/nav-links";
 
 describe("NavLinks", () => {

@@ -47,6 +47,7 @@
     "convex": "^1.31.6",
     "convex-helpers": "^0.1.111",
     "dotenv": "^16.4.7",
+    "hono": "^4.8.0",
     "zustand": "^5.0.3"
   }
 }

@@ -94,9 +94,8 @@ Active/selected: `border-brand-red bg-brand-red/10`
 | Foot Lab | `/footlab` | Set up / update foot profile |
 | Sanctuary | `/stash` | Shoe collection |
 | Matcher | `/matcher` | Visual shoe radar |
-| Sole Mate | `/findmyshoe` | Personalised recommendations |
 
-Note: `/foot-lab` redirects to `/dashboard`. Foot profile data lives in dashboard.
+Secondary links: About (`/about`), Privacy (`/privacy`), Admin (`/admin`, admin-only).
 
 ---
 

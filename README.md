@@ -38,7 +38,7 @@ comfort, built with **Next.js**, **Convex**, and **Better Auth**.
 
 ### Frontend (Next.js)
 
-- **Framework**: Next.js 15 with App Router
+- **Framework**: Next.js 16 with App Router
 - **UI**: Tailwind CSS with shadcn/ui components
 - **3D Graphics**: React Three Fiber with WebGL
 - **State Management**: TanStack Query for server state, Zustand for client
@@ -270,7 +270,6 @@ function MyComponent() {
   - `RATE_LIMIT_API_WINDOW_MS=60000`, `RATE_LIMIT_API_MAX=120`
   - `RATE_LIMIT_AUTH_WINDOW_MS=60000`, `RATE_LIMIT_AUTH_MAX=30`
   - `RATE_LIMIT_ACCOUNT_WINDOW_MS=60000`, `RATE_LIMIT_ACCOUNT_MAX=10`
-  - `RATE_LIMIT_CHECKOUT_WINDOW_MS=60000`, `RATE_LIMIT_CHECKOUT_MAX=12`
   - `RATE_LIMIT_UPLOAD_WINDOW_MS=60000`, `RATE_LIMIT_UPLOAD_MAX=20`
 
 #### Cloudflare Recommendations
@@ -280,7 +279,6 @@ function MyComponent() {
 - Suggested edge limits:
   - `/api/auth/*`: `10 requests / minute / IP`
   - `/api/v1/auth/*`: `20 requests / minute / IP`
-  - `/api/v1/polar/checkout`: `12 requests / minute / IP`
   - `/api/upload` and `/api/imagekit`: `20 requests / minute / IP`
 - Suggested cache rules:
   - Cache static paths (`/imgs/*`, `/fonts/*`, `/_next/static/*`) aggressively
@@ -333,7 +331,7 @@ userShoes: defineTable({
 
 ### Frontend
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
 - **UI**: Tailwind CSS + shadcn/ui
 - **3D**: React Three Fiber + Three.js

@@ -47,5 +47,3 @@ export const colors = {
     '5': '#8f8a73',
   },
 } as const;
-
-export type Colors = typeof colors;

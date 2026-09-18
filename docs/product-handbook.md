@@ -54,15 +54,20 @@ GripKicks is a web app that recommends climbing shoes based on foot shape, volum
 | Route | Purpose |
 |---|---|
 | `/` | Home page with 3D visualization |
+| `/dashboard` | Home base — stats, foot profile, recent shoes |
 | `/stash` | Shoe Sanctuary — manage your shoe collection |
 | `/footlab` | Foot Lab — analyze foot shape and get recommendations |
-| `/findmyshoe` | Sole Mate — find your perfect shoe match |
+| `/matcher` | Visual shoe radar matcher |
 | `/profile` | User profile management |
-| `/auth/login` | Authentication page |
+| `/onboarding` | First-run onboarding flow |
+| `/pricing` | Pricing page |
+| `/about` | About page |
+| `/privacy` | Privacy policy |
+| `/admin` | Admin dashboard (incl. canonical Backlog tab) |
+| `/test/*` | Editorial homepage design variants |
+| `/auth/login`, `/auth/signup` | Authentication pages |
 | `/api/v1/*` | REST API endpoints (via Hono) |
 | `/api/auth/*` | Better Auth endpoints |
-
-Note: `/foot-lab` redirects to `/dashboard`. Foot profile data lives in dashboard.
 
 ---
 
@@ -184,7 +189,8 @@ Active/selected: `border-brand-red bg-brand-red/10`
 | Foot Lab | `/footlab` | Set up / update foot profile |
 | Sanctuary | `/stash` | Shoe collection |
 | Matcher | `/matcher` | Visual shoe radar |
-| Sole Mate | `/findmyshoe` | Personalised recommendations |
+
+Secondary links: About (`/about`), Privacy (`/privacy`), Admin (`/admin`, admin-only).
 
 ### Motion Principles
 
@@ -319,20 +325,22 @@ function MyComponent() {
 
 ### Frontend
 
-- **Framework**: Next.js 15 with App Router
+- **Framework**: Next.js 16 with App Router
 - **Language**: TypeScript
 - **UI**: Tailwind CSS + shadcn/ui
 - **3D Graphics**: React Three Fiber + Three.js
 - **State Management**: TanStack Query for server state, Zustand for client state
 - **Authentication**: Better Auth React client
 - **Responsive Design**: Orientation-based fluid design system
+- **Testing**: Vitest + Testing Library (unit), Playwright (e2e)
 
 ### Backend
 
-- **API Framework**: Hono with TypeScript
+- **API Framework**: Hono with TypeScript (`packages/backend-api`)
 - **Database**: Convex (real-time, serverless)
 - **Authentication**: Better Auth with email/password + Google OAuth
-- **HTTP Router**: Convex HttpRouterWithHono integration
+- **HTTP Router**: Convex Hono router modules in `convex/router/` mounted via `convex/http.ts`
+- **Mobile**: Expo / React Native app in `packages/app` (Expo Router tabs: index, foot-lab, matcher, stash, profile)
 
 ### Data Flow
 
@@ -354,36 +362,49 @@ Frontend ↔ Convex Client ↔ Convex Functions (Queries/Mutations) ↔ Convex D
 ### Convex Schema
 
 ```typescript
-// Shoes table
+// Shoes table (common fields via commonShoeFieldsValidator)
 shoes: defineTable({
-  name: v.string(),
-  brand: v.string(),
-  imageUrl: v.optional(v.string()),
-  aggressiveness: v.string(),
+  ...commonShoeFieldsValidator, // name, brand, modelName, variantLabel, parentModelId, gender, imageUrl, ...
+  brandAggressiveness: v.optional(v.number()),
   stiffness: v.string(),
+  brandStiffness: v.optional(v.number()),
   climbingDiscipline: v.string(),
   volume: v.string(),
   rubberTechnologyId: v.optional(v.id("rubberTechnologies")),
+  avgComfortScore: v.optional(v.number()),
+  // ... aggregate rating fields
 });
 
 // Users table (Better Auth)
 users: defineTable({
-  name: v.string(),
   email: v.string(),
+  name: v.optional(v.string()),
   emailVerified: v.boolean(),
   image: v.optional(v.string()),
   isAdmin: v.optional(v.boolean()),
   onboardingComplete: v.boolean(),
+  betterAuthId: v.optional(v.string()),
   footShape: v.optional(footShapeValidator),
+  footVolume: v.optional(v.string()),
   favoriteShoeId: v.optional(v.id("shoes")),
+  ...subscriptionFieldsValidator, // legacy Polar fields, unused since billing removal
 });
 
-// User's shoe collection
+// User's shoe collection (stash)
 userShoes: defineTable({
   userId: v.id("users"),
   shoeId: v.id("shoes"),
+  ...userShoeFieldsValidator,
+  perceivedAggressiveness: v.optional(v.number()),
+  perceivedStiffness: v.optional(v.number()),
+  perceivedVolumeFit: v.optional(v.string()),
+  isFavourite: v.optional(v.boolean()),
+  fitLongevity: v.optional(v.string()),      // B2B signal enrichment
+  sizingDeviation: v.optional(v.number()),
 });
 ```
+
+Other tables: `rubberTechnologies`, `comfortRankings`, `footShapeCompat`, `accounts`, `sessions`, `verifications`, `jwks`, `backlogItems`, `userScoreProfiles`, `outliers`, `popularity`. See `convex/schema.ts` for the authoritative definition.
 
 ---
 
@@ -487,7 +508,6 @@ userShoes: defineTable({
 - Suggested edge limits:
   - `/api/auth/*`: `10 requests / minute / IP`
   - `/api/v1/auth/*`: `20 requests / minute / IP`
-  - `/api/v1/polar/checkout`: `12 requests / minute / IP`
   - `/api/upload` and `/api/imagekit`: `20 requests / minute / IP`
 - Suggested cache rules:
   - Cache static paths (`/imgs/*`, `/fonts/*`, `/_next/static/*`) aggressively

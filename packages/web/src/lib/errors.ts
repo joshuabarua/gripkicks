@@ -175,23 +175,6 @@ export class ErrorFactory {
       retryable: true,
     });
   }
-
-  static fromUnknown(error: unknown): AppError {
-    if (error instanceof AppError) {
-      return error;
-    }
-
-    const message = error instanceof Error ? error.message : "Unknown error occurred";
-
-    return new AppError({
-      code: "UNKNOWN_ERROR",
-      message,
-      userMessage: "An unexpected error occurred",
-      severity: "medium",
-      category: "unknown",
-      retryable: false,
-    });
-  }
 }
 
 const ResultUtils = {
