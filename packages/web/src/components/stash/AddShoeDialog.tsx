@@ -90,7 +90,6 @@ export function AddShoeDialog({
       </DialogTrigger>
       <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-2xl shadow-2xl shadow-brand-red/5 rounded-3xl">
         <DialogHeader>
-          <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-white/30 text-center">Add Shoe</p>
           <DialogTitle className="text-white font-so-cloudy uppercase text-fluid-2xl text-center">
             Add New Shoe
           </DialogTitle>

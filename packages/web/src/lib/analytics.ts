@@ -14,10 +14,6 @@ export const analyticsEvents = {
   stashShoeAdded: "stash_shoe_added",
   stashShoeRemoved: "stash_shoe_removed",
   stashFavouriteToggled: "stash_favourite_toggled",
-  checkoutStarted: "checkout_started",
-  checkoutRedirected: "checkout_redirected",
-  checkoutFailed: "checkout_failed",
-  checkoutSucceeded: "checkout_succeeded",
 } as const;
 
 export function track(event: string, properties?: AnalyticsProperties): void {

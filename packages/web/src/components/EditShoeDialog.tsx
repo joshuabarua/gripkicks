@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Save, HelpCircle, ChevronDown, Trash2, SlidersHorizontal } from 'lucide-react';
+import { Save, HelpCircle, ChevronDown, Trash2 } from 'lucide-react';
 import { shoeSizes, conditions, type ShoeSizeOption } from '@/constants/shoe-data';
 import type { UserShoe } from '@/types/api';
 import type { EditFormData } from '@/schemas/shoe-schema';
@@ -35,9 +35,6 @@ export default function EditShoeDialog({
         <Dialog open={!!editingShoe} onOpenChange={() => setEditingShoe(null)}>
           <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] w-[min(96vw,56rem)] max-w-4xl rounded-lg hal-glow shadow-2xl p-0 overflow-hidden">
             <DialogHeader className="space-y-3 border-b border-white/[0.06] px-5 py-6 sm:px-8 sm:py-7">
-              <div className="flex items-center gap-fluid-sm">
-                <p className="font-sora text-[9px] uppercase tracking-[0.35em] text-brand-putty/40">Edit Stats</p>
-              </div>
               <DialogTitle className="text-white font-so-cloudy uppercase text-fluid-xl">Edit Shoe Stats</DialogTitle>
               <DialogDescription className="text-fluid-sm text-neutral-500 font-sora">
                 {(editingShoe.shoe?.name || editingShoe.shoeDetails?.name || 'Unknown Shoe')} — {(editingShoe.shoe?.brand || editingShoe.shoeDetails?.brand || 'Unknown Brand')}
@@ -45,18 +42,6 @@ export default function EditShoeDialog({
             </DialogHeader>
 
             <div className="space-y-6 px-5 py-6 sm:space-y-8 sm:px-8 sm:py-8">
-              <div className="rounded-lg border border-brand-red/15 bg-brand-red/5 px-4 py-4 sm:px-5">
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 rounded-sm bg-brand-red/15 p-2 text-brand-red">
-                    <SlidersHorizontal className="h-4 w-4" />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="font-sora text-sm font-medium text-white">Update your personal fit data</p>
-                    <p className="font-sora text-sm text-neutral-400">Edit the fields below to reflect how this shoe actually fits and performs for you.</p>
-                  </div>
-                </div>
-              </div>
-
               <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="size" className="text-neutral-400 font-sora text-xs">Size</Label>

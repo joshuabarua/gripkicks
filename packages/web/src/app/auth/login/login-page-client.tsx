@@ -5,11 +5,7 @@ import { AuthPageLayout } from "@/components/auth-page-layout";
 
 export default function LoginPageClient() {
   return (
-    <AuthPageLayout
-      subtitle="Authenticate"
-      title="WELCOME"
-      highlightedText="BACK"
-    >
+    <AuthPageLayout title="WELCOME BACK">
       <LoginForm />
     </AuthPageLayout>
   );

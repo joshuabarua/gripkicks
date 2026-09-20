@@ -65,7 +65,7 @@ export default function Footer() {
 
         <div className="mt-16 pt-8 border-t border-white/[0.06] flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="font-sora text-xs text-brand-putty/25">
-            &copy; {new Date().getFullYear()} GripKicks. Your data, your shoes.
+            &copy; {new Date().getFullYear()} GripKicks
           </p>
           <div className="flex items-center gap-6">
             <Link

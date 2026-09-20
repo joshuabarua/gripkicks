@@ -3,13 +3,11 @@
 import { motion } from "framer-motion";
 
 interface AuthPageLayoutProps {
-  subtitle: string;
   title: string;
-  highlightedText: string;
   children: React.ReactNode;
 }
 
-export function AuthPageLayout({ subtitle, title, highlightedText, children }: AuthPageLayoutProps) {
+export function AuthPageLayout({ title, children }: AuthPageLayoutProps) {
   return (
     <main className="min-h-screen bg-black text-white flex flex-col">
       <div className="flex-1 flex items-center justify-center px-6 py-12 relative">
@@ -23,13 +21,8 @@ export function AuthPageLayout({ subtitle, title, highlightedText, children }: A
             transition={{ duration: 0.6 }}
             className="text-center mb-8"
           >
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">
-              {subtitle}
-            </p>
             <h1 className="font-ball-pill text-5xl md:text-6xl">
               {title}
-              <br />
-              <span className="text-brand-red">{highlightedText}</span>
             </h1>
           </motion.div>
 

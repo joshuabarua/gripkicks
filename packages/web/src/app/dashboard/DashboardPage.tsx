@@ -66,8 +66,7 @@ export default function DashboardPage() {
         >
           <div>
             <h1 className="font-ball-pill text-5xl md:text-7xl lg:text-8xl leading-[0.9] text-brand-chalk">
-              Hey {firstName},<br />
-              <span className="text-brand-red">ready to climb?</span>
+              Hey {firstName}
             </h1>
           </div>
           <motion.button
@@ -155,11 +154,11 @@ export default function DashboardPage() {
                 </>
               ) : (
                 <>
-                  <div className="font-ball-pill text-xl text-brand-red">
+                  <div className="font-ball-pill text-xl text-brand-chalk">
                     Set up your foot profile
                   </div>
                   <p className="font-sora text-brand-putty/40 text-xs mt-0.5">
-                    Takes 30 seconds — unlocks better matches
+                    Takes 30 seconds — improves your matches
                   </p>
                 </>
               )}
@@ -206,7 +205,7 @@ export default function DashboardPage() {
                 Shoe Sanctuary
               </h3>
               <p className="relative font-sora text-black/60 max-w-md text-sm">
-                Your full climbing shoe collection
+                Your shoe collection
               </p>
             </motion.div>
 
@@ -221,7 +220,7 @@ export default function DashboardPage() {
                   Sole Mate
                 </h4>
                 <p className="font-sora text-brand-putty/40 text-xs">
-                  Discover shoes made for you
+                  Shoes matched to your foot
                 </p>
               </div>
             </motion.div>
@@ -373,7 +372,7 @@ export default function DashboardPage() {
               NO SHOES YET
             </h3>
             <p className="font-sora text-brand-putty/40 mb-8 max-w-sm mx-auto">
-              Add your shoes so we can start figuring out what fits you best
+              Add your shoes to get fit recommendations
             </p>
             <motion.button
               whileHover={{ scale: 1.02 }}

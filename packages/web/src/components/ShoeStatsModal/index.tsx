@@ -212,7 +212,6 @@ export default function ShoeStatsModal({
               </div>
 
               <div>
-                <p className="font-sora text-[9px] uppercase tracking-[0.35em] text-brand-putty/40 mb-fluid-xs">Shoe Stats</p>
                 <div className="flex items-center gap-fluid-sm flex-wrap">
                   <h2 className="text-fluid-2xl font-bold font-so-cloudy uppercase">{shoeName}</h2>
                   <div className="flex items-center gap-1.5">

@@ -5,7 +5,7 @@ import { useSession } from '@/lib/auth';
 import { FullPageLoading } from '@/components/ui/loading';
 import { MatcherView } from '@/components/shoe/MatcherView';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, Zap, Activity, Clock, Users, Footprints } from 'lucide-react';
+import { Target, Users, Footprints } from 'lucide-react';
 import { useFindMyShoe, type SoleMateClimberMatch, type AggregatedRating } from '@/hooks/useFindMyShoe';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -31,33 +31,6 @@ export default function SoleSeekPage() {
               <Target className="w-10 h-10 text-brand-red" />
             </div>
             <h1 className="font-ball-pill text-5xl text-white mb-2">MATCHER</h1>
-            <p className="font-sora text-neutral-400">
-              See where every shoe lands based on how it actually performs
-            </p>
-          </div>
-
-          <div className="space-y-6 text-left">
-            <div className="flex items-start gap-3">
-              <Zap className="w-5 h-5 text-brand-red mt-1 flex-shrink-0" />
-              <div>
-                <h3 className="font-sora font-semibold text-white mb-1">See How Shoes Compare</h3>
-                <p className="text-sm text-neutral-400">Every shoe plotted on a grid by comfort, performance, and aggressiveness</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Activity className="w-5 h-5 text-brand-red mt-1 flex-shrink-0" />
-              <div>
-                <h3 className="font-sora font-semibold text-white mb-1">Find Your Style</h3>
-                <p className="text-sm text-neutral-400">Bouldering, sport, all-around — see what fits your climbing</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-brand-red mt-1 flex-shrink-0" />
-              <div>
-                <h3 className="font-sora font-semibold text-white mb-1">Visual Grid</h3>
-                <p className="text-sm text-neutral-400">Shoe images placed on a quadrant so you can spot the right zone fast</p>
-              </div>
-            </div>
           </div>
 
           <div className="mt-8 space-y-4 rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-center">

@@ -14,19 +14,13 @@ const publicRoutes: Array<{
   {
     path: "/about",
     verify: async (page) => {
-      await expect(page.getByRole("heading", { level: 1, name: /Built for\s+climbers/i })).toBeVisible();
-    },
-  },
-  {
-    path: "/pricing",
-    verify: async (page) => {
-      await expect(page.getByRole("heading", { level: 1, name: /\$0 forever/i })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "ABOUT" })).toBeVisible();
     },
   },
   {
     path: "/privacy",
     verify: async (page) => {
-      await expect(page.getByRole("heading", { level: 1, name: /Your data\s+your rules/i })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "PRIVACY" })).toBeVisible();
     },
   },
   {
@@ -39,7 +33,7 @@ const publicRoutes: Array<{
   {
     path: "/auth/signup",
     verify: async (page) => {
-      await expect(page.getByRole("heading", { level: 1, name: /Join the\s+crew/i })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: /Create\s+account/i })).toBeVisible();
     },
   },
 ];

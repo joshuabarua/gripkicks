@@ -135,10 +135,10 @@ function PitchSection() {
           className="md:col-span-7 md:pt-4 space-y-6 font-sora text-brand-putty/70 text-base md:text-lg leading-relaxed"
         >
           <p>
-            Track every shoe you climb in. Rate comfort, performance, and durability the way YOU feel them. Build a profile of what works on your foot, on your style, on your wall.
+            GripKicks helps you find climbing shoes that fit. Log the pairs you climb in, rate their comfort, performance, and durability, and build a profile of what works on your foot.
           </p>
           <p>
-            Then let the data find shoes you&rsquo;d have passed on &mdash; matched by climbers.
+            Matches come from climbers with the same foot shape.
           </p>
         </motion.div>
       </div>
@@ -149,19 +149,16 @@ function PitchSection() {
 function HowItWorksSection() {
   const steps = [
     {
-      n: "01",
       title: "Map your foot",
-      copy: "Pick your shape and volume in 30 seconds. Egyptian, Greek, Roman — we use the same fit language as the brands.",
+      copy: "Pick your foot shape and volume.",
     },
     {
-      n: "02",
       title: "Rate the shoes you own",
-      copy: "Add the pairs in your rotation. Score them on what matters: comfort, edging power, durability, aggression.",
+      copy: "Add your shoes and rate their comfort, performance, and durability.",
     },
     {
-      n: "03",
       title: "Find your next pair",
-      copy: "See shoes ranked for your foot profile and climbing style. Discover what’s working for climbers built like you.",
+      copy: "See shoes ranked for your foot profile, and what climbers with the same feet rate highly.",
     },
   ];
 
@@ -175,15 +172,15 @@ function HowItWorksSection() {
           transition={{ duration: 0.9 }}
           className="mb-fluid-2xl"
         >
-          <h2 className="font-ball-pill text-4xl md:text-5xl text-brand-red leading-[0.9] text-brand-chalk max-w-2xl">
-            Three steps.
+          <h2 className="font-ball-pill text-4xl md:text-5xl leading-[0.9] text-brand-chalk max-w-2xl">
+            How it works
           </h2>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-px bg-white/[0.06]">
           {steps.map((step, i) => (
             <motion.div
-              key={step.n}
+              key={step.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
@@ -206,22 +203,22 @@ function FeaturesSection() {
   const features = [
     {
       title: "Foot Lab",
-      copy: "Lock in your foot shape and volume. Everything else flows from this.",
+      copy: "Set your foot shape and volume.",
       href: "/footlab",
     },
     {
       title: "Sanctuary",
-      copy: "Your shoe wall, digitised. Track every pair, every rating, every retirement.",
+      copy: "Your climbing shoe collection and ratings.",
       href: "/stash",
     },
     {
       title: "Matcher",
-      copy: "Visual radar map of shoes ranked for your style. Comfort to competition.",
+      copy: "Shoes plotted on a comfort/performance grid.",
       href: "/matcher",
     },
     {
       title: "Sole Mate",
-      copy: "Climbers with your exact foot profile. See what they’re rating high.",
+      copy: "See what climbers with your foot profile rate highly.",
       href: "/matcher?tab=mate",
     },
   ];
@@ -237,7 +234,7 @@ function FeaturesSection() {
           className="mb-fluid-2xl"
         >
           <h2 className="font-ball-pill text-4xl md:text-5xl leading-[0.9] text-brand-chalk max-w-2xl">
-            Built for <br />climbers.
+            Features
           </h2>
         </motion.div>
 
@@ -286,7 +283,7 @@ function FinalCtaSection({ isAuthenticated, onEnter }: { isAuthenticated: boolea
           className="flex flex-col md:flex-row md:items-end justify-between gap-fluid-lg"
         >
           <h2 className="font-ball-pill text-5xl md:text-7xl lg:text-8xl leading-[0.85] text-brand-chalk max-w-3xl">
-            Stop guessing.<br /><span className="text-brand-red">Start climbing.</span>
+            Find climbing shoes<br />that fit.
           </h2>
           <button
             onClick={onEnter}

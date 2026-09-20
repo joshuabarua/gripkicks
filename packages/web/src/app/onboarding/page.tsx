@@ -69,26 +69,10 @@ export default function OnboardingPage() {
   const steps = useMemo(
     () =>
       [
-        {
-          key: "welcome",
-          title: "Welcome to GripKicks",
-          description: "Let&apos;s set up your profile",
-        },
-        {
-          key: "foot-data",
-          title: "Foot Profile",
-          description: "Help us understand your feet",
-        },
-        {
-          key: "first-shoe",
-          title: "Your First Shoe",
-          description: "Add a climbing shoe to your collection",
-        },
-        {
-          key: "complete",
-          title: "All Set!",
-          description: "You&apos;re ready to climb",
-        },
+        { key: "welcome" },
+        { key: "foot-data" },
+        { key: "first-shoe" },
+        { key: "complete" },
       ] as const,
     [],
   );
@@ -271,43 +255,11 @@ export default function OnboardingPage() {
             >
               {currentStep === "welcome" && (
                 <div className="text-center">
-                  <h1 className="font-ball-pill text-5xl md:text-6xl mb-4">
+                  <h1 className="font-ball-pill text-5xl md:text-6xl mb-10">
                     WELCOME TO
                     <br />
-                    <span className="text-brand-red">GRIPKICKS</span>
+                    GRIPKICKS
                   </h1>
-                  <p className="font-sora text-neutral-400 text-lg mb-10">
-                    Your personal climbing shoe companion
-                  </p>
-
-                  <div className="grid md:grid-cols-3 gap-4 text-left mb-10">
-                    {[
-                      {
-                        title: "Know Your Feet",
-                        desc: "Tell us your foot shape so we can narrow things down",
-                      },
-                      {
-                        title: "Rate Your Shoes",
-                        desc: "Track how each pair feels on comfort and performance",
-                      },
-                      {
-                        title: "Find Your Fit",
-                        desc: "Get shoe recs based on real data from your feet",
-                      },
-                    ].map((item) => (
-                      <div
-                        key={item.title}
-                        className="bg-brand-surface border border-white/[0.06] p-6 group hover:border-brand-red/30 transition-colors duration-500"
-                      >
-                        <h3 className="font-ball-pill text-lg text-white mb-1">
-                          {item.title}
-                        </h3>
-                        <p className="font-sora text-neutral-500 text-xs">
-                          {item.desc}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
 
                   <motion.button
                     whileHover={{ scale: 1.02 }}
@@ -322,10 +274,7 @@ export default function OnboardingPage() {
 
               {currentStep === "foot-data" && (
                 <div className="bg-brand-surface border border-white/[0.06] p-8">
-                  <h2 className="font-ball-pill text-3xl mb-2">FOOT SHAPE</h2>
-                  <p className="font-sora text-neutral-500 text-sm mb-8">
-                    This helps us recommend shoes that will fit you best
-                  </p>
+                  <h2 className="font-ball-pill text-3xl mb-8">FOOT SHAPE</h2>
 
                   <div className="space-y-6">
                     <div>
@@ -433,12 +382,9 @@ export default function OnboardingPage() {
 
               {currentStep === "first-shoe" && (
                 <div className="bg-brand-surface border border-white/[0.06] p-8">
-                  <h2 className="font-ball-pill text-3xl mb-2">
+                  <h2 className="font-ball-pill text-3xl mb-8">
                     ADD YOUR FIRST SHOE
                   </h2>
-                  <p className="font-sora text-neutral-500 text-sm mb-8">
-                    Search for a shoe and rate your experience with it
-                  </p>
 
                   <div className="space-y-6">
                     <div className="space-y-2">
@@ -626,14 +572,9 @@ export default function OnboardingPage() {
 
               {currentStep === "complete" && (
                 <div className="text-center">
-                  <h1 className="font-ball-pill text-5xl md:text-6xl mb-4">
-                    YOU&apos;RE
-                    <br />
-                    <span className="text-brand-red">ALL SET!</span>
+                  <h1 className="font-ball-pill text-5xl md:text-6xl mb-10">
+                    ALL SET
                   </h1>
-                  <p className="font-sora text-neutral-400 text-lg mb-10">
-                    Your profile is ready and you can start exploring
-                  </p>
 
                   <div className="grid md:grid-cols-3 gap-4 mb-10">
                     {[

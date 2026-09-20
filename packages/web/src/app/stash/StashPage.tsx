@@ -478,12 +478,8 @@ export default function ShoeSanctuaryPage() {
                 <h1 className="font-so-cloudy uppercase text-fluid-6xl md:text-fluid-7xl text-white leading-none">
                   Shoe
                   <br />
-                  <span className="text-brand-red">Sanctuary</span>
+                  Sanctuary
                 </h1>
-                <p className="font-sora text-neutral-500 text-sm md:text-fluid-base mt-fluid-sm max-w-md">
-                  Your personal climbing shoe collection. Click any shoe to view
-                  stats, edit, or manage.
-                </p>
               </div>
 
               <AddShoeDialog
@@ -574,11 +570,10 @@ export default function ShoeSanctuaryPage() {
                 className="flex flex-col items-center justify-center py-fluid-3xl text-center"
               >
                 <h3 className="font-ball-pill text-fluid-3xl text-white mb-fluid-xs">
-                  YOUR SANCTUARY AWAITS
+                  NO SHOES YET
                 </h3>
                 <p className="font-sora text-neutral-500 mb-fluid-md max-w-sm">
-                  Start building your climbing shoe collection. Add your first
-                  shoe to track stats and get recommendations.
+                  Add your first shoe to get started.
                 </p>
               </motion.div>
             )}

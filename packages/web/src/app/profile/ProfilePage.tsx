@@ -245,14 +245,13 @@ export default function ProfilePage() {
                   <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
                 </div>
                 <div className="relative">
-                  <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-black/50 mb-2">Getting started</p>
                   <h3 className="font-ball-pill text-3xl text-black mb-3">
                     COMPLETE YOUR PROFILE
                   </h3>
                   <ol className="font-sora text-sm text-black/70 space-y-1 mb-4">
                     <li>1. Set up your foot profile in Foot Lab</li>
                     <li>2. Add your first shoe with comfort ratings</li>
-                    <li>3. Find your perfect match</li>
+                    <li>3. Get shoe matches</li>
                   </ol>
                   <Link href="/footlab">
                     <motion.button

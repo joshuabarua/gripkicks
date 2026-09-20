@@ -9,7 +9,7 @@ interface OnboardingGuardProps {
   children: React.ReactNode
 }
 
-const PUBLIC_PATH_PREFIXES = ['/auth', '/onboarding', '/about', '/privacy', '/pricing']
+const PUBLIC_PATH_PREFIXES = ['/auth', '/onboarding', '/about', '/privacy']
 const PUBLIC_EXACT = ['/']
 
 function isPublicPath(pathname: string): boolean {

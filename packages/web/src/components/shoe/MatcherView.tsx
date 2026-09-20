@@ -264,9 +264,6 @@ function ModeHeader({ mode, count }: { mode: Mode; count: number }) {
   return (
     <div className="flex items-end justify-between mb-6">
       <div>
-        <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-2">
-          {mode === "personal" ? "Personal" : "Community"}
-        </p>
         <h2 className="font-ball-pill text-4xl md:text-5xl text-white leading-none">{title}</h2>
       </div>
       <p className="font-sora text-xs text-neutral-500 max-w-xs text-right hidden sm:block">{subtitle}</p>

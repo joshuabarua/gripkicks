@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Lock, Unlock } from "lucide-react";
 
 const MILESTONES = [
   { threshold: 50, label: "Foot profiles active", description: "Matchers start ranking by fit" },
@@ -113,20 +112,6 @@ export function CommunityMilestone({ userCount }: CommunityMilestoneProps) {
                       <p className="font-sora text-xs text-neutral-500 mt-2 leading-relaxed">
                         {m.description}
                       </p>
-                    </div>
-
-                    <div className="mt-8 pt-4 border-t border-white/[0.04]">
-                      {reached ? (
-                        <div className="flex items-center gap-1.5 text-brand-red">
-                          <Unlock className="w-3.5 h-3.5" />
-                          <span className="font-sora text-[10px] uppercase tracking-[0.15em] font-medium">Unlocked</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5 text-neutral-600">
-                          <Lock className="w-3.5 h-3.5" />
-                          <span className="font-sora text-[10px] uppercase tracking-[0.15em] font-medium">Locked</span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </motion.div>

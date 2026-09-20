@@ -19,11 +19,8 @@ export default function AboutPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto w-full">
           <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-putty/40 mb-4 text-center">
-              The mission
-            </p>
             <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.85] mb-8 text-brand-chalk text-center">
-              Built for<br /><span className="text-brand-red">climbers.</span>
+              ABOUT
             </h1>
           </motion.div>
 
@@ -32,9 +29,8 @@ export default function AboutPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-sora text-lg md:text-xl text-brand-putty/70 max-w-2xl mx-auto leading-relaxed text-center"
           >
-            GripKicks is a shoe wall for climbers &mdash; track every pair, rate the
-            fit the way you actually feel it, and let the data surface shoes matched
-            to your foot shape and style.
+            GripKicks helps you find climbing shoes that fit. Log your pairs,
+            rate the fit, and get matches based on your foot shape.
           </motion.p>
         </div>
       </section>

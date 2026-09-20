@@ -1,8 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Shield, Trash2, Lock, Eye, EyeOff, Database, ArrowUpRight } from 'lucide-react';
-import Link from 'next/link';
+import { Shield, Trash2, Lock, Eye, EyeOff, Database } from 'lucide-react';
 import LiquidGlassBackdrop from '@/components/brand/LiquidGlassBackdrop';
 import WordmarkWatermark from '@/components/brand/WordmarkWatermark';
 
@@ -12,12 +11,11 @@ const fadeUp = {
   viewport: { once: true },
 };
 
-function SectionHeader({ label, heading, highlight }: { label: string; heading: string; highlight: string }) {
+function SectionHeader({ heading }: { heading: string }) {
   return (
     <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-      <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-putty/40 mb-6">{label}</p>
       <h2 className="font-ball-pill text-4xl md:text-5xl mb-12 text-brand-chalk">
-        {heading}<br /><span className="text-brand-red">{highlight}</span>
+        {heading}
       </h2>
     </motion.div>
   );
@@ -27,32 +25,32 @@ const promises = [
   {
     icon: Shield,
     title: 'YOUR DATA BELONGS TO YOU',
-    body: 'Every piece of data you share with GripKicks — your foot profile, shoe ratings, preferences — belongs to you. We are custodians, not owners. You can export or delete it at any time.',
+    body: 'Your foot profile, shoe ratings, and preferences belong to you. Export or delete them anytime.',
   },
   {
     icon: EyeOff,
     title: 'ZERO DATA RESELLING',
-    body: 'We will never sell, license, or share your personal data with third parties for advertising, marketing, or any commercial purpose. Not now, not ever. This is non-negotiable.',
+    body: 'We do not sell or share your personal data with third parties.',
   },
   {
     icon: Trash2,
     title: 'PERMANENT DELETION',
-    body: 'When you delete your account, your data is permanently removed from our systems. No 30-day holds, no hidden backups kept for "analytics." Deleted means deleted.',
+    body: 'Deleting your account removes your data permanently.',
   },
   {
     icon: Lock,
     title: 'MINIMAL COLLECTION',
-    body: 'We only collect what we need to help you find better shoes. Your foot shape, your shoe ratings, and basic account info. That\'s it. No tracking across the web, no behavioral profiling.',
+    body: 'We collect only what is needed to match shoes: your foot shape, your shoe ratings, and basic account info.',
   },
   {
     icon: Eye,
     title: 'TRANSPARENT USE',
-    body: 'Your data is used for one purpose: helping the climbing community find shoes that fit. Your ratings contribute to aggregate recommendations. Your foot profile matches you with similar climbers.',
+    body: 'Your ratings feed aggregate recommendations. Your foot profile matches you with similar climbers.',
   },
   {
     icon: Database,
     title: 'COMMUNITY BENEFIT ONLY',
-    body: 'Aggregated, anonymized data helps the whole community get better recommendations. But your individual data is never exposed to other users without your explicit consent.',
+    body: 'Aggregated, anonymized data improves recommendations. Your individual data is never shared without your consent.',
   },
 ];
 
@@ -68,10 +66,8 @@ export default function PrivacyPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-putty/40 mb-4">Privacy Promise</p>
             <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8 text-brand-chalk">
-              YOUR DATA<br />
-              <span className="text-brand-red">YOUR RULES</span>
+              PRIVACY
             </h1>
           </motion.div>
 
@@ -80,33 +76,17 @@ export default function PrivacyPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-sora text-xl md:text-2xl text-brand-putty/70 max-w-2xl leading-relaxed"
           >
-            This isn&apos;t a legal document designed to confuse you. It&apos;s a plain-language promise about how we treat your data.
+            How GripKicks handles your data.
           </motion.p>
         </div>
-      </section>
-
-      {/* The Promise Banner */}
-      <section className="py-8 bg-brand-red overflow-hidden">
-        <motion.div
-          animate={{ x: [0, -1200] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="flex gap-8 whitespace-nowrap"
-        >
-          {Array(10).fill(null).map((_, i) => (
-            <span key={i} className="font-ball-pill text-2xl text-black/80">
-              NO DATA RESELLING • PERMANENT DELETION • YOUR DATA, YOUR CONTROL • COMMUNITY FIRST •
-            </span>
-          ))}
-        </motion.div>
       </section>
 
       {/* TL;DR */}
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-brand-surface">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-brand-putty/40 mb-6">TL;DR</p>
             <h2 className="font-ball-pill text-4xl md:text-5xl mb-8">
-              THE SHORT<br /><span className="text-brand-red">VERSION</span>
+              TL;DR
             </h2>
           </motion.div>
 
@@ -129,7 +109,7 @@ export default function PrivacyPage() {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <div className="font-ball-pill text-4xl md:text-5xl text-brand-red mb-2">{stat.value}</div>
+                  <div className="font-ball-pill text-4xl md:text-5xl text-brand-chalk mb-2">{stat.value}</div>
                   <p className="font-sora text-sm text-brand-putty/50">{stat.label}</p>
                 </motion.div>
               ))}
@@ -141,7 +121,7 @@ export default function PrivacyPage() {
       {/* Promises Grid */}
       <section className="px-6 md:px-12 lg:px-16 py-24">
         <div className="max-w-4xl mx-auto">
-          <SectionHeader label="Our Promises" heading="SIX PROMISES" highlight="WE KEEP" />
+          <SectionHeader heading="OUR PROMISES" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {promises.map((promise, i) => (
@@ -167,7 +147,7 @@ export default function PrivacyPage() {
       {/* What We Collect */}
       <section className="px-6 md:px-12 lg:px-16 py-24 bg-brand-surface">
         <div className="max-w-4xl mx-auto">
-          <SectionHeader label="What We Collect" heading="EXACTLY WHAT" highlight="WE NEED" />
+          <SectionHeader heading="WHAT WE COLLECT" />
 
           <div className="space-y-4">
             {[
@@ -206,43 +186,8 @@ export default function PrivacyPage() {
             className="mt-8 bg-brand-red/5 border border-brand-red/20 rounded-2xl p-6"
           >
             <p className="font-sora text-sm text-brand-putty/60">
-              <span className="text-brand-red font-medium">What we don&apos;t collect:</span> browsing habits, location data, device fingerprints, contacts, photos, or anything else that isn&apos;t directly needed to help you find climbing shoes.
+              <span className="text-brand-chalk font-medium">What we don&apos;t collect:</span> browsing habits, location data, device fingerprints, contacts, photos, or anything else not needed to match climbing shoes.
             </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="px-6 md:px-12 lg:px-16 py-24">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div {...fadeUp} transition={{ duration: 0.8 }}>
-            <h2 className="font-ball-pill text-5xl md:text-7xl mb-6 text-brand-chalk">
-              QUESTIONS?<br /><span className="text-brand-red">ASK US</span>
-            </h2>
-            <p className="font-sora text-brand-putty/50 text-lg mb-10 max-w-xl mx-auto">
-              We believe in transparency. If you have questions about your data or our practices, we&apos;re happy to answer.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/signup">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-xl px-10 py-4 rounded-2xl transition-colors inline-flex items-center gap-2"
-                >
-                  JOIN GRIPKICKS
-                  <ArrowUpRight className="w-5 h-5" />
-                </motion.button>
-              </Link>
-              <Link href="/about">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="border border-white/[0.1] hover:border-brand-red/30 text-brand-putty/70 hover:text-brand-red font-sora px-10 py-4 rounded-2xl transition-all"
-                >
-                  Why we built this
-                </motion.button>
-              </Link>
-            </div>
           </motion.div>
         </div>
       </section>

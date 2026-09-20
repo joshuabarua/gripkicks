@@ -230,7 +230,7 @@ export default function FootLabPage() {
             <Footprints className="w-8 h-8 text-brand-red" />
           </div>
           <h1 className="font-ball-pill text-5xl mb-3">FOOT PROFILE</h1>
-          <p className="font-sora text-neutral-500 mb-6">Log in to discover your foot shape</p>
+          <p className="font-sora text-neutral-500 mb-6">Log in to set up your foot profile</p>
           <Link
             href="/auth/login?callbackUrl=%2Ffootlab"
             className="inline-flex items-center justify-center rounded-lg bg-brand-red px-8 py-3 font-ball-pill text-lg text-black"
@@ -253,10 +253,10 @@ export default function FootLabPage() {
           className="mb-16"
         >
           <h1 className="font-ball-pill text-6xl md:text-8xl leading-none mb-4">
-            KNOW YOUR<br /><span className="text-brand-red">FOOT</span>
+            KNOW YOUR<br />FOOT
           </h1>
           <p className="font-sora text-neutral-400 text-lg max-w-lg">
-            Two questions. Better shoes. Tell us about your foot and we&apos;ll match you to the right rubber.
+            Set your foot shape and volume — used to match climbing shoes.
           </p>
         </motion.div>
 
@@ -271,7 +271,7 @@ export default function FootLabPage() {
               <div>
                 <h2 className="font-ball-pill text-2xl text-brand-chalk mb-2">Foot Lab is ready — finish setup when you want</h2>
                 <p className="font-sora text-sm text-brand-putty/70 max-w-2xl">
-                  You can use Foot Lab right now, or jump back into onboarding to finish your guided setup and add your first shoe.
+                  You can use Foot Lab now, or continue onboarding to finish setup.
                 </p>
               </div>
               <Link
@@ -324,7 +324,7 @@ export default function FootLabPage() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="font-sora text-[10px] text-brand-red mt-2 overflow-hidden"
+                        className="font-sora text-[10px] text-brand-putty/70 mt-2 overflow-hidden"
                       >
                         {footShapeInfo[shape].fit}
                       </motion.p>
@@ -376,7 +376,7 @@ export default function FootLabPage() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="font-sora text-[10px] text-brand-red overflow-hidden"
+                        className="font-sora text-[10px] text-brand-putty/70 overflow-hidden"
                       >
                         {footVolumeInfo[volume].fit}
                       </motion.p>
@@ -392,28 +392,6 @@ export default function FootLabPage() {
           <div className="text-red-400 text-sm font-sora bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">{error}</div>
         )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-brand-charcoal/50 border border-white/[0.06] rounded-lg p-6 md:p-8"
-        >
-          <h2 className="font-ball-pill text-2xl mb-5">Your foot shape changes everything</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {[
-              'Toes fit without pressure or pain',
-              'Optimal power transfer on every hold',
-              'Prevents common climbing foot injuries',
-              'Personalised to how you actually climb',
-            ].map((item) => (
-              <div key={item} className="flex items-start gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-red mt-2 flex-shrink-0" />
-                <span className="font-sora text-sm text-neutral-400">{item}</span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
       </section>
 
       <AnimatePresence>
@@ -428,7 +406,7 @@ export default function FootLabPage() {
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
               <div>
                 <p className="font-ball-pill text-xl capitalize">
-                  {selectedFootShape} <span className="text-brand-red">·</span> {selectedFootVolume} volume
+                  {selectedFootShape} <span className="text-neutral-500">·</span> {selectedFootVolume} volume
                 </p>
                 <p className="font-sora text-xs text-neutral-500">
                   {isAlreadySaved ? 'Profile already saved' : 'Ready to save your profile'}
