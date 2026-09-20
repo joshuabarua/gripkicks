@@ -1,0 +1,50 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: sh -c "yarn install --immutable && yarn workspace backend-api dev"
+    env_file:
+      - .env
+      - .env.local
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3001"
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/packages/web/node_modules
+      - /app/packages/app/node_modules
+      - /app/packages/backend-api/node_modules
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: sh -c "yarn install --immutable && yarn workspace web next dev --turbopack -p 3000 -H 0.0.0.0"
+    env_file:
+      - .env
+      - .env.local
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      WATCHPACK_POLLING: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/packages/web/node_modules
+      - /app/packages/app/node_modules
+      - /app/packages/backend-api/node_modules
+      - /app/packages/web/.next
+    depends_on:
+      api:
+        condition: service_healthy

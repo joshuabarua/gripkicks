@@ -1,0 +1,14 @@
+FROM node:22-alpine
+
+RUN corepack enable
+
+WORKDIR /app
+
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY packages/web/package.json packages/web/
+COPY packages/app/package.json packages/app/
+COPY packages/backend-api/package.json packages/backend-api/
+
+RUN yarn install --immutable
+
+COPY . .
