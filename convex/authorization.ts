@@ -1,24 +1,9 @@
 import { ConvexError } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
+import { findUserByAuthSubject } from "./userHelpers";
 
 type AuthorizationContext = Pick<QueryCtx | MutationCtx, "auth" | "db">;
-
-async function findIdentityUser(
-  ctx: AuthorizationContext,
-  subject: string,
-): Promise<Doc<"users"> | null> {
-  const userId = ctx.db.normalizeId("users", subject);
-  if (userId) {
-    const user = await ctx.db.get(userId);
-    if (user) return user;
-  }
-
-  return await ctx.db
-    .query("users")
-    .withIndex("by_betterAuthId", (query) => query.eq("betterAuthId", subject))
-    .first();
-}
 
 export async function requireCurrentUser(
   ctx: AuthorizationContext,
@@ -28,7 +13,7 @@ export async function requireCurrentUser(
     throw new ConvexError({ code: "UNAUTHENTICATED", message: "Authentication required" });
   }
 
-  const user = await findIdentityUser(ctx, identity.subject);
+  const user = await findUserByAuthSubject(ctx, identity.subject);
   if (!user) {
     throw new ConvexError({ code: "UNAUTHENTICATED", message: "Authenticated user not found" });
   }

@@ -2,6 +2,8 @@ import { v } from "convex/values";
 import { internalMutation, internalQuery } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { formatEntityWithId, filterUndefinedValues, accountFieldsValidator } from "./utils/helpers";
+import { deleteUserShoesForUser } from "./userShoes";
+import { findOrLinkUserByAuth } from "./userHelpers";
 
 async function deleteByIndex(ctx: any, tableName: string, indexName: string, field: string, value: any) {
   const items = await ctx.db
@@ -47,25 +49,9 @@ export const createUser = internalMutation({
     createdAt: v.optional(v.union(v.string(), v.number())),
   },
   handler: async (ctx, args) => {
-    // 1. Check if user already exists by Better Auth ID
-    let existing = await ctx.db
-      .query("users")
-      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
-      .first();
-
-    // 2. Fall back to checking by email if no betterAuthId match
-    if (!existing) {
-      existing = await ctx.db
-        .query("users")
-        .withIndex("by_email", (q) => q.eq("email", args.email))
-        .first();
-
-      // If found by email but missing betterAuthId, link them
-      if (existing && !existing.betterAuthId) {
-        await ctx.db.patch(existing._id, { betterAuthId: args.betterAuthId });
-        existing = { ...existing, betterAuthId: args.betterAuthId };
-      }
-    }
+    // 1. Check if user already exists by Better Auth ID, falling back to
+    //    email and linking when the row has no betterAuthId
+    const existing = await findOrLinkUserByAuth(ctx, args.betterAuthId, args.email);
 
     if (existing) {
       // Return existing user in Better Auth format
@@ -127,7 +113,7 @@ export const deleteUser = internalMutation({
     await Promise.all([
       deleteByIndex(ctx, "sessions", "by_userId", "userId", args.id),
       deleteByIndex(ctx, "accounts", "by_userId", "userId", args.id),
-      deleteByIndex(ctx, "userShoes", "by_userId", "userId", args.id),
+      deleteUserShoesForUser(ctx, args.id),
     ]);
     await ctx.db.delete(args.id);
   },

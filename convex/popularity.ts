@@ -1,8 +1,6 @@
 import { v } from "convex/values";
-import { paginationOptsValidator } from "convex/server";
 import { internalMutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
-import { requireAdmin } from "./authorization";
 
 export const getShoePopularity = query({
   args: { shoeId: v.id("shoes") },
@@ -34,14 +32,6 @@ export const getAllShoesPopularity = query({
       .collect();
 
     return rows.map((row) => ({ shoeId: row.shoeId, count: row.count }));
-  },
-});
-
-export const list = query({
-  args: { paginationOpts: paginationOptsValidator },
-  handler: async (ctx, args) => {
-    await requireAdmin(ctx);
-    return await ctx.db.query("userShoes").paginate(args.paginationOpts);
   },
 });
 

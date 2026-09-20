@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { internalMutation, query, mutation } from "./_generated/server";
 import { footShapeValidator, genderValidator, shoeOfficialSpecsValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, commonShoeFieldsValidator, optionalShoeFieldsValidator } from "./utils/helpers";
 import { findParentModel } from "./shoeHelpers";
+import { deleteUserShoesForShoe } from "./userShoes";
 import { requireAdmin } from "./authorization";
 
 async function enrichShoesWithRubber(ctx: any, shoes: any[]) {
@@ -645,6 +646,8 @@ export const remove = mutation({
     for (const compat of footShapeCompat) {
       await ctx.db.delete(compat._id);
     }
+
+    await deleteUserShoesForShoe(ctx, args.id);
 
     await ctx.db.delete(args.id);
     return { success: true };

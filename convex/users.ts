@@ -3,51 +3,8 @@ import { paginationOptsValidator } from "convex/server";
 import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { footShapeValidator } from "./schema";
 import { requireAdmin, requireUserAccess } from "./authorization";
-
-// In-memory store for tracking ongoing sync operations
-// In production, you might want to use a more robust solution like Redis
-const syncOperations = new Map<string, Promise<any>>();
-
-// Deduplication utility for user sync operations
-class SyncDeduplicator {
-  // Get a unique key for a sync operation
-  private static getSyncKey(betterAuthId: string): string {
-    return `sync:${betterAuthId}`;
-  }
-
-  // Execute a sync operation with deduplication
-  static async executeSync<T>(
-    betterAuthId: string,
-    syncOperation: () => Promise<T>
-  ): Promise<T> {
-    const syncKey = this.getSyncKey(betterAuthId);
-
-    // Check if there's already a sync operation in progress
-    if (syncOperations.has(syncKey)) {
-      return syncOperations.get(syncKey) as Promise<T>;
-    }
-
-    // Create and store the sync operation
-    const syncPromise = this.wrapSyncOperation(syncKey, syncOperation);
-    syncOperations.set(syncKey, syncPromise);
-
-    return syncPromise;
-  }
-
-  // Wrap the sync operation with cleanup
-  private static async wrapSyncOperation<T>(
-    syncKey: string,
-    syncOperation: () => Promise<T>
-  ): Promise<T> {
-    try {
-      const result = await syncOperation();
-      return result;
-    } finally {
-      // Clean up the operation reference
-      syncOperations.delete(syncKey);
-    }
-  }
-}
+import { findOrLinkUserByAuth, findUserByAuthSubject } from "./userHelpers";
+import { addUserShoe, removeUserShoe } from "./userShoes";
 
 export const getByEmail = query({
   args: { email: v.string() },
@@ -165,25 +122,13 @@ export const createOrUpdateFromBetterAuth = internalMutation({
     emailVerified: v.boolean(),
   },
   handler: async (ctx, args) => {
-    // 1. Check if user already exists with this Better Auth ID
-    let existingUser = await ctx.db
-      .query("users")
-      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
-      .first();
-
-    // 2. Fall back to checking by email if no betterAuthId match
-    if (!existingUser) {
-      existingUser = await ctx.db
-        .query("users")
-        .withIndex("by_email", (q) => q.eq("email", args.email))
-        .first();
-
-      // If found by email but missing betterAuthId, link them
-      if (existingUser && !existingUser.betterAuthId) {
-        await ctx.db.patch(existingUser._id, { betterAuthId: args.betterAuthId });
-        existingUser = { ...existingUser, betterAuthId: args.betterAuthId };
-      }
-    }
+    // 1. Check if user already exists with this Better Auth ID, falling back
+    //    to email and linking when the row has no betterAuthId
+    const existingUser = await findOrLinkUserByAuth(
+      ctx,
+      args.betterAuthId,
+      args.email,
+    );
 
     if (existingUser) {
       // Update existing user
@@ -217,16 +162,7 @@ export const findByBetterAuthId = query({
     betterAuthId: v.string(),
   },
   handler: async (ctx, args) => {
-    const normalizedId = ctx.db.normalizeId("users", args.betterAuthId);
-    const user = normalizedId
-      ? await ctx.db.get(normalizedId)
-      : await ctx.db
-          .query("users")
-          .withIndex("by_betterAuthId", (q) =>
-            q.eq("betterAuthId", args.betterAuthId),
-          )
-          .first();
-
+    const user = await findUserByAuthSubject(ctx, args.betterAuthId);
     if (user) await requireUserAccess(ctx, user._id);
     return user;
   },
@@ -242,46 +178,40 @@ export const syncUserDeduplicated = internalMutation({
     emailVerified: v.boolean(),
   },
   handler: async (ctx, args) => {
-    // Use the deduplicator to prevent duplicate syncs
-    return await SyncDeduplicator.executeSync(
-      args.betterAuthId,
-      async () => {
-        // Check if user already exists
-        const existingUser = await ctx.db
-          .query("users")
-          .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
-          .first();
+    // Check if user already exists
+    const existingUser = await ctx.db
+      .query("users")
+      .withIndex("by_betterAuthId", (q) => q.eq("betterAuthId", args.betterAuthId))
+      .first();
 
-        if (existingUser) {
-          // Update existing user if needed
-          const updates: any = {};
-          if (existingUser.email !== args.email) updates.email = args.email;
-          if (args.name && existingUser.name !== args.name) updates.name = args.name;
-          if (args.image !== undefined && existingUser.image !== args.image) updates.image = args.image;
-          if (existingUser.emailVerified !== args.emailVerified) updates.emailVerified = args.emailVerified;
+    if (existingUser) {
+      // Update existing user if needed
+      const updates: any = {};
+      if (existingUser.email !== args.email) updates.email = args.email;
+      if (args.name && existingUser.name !== args.name) updates.name = args.name;
+      if (args.image !== undefined && existingUser.image !== args.image) updates.image = args.image;
+      if (existingUser.emailVerified !== args.emailVerified) updates.emailVerified = args.emailVerified;
 
-          if (Object.keys(updates).length > 0) {
-            await ctx.db.patch(existingUser._id, updates);
-          }
-
-          return existingUser._id;
-        }
-
-        // Create new user
-        const emailPrefix = args.email.split("@")[0] ?? args.email;
-        const name = args.name?.trim() || emailPrefix;
-        const userId = await ctx.db.insert("users", {
-          betterAuthId: args.betterAuthId,
-          email: args.email,
-          name,
-          ...(args.image !== undefined ? { image: args.image } : {}),
-          emailVerified: args.emailVerified,
-          onboardingComplete: false,
-        });
-
-        return userId;
+      if (Object.keys(updates).length > 0) {
+        await ctx.db.patch(existingUser._id, updates);
       }
-    );
+
+      return existingUser._id;
+    }
+
+    // Create new user
+    const emailPrefix = args.email.split("@")[0] ?? args.email;
+    const name = args.name?.trim() || emailPrefix;
+    const userId = await ctx.db.insert("users", {
+      betterAuthId: args.betterAuthId,
+      email: args.email,
+      name,
+      ...(args.image !== undefined ? { image: args.image } : {}),
+      emailVerified: args.emailVerified,
+      onboardingComplete: false,
+    });
+
+    return userId;
   },
 });
 
@@ -345,10 +275,10 @@ export const removeIndoorOutdoorField = mutation({
             } = userShoe as any;
 
             // Delete the old document
-            await ctx.db.delete(userShoe._id);
+            await removeUserShoe(ctx, userShoe);
 
             // Create a new document without the indoorOutdoor field
-            await ctx.db.insert("userShoes", fieldsToKeep);
+            await addUserShoe(ctx, userShoe.userId, userShoe.shoeId, fieldsToKeep);
 
             results.documentsUpdated++;
           }
@@ -391,14 +321,7 @@ export const serviceGetById = internalQuery({
 export const serviceFindByBetterAuthId = internalQuery({
   args: { betterAuthId: v.string() },
   handler: async (ctx, args) => {
-    const normalizedId = ctx.db.normalizeId("users", args.betterAuthId);
-    if (normalizedId) return await ctx.db.get(normalizedId);
-    return await ctx.db
-      .query("users")
-      .withIndex("by_betterAuthId", (query) =>
-        query.eq("betterAuthId", args.betterAuthId),
-      )
-      .first();
+    return await findUserByAuthSubject(ctx, args.betterAuthId);
   },
 });
 

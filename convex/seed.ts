@@ -2,6 +2,7 @@ import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { deriveModelName, deriveVariantLabel } from "./utils/helpers";
 import { findParentModel } from "./shoeHelpers";
+import { deleteUserShoesForShoe } from "./userShoes";
 import seedShoes from "./data/seedShoes.json";
 
 const climbingShoes = seedShoes;
@@ -100,15 +101,8 @@ export const deleteShoeByName = internalMutation({
       await ctx.db.delete(compat._id);
     }
 
-    // Delete related user shoes (stashed items)
-    const userShoes = await ctx.db
-      .query("userShoes")
-      .filter((q) => q.eq(q.field("shoeId"), shoe._id))
-      .collect();
-
-    for (const userShoe of userShoes) {
-      await ctx.db.delete(userShoe._id);
-    }
+    // Delete related user shoes (stashed items) and the popularity row
+    const deletedUserShoes = await deleteUserShoesForShoe(ctx, shoe._id);
 
     // Delete the shoe itself
     await ctx.db.delete(shoe._id);
@@ -117,7 +111,7 @@ export const deleteShoeByName = internalMutation({
       success: true,
       message: `Deleted ${args.name} by ${args.brand} and related data`,
       deletedFootShapeComps: footShapeComps.length,
-      deletedUserShoes: userShoes.length
+      deletedUserShoes
     };
   },
 });
@@ -142,7 +136,7 @@ export const clearDatabase = internalMutation({
   args: {},
   handler: async (ctx) => {
     // Delete all data (use with caution!)
-    const tables = ["footShapeCompat", "comfortRankings", "userShoes", "shoes", "rubberTechnologies"] as const;
+    const tables = ["footShapeCompat", "comfortRankings", "userShoes", "popularity", "shoes", "rubberTechnologies"] as const;
 
     for (const table of tables) {
       const docs = await ctx.db.query(table).collect();

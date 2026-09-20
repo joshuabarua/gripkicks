@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { filterUndefinedValues, userShoeFieldsValidator } from "./utils/helpers";
 import { requireUserAccess, requireUserShoeAccess } from "./authorization";
-import { adjustShoePopularity } from "./shoeHelpers";
+import { addUserShoe, findUserShoe, removeUserShoe } from "./userShoes";
 import { fitLongevityToScore, sizingDeviationToScore } from "./utils/scoring";
 
 async function getUserShoesByUserId(ctx: any, userId: any) {
@@ -10,31 +10,6 @@ async function getUserShoesByUserId(ctx: any, userId: any) {
     .query("userShoes")
     .withIndex("by_userId", (q: any) => q.eq("userId", userId))
     .collect();
-}
-
-async function findExistingUserShoe(ctx: any, userId: any, shoeId: any) {
-  return await ctx.db
-    .query("userShoes")
-    .withIndex("by_userId_shoeId", (q: any) =>
-      q.eq("userId", userId).eq("shoeId", shoeId)
-    )
-    .first();
-}
-
-async function withExistingUserShoe<T>(
-  ctx: any,
-  userId: string,
-  shoeId: string,
-  onExists: (existing: any) => Promise<T>,
-  onNotExists: () => Promise<T>,
-): Promise<T> {
-  const existing = await findExistingUserShoe(ctx, userId, shoeId);
-
-  if (existing) {
-    return await onExists(existing);
-  }
-
-  return await onNotExists();
 }
 
 const userShoeMutationArgs = {
@@ -139,20 +114,7 @@ export const addToStash = mutation({
   args: userShoeMutationArgs,
   handler: async (ctx, args) => {
     await requireUserAccess(ctx, args.userId);
-    return await withExistingUserShoe(
-      ctx,
-      args.userId,
-      args.shoeId,
-      async (existing) => existing._id,
-      async () => {
-        const id = await ctx.db.insert("userShoes", {
-          userId: args.userId,
-          shoeId: args.shoeId,
-        });
-        await adjustShoePopularity(ctx, args.shoeId, 1);
-        return id;
-      },
-    );
+    return await addUserShoe(ctx, args.userId, args.shoeId);
   },
 });
 
@@ -160,17 +122,10 @@ export const removeFromStash = mutation({
   args: userShoeMutationArgs,
   handler: async (ctx, args) => {
     await requireUserAccess(ctx, args.userId);
-    return await withExistingUserShoe(
-      ctx,
-      args.userId,
-      args.shoeId,
-      async (existing) => {
-        await ctx.db.delete(existing._id);
-        await adjustShoePopularity(ctx, existing.shoeId, -1);
-        return true;
-      },
-      async () => false,
-    );
+    const existing = await findUserShoe(ctx, args.userId, args.shoeId);
+    if (!existing) return false;
+    await removeUserShoe(ctx, existing);
+    return true;
   },
 });
 
@@ -181,7 +136,7 @@ export const isInStash = query({
   },
   handler: async (ctx, args) => {
     await requireUserAccess(ctx, args.userId);
-    const existing = await findExistingUserShoe(ctx, args.userId, args.shoeId);
+    const existing = await findUserShoe(ctx, args.userId, args.shoeId);
     return existing !== null;
   },
 });
@@ -229,8 +184,7 @@ export const deleteUserShoe = mutation({
   handler: async (ctx, args) => {
     const userShoe = await requireUserShoeAccess(ctx, args.userShoeId);
     // Delete the userShoe document
-    await ctx.db.delete(args.userShoeId);
-    await adjustShoePopularity(ctx, userShoe.shoeId, -1);
+    await removeUserShoe(ctx, userShoe);
   },
 });
 
