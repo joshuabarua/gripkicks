@@ -22,7 +22,7 @@ export function calculateEnrichmentScores(
     weight?: string;
     sensitivity?: string;
     rigidity?: string;
-  },
+  } = {},
 ) {
   const aggressiveness = shoe.aggressiveness.toLowerCase();
   const stiffness = shoe.stiffness.toLowerCase();

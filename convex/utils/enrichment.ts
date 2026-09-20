@@ -1,7 +1,15 @@
 import { Infer, v } from "convex/values";
 import { MutationCtx } from "../_generated/server";
-import { shoeOfficialSpecsValidator } from "./helpers";
+import { Doc } from "../_generated/dataModel";
+import {
+  filterUndefinedValues,
+  findOrCreateRubberTechnology,
+  shoeMetricsValidator,
+  shoeOfficialSpecsValidator,
+} from "./helpers";
 import { calculateEnrichmentScores } from "./enrichmentScoring";
+
+export { shoeMetricsValidator };
 
 export const shoeEnrichmentEntryValidator = v.object({
   brand: v.string(),
@@ -15,7 +23,39 @@ export const shoeEnrichmentEntryValidator = v.object({
     v.literal("approved"),
     v.literal("rejected"),
   ),
+  metrics: v.optional(shoeMetricsValidator),
 });
+
+export async function buildApprovedMetricsPatch(
+  ctx: MutationCtx,
+  shoe: Doc<"shoes">,
+  metrics: Infer<typeof shoeMetricsValidator>,
+  officialSpecs?: Infer<typeof shoeOfficialSpecsValidator>,
+) {
+  const appliedFields = filterUndefinedValues({
+    aggressiveness: metrics.aggressiveness,
+    climbingDiscipline: metrics.climbingDiscipline,
+    stiffness: metrics.stiffness,
+    volume: metrics.volume,
+    brandAggressiveness: metrics.brandAggressiveness,
+    brandStiffness: metrics.brandStiffness,
+  });
+
+  const rubberTechnologyId = metrics.rubber
+    ? await findOrCreateRubberTechnology(ctx, metrics.rubber)
+    : undefined;
+  if (rubberTechnologyId !== undefined) {
+    appliedFields.rubberTechnologyId = rubberTechnologyId;
+  }
+
+  return {
+    ...appliedFields,
+    defaultScores: calculateEnrichmentScores(
+      { ...shoe, ...appliedFields },
+      officialSpecs,
+    ),
+  };
+}
 
 export async function applyEnrichmentEntries(
   ctx: MutationCtx,
@@ -50,17 +90,28 @@ export async function applyEnrichmentEntries(
       continue;
     }
 
+    const metricsPatch =
+      entry.reviewStatus === "approved" && entry.metrics
+        ? await buildApprovedMetricsPatch(
+            ctx,
+            shoe,
+            entry.metrics,
+            entry.officialSpecs,
+          )
+        : { defaultScores: calculateEnrichmentScores(shoe, entry.officialSpecs) };
+
     await ctx.db.patch(shoe._id, {
       description: entry.description,
       officialUrl: entry.officialUrl,
       officialSpecs: entry.officialSpecs,
-      defaultScores: calculateEnrichmentScores(shoe, entry.officialSpecs),
+      ...metricsPatch,
       enrichment: {
         sourceUrl: entry.officialUrl,
         sourceName: `${entry.brand} official product page`,
         extractedAt,
         confidence: entry.confidence,
         reviewStatus: entry.reviewStatus,
+        ...(entry.metrics !== undefined ? { metrics: entry.metrics } : {}),
       },
     });
     updated.push(`${entry.brand}: ${entry.name}`);

@@ -86,6 +86,38 @@ export async function ensureRubberTechnologyExists(ctx: any, rubberTechnologyId:
   return rubberTechnology;
 }
 
+export async function findOrCreateRubberTechnology(
+  ctx: any,
+  rubber: {
+    brand: string;
+    compound: string;
+    stickiness?: string;
+    durability?: string;
+  },
+) {
+  const existing = await ctx.db
+    .query("rubberTechnologies")
+    .withIndex("by_brand_compound", (q: any) =>
+      q.eq("brand", rubber.brand).eq("compound", rubber.compound),
+    )
+    .first();
+
+  if (existing) {
+    return existing._id;
+  }
+
+  if (!rubber.stickiness || !rubber.durability) {
+    return undefined;
+  }
+
+  return await ctx.db.insert("rubberTechnologies", {
+    brand: rubber.brand,
+    compound: rubber.compound,
+    stickiness: rubber.stickiness,
+    durability: rubber.durability,
+  });
+}
+
 export const scoreHistoryEntryValidator = v.object({
   timestamp: v.number(),
   previousScore: v.number(),
@@ -184,6 +216,49 @@ export const shoeOfficialSpecsValidator = v.object({
   rigidity: v.optional(v.string()),
 });
 
+export const shoeMetricsValidator = v.object({
+  aggressiveness: v.optional(
+    v.union(
+      v.literal("flat"),
+      v.literal("moderate"),
+      v.literal("aggressive"),
+    ),
+  ),
+  climbingDiscipline: v.optional(
+    v.union(
+      v.literal("bouldering"),
+      v.literal("competition"),
+      v.literal("gym"),
+      v.literal("sport"),
+      v.literal("trad"),
+    ),
+  ),
+  stiffness: v.optional(
+    v.union(
+      v.literal("soft"),
+      v.literal("medium"),
+      v.literal("stiff"),
+    ),
+  ),
+  volume: v.optional(
+    v.union(
+      v.literal("low"),
+      v.literal("medium"),
+      v.literal("high"),
+    ),
+  ),
+  brandAggressiveness: v.optional(v.number()),
+  brandStiffness: v.optional(v.number()),
+  rubber: v.optional(
+    v.object({
+      brand: v.string(),
+      compound: v.string(),
+      stickiness: v.optional(v.string()),
+      durability: v.optional(v.string()),
+    }),
+  ),
+});
+
 export const shoeEnrichmentValidator = v.object({
   sourceUrl: v.string(),
   sourceName: v.string(),
@@ -194,6 +269,7 @@ export const shoeEnrichmentValidator = v.object({
     v.literal("approved"),
     v.literal("rejected"),
   ),
+  metrics: v.optional(shoeMetricsValidator),
 });
 
 const baseShoeFieldsValidator = {

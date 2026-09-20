@@ -1,5 +1,6 @@
 import { internalMutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { findOrCreateRubberTechnology } from "./utils/helpers";
 
 export const list = query({
   args: {},
@@ -21,22 +22,6 @@ export const createOrGet = internalMutation({
     durability: v.string(),
   },
   handler: async (ctx, args) => {
-    const existing = await ctx.db
-      .query("rubberTechnologies")
-      .withIndex("by_brand_compound", (q) =>
-        q.eq("brand", args.brand).eq("compound", args.compound),
-      )
-      .first();
-
-    if (existing) {
-      return existing._id;
-    }
-
-    return await ctx.db.insert("rubberTechnologies", {
-      brand: args.brand,
-      compound: args.compound,
-      stickiness: args.stickiness,
-      durability: args.durability,
-    });
+    return await findOrCreateRubberTechnology(ctx, args);
   },
 });

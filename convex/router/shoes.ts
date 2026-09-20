@@ -15,6 +15,24 @@ export function registerShoeRoutes(app: HonoWithConvex<ActionCtx>) {
     return c.json({ success: true, data: result });
   });
 
+  app.post("/api/shoes/bulkUpsert", async (c) => {
+    const { brand, shoes } = await c.req.json();
+    const result = await c.env.runMutation(internal.shoes.serviceBulkUpsertByBrand, {
+      brand,
+      shoes,
+    });
+    return c.json({ success: true, data: result });
+  });
+
+  app.post("/api/shoes/reviewEnrichment", async (c) => {
+    const { id, reviewStatus } = await c.req.json();
+    const result = await c.env.runMutation(internal.shoes.serviceReviewEnrichment, {
+      id,
+      reviewStatus,
+    });
+    return c.json({ success: true, data: result });
+  });
+
   app.get("/api/v1/shoes", async (c) => {
     const numItems = Math.min(100, Math.max(1, Number(c.req.query("limit")) || 50));
     const shoes = await c.env.runQuery(api.shoes.list, {

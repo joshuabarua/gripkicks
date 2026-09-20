@@ -1,1 +1,107 @@
-[]
+[
+  {
+    "brand": "So iLL",
+    "name": "The Bowler",
+    "officialUrl": "https://www.kickstarter.com/projects/1709752678/high-performance-climbing-shoes-inspired-by-retro",
+    "description": "Flat, comfortable beginner shoe with a single strap and leather upper; also used as a gym rental model.",
+    "officialSpecs": {
+      "closure": "Single velcro strap",
+      "upper": "Leather",
+      "sole": "Dark Matter rubber"
+    },
+    "confidence": 0.65,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "gym",
+      "stiffness": "soft",
+      "volume": "medium",
+      "rubber": { "brand": "Dark Matter", "compound": "Standard" }
+    }
+  },
+  {
+    "brand": "So iLL",
+    "name": "New Zero",
+    "officialUrl": "https://bananafingers.com/so-ill-new-zero",
+    "description": "The softest and most aggressive shoe in the So iLL line — slipper sensitivity with a downturned toe and ultra-thin midsole for steep bouldering.",
+    "officialSpecs": {
+      "closure": "Single velcro strap",
+      "upper": "Synthetic vegan",
+      "lining": "Lined synthetic interior",
+      "midsole": "Ultra-thin midsole",
+      "sole": "Dark Matter rubber"
+    },
+    "confidence": 0.8,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "bouldering",
+      "stiffness": "soft",
+      "volume": "medium",
+      "rubber": { "brand": "Dark Matter", "compound": "Standard" }
+    }
+  },
+  {
+    "brand": "So iLL",
+    "name": "Free Range",
+    "officialUrl": "https://weighmyrack.com/shoe/so-ill-free-range",
+    "description": "So iLL's most aggressive model at release — downturned toe, fishhook midsole, semi-stiff toe box, and extra heel tension for technical precision.",
+    "officialSpecs": {
+      "closure": "Single velcro strap",
+      "upper": "Synthetic",
+      "midsole": "Fishhook midsole",
+      "sole": "Dark Matter rubber"
+    },
+    "confidence": 0.8,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "bouldering",
+      "stiffness": "medium",
+      "volume": "high",
+      "rubber": { "brand": "Dark Matter", "compound": "Standard" }
+    }
+  },
+  {
+    "brand": "So iLL",
+    "name": "Street",
+    "officialUrl": "https://soillholds.com/products/street",
+    "description": "Medium-soft, moderately downturned dual-strap shoe on Vibram XS Grip — built for gym and crag by Jae Jung with Fred Nicole.",
+    "officialSpecs": {
+      "closure": "Dual-strap velcro with D-ring",
+      "upper": "6-piece unlined vegan microsuede",
+      "midsole": "Molded toe midsole",
+      "sole": "Vibram XS Grip, 3mm split outsole"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "gym",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    }
+  },
+  {
+    "brand": "So iLL",
+    "name": "Runner LV",
+    "officialUrl": "https://weighmyrack.com/shoe/so-ill-runner",
+    "description": "Retro-runner-styled downturned shoe with a three-point closure and thin fishhook midsole; the low-volume fit variant.",
+    "officialSpecs": {
+      "closure": "Three-point velcro closure",
+      "upper": "Synthetic padded",
+      "midsole": "Fishhook thin midsole",
+      "sole": "Dark Matter rubber"
+    },
+    "confidence": 0.75,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "soft",
+      "volume": "low",
+      "rubber": { "brand": "Dark Matter", "compound": "Standard" }
+    }
+  }
+]

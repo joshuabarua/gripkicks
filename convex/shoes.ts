@@ -1,9 +1,10 @@
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
-import { internalMutation, query, mutation } from "./_generated/server";
+import { internalMutation, query, mutation, MutationCtx } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 import { footShapeValidator, genderValidator, deriveModelName, deriveVariantLabel, ensureRubberTechnologyExists, commonShoeFieldsValidator, optionalShoeFieldsValidator } from "./utils/helpers";
 import { enrichShoesWithRubber, insertFootShapeCompat, resolveParentModelId, sortShoesByName } from "./shoeHelpers";
-import { applyEnrichmentEntries, shoeEnrichmentEntryValidator } from "./utils/enrichment";
+import { applyEnrichmentEntries, buildApprovedMetricsPatch, shoeEnrichmentEntryValidator } from "./utils/enrichment";
 import {
   buildMissingRubberTechnologyReport,
   runBackfillMissingRubberTechnology,
@@ -235,23 +236,53 @@ export const serviceApplyEnrichment = internalMutation({
   handler: async (ctx, args) => await applyEnrichmentEntries(ctx, args.entries),
 });
 
+const reviewStatusValidator = v.union(
+  v.literal("pending"),
+  v.literal("approved"),
+  v.literal("rejected"),
+);
+
+async function applyEnrichmentReview(
+  ctx: MutationCtx,
+  id: Id<"shoes">,
+  reviewStatus: "pending" | "approved" | "rejected",
+) {
+  const shoe = await ctx.db.get(id);
+  if (!shoe?.enrichment) throw new Error("Shoe enrichment not found");
+  const metricsPatch =
+    reviewStatus === "approved" && shoe.enrichment.metrics
+      ? await buildApprovedMetricsPatch(
+          ctx,
+          shoe,
+          shoe.enrichment.metrics,
+          shoe.officialSpecs,
+        )
+      : {};
+  await ctx.db.patch(id, {
+    ...metricsPatch,
+    enrichment: { ...shoe.enrichment, reviewStatus },
+  });
+  return id;
+}
+
 export const reviewEnrichment = mutation({
   args: {
     id: v.id("shoes"),
-    reviewStatus: v.union(
-      v.literal("pending"),
-      v.literal("approved"),
-      v.literal("rejected"),
-    ),
+    reviewStatus: reviewStatusValidator,
   },
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
-    const shoe = await ctx.db.get(args.id);
-    if (!shoe?.enrichment) throw new Error("Shoe enrichment not found");
-    await ctx.db.patch(args.id, {
-      enrichment: { ...shoe.enrichment, reviewStatus: args.reviewStatus },
-    });
-    return args.id;
+    return await applyEnrichmentReview(ctx, args.id, args.reviewStatus);
+  },
+});
+
+export const serviceReviewEnrichment = internalMutation({
+  args: {
+    id: v.id("shoes"),
+    reviewStatus: reviewStatusValidator,
+  },
+  handler: async (ctx, args) => {
+    return await applyEnrichmentReview(ctx, args.id, args.reviewStatus);
   },
 });
 
@@ -365,13 +396,12 @@ export const remove = mutation({
   },
 });
 
-export const bulkUpsertByBrand = mutation({
+export const serviceBulkUpsertByBrand = internalMutation({
   args: {
     brand: v.string(),
     shoes: v.array(bulkUpsertShoeValidator),
   },
   handler: async (ctx, args) => {
-    await requireAdmin(ctx);
     return await bulkUpsertShoesByBrand(ctx, args.brand, args.shoes);
   },
 });

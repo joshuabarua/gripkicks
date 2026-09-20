@@ -19,6 +19,56 @@ const allowedSpecKeys = new Set([
   "sensitivity",
   "rigidity",
 ]);
+const metricVocabs = {
+  aggressiveness: new Set(["flat", "moderate", "aggressive"]),
+  climbingDiscipline: new Set(["bouldering", "competition", "gym", "sport", "trad"]),
+  stiffness: new Set(["soft", "medium", "stiff"]),
+  volume: new Set(["low", "medium", "high"]),
+};
+const allowedMetricKeys = new Set([
+  ...Object.keys(metricVocabs),
+  "brandAggressiveness",
+  "brandStiffness",
+  "rubber",
+]);
+const allowedRubberKeys = new Set(["brand", "compound", "stickiness", "durability"]);
+
+function assertRubberMetric(rubber, fileName, name) {
+  if (!rubber || typeof rubber !== "object" || Array.isArray(rubber)) {
+    throw new Error(`${fileName}: ${name} metrics.rubber must be an object`);
+  }
+  for (const [key, value] of Object.entries(rubber)) {
+    if (!allowedRubberKeys.has(key) || typeof value !== "string") {
+      throw new Error(`${fileName}: ${name} has invalid rubber field ${key}`);
+    }
+  }
+  for (const field of ["brand", "compound"]) {
+    if (typeof rubber[field] !== "string" || !rubber[field].trim()) {
+      throw new Error(`${fileName}: ${name} metrics.rubber requires a non-empty ${field}`);
+    }
+  }
+}
+
+function assertMetrics(metrics, fileName, name) {
+  if (!metrics || typeof metrics !== "object" || Array.isArray(metrics)) {
+    throw new Error(`${fileName}: ${name} metrics must be an object`);
+  }
+  for (const [key, value] of Object.entries(metrics)) {
+    if (!allowedMetricKeys.has(key)) {
+      throw new Error(`${fileName}: ${name} has invalid metric ${key}`);
+    }
+    const vocab = metricVocabs[key];
+    if (vocab) {
+      if (typeof value !== "string" || !vocab.has(value)) {
+        throw new Error(`${fileName}: ${name} has invalid metric ${key} value`);
+      }
+    } else if (key === "rubber") {
+      assertRubberMetric(value, fileName, name);
+    } else if (typeof value !== "number") {
+      throw new Error(`${fileName}: ${name} metric ${key} must be a number`);
+    }
+  }
+}
 
 function assertEntry(entry, fileName) {
   if (!entry || typeof entry !== "object") throw new Error(`${fileName}: entry must be an object`);
@@ -46,6 +96,9 @@ function assertEntry(entry, fileName) {
     if (!allowedSpecKeys.has(key) || typeof value !== "string") {
       throw new Error(`${fileName}: ${entry.name} has invalid spec ${key}`);
     }
+  }
+  if (entry.metrics !== undefined) {
+    assertMetrics(entry.metrics, fileName, entry.name);
   }
 }
 
