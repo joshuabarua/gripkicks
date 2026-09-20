@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { motion } from "framer-motion";
@@ -22,12 +22,6 @@ const CloudBackground = dynamic(() => import("@/components/CloudBackground"), {
 import { LoadingBar } from "@/components/ui/loading";
 import { useLoading } from "@/contexts/LoadingContext";
 import { ShoeCardSkeleton, StatsStripSkeleton } from "@/components/ui/skeleton";
-import {
-  addShoeToStash,
-  removeShoeFromStash as removeShoeFromStashService,
-  toggleFavouriteInStash,
-  updateShoeInStash,
-} from "@/services/stash";
 import { buildSpecialLabels } from "@/utils/specialLabels";
 import { AddShoeDialog } from "@/components/stash/AddShoeDialog";
 import { useStashData } from "@/hooks/useStashData";
@@ -92,8 +86,6 @@ export default function ShoeSanctuaryPage() {
     userShoes,
     setUserShoes,
     isLoading,
-    fetchUserStash,
-    invalidateCache,
     allShoes,
     popularityMap,
     totalShoesInDatabase,
@@ -109,8 +101,12 @@ export default function ShoeSanctuaryPage() {
       brand: dialogSelectedBrand,
       gender: dialogSelectedGender,
     },
-    onError: (message) => toast.error(message),
   });
+
+  const addToStash = useMutation(api.stash.addToStash);
+  const deleteUserShoe = useMutation(api.stash.deleteUserShoe);
+  const updateUserShoeStats = useMutation(api.stash.updateUserShoeStats);
+  const toggleFavourite = useMutation(api.stash.toggleFavourite);
 
   const [backgroundFxReady, setBackgroundFxReady] = useState(false);
 
@@ -237,41 +233,38 @@ export default function ShoeSanctuaryPage() {
   }, []);
 
   const addShoeToSanctuary = async (shoeId: string) => {
-    const result = await addShoeToStash(shoeId);
-    result.match(
-      () => {
-        invalidateCache();
-        fetchUserStash();
-        setIsAddDialogOpen(false);
-        setDialogSearchQuery("");
-        setDialogSelectedBrand("all");
-        setDialogSelectedGender("all");
-        toast.success("Shoe added to your sanctuary!");
-        track(analyticsEvents.stashShoeAdded, { shoe_id: shoeId });
-      },
-      (error) => {
-        toast.error("Failed to add shoe to sanctuary");
-        captureError(error, { source: "stash_add", shoe_id: shoeId });
-      },
-    );
+    if (!userData) {
+      toast.error("Failed to add shoe to sanctuary");
+      return;
+    }
+    try {
+      await addToStash({
+        userId: userData._id,
+        shoeId: shoeId as Id<"shoes">,
+      });
+      setIsAddDialogOpen(false);
+      setDialogSearchQuery("");
+      setDialogSelectedBrand("all");
+      setDialogSelectedGender("all");
+      toast.success("Shoe added to your sanctuary!");
+      track(analyticsEvents.stashShoeAdded, { shoe_id: shoeId });
+    } catch (error) {
+      toast.error("Failed to add shoe to sanctuary");
+      captureError(error, { source: "stash_add", shoe_id: shoeId });
+    }
   };
 
-  const removeShoeFromStash = async (shoeId: string) => {
-    const result = await removeShoeFromStashService(shoeId);
-    result.match(
-      () => {
-        invalidateCache();
-        fetchUserStash();
-        setIsStatsModalOpen(false);
-        setSelectedShoe(null);
-        toast.success("Shoe removed from your sanctuary");
-        track(analyticsEvents.stashShoeRemoved, { shoe_id: shoeId });
-      },
-      (error) => {
-        toast.error("Failed to remove shoe from sanctuary");
-        captureError(error, { source: "stash_remove", shoe_id: shoeId });
-      },
-    );
+  const removeShoeFromStash = async (userShoeId: string) => {
+    try {
+      await deleteUserShoe({ userShoeId: userShoeId as Id<"userShoes"> });
+      setIsStatsModalOpen(false);
+      setSelectedShoe(null);
+      toast.success("Shoe removed from your sanctuary");
+      track(analyticsEvents.stashShoeRemoved, { shoe_id: userShoeId });
+    } catch (error) {
+      toast.error("Failed to remove shoe from sanctuary");
+      captureError(error, { source: "stash_remove", shoe_id: userShoeId });
+    }
   };
 
   const updateShoeStats = async () => {
@@ -283,20 +276,39 @@ export default function ShoeSanctuaryPage() {
       return;
     }
 
-    const result = await updateShoeInStash(editingShoe._id, editForm);
-    result.match(
-      () => {
-        invalidateCache();
-        fetchUserStash();
-        setEditingShoe(null);
-        setSelectedShoe(null);
-        toast.success("Shoe updated successfully!");
-      },
-      (error) => {
-        toast.error("Failed to update shoe");
-        captureError(error, { source: "stash_update", shoe_id: editingShoe._id });
-      },
-    );
+    const data = validationResult.data;
+    try {
+      await updateUserShoeStats({
+        userShoeId: editingShoe._id as Id<"userShoes">,
+        ...(data.size !== undefined ? { size: data.size } : {}),
+        ...(data.purchaseDate !== undefined
+          ? { purchaseDate: data.purchaseDate }
+          : {}),
+        ...(data.condition !== undefined ? { condition: data.condition } : {}),
+        ...(data.notes !== undefined ? { notes: data.notes } : {}),
+        ...(data.comfortScore !== undefined
+          ? { comfortScore: data.comfortScore }
+          : {}),
+        ...(data.performanceRating !== undefined
+          ? { performanceRating: data.performanceRating }
+          : {}),
+        ...(data.durabilityRating !== undefined
+          ? { durabilityRating: data.durabilityRating }
+          : {}),
+        ...(data.fitLongevity !== undefined
+          ? { fitLongevity: data.fitLongevity }
+          : {}),
+        ...(data.sizingDeviation !== undefined
+          ? { sizingDeviation: data.sizingDeviation }
+          : {}),
+      });
+      setEditingShoe(null);
+      setSelectedShoe(null);
+      toast.success("Shoe updated successfully!");
+    } catch (error) {
+      toast.error("Failed to update shoe");
+      captureError(error, { source: "stash_update", shoe_id: editingShoe._id });
+    }
   };
 
   const selectedBaseShoe = useQuery(
@@ -529,47 +541,45 @@ export default function ShoeSanctuaryPage() {
         onToggleFavourite={
           selectedShoe
             ? async () => {
-              const result = await toggleFavouriteInStash(selectedShoe._id);
-              result.match(
-                () => {
-                  const newFavStatus = !selectedShoe.isFavourite;
-                  void fetchApi("/api/v1/profile", {
-                    method: "PUT",
-                    body: JSON.stringify({
-                      favoriteShoeId: newFavStatus
-                        ? selectedShoe.shoeId
-                        : null,
-                    }),
-                  });
-                  setSelectedShoe((prev) =>
-                    prev ? { ...prev, isFavourite: newFavStatus } : null,
-                  );
-                  setUserShoes((prev) =>
-                    prev.map((shoe) =>
-                      shoe._id === selectedShoe._id
-                        ? { ...shoe, isFavourite: newFavStatus }
-                        : shoe,
-                    ),
-                  );
-                  fetchUserStash();
-                  toast.success(
-                    newFavStatus
-                      ? "Added to favorites!"
-                      : "Removed from favorites",
-                  );
-                  track(analyticsEvents.stashFavouriteToggled, {
-                    shoe_id: selectedShoe._id,
-                    is_favourite: newFavStatus,
-                  });
-                },
-                (error) => {
-                  toast.error("Failed to update favourite status");
-                  captureError(error, {
-                    source: "stash_toggle_favourite",
-                    shoe_id: selectedShoe._id,
-                  });
-                },
-              );
+              try {
+                await toggleFavourite({
+                  userShoeId: selectedShoe._id as Id<"userShoes">,
+                });
+                const newFavStatus = !selectedShoe.isFavourite;
+                void fetchApi("/api/v1/profile", {
+                  method: "PUT",
+                  body: JSON.stringify({
+                    favoriteShoeId: newFavStatus
+                      ? selectedShoe.shoeId
+                      : null,
+                  }),
+                });
+                setSelectedShoe((prev) =>
+                  prev ? { ...prev, isFavourite: newFavStatus } : null,
+                );
+                setUserShoes((prev) =>
+                  prev.map((shoe) =>
+                    shoe._id === selectedShoe._id
+                      ? { ...shoe, isFavourite: newFavStatus }
+                      : shoe,
+                  ),
+                );
+                toast.success(
+                  newFavStatus
+                    ? "Added to favorites!"
+                    : "Removed from favorites",
+                );
+                track(analyticsEvents.stashFavouriteToggled, {
+                  shoe_id: selectedShoe._id,
+                  is_favourite: newFavStatus,
+                });
+              } catch (error) {
+                toast.error("Failed to update favourite status");
+                captureError(error, {
+                  source: "stash_toggle_favourite",
+                  shoe_id: selectedShoe._id,
+                });
+              }
             }
             : undefined
         }

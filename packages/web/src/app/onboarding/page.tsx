@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import type { Id } from "convex/_generated/dataModel";
 import { useSession } from "@/lib/auth";
 import { fetchApi } from "@/lib/api-client";
 import { motion, AnimatePresence } from "framer-motion";
@@ -62,6 +65,12 @@ export default function OnboardingPage() {
   });
 
   const setFootProfile = useFootProfileStore((s) => s.setProfile);
+  const addToStash = useMutation(api.stash.addToStash);
+  const updateUserShoeStats = useMutation(api.stash.updateUserShoeStats);
+  const convexUser = useQuery(
+    api.users.findByBetterAuthId,
+    session?.user ? { betterAuthId: session.user.id } : "skip",
+  );
   const [footShape, setFootShape] = useState("");
   const [footVolume, setFootVolume] = useState("");
   const hasFootProfile = !!footShape && !!footVolume;
@@ -160,20 +169,36 @@ export default function OnboardingPage() {
 
       setIsLoading(true);
       try {
-        const shoeResponse = await fetchApi<ApiSuccessResponse>(
-          "/api/v1/stash",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              shoeId: selectedShoe._id,
-              ...shoeFormData,
-            }),
-          },
-        );
+        let shoeAdded = false;
+        if (convexUser) {
+          try {
+            const userShoeId = await addToStash({
+              userId: convexUser._id,
+              shoeId: selectedShoe._id as Id<"shoes">,
+            });
+            if (userShoeId) {
+              await updateUserShoeStats({
+                userShoeId,
+                ...(shoeFormData.size ? { size: shoeFormData.size } : {}),
+                ...(shoeFormData.condition
+                  ? { condition: shoeFormData.condition }
+                  : {}),
+                ...(shoeFormData.notes ? { notes: shoeFormData.notes } : {}),
+                comfortScore: shoeFormData.comfort,
+                performanceRating: shoeFormData.performance,
+              });
+            }
+            shoeAdded = true;
+          } catch (error) {
+            console.error("Failed to add shoe to stash:", error);
+          }
+        } else {
+          console.error("Failed to add shoe to stash: user not loaded");
+        }
 
-        if (shoeResponse.isOk()) {
+        if (shoeAdded) {
           const onboardingResponse = await fetchApi<ApiSuccessResponse>(
-            "/api/v1/users/onboarding",
+            "/api/v1/onboarding",
             {
               method: "POST",
               body: JSON.stringify({

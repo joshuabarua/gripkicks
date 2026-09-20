@@ -168,15 +168,7 @@ test.describe("authenticated staging critical paths", () => {
 
     let added = false;
     try {
-      const addResponsePromise = page.waitForResponse((response) => {
-        return (
-          new URL(response.url()).pathname === "/api/v1/stash" &&
-          response.request().method() === "POST"
-        );
-      });
       await addVariantButton.click();
-      const addResponse = await addResponsePromise;
-      expect(addResponse.ok()).toBe(true);
       added = true;
       await expect(page.getByText("Shoe added to your sanctuary!")).toBeVisible();
 
@@ -191,15 +183,7 @@ test.describe("authenticated staging critical paths", () => {
       const editDialog = page.getByRole("dialog").filter({ hasText: "Edit Shoe Stats" });
       await expect(editDialog).toBeVisible();
       await editDialog.locator("#condition").selectOption("good");
-      const updateResponsePromise = page.waitForResponse((response) => {
-        return (
-          new URL(response.url()).pathname.startsWith("/api/v1/stash/") &&
-          response.request().method() === "PUT"
-        );
-      });
       await editDialog.getByRole("button", { name: "Save Changes" }).click();
-      const updateResponse = await updateResponsePromise;
-      expect(updateResponse.ok()).toBe(true);
       await expect(page.getByText("Shoe updated successfully!")).toBeVisible();
     } finally {
       if (added) await removeShoe(page, shoeName);

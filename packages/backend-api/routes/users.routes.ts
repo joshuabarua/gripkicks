@@ -7,13 +7,6 @@ import {
   completeOnboarding,
   getShoes,
 } from "../controllers/userController";
-import {
-  getUserStash,
-  addToStash,
-  removeFromStash,
-  updateUserShoeStats,
-  toggleFavourite,
-} from "../controllers/stashController";
 import { isAdmin, protect } from "../middleware/auth.middlewares";
 
 const Users = new Hono();
@@ -32,13 +25,6 @@ Users.post("/onboarding", protect, completeOnboarding);
 
 // Get All Shoes (for onboarding selection)
 Users.get("/shoes", getShoes);
-
-// User Stash (shoe collection)
-Users.get("/stash", protect, getUserStash);
-Users.post("/stash", protect, addToStash);
-Users.put("/stash/:userShoeId", protect, updateUserShoeStats);
-Users.post("/stash/:userShoeId/favourite", protect, toggleFavourite);
-Users.delete("/stash/:shoeId", protect, removeFromStash);
 
 // Get Single User
 Users.get("/:id", isAdmin, getUserById);

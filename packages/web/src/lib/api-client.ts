@@ -61,10 +61,15 @@ export function fetchApi<T>(
   options?: RequestInit,
 ): ResultAsync<T, AppError> {
   const cacheKey = getCacheKey(path, options);
+  const isDeduplicable = (options?.method || "GET").toUpperCase() === "GET";
 
-  const existing = pendingRequests.get(cacheKey) as PendingRequest<T> | undefined;
-  if (existing) {
-    return existing;
+  if (isDeduplicable) {
+    const existing = pendingRequests.get(cacheKey) as
+      | PendingRequest<T>
+      | undefined;
+    if (existing) {
+      return existing;
+    }
   }
 
   const request = ResultAsync.fromPromise(
@@ -109,12 +114,18 @@ export function fetchApi<T>(
     },
   );
 
-  pendingRequests.set(cacheKey, request as PendingRequest<unknown>);
+  if (isDeduplicable) {
+    pendingRequests.set(cacheKey, request as PendingRequest<unknown>);
 
-  request.match(
-    () => {},
-    () => pendingRequests.delete(cacheKey),
-  );
+    void request.match(
+      () => {
+        pendingRequests.delete(cacheKey);
+      },
+      () => {
+        pendingRequests.delete(cacheKey);
+      },
+    );
+  }
 
   return request;
 }

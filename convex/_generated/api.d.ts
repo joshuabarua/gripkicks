@@ -18,7 +18,6 @@ import type * as recommendations from "../recommendations.js";
 import type * as router_authDb from "../router/authDb.js";
 import type * as router_helpers from "../router/helpers.js";
 import type * as router_shoes from "../router/shoes.js";
-import type * as router_stash from "../router/stash.js";
 import type * as router_users from "../router/users.js";
 import type * as rubberTechnologies from "../rubberTechnologies.js";
 import type * as seed from "../seed.js";
@@ -46,7 +45,6 @@ declare const fullApi: ApiFromModules<{
   "router/authDb": typeof router_authDb;
   "router/helpers": typeof router_helpers;
   "router/shoes": typeof router_shoes;
-  "router/stash": typeof router_stash;
   "router/users": typeof router_users;
   rubberTechnologies: typeof rubberTechnologies;
   seed: typeof seed;

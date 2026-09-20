@@ -4,7 +4,6 @@ import { HonoWithConvex, HttpRouterWithHono } from "convex-helpers/server/hono";
 import { ActionCtx } from "./_generated/server";
 import { registerUserRoutes } from "./router/users";
 import { registerShoeRoutes } from "./router/shoes";
-import { registerStashRoutes } from "./router/stash";
 import { registerAuthDbRoutes } from "./router/authDb";
 
 const app: HonoWithConvex<ActionCtx> = new Hono();
@@ -30,7 +29,6 @@ app.get("/health", (c) => {
 
 registerUserRoutes(app);
 registerShoeRoutes(app);
-registerStashRoutes(app);
 registerAuthDbRoutes(app);
 
 export default new HttpRouterWithHono(app);

@@ -82,38 +82,6 @@ async function withUserValidationBase(
   }
 }
 
-export async function withUserValidation(
-  c: HttpContext,
-  betterAuthId: string,
-  operation: (user: UserResult) => Promise<unknown>,
-) {
-  if (!betterAuthId) {
-    return handleValidationError(c, "BetterAuth ID");
-  }
-
-  const user = await findUserByBetterAuthId(c, betterAuthId);
-  return withUserValidationBase(c, user, operation);
-}
-
-export async function withUserAndShoeValidation(
-  c: HttpContext,
-  betterAuthId: string,
-  shoeId: string,
-  operation: (user: UserResult, shoeId: Id<"shoes">) => Promise<unknown>,
-) {
-  if (!betterAuthId || !shoeId) {
-    return c.json(
-      { success: false, message: "BetterAuth ID and Shoe ID are required" },
-      400,
-    );
-  }
-
-  const user = await findUserByBetterAuthId(c, betterAuthId);
-  return withUserValidationBase(c, user, (u) =>
-    operation(u, shoeId as Id<"shoes">),
-  );
-}
-
 export async function withUserIdValidation(
   c: HttpContext,
   id: string,
@@ -125,22 +93,4 @@ export async function withUserIdValidation(
 
   const user = await findUserByIdOrBetterAuthId(c, id);
   return withUserValidationBase(c, user, operation);
-}
-
-export async function withIdValidation<T>(
-  c: HttpContext,
-  id: string,
-  idName: string,
-  operation: (id: T) => Promise<unknown>,
-) {
-  if (!id) {
-    return handleValidationError(c, idName);
-  }
-
-  try {
-    const result = await operation(id as T);
-    return c.json({ success: true, data: result });
-  } catch (error) {
-    return handleError(c, error, "operation");
-  }
 }

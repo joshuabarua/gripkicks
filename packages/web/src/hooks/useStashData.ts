@@ -1,10 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePaginatedQuery, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Doc, Id } from "convex/_generated/dataModel";
 import type { UserShoe } from "@/types/api";
-import { shoeCache } from "@/lib/cache";
-import { getUserStash } from "@/services/stash";
 
 interface CatalogFilters {
   enabled: boolean;
@@ -16,7 +14,6 @@ interface CatalogFilters {
 interface UseStashDataOptions {
   enabled?: boolean;
   catalog?: CatalogFilters;
-  onError?: (message: string) => void;
 }
 
 type Shoe = Doc<"shoes">;
@@ -47,29 +44,8 @@ export function useStashData(
   options?: UseStashDataOptions,
 ) {
   const [userShoes, setUserShoes] = useState<UserShoe[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [realtimeEnabled, setRealtimeEnabled] = useState(false);
-  const hasAttemptedFallbackRef = useRef(false);
-  const onErrorRef = useRef<UseStashDataOptions["onError"]>(undefined);
 
-  const { enabled = true, catalog, onError } = options ?? {};
-
-  useEffect(() => {
-    onErrorRef.current = onError;
-  }, [onError]);
-
-  useEffect(() => {
-    let cancelled = false;
-    queueMicrotask(() => {
-      if (cancelled) return;
-      hasAttemptedFallbackRef.current = false;
-      setRealtimeEnabled(false);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [sessionUserId]);
+  const { enabled = true, catalog } = options ?? {};
 
   // Consolidated queries - only fetch what's needed
   const userData = useQuery(
@@ -143,51 +119,18 @@ export function useStashData(
     return brandsData;
   }, [brandsData]);
 
-  const fetchUserStash = useCallback(async () => {
-    if (!sessionUserId || !enabled || realtimeEnabled) return;
+  const isLoading =
+    enabled && !!sessionUserId && realtimeStashData === undefined;
 
-    const cacheKey = `user-stash-${sessionUserId}`;
-
-    setIsLoading(true);
-    const cachedData = shoeCache.get<UserShoe[]>(cacheKey);
-    if (Array.isArray(cachedData)) {
-      setUserShoes(cachedData);
-      setIsLoading(false);
-      return;
-    }
-
-    const result = await getUserStash();
-    result.match(
-      (value) => {
-        if (!Array.isArray(value)) {
-          console.error("Invalid stash response: expected an array");
-          setUserShoes([]);
-          return;
-        }
-        setUserShoes(value);
-        shoeCache.set(cacheKey, value, 5 * 60 * 1000);
-      },
-      (error) => {
-        console.error("Failed to fetch user stash:", error);
-        onErrorRef.current?.("Failed to load your shoe collection");
-      },
-    );
-    setIsLoading(false);
-  }, [sessionUserId, enabled, realtimeEnabled]);
-
-  // Use real-time data when available, fallback to REST API
   useEffect(() => {
     let cancelled = false;
     queueMicrotask(() => {
       if (cancelled) return;
 
       if (realtimeStashData !== undefined) {
-        hasAttemptedFallbackRef.current = false;
         if (!Array.isArray(realtimeStashData)) {
           console.error("Invalid stash response: expected an array");
           setUserShoes([]);
-          setRealtimeEnabled(true);
-          setIsLoading(false);
           return;
         }
         const mappedUserShoes: UserShoe[] = realtimeStashData.map(
@@ -209,47 +152,20 @@ export function useStashData(
       );
 
         setUserShoes(mappedUserShoes);
-        setRealtimeEnabled(true);
-        setIsLoading(false);
-      } else if (
-        userData &&
-        !realtimeEnabled &&
-        !hasAttemptedFallbackRef.current
-      ) {
-        hasAttemptedFallbackRef.current = true;
-        void fetchUserStash();
       } else if (!sessionUserId) {
         setUserShoes([]);
-        setIsLoading(false);
-        setRealtimeEnabled(false);
-        hasAttemptedFallbackRef.current = false;
       }
     });
 
     return () => {
       cancelled = true;
     };
-  }, [
-    realtimeStashData,
-    userData,
-    sessionUserId,
-    realtimeEnabled,
-    fetchUserStash,
-  ]);
-
-  const invalidateCache = useCallback(() => {
-    if (sessionUserId) {
-      shoeCache.delete(`user-stash-${sessionUserId}`);
-    }
-    hasAttemptedFallbackRef.current = false;
-  }, [sessionUserId]);
+  }, [realtimeStashData, sessionUserId]);
 
   return {
     userShoes,
     setUserShoes,
     isLoading,
-    fetchUserStash,
-    invalidateCache,
     allShoes,
     popularityMap,
     totalShoesInDatabase,
