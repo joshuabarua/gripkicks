@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/compone
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { UserShoe } from '@/types/api';
 import { calculateDefaultStats, getEffectiveShoeStats } from './utils';
+import { findMostComfy, findOldest, findMostWorn } from '@/utils/specialLabels';
 import ShoeTags from './ShoeTags';
 import RatingInfoTooltip from './RatingInfoTooltip';
 import PersonalStatsSection from './PersonalStatsSection';
@@ -229,30 +230,21 @@ export default function ShoeStatsModal({
                         </div>
                       </BadgeTooltip>
                     )}
-                    {userShoes && userShoes.length > 1 && shoe.comfortScore && shoe.comfortScore > 0 && shoe === userShoes.reduce((prev: UserShoe, current: UserShoe) =>
-                      (current.comfortScore || 0) > (prev.comfortScore || 0) ? current : prev
-                    ) && (
+                    {userShoes && findMostComfy(userShoes)?._id === shoe._id && (
                         <BadgeTooltip text="Most comfortable shoe">
                           <div className="bg-pink-500/20 text-pink-400 rounded-full w-6 h-6 flex items-center justify-center border border-pink-500/30">
                             <Heart className="w-3 h-3 fill-current" />
                           </div>
                         </BadgeTooltip>
                       )}
-                    {userShoes && userShoes.length > 1 && shoe.purchaseDate && shoe === [...userShoes].filter(s => s.purchaseDate).reduce((prev: UserShoe, current: UserShoe) =>
-                      new Date(current.purchaseDate!).getTime() < new Date(prev.purchaseDate!).getTime() ? current : prev
-                    ) && (
+                    {userShoes && findOldest(userShoes)?._id === shoe._id && (
                         <BadgeTooltip text="Oldest shoe">
                           <div className="bg-blue-500/20 text-blue-400 rounded-full w-6 h-6 flex items-center justify-center border border-blue-500/30">
                             <Clock className="w-3 h-3" />
                           </div>
                         </BadgeTooltip>
                       )}
-                    {userShoes && userShoes.length > 1 && shoe.condition && shoe === [...userShoes].filter(s => s.condition).reduce((prev: UserShoe, current: UserShoe) => {
-                      const conditionOrder = { 'worn': 0, 'fair': 1, 'good': 2, 'excellent': 3, 'new': 4 };
-                      const prevOrder = conditionOrder[current.condition as keyof typeof conditionOrder] ?? 999;
-                      const currentOrder = conditionOrder[prev.condition as keyof typeof conditionOrder] ?? 999;
-                      return currentOrder < prevOrder ? current : prev;
-                    }) && (
+                    {userShoes && findMostWorn(userShoes)?._id === shoe._id && (
                         <BadgeTooltip text="Most worn shoe">
                           <div className="bg-purple-500/20 text-purple-400 rounded-full w-6 h-6 flex items-center justify-center border border-purple-500/30">
                             <Crown className="w-3 h-3 fill-current" />
