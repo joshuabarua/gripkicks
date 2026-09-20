@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createAuthClient } from "better-auth/react";
 import { jwtClient } from "better-auth/client/plugins";
 
-const SESSION_TIMEOUT_MS = 15000;
+const SESSION_TIMEOUT_MS = 5000;
 const authBaseUrl = process.env["NEXT_PUBLIC_API_URL"] || "";
 
 export const authClient = createAuthClient({

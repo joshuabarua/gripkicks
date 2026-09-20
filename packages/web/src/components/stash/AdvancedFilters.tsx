@@ -8,7 +8,7 @@ import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type GenderFilter = 'all' | 'men' | 'women' | 'kids' | 'unisex';
-type RatingFilter = 'all' | '4+' | '3+' | '2+' | '1+';
+type RatingFilter = 'all' | '8+' | '6+' | '4+' | '2+';
 
 interface AdvancedFiltersProps {
   selectedBrand: string;
@@ -67,10 +67,10 @@ const volumeOptions = [
 
 const ratingOptions = [
   { label: 'All', value: 'all' },
-  { label: '4+ Stars', value: '4+' },
-  { label: '3+ Stars', value: '3+' },
-  { label: '2+ Stars', value: '2+' },
-  { label: '1+ Stars', value: '1+' },
+  { label: '8+ /10', value: '8+' },
+  { label: '6+ /10', value: '6+' },
+  { label: '4+ /10', value: '4+' },
+  { label: '2+ /10', value: '2+' },
 ];
 
 const genderOptions = [

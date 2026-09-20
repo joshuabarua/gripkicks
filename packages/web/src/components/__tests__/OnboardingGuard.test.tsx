@@ -2,7 +2,12 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { OnboardingGuard } from "@/components/OnboardingGuard";
-import { LoadingProvider } from "@/contexts/LoadingContext";
+import { LoadingProvider, useLoading } from "@/contexts/LoadingContext";
+
+function LoadingProbe() {
+  const { isLoading } = useLoading();
+  return <div data-testid="loading-state">{isLoading ? "loading" : "idle"}</div>;
+}
 
 const mockPush = vi.fn();
 
@@ -162,27 +167,32 @@ describe("OnboardingGuard", () => {
     expect(mockPush).not.toHaveBeenCalled();
   });
 
-  it("times out session loading after 5 seconds and logs warning", async () => {
+  it("shows the session loader while pending and hides it when done", async () => {
     mockUsePathname.mockReturnValue("/dashboard");
     setupMockSession(null, true);
 
-    const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-
     renderWithWrapper(
       <OnboardingGuard>
-        <div data-testid="protected-content">Protected Content</div>
+        <LoadingProbe />
       </OnboardingGuard>
     );
 
-    expect(screen.getByTestId("protected-content")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("loading-state")).toHaveTextContent("loading");
+    });
+  });
 
-    vi.advanceTimersByTime(5001);
+  it("does not show the session loader on public paths", () => {
+    mockUsePathname.mockReturnValue("/auth/login");
+    setupMockSession(null, true);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "[OnboardingGuard] Session loading timed out — rendering anyway",
+    renderWithWrapper(
+      <OnboardingGuard>
+        <LoadingProbe />
+      </OnboardingGuard>
     );
 
-    consoleSpy.mockRestore();
+    expect(screen.getByTestId("loading-state")).toHaveTextContent("idle");
   });
 
   it("works for all protected paths without blocking", async () => {

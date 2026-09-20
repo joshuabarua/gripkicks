@@ -29,7 +29,7 @@ import { StatsStrip } from "@/components/stash/StatsStrip";
 import { BrandSections } from "@/components/stash/BrandSections";
 import { useBrandGroups } from "@/hooks/useBrandGroups";
 import { AdvancedFilters } from "@/components/stash/AdvancedFilters";
-import { DataContributionNudge } from "@/components/stash/DataContributionNudge";
+import { DataContributionNudge } from "@/components/DataContributionNudge";
 import { debounce } from "@/lib/debounce";
 import { analyticsEvents, captureError, track } from "@/lib/analytics";
 import { fetchApi } from "@/lib/api-client";
@@ -57,10 +57,10 @@ export default function ShoeSanctuaryPage() {
   const [selectedDiscipline, setSelectedDiscipline] = useState<string>("all");
   const [selectedVolume, setSelectedVolume] = useState<string>("all");
   const [selectedComfortRating, setSelectedComfortRating] = useState<
-    "all" | "4+" | "3+" | "2+" | "1+"
+    "all" | "8+" | "6+" | "4+" | "2+"
   >("all");
   const [selectedPerformanceRating, setSelectedPerformanceRating] = useState<
-    "all" | "4+" | "3+" | "2+" | "1+"
+    "all" | "8+" | "6+" | "4+" | "2+"
   >("all");
   const [editingShoe, setEditingShoe] = useState<UserShoe | null>(null);
   const [editForm, setEditForm] = useState<EditFormData>({
@@ -157,7 +157,76 @@ export default function ShoeSanctuaryPage() {
     [userShoes],
   );
 
-  const brandGroups = useBrandGroups(userShoes);
+  const stashBrands = useMemo(() => {
+    const brands = new Set<string>();
+    for (const shoe of userShoes) {
+      const brand = shoe.shoe?.brand ?? shoe.shoeDetails?.brand;
+      if (brand) brands.add(brand);
+    }
+    return Array.from(brands).sort((a, b) => a.localeCompare(b));
+  }, [userShoes]);
+
+  const filteredShoes = useMemo(() => {
+    return userShoes.filter((shoe) => {
+      if (selectedBrand !== "all") {
+        const brand = shoe.shoe?.brand ?? shoe.shoeDetails?.brand;
+        if (brand !== selectedBrand) return false;
+      }
+      if (selectedGender !== "all") {
+        const gender = shoe.shoe?.gender ?? shoe.shoeDetails?.gender;
+        if (gender !== selectedGender) return false;
+      }
+      if (
+        selectedAggressiveness !== "all" &&
+        shoe.shoe?.aggressiveness !== selectedAggressiveness
+      ) {
+        return false;
+      }
+      if (
+        selectedStiffness !== "all" &&
+        shoe.shoe?.stiffness !== selectedStiffness
+      ) {
+        return false;
+      }
+      if (
+        selectedDiscipline !== "all" &&
+        shoe.shoe?.climbingDiscipline !== selectedDiscipline
+      ) {
+        return false;
+      }
+      if (selectedVolume !== "all" && shoe.shoe?.volume !== selectedVolume) {
+        return false;
+      }
+      if (selectedComfortRating !== "all") {
+        const minScore = Number.parseInt(selectedComfortRating, 10);
+        if (shoe.comfortScore === undefined || shoe.comfortScore < minScore) {
+          return false;
+        }
+      }
+      if (selectedPerformanceRating !== "all") {
+        const minScore = Number.parseInt(selectedPerformanceRating, 10);
+        if (
+          shoe.performanceRating === undefined ||
+          shoe.performanceRating < minScore
+        ) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [
+    userShoes,
+    selectedBrand,
+    selectedGender,
+    selectedAggressiveness,
+    selectedStiffness,
+    selectedDiscipline,
+    selectedVolume,
+    selectedComfortRating,
+    selectedPerformanceRating,
+  ]);
+
+  const brandGroups = useBrandGroups(filteredShoes);
 
   // Catalog is filtered server-side; only exclude shoes already in the stash
   const dialogSearchResults = useMemo(() => {
@@ -188,14 +257,14 @@ export default function ShoeSanctuaryPage() {
     selectedPerformanceRating,
   ]);
 
-  const hasRatedShoe = useMemo(
+  const ratedShoeCount = useMemo(
     () =>
-      userShoes.some(
+      userShoes.filter(
         (shoe) =>
           shoe.comfortScore !== undefined ||
           shoe.performanceRating !== undefined ||
           shoe.durabilityRating !== undefined,
-      ),
+      ).length,
     [userShoes],
   );
 
@@ -443,15 +512,13 @@ export default function ShoeSanctuaryPage() {
                     ? userShoes.filter((s) => s.isFavourite).length
                     : 0
                 }
-                brandCount={brandGroups.length}
+                brandCount={stashBrands.length}
               />
             )}
 
             <DataContributionNudge
-              hasFootShape={!!userData?.footShape}
-              hasFootVolume={!!userData?.footVolume}
-              hasShoe={userShoes.length > 0}
-              hasRatedShoe={hasRatedShoe}
+              stashCount={userShoes.length}
+              ratedCount={ratedShoeCount}
             />
 
             {isLoading && userShoes.length === 0 && <StatsStripSkeleton />}
@@ -478,7 +545,7 @@ export default function ShoeSanctuaryPage() {
               onComfortRatingChange={setSelectedComfortRating}
               selectedPerformanceRating={selectedPerformanceRating}
               onPerformanceRatingChange={setSelectedPerformanceRating}
-              uniqueBrands={uniqueBrands}
+              uniqueBrands={stashBrands}
               onReset={resetFilters}
               activeFiltersCount={activeFiltersCount}
             />
@@ -516,7 +583,15 @@ export default function ShoeSanctuaryPage() {
               </motion.div>
             )}
 
-            {!isLoading && userShoes.length > 0 && (
+            {!isLoading && userShoes.length > 0 && filteredShoes.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-fluid-3xl text-center">
+                <p className="font-sora text-neutral-500 max-w-sm">
+                  No shoes match the selected filters.
+                </p>
+              </div>
+            )}
+
+            {!isLoading && filteredShoes.length > 0 && (
               <BrandSections
                 groups={brandGroups}
                 specialLabels={specialLabels}

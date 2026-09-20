@@ -12,7 +12,7 @@ import { useFootProfile } from "@/hooks/useFootProfile";
 import { Badge } from "@/components/ui/badge";
 import { User } from "lucide-react";
 import { MatchScoreTooltip } from "./MatchScoreTooltip";
-import { DataContributionNudge } from "./DataContributionNudge";
+import { DataContributionNudge } from "@/components/DataContributionNudge";
 import { RadarGrid, type RadarShoe, type RadarUserPosition } from "./RadarGrid";
 import type { CommunitySignal } from "@/types/shoe";
 

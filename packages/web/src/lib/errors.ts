@@ -18,6 +18,8 @@ interface ErrorDetails {
   severity: ErrorSeverity;
   category: ErrorCategory;
   retryable: boolean;
+  type?: ApiErrorType;
+  details?: unknown;
   action?: {
     label: string;
     handler: () => void;
@@ -45,6 +47,7 @@ export class AppError extends Error {
   public readonly severity: ErrorSeverity;
   public readonly category: ErrorCategory;
   public readonly retryable: boolean;
+  public readonly details: unknown = undefined;
   public readonly action: ErrorDetails["action"] | undefined = undefined;
   public readonly context: Record<string, unknown> | undefined = undefined;
 
@@ -52,17 +55,57 @@ export class AppError extends Error {
     super(details.message);
     this.name = "AppError";
     this.code = details.code;
-    this.type = this.categoryToType(details.category);
+    this.type = details.type ?? this.categoryToType(details.category);
     this.userMessage = details.userMessage;
     this.severity = details.severity;
     this.category = details.category;
     this.retryable = details.retryable;
+    if (details.details !== undefined) {
+      this.details = details.details;
+    }
     if (details.action !== undefined) {
       this.action = details.action;
     }
     if (details.context !== undefined) {
       this.context = details.context;
     }
+  }
+
+  static fromType(
+    type: ApiErrorType,
+    message: string,
+    details?: unknown,
+  ): AppError {
+    const categoryByType: Record<ApiErrorType, ErrorCategory> = {
+      VALIDATION_ERROR: "validation",
+      INVALID_DATA: "validation",
+      UNAUTHENTICATED: "authentication",
+      UNAUTHORIZED: "authorization",
+      NOT_FOUND: "not_found",
+      DATABASE_ERROR: "server",
+      INTERNAL_SERVER_ERROR: "server",
+      NETWORK_ERROR: "network",
+      TIMEOUT_ERROR: "network",
+      UNEXPECTED_ERROR: "unknown",
+      RANDOM_ERROR: "unknown",
+    };
+    const category = categoryByType[type];
+    const retryable = [
+      "NETWORK_ERROR",
+      "TIMEOUT_ERROR",
+      "INTERNAL_SERVER_ERROR",
+    ].includes(type);
+
+    return new AppError({
+      code: type,
+      type,
+      message,
+      userMessage: message,
+      severity: category === "server" ? "high" : "medium",
+      category,
+      retryable,
+      ...(details !== undefined ? { details } : {}),
+    });
   }
 
   private categoryToType(category: ErrorCategory): ApiErrorType {
@@ -95,33 +138,6 @@ class ServerError extends AppError {
     });
   }
 }
-
-export class ApiError extends Error {
-  public readonly type: ApiErrorType;
-  public readonly details?: unknown;
-  public readonly retryable: boolean;
-
-  constructor({
-    type,
-    message,
-    details,
-  }: {
-    type: ApiErrorType;
-    message: string;
-    details?: unknown;
-  }) {
-    super(message);
-    this.name = "ApiError";
-    this.type = type;
-    this.details = details;
-    this.retryable = [
-      "NETWORK_ERROR",
-      "TIMEOUT_ERROR",
-      "INTERNAL_SERVER_ERROR",
-    ].includes(type);
-  }
-}
-
 
 // fallow-ignore-next-line unused-type
 export type AsyncResult<T, E = AppError> = ResultAsync<T, E>;

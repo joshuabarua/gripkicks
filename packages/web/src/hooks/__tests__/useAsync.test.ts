@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useAsync, useMutation } from "@/hooks/useAsync";
 import { ResultAsync } from "neverthrow";
-import { ApiError } from "@/lib/errors";
+import { AppError } from "@/lib/errors";
 
 describe("useAsync", () => {
   it("initializes with default state", () => {
@@ -39,7 +39,7 @@ describe("useAsync", () => {
 
   it("handles failed async operation", async () => {
     const { result } = renderHook(() => useAsync<string>());
-    const error = new ApiError({ type: "NETWORK_ERROR", message: "Failed" });
+    const error = AppError.fromType("NETWORK_ERROR", "Failed");
 
     await act(async () => {
       const operationResult = await result.current.execute(() => 
@@ -109,7 +109,7 @@ describe("useAsync", () => {
 
   it("clears previous error on new execution", async () => {
     const { result } = renderHook(() => useAsync<string>());
-    const error = new ApiError({ type: "VALIDATION_ERROR", message: "First error" });
+    const error = AppError.fromType("VALIDATION_ERROR", "First error");
 
     // First, fail
     await act(async () => {
@@ -180,7 +180,7 @@ describe("useMutation", () => {
   });
 
   it("executes failed mutation", async () => {
-    const error = new ApiError({ type: "INTERNAL_SERVER_ERROR", message: "Mutation failed" });
+    const error = AppError.fromType("INTERNAL_SERVER_ERROR", "Mutation failed");
     const mutationFn = vi.fn().mockReturnValue(ResultAsync.fromSafePromise(Promise.reject(error)));
     const { result } = renderHook(() => useMutation<string, void>(mutationFn));
 
@@ -258,7 +258,7 @@ describe("useMutation", () => {
 
   it("clears previous error on new mutation", async () => {
     const mutationFn = vi.fn()
-      .mockReturnValueOnce(ResultAsync.fromSafePromise(Promise.reject(new ApiError({ type: "NETWORK_ERROR", message: "First error" }))))
+      .mockReturnValueOnce(ResultAsync.fromSafePromise(Promise.reject(AppError.fromType("NETWORK_ERROR", "First error"))))
       .mockReturnValueOnce(ResultAsync.fromSafePromise(Promise.resolve("success")));
     
     const { result } = renderHook(() => useMutation<string, void>(mutationFn));

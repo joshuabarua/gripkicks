@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useAsync } from "@/hooks/useAsync";
 import { fetchApi } from "@/lib/api-client";
-import { ApiError } from "@/lib/errors";
+import { AppError } from "@/lib/errors";
 import { ResultAsync } from "neverthrow";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -78,7 +78,7 @@ export function ProfileForm({
     loadProfile();
   }, [initialProfile, loadProfileData, setFormData]);
 
-  const updateProfile = (data: ProfileData): ResultAsync<ProfileData, ApiError> =>
+  const updateProfile = (data: ProfileData): ResultAsync<ProfileData, AppError> =>
     ResultAsync.fromPromise(
       fetchApi<{ name?: string }>("/api/v1/profile", {
         method: "PUT",
@@ -93,7 +93,7 @@ export function ProfileForm({
           },
         ),
       ),
-      (error) => error as ApiError,
+      (error) => error as AppError,
     );
 
   const { error, isLoading, isSuccess, isError, mutate, reset } =
@@ -232,7 +232,7 @@ export function ProfileForm({
   );
 }
 
-function getErrorDisplayMessage(error: ApiError): string {
+function getErrorDisplayMessage(error: AppError): string {
   switch (error.type) {
     case "UNAUTHENTICATED":
       return "Please sign in to update your profile";
@@ -255,7 +255,7 @@ function getErrorDisplayMessage(error: ApiError): string {
   }
 }
 
-function getErrorSeverity(error: ApiError): "error" | "warning" | "info" {
+function getErrorSeverity(error: AppError): "error" | "warning" | "info" {
   switch (error.type) {
     case "UNAUTHENTICATED":
     case "UNAUTHORIZED":

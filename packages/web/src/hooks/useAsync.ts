@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
 import { errAsync, ResultAsync } from 'neverthrow';
-import { ApiError } from '@/lib/errors';
+import { AppError } from '@/lib/errors';
 
 interface UseAsyncState<T> {
   data: T | null;
-  error: ApiError | null;
+  error: AppError | null;
   isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
@@ -33,7 +33,7 @@ function useAsyncState<T>() {
     });
   }, []);
 
-  const setError = useCallback((error: ApiError) => {
+  const setError = useCallback((error: AppError) => {
     setState({
       data: null,
       error,
@@ -56,22 +56,27 @@ function useAsyncState<T>() {
   return { state, setLoading, setSuccess, setError, reset };
 }
 
+function toAppError(error: unknown, fallbackMessage: string): AppError {
+  if (error instanceof AppError) {
+    return error;
+  }
+  return AppError.fromType('UNEXPECTED_ERROR', fallbackMessage);
+}
+
 export function useAsync<T>() {
   const { state, setLoading, setSuccess, setError, reset } = useAsyncState<T>();
 
   const execute = useCallback(
-    async (asyncOperation: () => ResultAsync<T, ApiError>) => {
+    async (asyncOperation: () => ResultAsync<T, AppError>) => {
       setLoading();
       try {
         const result = await asyncOperation();
         result.match(setSuccess, setError);
         return result;
       } catch (error) {
-        const apiError = error instanceof ApiError
-          ? error
-          : new ApiError({ type: 'UNEXPECTED_ERROR', message: 'Async operation failed' });
-        setError(apiError);
-        return errAsync(apiError);
+        const appError = toAppError(error, 'Async operation failed');
+        setError(appError);
+        return errAsync(appError);
       }
     },
     [setLoading, setSuccess, setError]
@@ -85,7 +90,7 @@ export function useAsync<T>() {
 }
 
 export function useMutation<T, P = void>(
-  mutationFn: (params: P) => ResultAsync<T, ApiError>
+  mutationFn: (params: P) => ResultAsync<T, AppError>
 ) {
   const { state, setLoading, setSuccess, setError, reset } = useAsyncState<T>();
 
@@ -97,11 +102,9 @@ export function useMutation<T, P = void>(
         result.match(setSuccess, setError);
         return result;
       } catch (error) {
-        const apiError = error instanceof ApiError
-          ? error
-          : new ApiError({ type: 'UNEXPECTED_ERROR', message: 'Mutation failed' });
-        setError(apiError);
-        return errAsync(apiError);
+        const appError = toAppError(error, 'Mutation failed');
+        setError(appError);
+        return errAsync(appError);
       }
     },
     [mutationFn, setLoading, setSuccess, setError]
