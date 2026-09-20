@@ -1,4 +1,4 @@
-import { Result, ResultAsync, err, ok } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
 import {
   AppError,
   NotFoundError,
@@ -8,7 +8,7 @@ import {
   UnauthenticatedError,
   UnexpectedError
 } from '../src/lib/errors';
-import { getConvexServiceHeaders, getConvexUrl } from '../utils/convexHelper';
+import { callConvex } from '../utils/convexClient';
 
 interface User {
   id: string;
@@ -114,12 +114,6 @@ class UserService {
     // Authentication check
     if (!userId) {
       return err(new UnauthenticatedError('User must be authenticated'));
-    }
-
-    // Authorization check (example: user must be verified)
-    const isVerified = await this.checkUserVerification(userId);
-    if (!isVerified) {
-      return err(new UnauthorizedError('User must be verified to complete onboarding'));
     }
 
     if (footShape && !this.isValidFootShape(footShape)) {
@@ -230,43 +224,25 @@ class UserService {
   }
 
   private async findUsers(): Promise<User[]> {
-    const response = await fetch(`${getConvexUrl()}/api/users/list`, {
-      method: 'POST',
-      headers: getConvexServiceHeaders(),
-      body: JSON.stringify({}),
-    });
+    const users = await callConvex<unknown>('/api/users/list');
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch users: ${response.statusText}`);
+    if (!Array.isArray(users)) {
+      throw new Error('Invalid users response from Convex');
     }
 
-    const result = await response.json();
-    if (!result.success || !Array.isArray(result.data)) {
-      throw new Error(result.error || 'Invalid users response from Convex');
-    }
-
-    return result.data.map((user: unknown) => this.mapUserFromConvex(user));
+    return users.map((user: unknown) => this.mapUserFromConvex(user));
   }
 
   private async findUserById(id: string): Promise<User | null> {
     try {
-      const convexUrl = getConvexUrl();
-      const response = await fetch(`${convexUrl}/api/users/findByBetterAuthId`, {
-        method: 'POST',
-        headers: getConvexServiceHeaders(),
-        body: JSON.stringify({ betterAuthId: id })
+      const user = await callConvex<any>('/api/users/findByBetterAuthId', {
+        betterAuthId: id,
       });
 
-      if (!response.ok) {
+      if (!user) {
         return null;
       }
 
-      const data = await response.json();
-      if (!data.data) {
-        return null;
-      }
-
-      const user = data.data;
       return {
         id: user._id,
         email: user.email,
@@ -284,23 +260,13 @@ class UserService {
   }
 
   private async syncUserToConvex(sessionUser: SessionUser): Promise<void> {
-    const convexUrl = getConvexUrl();
-    const response = await fetch(`${convexUrl}/api/sync-user-deduplicated`, {
-      method: 'POST',
-      headers: getConvexServiceHeaders(),
-      body: JSON.stringify({
-        betterAuthId: sessionUser.id,
-        email: sessionUser.email,
-        name: sessionUser.name,
-        image: sessionUser.image,
-        emailVerified: sessionUser.emailVerified ?? false,
-      }),
+    await callConvex('/api/sync-user-deduplicated', {
+      betterAuthId: sessionUser.id,
+      email: sessionUser.email,
+      name: sessionUser.name,
+      image: sessionUser.image,
+      emailVerified: sessionUser.emailVerified ?? false,
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || 'Failed to sync user to Convex');
-    }
   }
 
   private async performUpdate(
@@ -321,23 +287,10 @@ class UserService {
         throw new Error('User not found for profile update');
       }
 
-      const convexUrl = getConvexUrl();
-      const response = await fetch(`${convexUrl}/api/users/update`, {
-        method: 'POST',
-        headers: getConvexServiceHeaders(),
-        body: JSON.stringify({
-          id: userId,
-          ...data
-        })
+      const user = await callConvex<any>('/api/users/update', {
+        id: userId,
+        ...data,
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Failed to update user in database');
-      }
-
-      const result = await response.json();
-      const user = result.data;
 
       return this.mapUserFromConvex(user);
     } catch (error) {
@@ -352,34 +305,17 @@ class UserService {
     favoriteShoeId?: string
   ): Promise<User> {
     try {
-      const convexUrl = getConvexUrl();
-      const response = await fetch(`${convexUrl}/api/users/completeOnboarding`, {
-        method: 'POST',
-        headers: getConvexServiceHeaders(),
-        body: JSON.stringify({
-          userId,
-          footShape,
-          favoriteShoeId
-        })
+      const user = await callConvex<any>('/api/users/completeOnboarding', {
+        userId,
+        footShape,
+        favoriteShoeId,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to update onboarding status');
-      }
-
-      const result = await response.json();
-      const user = result.data;
 
       return this.mapUserFromConvex(user);
     } catch (error) {
       console.error('Error updating onboarding status:', error);
       throw error;
     }
-  }
-
-  private async checkUserVerification(userId: string): Promise<boolean> {
-    // Simulate verification check
-    return true;
   }
 
   private async checkIsAdmin(userId: string): Promise<boolean> {
@@ -394,16 +330,7 @@ class UserService {
 
   private async performDelete(userId: string): Promise<void> {
     try {
-      const convexUrl = getConvexUrl();
-      const response = await fetch(`${convexUrl}/api/users/delete`, {
-        method: 'POST',
-        headers: getConvexServiceHeaders(),
-        body: JSON.stringify({ id: userId })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete user from database');
-      }
+      await callConvex('/api/users/delete', { id: userId });
     } catch (error) {
       console.error('Error deleting user:', error);
       throw error;

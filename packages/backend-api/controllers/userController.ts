@@ -4,7 +4,7 @@ import { ValidationError, UnexpectedError } from '../src/lib/errors';
 import { resultAsyncToHonoResponse } from '../utils/response';
 import { getAuthenticatedUser } from './utils/controllerHelpers';
 import { userService } from '../services/user.service';
-import { getConvexUrl } from "../utils/convexHelper";
+import { getConvexSiteUrl } from "../utils/convexClient";
 
 export const getUsers = async (c: Context): Promise<Response> => {
   const result = await userService.getUsers();
@@ -91,7 +91,7 @@ export const completeOnboarding = async (c: Context): Promise<Response> => {
 
 export const getShoes = async (c: Context): Promise<Response> => {
   try {
-    const convexUrl = getConvexUrl();
+    const convexUrl = getConvexSiteUrl();
     const response = await fetch(`${convexUrl}/api/v1/shoes`);
 
     if (!response.ok) {

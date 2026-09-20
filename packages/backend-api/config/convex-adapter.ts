@@ -6,14 +6,16 @@
  */
 
 import { createAdapterFactory } from "better-auth/adapters";
+import {
+  callConvex as callConvexApi,
+  getConvexBaseUrls,
+} from "../utils/convexClient";
 
 interface ConvexAdapterConfig {
   convexUrl: string;
   serviceToken: string;
   debugLogs?: boolean;
 }
-
-const withNoTrailingSlash = (url: string) => url.replace(/\/$/, "");
 
 const normalizeNullableRecord = (data: Record<string, unknown>) =>
   Object.fromEntries(
@@ -152,25 +154,6 @@ function sanitizeUpdatePayload(
   return sanitizedData;
 }
 
-function getConvexBaseUrls(url: string): string[] {
-  const normalized = withNoTrailingSlash(url);
-  if (normalized.includes(".convex.cloud")) {
-    return [
-      normalized.replace(".convex.cloud", ".convex.site"),
-      normalized,
-    ];
-  }
-
-  if (normalized.includes(".convex.site")) {
-    return [
-      normalized,
-      normalized.replace(".convex.site", ".convex.cloud"),
-    ];
-  }
-
-  return [normalized];
-}
-
 // Map Better Auth model names to our Convex model names
 const modelMap: Record<string, string> = {
   user: "user",
@@ -189,9 +172,6 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
     data: Record<string, unknown>,
   ) => {
     const mappedModel = modelMap[model] || model;
-    const endpoints = baseUrls.map(
-      (baseUrl) => `${baseUrl}/api/auth-db/${mappedModel}/${operation}`,
-    );
 
     if (config.debugLogs) {
       console.log(
@@ -200,69 +180,29 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
       );
     }
 
-    let lastError: Error | null = null;
+    try {
+      const result = await callConvexApi<any>(
+        `/api/auth-db/${mappedModel}/${operation}`,
+        data,
+        {
+          baseUrls,
+          serviceToken: config.serviceToken,
+          timeoutMs: 0,
+        },
+      );
 
-    for (let i = 0; i < endpoints.length; i += 1) {
-      const url = endpoints[i];
-
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${config.serviceToken}`,
-          },
-          body: JSON.stringify(data),
-        });
-
-        const responseText = await response.text();
-
-        if (!response.ok) {
-          if (response.status === 404 && i < endpoints.length - 1) {
-            if (config.debugLogs) {
-              console.warn(
-                `[ConvexAdapter] Endpoint not found at ${url}, trying fallback endpoint...`,
-              );
-            }
-            continue;
-          }
-
-          console.error(
-            `[ConvexAdapter] Error: ${response.status} ${responseText}`,
-          );
-          throw new Error(
-            `Convex adapter error: ${response.status} - ${responseText}`,
-          );
-        }
-
-        let result;
-        try {
-          result = JSON.parse(responseText);
-        } catch {
-          console.error(
-            `[ConvexAdapter] Failed to parse response:`,
-            responseText,
-          );
-          throw new Error(`Invalid JSON response from Convex`);
-        }
-
-        if (config.debugLogs) {
-          console.log(
-            `[ConvexAdapter] Result from ${url}:`,
-            JSON.stringify(result, null, 2),
-          );
-        }
-
-        return result.data;
-      } catch (error) {
-        lastError = error as Error;
-        if (i === endpoints.length - 1) {
-          console.error(`[ConvexAdapter] Failed to call ${url}:`, error);
-        }
+      if (config.debugLogs) {
+        console.log(
+          `[ConvexAdapter] Result:`,
+          JSON.stringify(result, null, 2),
+        );
       }
-    }
 
-    throw lastError || new Error("Convex adapter request failed");
+      return result;
+    } catch (error) {
+      console.error(`[ConvexAdapter] Failed to call ${operation} on ${model}:`, error);
+      throw error;
+    }
   };
 
   async function findSessionsByUserIdWhere(where: any[], model: string) {
