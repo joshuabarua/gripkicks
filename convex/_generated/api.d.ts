@@ -27,6 +27,7 @@ import type * as stash from "../stash.js";
 import type * as userScores from "../userScores.js";
 import type * as users from "../users.js";
 import type * as utils_helpers from "../utils/helpers.js";
+import type * as utils_scoring from "../utils/scoring.js";
 
 import type {
   ApiFromModules,
@@ -54,6 +55,7 @@ declare const fullApi: ApiFromModules<{
   userScores: typeof userScores;
   users: typeof users;
   "utils/helpers": typeof utils_helpers;
+  "utils/scoring": typeof utils_scoring;
 }>;
 
 /**

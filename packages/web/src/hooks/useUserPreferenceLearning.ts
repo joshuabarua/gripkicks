@@ -3,6 +3,11 @@ import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import type { Doc } from 'convex/_generated/dataModel';
 import { useUserStore } from '@/stores/userStore';
+import {
+  aggressivenessToScore,
+  disciplineToVersatility,
+  toFivePointScale,
+} from 'convex/utils/scoring';
 
 type Shoe = Doc<'shoes'>;
 type StashEntry = Doc<'userShoes'> & { shoe?: Shoe | null };
@@ -108,22 +113,13 @@ function calculateUserPreferenceProfile(userShoes: StashEntry[]): UserPreference
     .map(userShoe => userShoe.shoe)
     .filter(Boolean) as Shoe[];
 
-  const aggressivenessScores = shoeDetails.map(shoe => {
-    if (shoe.aggressiveness === 'very_high') return 5;
-    if (shoe.aggressiveness === 'high') return 4;
-    if (shoe.aggressiveness === 'moderate') return 3;
-    if (shoe.aggressiveness === 'low') return 1;
-    return 3;
-  });
+  const aggressivenessScores = shoeDetails.map(shoe =>
+    aggressivenessToScore(shoe.aggressiveness, 3),
+  );
 
-  const versatilityScores = shoeDetails.map(shoe => {
-    if (shoe.climbingDiscipline === 'all_around') return 5;
-    if (shoe.climbingDiscipline === 'trad') return 4;
-    if (shoe.climbingDiscipline === 'sport') return 3;
-    if (shoe.climbingDiscipline === 'bouldering') return 3;
-    if (shoe.climbingDiscipline === 'indoor') return 2;
-    return 3;
-  });
+  const versatilityScores = shoeDetails.map(shoe =>
+    disciplineToVersatility(shoe.climbingDiscipline, 3),
+  );
 
   const avgAggressiveness = aggressivenessScores.length > 0
     ? aggressivenessScores.reduce((sum, score) => sum + score, 0) / aggressivenessScores.length
@@ -171,9 +167,9 @@ function calculateUserPreferenceProfile(userShoes: StashEntry[]): UserPreference
   const confidence = Math.min(1, ratedShoes.length / 10); // Max confidence at 10 shoes
 
   return {
-    comfort: avgComfort,
-    performance: avgPerformance,
-    durability: avgDurability,
+    comfort: toFivePointScale(avgComfort),
+    performance: toFivePointScale(avgPerformance),
+    durability: toFivePointScale(avgDurability),
     aggressiveness: avgAggressiveness,
     versatility: avgVersatility,
     preferredBrands,
@@ -264,15 +260,8 @@ function generateLearningInsights(
   const increasingPerformance = secondHalfAvgPerformance > firstHalfAvgPerformance + 0.2;
   const durabilityFocus = profile.durability > (profile.comfort + profile.performance) / 2 + 0.5;
 
-  const calculateAggressivenessScore = (userShoe: StashEntry): number => {
-    const shoe = userShoe.shoe;
-    if (!shoe) return 3;
-    if (shoe.aggressiveness === 'very_high') return 5;
-    if (shoe.aggressiveness === 'high') return 4;
-    if (shoe.aggressiveness === 'moderate') return 3;
-    if (shoe.aggressiveness === 'low') return 1;
-    return 3;
-  };
+  const calculateAggressivenessScore = (userShoe: StashEntry): number =>
+    aggressivenessToScore(userShoe.shoe?.aggressiveness, 3);
 
   const firstHalfAggressiveness = firstHalf.map(calculateAggressivenessScore).reduce((sum, score) => sum + score, 0) / (firstHalf.length || 1);
   const secondHalfAggressiveness = secondHalf.map(calculateAggressivenessScore).reduce((sum, score) => sum + score, 0) / (secondHalf.length || 1);

@@ -3,6 +3,7 @@ import { query } from "./_generated/server";
 import { footShapeValidator } from "./schema";
 import type { CommunitySignal, ShoeRecommendation } from "../types/shoe";
 import { requireUserAccess } from "./authorization";
+import { fitLongevityToScore, sizingDeviationToScore } from "./utils/scoring";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -14,18 +15,6 @@ interface PaginatedResult<T> {
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 50;
-
-function fitLongevityToScore(fitLongevity?: string) {
-  if (fitLongevity === "6+ months") return 10;
-  if (fitLongevity === "3-6 months") return 7;
-  if (fitLongevity === "1-3 months") return 4;
-  return null;
-}
-
-function sizingDeviationToScore(sizingDeviation?: number) {
-  if (sizingDeviation === undefined) return null;
-  return Math.max(2, 10 - Math.min(8, Math.abs(sizingDeviation) * 4));
-}
 
 function avg(values: number[]) {
   return values.length === 0 ? null : values.reduce((a, b) => a + b, 0) / values.length;

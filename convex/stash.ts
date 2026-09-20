@@ -3,6 +3,7 @@ import { mutation, query } from "./_generated/server";
 import { filterUndefinedValues, userShoeFieldsValidator } from "./utils/helpers";
 import { requireUserAccess, requireUserShoeAccess } from "./authorization";
 import { adjustShoePopularity } from "./shoeHelpers";
+import { fitLongevityToScore, sizingDeviationToScore } from "./utils/scoring";
 
 async function getUserShoesByUserId(ctx: any, userId: any) {
   return await ctx.db
@@ -75,18 +76,6 @@ function calculateRatingAverages(allUserRatings: any[]) {
       ? validDurabilityRatings.reduce((a, b) => a + b, 0) / validDurabilityRatings.length
       : undefined,
   };
-}
-
-function fitLongevityToScore(fitLongevity?: string) {
-  if (fitLongevity === "6+ months") return 5;
-  if (fitLongevity === "3-6 months") return 3.5;
-  if (fitLongevity === "1-3 months") return 2;
-  return null;
-}
-
-function sizingDeviationToScore(sizingDeviation?: number) {
-  if (sizingDeviation === undefined) return null;
-  return Math.max(1, 5 - Math.min(4, Math.abs(sizingDeviation) * 2));
 }
 
 async function updateShoeRatingAverages(ctx: any, shoeId: any) {

@@ -5,6 +5,11 @@ import type { Doc } from "convex/_generated/dataModel";
 import { useFootProfileStore } from "@/stores/footProfileStore";
 import { useUserPreferenceLearning } from "./useUserPreferenceLearning";
 import { useUserStore } from "@/stores/userStore";
+import {
+  aggressivenessToScore,
+  disciplineToVersatility,
+  toFivePointScale,
+} from "convex/utils/scoring";
 
 interface SoleMateAggregate {
   shoeId: string;
@@ -147,7 +152,7 @@ export function useShoeScoring(userPreferences?: {
   return { scoredShoes, isLoading, isLearningReady, userPreferenceProfile, stashCount, ratedCount };
 }
 
-function calculateShoeScore(
+export function calculateShoeScore(
   shoe: Shoe,
   footProfile: { shape: string; volume: string } | null,
   userPreferences:
@@ -158,7 +163,12 @@ function calculateShoeScore(
   soleMateMap?: Map<string, SoleMateAggregate>,
 ): ShoeScore {
   const soleMate = soleMateMap?.get(shoe._id);
-  const overallRating = calculateOverallRating(shoe, soleMate?.avgFitLongevityScore ?? null);
+  const overallRating = calculateOverallRating(
+    shoe,
+    soleMate?.avgFitLongevityScore != null
+      ? toFivePointScale(soleMate.avgFitLongevityScore)
+      : null,
+  );
 
   // 1. Foot Type Compatibility (30% weight)
   const footTypeScore = footProfile
@@ -169,7 +179,9 @@ function calculateShoeScore(
   const volumeScore = footProfile
     ? applySizingDeviationSignal(
         calculateVolumeCompatibility(shoe, footProfile),
-        soleMate?.avgSizingDeviationScore ?? null,
+        soleMate?.avgSizingDeviationScore != null
+          ? toFivePointScale(soleMate.avgSizingDeviationScore)
+          : null,
       )
     : overallRating;
 
@@ -322,9 +334,18 @@ function calculatePreferenceMatch(
 ): number {
   if (!preferences) return 2.5;
 
-  const shoeComfort = shoe.avgComfortScore ?? getCatalogBaseline(shoe, "comfort");
-  const shoePerformance = shoe.avgPerformanceRating ?? getCatalogBaseline(shoe, "performance");
-  const shoeDurability = shoe.avgDurabilityRating ?? getCatalogBaseline(shoe, "durability");
+  const shoeComfort =
+    shoe.avgComfortScore !== undefined
+      ? toFivePointScale(shoe.avgComfortScore)
+      : getCatalogBaseline(shoe, "comfort");
+  const shoePerformance =
+    shoe.avgPerformanceRating !== undefined
+      ? toFivePointScale(shoe.avgPerformanceRating)
+      : getCatalogBaseline(shoe, "performance");
+  const shoeDurability =
+    shoe.avgDurabilityRating !== undefined
+      ? toFivePointScale(shoe.avgDurabilityRating)
+      : getCatalogBaseline(shoe, "durability");
 
   // Calculate how well the shoe matches user preferences (inverse of difference)
   const comfortDiff = Math.abs(shoeComfort - preferences.comfort);
@@ -368,13 +389,35 @@ function calculateCommunityApproval(
   const soleMate = soleMateMap?.get(shoe._id) ?? null;
   const soleMateMatch = soleMate?.ownerCount ?? 0;
 
-  const generalComfort = shoe.avgComfortScore ?? getCatalogBaseline(shoe, "comfort");
-  const generalPerformance = shoe.avgPerformanceRating ?? getCatalogBaseline(shoe, "performance");
-  const generalDurability = shoe.avgDurabilityRating ?? getCatalogBaseline(shoe, "durability");
+  const generalComfort =
+    shoe.avgComfortScore !== undefined
+      ? toFivePointScale(shoe.avgComfortScore)
+      : getCatalogBaseline(shoe, "comfort");
+  const generalPerformance =
+    shoe.avgPerformanceRating !== undefined
+      ? toFivePointScale(shoe.avgPerformanceRating)
+      : getCatalogBaseline(shoe, "performance");
+  const generalDurability =
+    shoe.avgDurabilityRating !== undefined
+      ? toFivePointScale(shoe.avgDurabilityRating)
+      : getCatalogBaseline(shoe, "durability");
 
-  const blendedComfort = blend(generalComfort, soleMate?.avgComfort ?? null);
-  const blendedPerformance = blend(generalPerformance, soleMate?.avgPerformance ?? null);
-  const blendedDurability = blend(generalDurability, soleMate?.avgDurability ?? null);
+  const blendedComfort = blend(
+    generalComfort,
+    soleMate?.avgComfort != null ? toFivePointScale(soleMate.avgComfort) : null,
+  );
+  const blendedPerformance = blend(
+    generalPerformance,
+    soleMate?.avgPerformance != null
+      ? toFivePointScale(soleMate.avgPerformance)
+      : null,
+  );
+  const blendedDurability = blend(
+    generalDurability,
+    soleMate?.avgDurability != null
+      ? toFivePointScale(soleMate.avgDurability)
+      : null,
+  );
 
   const blendedRating = (blendedComfort + blendedPerformance + blendedDurability) / 3;
   const popularityBoost = Math.min(2, shoePopularity.count / 10);
@@ -418,16 +461,7 @@ function calculateLearnedPreferenceBonus(
   }
 
   // Aggressiveness match bonus (up to 0.1 points)
-  const shoeAggressiveness =
-    shoe.aggressiveness === "very_high"
-      ? 5
-      : shoe.aggressiveness === "high"
-        ? 4
-        : shoe.aggressiveness === "moderate"
-          ? 3
-          : shoe.aggressiveness === "low"
-            ? 1
-            : 3;
+  const shoeAggressiveness = aggressivenessToScore(shoe.aggressiveness, 3);
 
   const aggressivenessDiff = Math.abs(
     shoeAggressiveness - learnedPreferences.aggressiveness,
@@ -441,9 +475,18 @@ function calculateLearnedPreferenceBonus(
 }
 
 function calculateOverallRating(shoe: Shoe, fitLongevityScore: number | null): number {
-  const comfort = shoe.avgComfortScore ?? getCatalogBaseline(shoe, "comfort");
-  const performance = shoe.avgPerformanceRating ?? getCatalogBaseline(shoe, "performance");
-  const durability = shoe.avgDurabilityRating ?? getCatalogBaseline(shoe, "durability");
+  const comfort =
+    shoe.avgComfortScore !== undefined
+      ? toFivePointScale(shoe.avgComfortScore)
+      : getCatalogBaseline(shoe, "comfort");
+  const performance =
+    shoe.avgPerformanceRating !== undefined
+      ? toFivePointScale(shoe.avgPerformanceRating)
+      : getCatalogBaseline(shoe, "performance");
+  const durability =
+    shoe.avgDurabilityRating !== undefined
+      ? toFivePointScale(shoe.avgDurabilityRating)
+      : getCatalogBaseline(shoe, "durability");
   const enrichedDurability =
     fitLongevityScore === null ? durability : durability * 0.85 + fitLongevityScore * 0.15;
 
@@ -458,21 +501,31 @@ function calculateRadarMetrics(
   soleMate?: SoleMateAggregate,
 ): ShoeScore["metrics"] {
   const baseComfort = blend(
-    shoe.avgComfortScore ?? getCatalogBaseline(shoe, "comfort"),
-    soleMate?.avgComfort ?? null,
+    shoe.avgComfortScore !== undefined
+      ? toFivePointScale(shoe.avgComfortScore)
+      : getCatalogBaseline(shoe, "comfort"),
+    soleMate?.avgComfort != null ? toFivePointScale(soleMate.avgComfort) : null,
   );
   const basePerformance = blend(
-    shoe.avgPerformanceRating ?? getCatalogBaseline(shoe, "performance"),
-    soleMate?.avgPerformance ?? null,
+    shoe.avgPerformanceRating !== undefined
+      ? toFivePointScale(shoe.avgPerformanceRating)
+      : getCatalogBaseline(shoe, "performance"),
+    soleMate?.avgPerformance != null
+      ? toFivePointScale(soleMate.avgPerformance)
+      : null,
   );
   const baseDurability = blend(
-    shoe.avgDurabilityRating ?? getCatalogBaseline(shoe, "durability"),
-    soleMate?.avgDurability ?? null,
+    shoe.avgDurabilityRating !== undefined
+      ? toFivePointScale(shoe.avgDurabilityRating)
+      : getCatalogBaseline(shoe, "durability"),
+    soleMate?.avgDurability != null
+      ? toFivePointScale(soleMate.avgDurability)
+      : null,
   );
   const enrichedDurability =
     soleMate?.avgFitLongevityScore === null || soleMate?.avgFitLongevityScore === undefined
       ? baseDurability
-      : baseDurability * 0.85 + soleMate.avgFitLongevityScore * 0.15;
+      : baseDurability * 0.85 + toFivePointScale(soleMate.avgFitLongevityScore) * 0.15;
 
   // Comfort (blended rating + compatibility factors)
   const comfort = baseComfort + (footTypeScore + volumeScore) / 5;
@@ -484,11 +537,7 @@ function calculateRadarMetrics(
   const durability = enrichedDurability;
 
   // Aggressiveness (convert to 1-5 scale)
-  let aggressiveness = 2.5;
-  if (shoe.aggressiveness === "very_high") aggressiveness = 5;
-  else if (shoe.aggressiveness === "high") aggressiveness = 4;
-  else if (shoe.aggressiveness === "moderate") aggressiveness = 3;
-  else if (shoe.aggressiveness === "low") aggressiveness = 1;
+  const aggressiveness = aggressivenessToScore(shoe.aggressiveness, 2.5);
 
   let stiffness = 2.5;
   if (shoe.stiffness === "very_stiff") stiffness = 5;
@@ -511,12 +560,7 @@ function calculateRadarMetrics(
   );
 
   // Versatility (based on climbing discipline and compatibility)
-  let versatility = 2.5;
-  if (shoe.climbingDiscipline === "all_around") versatility = 5;
-  else if (shoe.climbingDiscipline === "trad") versatility = 4;
-  else if (shoe.climbingDiscipline === "sport") versatility = 3;
-  else if (shoe.climbingDiscipline === "bouldering") versatility = 3;
-  else if (shoe.climbingDiscipline === "indoor") versatility = 2;
+  let versatility = disciplineToVersatility(shoe.climbingDiscipline, 2.5);
 
   // Boost versatility based on compatibility
   versatility += (footTypeScore + volumeScore) / 10;
