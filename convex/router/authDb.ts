@@ -10,6 +10,21 @@ type OpHandler = (c: HttpContext, body: AuthDbBody) => Promise<unknown>;
 
 type InternalMutation = FunctionReference<"mutation", "internal">;
 type InternalQuery = FunctionReference<"query", "internal">;
+type AnyInternalFn = InternalMutation | InternalQuery;
+
+type ArgsWithUndefined<F extends AnyInternalFn> = {
+  [K in keyof FunctionArgs<F>]: FunctionArgs<F>[K] | undefined;
+};
+
+const definedOnly = <F extends AnyInternalFn>(
+  args: ArgsWithUndefined<F>,
+): FunctionArgs<F> => {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(args)) {
+    if (value !== undefined) out[key] = value;
+  }
+  return out as FunctionArgs<F>;
+};
 
 const str = (value: unknown) => value as string;
 const optStr = (value: unknown) => value as string | undefined;
@@ -23,13 +38,15 @@ const patchData = (body: AuthDbBody) => (body.data ?? {}) as Record<string, unkn
 
 const mutation = <F extends InternalMutation>(
   fn: F,
-  mapArgs: (body: AuthDbBody) => FunctionArgs<F>,
-): OpHandler => (c, body) => c.env.runMutation(fn, mapArgs(body));
+  mapArgs: (body: AuthDbBody) => ArgsWithUndefined<F>,
+): OpHandler => (c, body) =>
+  c.env.runMutation(fn, definedOnly<F>(mapArgs(body)));
 
 const query = <F extends InternalQuery>(
   fn: F,
-  mapArgs: (body: AuthDbBody) => FunctionArgs<F>,
-): OpHandler => (c, body) => c.env.runQuery(fn, mapArgs(body));
+  mapArgs: (body: AuthDbBody) => ArgsWithUndefined<F>,
+): OpHandler => (c, body) =>
+  c.env.runQuery(fn, definedOnly<F>(mapArgs(body)));
 
 const withSuccess = (handler: OpHandler): OpHandler =>
   async (c, body) => {
