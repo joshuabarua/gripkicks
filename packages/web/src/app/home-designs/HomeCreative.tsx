@@ -124,7 +124,7 @@ function PitchSection() {
           className="md:col-span-5"
         >
           <h2 className="font-ball-pill text-5xl md:text-6xl leading-[0.9] text-brand-chalk">
-            The shoe wall<br />for climbers.
+            GRIPKICKS
           </h2>
         </motion.div>
         <motion.div
@@ -283,7 +283,7 @@ function FinalCtaSection({ isAuthenticated, onEnter }: { isAuthenticated: boolea
           className="flex flex-col md:flex-row md:items-end justify-between gap-fluid-lg"
         >
           <h2 className="font-ball-pill text-5xl md:text-7xl lg:text-8xl leading-[0.85] text-brand-chalk max-w-3xl">
-            Find climbing shoes<br />that fit.
+            GET STARTED
           </h2>
           <button
             onClick={onEnter}

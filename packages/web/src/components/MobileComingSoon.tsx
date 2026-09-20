@@ -5,8 +5,6 @@ export default function MobileComingSoon() {
         <div className="absolute inset-x-10 -top-28 h-56 rounded-full bg-brand-red/20 blur-3xl" />
         <div className="relative rounded-[2rem] border border-white/[0.08] bg-brand-charcoal/80 p-8 shadow-2xl shadow-black/60">
           <h1 className="font-ball-pill text-5xl leading-none text-brand-chalk">
-            MOBILE
-            <br />
             COMING SOON
           </h1>
           <p className="mt-5 font-sora text-sm leading-6 text-brand-putty/70">

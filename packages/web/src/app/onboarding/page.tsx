@@ -256,9 +256,7 @@ export default function OnboardingPage() {
               {currentStep === "welcome" && (
                 <div className="text-center">
                   <h1 className="font-ball-pill text-5xl md:text-6xl mb-10">
-                    WELCOME TO
-                    <br />
-                    GRIPKICKS
+                    WELCOME
                   </h1>
 
                   <motion.button

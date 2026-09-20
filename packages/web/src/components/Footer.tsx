@@ -25,7 +25,7 @@ export default function Footer() {
           <div className="md:col-span-2">
             <Link href="/">
               <h2 className="font-ball-pill text-3xl text-brand-chalk mb-3">
-                GRIP <span className="text-brand-red">KICKS</span>
+                GRIPKICKS
               </h2>
             </Link>
           </div>

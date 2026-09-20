@@ -253,7 +253,7 @@ export default function FootLabPage() {
           className="mb-16"
         >
           <h1 className="font-ball-pill text-6xl md:text-8xl leading-none mb-4">
-            KNOW YOUR<br />FOOT
+            FOOT LAB
           </h1>
           <p className="font-sora text-neutral-400 text-lg max-w-lg">
             Set your foot shape and volume — used to match climbing shoes.

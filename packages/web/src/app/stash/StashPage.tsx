@@ -476,9 +476,7 @@ export default function ShoeSanctuaryPage() {
             >
               <div>
                 <h1 className="font-so-cloudy uppercase text-fluid-6xl md:text-fluid-7xl text-white leading-none">
-                  Shoe
-                  <br />
-                  Sanctuary
+                  Shoe Sanctuary
                 </h1>
               </div>
 
