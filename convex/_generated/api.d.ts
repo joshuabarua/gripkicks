@@ -28,8 +28,13 @@ import type * as userHelpers from "../userHelpers.js";
 import type * as userScores from "../userScores.js";
 import type * as userShoes from "../userShoes.js";
 import type * as users from "../users.js";
+import type * as utils_backfills from "../utils/backfills.js";
+import type * as utils_bulkUpsert from "../utils/bulkUpsert.js";
+import type * as utils_enrichment from "../utils/enrichment.js";
+import type * as utils_enrichmentScoring from "../utils/enrichmentScoring.js";
 import type * as utils_helpers from "../utils/helpers.js";
 import type * as utils_scoring from "../utils/scoring.js";
+import type * as utils_shoeVariants from "../utils/shoeVariants.js";
 
 import type {
   ApiFromModules,
@@ -58,8 +63,13 @@ declare const fullApi: ApiFromModules<{
   userScores: typeof userScores;
   userShoes: typeof userShoes;
   users: typeof users;
+  "utils/backfills": typeof utils_backfills;
+  "utils/bulkUpsert": typeof utils_bulkUpsert;
+  "utils/enrichment": typeof utils_enrichment;
+  "utils/enrichmentScoring": typeof utils_enrichmentScoring;
   "utils/helpers": typeof utils_helpers;
   "utils/scoring": typeof utils_scoring;
+  "utils/shoeVariants": typeof utils_shoeVariants;
 }>;
 
 /**

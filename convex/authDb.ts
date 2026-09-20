@@ -220,6 +220,26 @@ export const deleteSessionByToken = internalMutation({
   },
 });
 
+export const deleteSessionByTokenOrId = internalMutation({
+  args: { value: v.string() },
+  handler: async (ctx, args) => {
+    const byToken = await ctx.db
+      .query("sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.value))
+      .first();
+    if (byToken) {
+      await ctx.db.delete(byToken._id);
+      return;
+    }
+    const id = ctx.db.normalizeId("sessions", args.value);
+    if (!id) return;
+    const session = await ctx.db.get(id);
+    if (session) {
+      await ctx.db.delete(session._id);
+    }
+  },
+});
+
 export const deleteSessionsByUserId = internalMutation({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
@@ -465,6 +485,13 @@ export const deleteVerification = internalMutation({
   },
 });
 
+export const findVerificationById = internalQuery({
+  args: { id: v.id("verifications") },
+  handler: async (ctx, args) => {
+    return formatEntityWithId(await ctx.db.get(args.id));
+  },
+});
+
 export const findVerificationByIdentifier = internalQuery({
   args: { identifier: v.string() },
   handler: async (ctx, args) => {
@@ -485,6 +512,20 @@ export const createJwk = internalMutation({
   handler: async (ctx, args) => {
     const id = await ctx.db.insert("jwks", args);
     return formatEntityWithId(await ctx.db.get(id));
+  },
+});
+
+export const deleteJwk = internalMutation({
+  args: { id: v.id("jwks") },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
+  },
+});
+
+export const findJwkById = internalQuery({
+  args: { id: v.id("jwks") },
+  handler: async (ctx, args) => {
+    return formatEntityWithId(await ctx.db.get(args.id));
   },
 });
 

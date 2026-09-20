@@ -1,216 +1,225 @@
 import type { HonoWithConvex } from "convex-helpers/server/hono";
-import type { FunctionArgs } from "convex/server";
+import type { FunctionArgs, FunctionReference } from "convex/server";
 import type { ActionCtx } from "../_generated/server";
 import { internal } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
 import { requireServiceToken, type HttpContext } from "./helpers";
 
-type AuthDbBody = Record<string, unknown> & {
-  id?: string;
-  data?: Record<string, unknown>;
-};
+type AuthDbBody = Record<string, unknown>;
+type OpHandler = (c: HttpContext, body: AuthDbBody) => Promise<unknown>;
 
-async function handleUserOperation(
-  c: HttpContext,
-  operation: string,
-  body: AuthDbBody,
-): Promise<unknown> {
-  if (operation === "create") {
-    return await c.env.runMutation(
-      internal.authDb.createUser,
-      body as unknown as FunctionArgs<typeof internal.authDb.createUser>,
-    );
-  }
-  if (operation === "update") {
-    return await c.env.runMutation(internal.authDb.updateUser, {
-      id: body.id as Id<"users">,
-      ...body.data,
-    });
-  }
-  if (operation === "delete") {
-    await c.env.runMutation(internal.authDb.deleteUser, {
-      id: body.id as Id<"users">,
-    });
-    return { success: true };
-  }
-  if (operation === "findById") {
-    return await c.env.runQuery(internal.authDb.findUserById, {
-      id: body.id as Id<"users">,
-    });
-  }
-  if (operation === "findByEmail") {
-    return await c.env.runQuery(internal.authDb.findUserByEmail, {
-      email: body["email"] as string,
-    });
-  }
-  return null;
-}
+type InternalMutation = FunctionReference<"mutation", "internal">;
+type InternalQuery = FunctionReference<"query", "internal">;
 
-async function handleSessionOperation(
-  c: HttpContext,
-  operation: string,
-  body: AuthDbBody,
-): Promise<unknown> {
-  if (operation === "create") {
-    return await c.env.runMutation(internal.authDb.createSession, {
-      ...body,
-      userId: body["userId"] as Id<"users">,
-    } as unknown as FunctionArgs<typeof internal.authDb.createSession>);
-  }
-  if (operation === "update") {
-    return await c.env.runMutation(internal.authDb.updateSession, {
-      id: body.id as Id<"sessions">,
-      ...body.data,
-    });
-  }
-  if (operation === "delete") {
-    await c.env.runMutation(internal.authDb.deleteSession, {
-      id: body.id as Id<"sessions">,
-    });
-    return { success: true };
-  }
-  if (operation === "deleteByToken") {
-    await c.env.runMutation(internal.authDb.deleteSessionByToken, {
-      token: body["token"] as string,
-    });
-    return { success: true };
-  }
-  if (operation === "deleteByUserId") {
-    const count = await c.env.runMutation(internal.authDb.deleteSessionsByUserId, {
-      userId: body["userId"] as Id<"users">,
-    });
-    return { success: true, count };
-  }
-  if (operation === "findById") {
-    return await c.env.runQuery(internal.authDb.findSessionById, {
-      id: body.id as Id<"sessions">,
-    });
-  }
-  if (operation === "findByToken") {
-    return await c.env.runQuery(internal.authDb.findSessionByToken, {
-      token: body["token"] as string,
-    });
-  }
-  if (operation === "findByUserId") {
-    return await c.env.runQuery(internal.authDb.findSessionsByUserId, {
-      userId: body["userId"] as Id<"users">,
-    });
-  }
-  return null;
-}
+const str = (value: unknown) => value as string;
+const optStr = (value: unknown) => value as string | undefined;
+const bool = (value: unknown) => value as boolean;
+const optBool = (value: unknown) => value as boolean | undefined;
+const num = (value: unknown) => value as number;
+const optNum = (value: unknown) => value as number | undefined;
+const numOrStr = (value: unknown) => value as number | string;
+const optNumOrStr = (value: unknown) => value as number | string | undefined;
+const patchData = (body: AuthDbBody) => (body.data ?? {}) as Record<string, unknown>;
 
-async function handleAccountOperation(
-  c: HttpContext,
-  operation: string,
-  body: AuthDbBody,
-): Promise<unknown> {
-  if (operation === "create") {
-    return await c.env.runMutation(internal.authDb.createAccount, {
-      ...body,
-      userId: body["userId"] as Id<"users">,
-    } as unknown as FunctionArgs<typeof internal.authDb.createAccount>);
-  }
-  if (operation === "update") {
-    return await c.env.runMutation(internal.authDb.updateAccount, {
-      id: body.id as Id<"accounts">,
-      ...body.data,
-    });
-  }
-  if (operation === "delete") {
-    await c.env.runMutation(internal.authDb.deleteAccount, {
-      id: body.id as Id<"accounts">,
-    });
-    return { success: true };
-  }
-  if (operation === "findById") {
-    return await c.env.runQuery(internal.authDb.findAccountById, {
-      id: body.id as Id<"accounts">,
-    });
-  }
-  if (operation === "findByUserId") {
-    return await c.env.runQuery(internal.authDb.findAccountByUserId, {
-      userId: body["userId"] as Id<"users">,
-    });
-  }
-  if (operation === "findByProviderAccountId") {
-    return await c.env.runQuery(internal.authDb.findAccountByProviderAndAccountId, {
-      providerId: body["providerId"] as string,
-      accountId: body["accountId"] as string,
-    });
-  }
-  return null;
-}
+const mutation = <F extends InternalMutation>(
+  fn: F,
+  mapArgs: (body: AuthDbBody) => FunctionArgs<F>,
+): OpHandler => (c, body) => c.env.runMutation(fn, mapArgs(body));
 
-async function handleVerificationOperation(
-  c: HttpContext,
-  operation: string,
-  body: AuthDbBody,
-): Promise<unknown> {
-  if (operation === "create") {
-    const { id, createdAt, updatedAt, ...rest } = body as Record<
-      string,
-      unknown
-    >;
-    const validFields = {
-      ...rest,
+const query = <F extends InternalQuery>(
+  fn: F,
+  mapArgs: (body: AuthDbBody) => FunctionArgs<F>,
+): OpHandler => (c, body) => c.env.runQuery(fn, mapArgs(body));
+
+const withSuccess = (handler: OpHandler): OpHandler =>
+  async (c, body) => {
+    await handler(c, body);
+    return { success: true };
+  };
+
+const dispatch: Record<string, Record<string, OpHandler>> = {
+  user: {
+    create: mutation(internal.authDb.createUser, (b) => ({
+      id: optStr(b.id),
+      betterAuthId: str(b.betterAuthId),
+      name: str(b.name),
+      email: str(b.email),
+      emailVerified: bool(b.emailVerified),
+      image: optStr(b.image),
+      isAdmin: optBool(b.isAdmin),
+      createdAt: optNumOrStr(b.createdAt),
+    })),
+    update: mutation(internal.authDb.updateUser, (b) => {
+      const d = patchData(b);
+      return {
+        id: b.id as Id<"users">,
+        name: optStr(d.name),
+        email: optStr(d.email),
+        emailVerified: optBool(d.emailVerified),
+        image: optStr(d.image),
+      };
+    }),
+    delete: withSuccess(
+      mutation(internal.authDb.deleteUser, (b) => ({ id: b.id as Id<"users"> })),
+    ),
+    findById: query(internal.authDb.findUserById, (b) => ({
+      id: b.id as Id<"users">,
+    })),
+    findByEmail: query(internal.authDb.findUserByEmail, (b) => ({
+      email: str(b.email),
+    })),
+  },
+  session: {
+    create: mutation(internal.authDb.createSession, (b) => ({
+      id: optStr(b.id),
+      token: str(b.token),
+      userId: str(b.userId),
+      expiresAt: numOrStr(b.expiresAt),
+      ipAddress: optStr(b.ipAddress),
+      userAgent: optStr(b.userAgent),
+      createdAt: optNumOrStr(b.createdAt),
+    })),
+    update: mutation(internal.authDb.updateSession, (b) => {
+      const d = patchData(b);
+      return {
+        id: b.id as Id<"sessions">,
+        token: optStr(d.token),
+        expiresAt: optNumOrStr(d.expiresAt),
+        ipAddress: optStr(d.ipAddress),
+        userAgent: optStr(d.userAgent),
+      };
+    }),
+    delete: withSuccess(
+      mutation(internal.authDb.deleteSession, (b) => ({
+        id: b.id as Id<"sessions">,
+      })),
+    ),
+    deleteByToken: withSuccess(
+      mutation(internal.authDb.deleteSessionByToken, (b) => ({
+        token: str(b.token),
+      })),
+    ),
+    deleteByTokenOrId: withSuccess(
+      mutation(internal.authDb.deleteSessionByTokenOrId, (b) => ({
+        value: str(b.value),
+      })),
+    ),
+    deleteByUserId: async (c, b) => ({
+      success: true,
+      count: await c.env.runMutation(internal.authDb.deleteSessionsByUserId, {
+        userId: b.userId as Id<"users">,
+      }),
+    }),
+    findById: query(internal.authDb.findSessionById, (b) => ({
+      id: b.id as Id<"sessions">,
+    })),
+    findByToken: query(internal.authDb.findSessionByToken, (b) => ({
+      token: str(b.token),
+    })),
+    findByUserId: query(internal.authDb.findSessionsByUserId, (b) => ({
+      userId: b.userId as Id<"users">,
+    })),
+  },
+  account: {
+    create: mutation(internal.authDb.createAccount, (b) => ({
+      id: optStr(b.id),
+      accountId: str(b.accountId),
+      providerId: str(b.providerId),
+      userId: str(b.userId),
+      accessToken: optStr(b.accessToken),
+      refreshToken: optStr(b.refreshToken),
+      idToken: optStr(b.idToken),
+      expiresAt: optNumOrStr(b.expiresAt),
+      password: optStr(b.password),
+      accessTokenExpiresAt: optNumOrStr(b.accessTokenExpiresAt),
+      refreshTokenExpiresAt: optNumOrStr(b.refreshTokenExpiresAt),
+      scope: optStr(b.scope),
+      createdAt: optNumOrStr(b.createdAt),
+    })),
+    update: mutation(internal.authDb.updateAccount, (b) => {
+      const d = patchData(b);
+      return {
+        id: b.id as Id<"accounts">,
+        accessToken: optStr(d.accessToken),
+        refreshToken: optStr(d.refreshToken),
+        idToken: optStr(d.idToken),
+        expiresAt: optNum(d.expiresAt),
+        password: optStr(d.password),
+        accessTokenExpiresAt: optNum(d.accessTokenExpiresAt),
+        refreshTokenExpiresAt: optNum(d.refreshTokenExpiresAt),
+        scope: optStr(d.scope),
+      };
+    }),
+    delete: withSuccess(
+      mutation(internal.authDb.deleteAccount, (b) => ({
+        id: b.id as Id<"accounts">,
+      })),
+    ),
+    findById: query(internal.authDb.findAccountById, (b) => ({
+      id: b.id as Id<"accounts">,
+    })),
+    findByUserId: query(internal.authDb.findAccountByUserId, (b) => ({
+      userId: b.userId as Id<"users">,
+    })),
+    findByProviderAccountId: query(
+      internal.authDb.findAccountByProviderAndAccountId,
+      (b) => ({
+        providerId: str(b.providerId),
+        accountId: str(b.accountId),
+      }),
+    ),
+  },
+  verification: {
+    create: mutation(internal.authDb.createVerification, (b) => ({
+      id: optStr(b.id),
+      identifier: str(b.identifier),
+      value: str(b.value),
       expiresAt:
-        typeof body["expiresAt"] === "string"
-          ? new Date(body["expiresAt"]).getTime()
-          : body["expiresAt"],
-    };
-    return await c.env.runMutation(
-      internal.authDb.createVerification,
-      validFields as unknown as FunctionArgs<
-        typeof internal.authDb.createVerification
-      >,
-    );
-  }
-  if (operation === "update") {
-    return await c.env.runMutation(internal.authDb.updateVerification, {
-      id: body.id as Id<"verifications">,
-      ...body.data,
-    });
-  }
-  if (operation === "delete") {
-    await c.env.runMutation(internal.authDb.deleteVerification, {
-      id: body.id as Id<"verifications">,
-    });
-    return { success: true };
-  }
-  if (operation === "findByIdentifier") {
-    return await c.env.runQuery(internal.authDb.findVerificationByIdentifier, {
-      identifier: body["identifier"] as string,
-    });
-  }
-  return null;
-}
-
-async function handleJwkOperation(
-  c: HttpContext,
-  operation: string,
-  body: AuthDbBody,
-): Promise<unknown> {
-  if (operation === "create") {
-    return await c.env.runMutation(
-      internal.authDb.createJwk,
-      body as unknown as FunctionArgs<typeof internal.authDb.createJwk>,
-    );
-  }
-  if (operation === "list") {
-    return await c.env.runQuery(internal.authDb.listJwks, {});
-  }
-  return null;
-}
-
-const modelHandlers: Record<
-  string,
-  (c: HttpContext, operation: string, body: AuthDbBody) => Promise<unknown>
-> = {
-  user: handleUserOperation,
-  session: handleSessionOperation,
-  account: handleAccountOperation,
-  verification: handleVerificationOperation,
-  jwks: handleJwkOperation,
+        typeof b.expiresAt === "string"
+          ? new Date(b.expiresAt).getTime()
+          : num(b.expiresAt),
+    })),
+    update: mutation(internal.authDb.updateVerification, (b) => {
+      const d = patchData(b);
+      return {
+        id: b.id as Id<"verifications">,
+        identifier: optStr(d.identifier),
+        value: optStr(d.value),
+        expiresAt: optNum(d.expiresAt),
+      };
+    }),
+    delete: withSuccess(
+      mutation(internal.authDb.deleteVerification, (b) => ({
+        id: b.id as Id<"verifications">,
+      })),
+    ),
+    deleteExpired: mutation(internal.authDb.deleteExpired, (b) => ({
+      expiresBefore: num(b.expiresBefore),
+    })),
+    findById: query(internal.authDb.findVerificationById, (b) => ({
+      id: b.id as Id<"verifications">,
+    })),
+    findByIdentifier: query(internal.authDb.findVerificationByIdentifier, (b) => ({
+      identifier: str(b.identifier),
+    })),
+  },
+  jwks: {
+    create: mutation(internal.authDb.createJwk, (b) => ({
+      publicKey: str(b.publicKey),
+      privateKey: str(b.privateKey),
+      createdAt: num(b.createdAt),
+      expiresAt: optNum(b.expiresAt),
+      alg: optStr(b.alg),
+      crv: optStr(b.crv),
+    })),
+    delete: withSuccess(
+      mutation(internal.authDb.deleteJwk, (b) => ({ id: b.id as Id<"jwks"> })),
+    ),
+    findById: query(internal.authDb.findJwkById, (b) => ({
+      id: b.id as Id<"jwks">,
+    })),
+    list: query(internal.authDb.listJwks, () => ({})),
+  },
 };
 
 export function registerAuthDbRoutes(app: HonoWithConvex<ActionCtx>) {
@@ -221,9 +230,12 @@ export function registerAuthDbRoutes(app: HonoWithConvex<ActionCtx>) {
       const operation = c.req.param("operation");
       const body: AuthDbBody = await c.req.json();
 
-      const handler = modelHandlers[model];
-      const result = handler ? await handler(c, operation, body) : null;
+      const handler = dispatch[model]?.[operation];
+      if (!handler) {
+        throw new Error(`Unsupported auth-db operation: ${model}/${operation}`);
+      }
 
+      const result = await handler(c, body);
       return c.json({ success: true, data: result });
     } catch (error) {
       console.error("Convex AuthDB Error:", error);
