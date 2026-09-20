@@ -8,7 +8,7 @@ import { api } from "convex/_generated/api";
 import ShoeImage from "@/components/ShoeImage";
 import { useShoeScoring } from "@/hooks/useShoeScoring";
 import { useUserPreferenceLearning } from "@/hooks/useUserPreferenceLearning";
-import { useFootProfileStore } from "@/stores/footProfileStore";
+import { useFootProfile } from "@/hooks/useFootProfile";
 import { Badge } from "@/components/ui/badge";
 import { User } from "lucide-react";
 import { MatchScoreTooltip } from "./MatchScoreTooltip";
@@ -49,7 +49,7 @@ interface DisplayShoe {
 export function MatcherView() {
   const [mode, setMode] = useState<Mode>("personal");
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const { profile: footProfile } = useFootProfileStore();
+  const { profile: footProfile } = useFootProfile();
   const { scoredShoes, isLoading: personalLoading, stashCount, ratedCount } = useShoeScoring();
   const { userPreferenceProfile } = useUserPreferenceLearning();
   const communityShoes = useQuery(api.recommendations.getCommunityTopShoes, { limit: 10 });

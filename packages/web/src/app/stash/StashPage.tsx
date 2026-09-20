@@ -94,7 +94,7 @@ export default function ShoeSanctuaryPage() {
     catalogHasMore,
     catalogIsLoadingMore,
     loadMoreCatalog,
-  } = useStashData(session?.user?.id, {
+  } = useStashData({
     catalog: {
       enabled: isAddDialogOpen,
       searchTerm: dialogSearchQuery,

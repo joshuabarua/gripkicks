@@ -21,7 +21,7 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { useUserData } from "@/hooks/useUserData";
-import { useFootProfileStore } from "@/stores/footProfileStore";
+import { useFootProfile } from "@/hooks/useFootProfile";
 
 interface UserProfile {
   id: string;
@@ -52,12 +52,13 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
-  const { profile: footProfile } = useFootProfileStore();
+  const { profile: footProfile, isLoading: footProfileLoading } =
+    useFootProfile();
   const displayName = profile?.name || session?.user?.name || "User";
   const displayEmail = profile?.email || session?.user?.email || "";
   const displayUserId = profile?.id ?? session?.user?.id ?? null;
 
-  const { userStashData } = useUserData(session);
+  const { userStashData } = useUserData();
 
   const hasFootProfile = !!(footProfile?.shape && footProfile?.volume);
   const hasShoesInStash = userStashData && userStashData.length > 0;
@@ -230,7 +231,10 @@ export default function ProfilePage() {
               </div>
             </motion.div>
 
-            {!profile?.onboardingComplete && !shouldSkipOnboarding && (
+            {!profile?.onboardingComplete &&
+              !footProfileLoading &&
+              userStashData !== undefined &&
+              !shouldSkipOnboarding && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}

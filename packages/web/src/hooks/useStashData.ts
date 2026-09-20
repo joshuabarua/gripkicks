@@ -3,6 +3,7 @@ import { usePaginatedQuery, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Doc, Id } from "convex/_generated/dataModel";
 import type { UserShoe } from "@/types/api";
+import { useCurrentUser } from "./useCurrentUser";
 
 interface CatalogFilters {
   enabled: boolean;
@@ -39,19 +40,12 @@ interface ConvexUserShoe {
   } | null;
 }
 
-export function useStashData(
-  sessionUserId?: string,
-  options?: UseStashDataOptions,
-) {
+export function useStashData(options?: UseStashDataOptions) {
   const [userShoes, setUserShoes] = useState<UserShoe[]>([]);
 
   const { enabled = true, catalog } = options ?? {};
 
-  // Consolidated queries - only fetch what's needed
-  const userData = useQuery(
-    api.users.findByBetterAuthId,
-    sessionUserId ? { betterAuthId: sessionUserId } : "skip",
-  );
+  const { session, convexUser: userData } = useCurrentUser();
 
   // Get user's stash in real-time when user data is available
   const realtimeStashData = useQuery(
@@ -120,7 +114,7 @@ export function useStashData(
   }, [brandsData]);
 
   const isLoading =
-    enabled && !!sessionUserId && realtimeStashData === undefined;
+    enabled && !!session?.user && realtimeStashData === undefined;
 
   useEffect(() => {
     let cancelled = false;
@@ -152,7 +146,7 @@ export function useStashData(
       );
 
         setUserShoes(mappedUserShoes);
-      } else if (!sessionUserId) {
+      } else if (!session?.user) {
         setUserShoes([]);
       }
     });
@@ -160,7 +154,7 @@ export function useStashData(
     return () => {
       cancelled = true;
     };
-  }, [realtimeStashData, sessionUserId]);
+  }, [realtimeStashData, session?.user]);
 
   return {
     userShoes,

@@ -2,9 +2,9 @@ import { useEffect, useMemo } from "react";
 import { usePaginatedQuery, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Doc } from "convex/_generated/dataModel";
-import { useFootProfileStore } from "@/stores/footProfileStore";
+import { useFootProfile } from "./useFootProfile";
 import { useUserPreferenceLearning } from "./useUserPreferenceLearning";
-import { useUserStore } from "@/stores/userStore";
+import { useCurrentUser } from "./useCurrentUser";
 import {
   aggressivenessToScore,
   disciplineToVersatility,
@@ -73,15 +73,10 @@ export function useShoeScoring(userPreferences?: {
   useEffect(() => {
     if (shoesStatus === "CanLoadMore") loadMoreShoes(100);
   }, [shoesStatus, loadMoreShoes]);
-  const { profile: footProfile } = useFootProfileStore();
+  const { profile: footProfile, isLoading: profileLoading } = useFootProfile();
   const { userPreferenceProfile, isLearningReady } =
     useUserPreferenceLearning();
-  const { user } = useUserStore();
-
-  const convexUser = useQuery(
-    api.users.findByBetterAuthId,
-    user ? { betterAuthId: user.id } : "skip",
-  );
+  const { convexUser } = useCurrentUser();
   const userShoes = useQuery(
     api.stash.getUserStash,
     convexUser ? { userId: convexUser._id } : "skip",
@@ -147,7 +142,10 @@ export function useShoeScoring(userPreferences?: {
     soleMateMap,
   ]);
 
-  const isLoading = shoesStatus !== "Exhausted" || popularityData === undefined;
+  const isLoading =
+    shoesStatus !== "Exhausted" ||
+    popularityData === undefined ||
+    profileLoading;
 
   return { scoredShoes, isLoading, isLearningReady, userPreferenceProfile, stashCount, ratedCount };
 }

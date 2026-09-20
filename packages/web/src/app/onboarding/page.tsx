@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
-import { useSession } from "@/lib/auth";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { fetchApi } from "@/lib/api-client";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -26,10 +26,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { FullPageLoading } from "@/components/ui/loading";
 import type { Shoe } from "@/types/api";
-import {
-  useFootProfileStore,
-  normalizeBackendFootProfile,
-} from "@/stores/footProfileStore";
 import { RatingButton, BackButton } from "@/components/onboarding/OnboardingHelpers";
 
 type ShoeSizeOption = { value: string; label: string };
@@ -52,7 +48,7 @@ type ProfileResponse = {
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { data: session, isPending: sessionLoading } = useSession();
+  const { session, convexUser, isLoading: userLoading } = useCurrentUser();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>("welcome");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedShoe, setSelectedShoe] = useState<Shoe | null>(null);
@@ -64,13 +60,8 @@ export default function OnboardingPage() {
     notes: "",
   });
 
-  const setFootProfile = useFootProfileStore((s) => s.setProfile);
   const addToStash = useMutation(api.stash.addToStash);
   const updateUserShoeStats = useMutation(api.stash.updateUserShoeStats);
-  const convexUser = useQuery(
-    api.users.findByBetterAuthId,
-    session?.user ? { betterAuthId: session.user.id } : "skip",
-  );
   const [footShape, setFootShape] = useState("");
   const [footVolume, setFootVolume] = useState("");
   const hasFootProfile = !!footShape && !!footVolume;
@@ -105,10 +96,10 @@ export default function OnboardingPage() {
   const progress = ((steps.findIndex((step) => step.key === currentStep) + 1) / steps.length) * 100;
 
   useEffect(() => {
-    if (!sessionLoading && !session?.user) {
+    if (!userLoading && !session?.user) {
       router.push("/auth");
     }
-  }, [session?.user, sessionLoading, router]);
+  }, [session?.user, userLoading, router]);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -122,12 +113,6 @@ export default function OnboardingPage() {
       const { footShape: savedFootShape, footVolume: savedFootVolume, onboardingComplete } = response.value;
       if (savedFootShape) setFootShape(savedFootShape);
       if (savedFootVolume) setFootVolume(savedFootVolume);
-
-      const normalized = normalizeBackendFootProfile({
-        footShape: savedFootShape ?? null,
-        footVolume: savedFootVolume ?? null,
-      });
-      if (normalized) setFootProfile(normalized);
 
       if (onboardingComplete) {
         router.push("/stash");
@@ -144,7 +129,7 @@ export default function OnboardingPage() {
     return () => {
       ignore = true;
     };
-  }, [router, session?.user, setFootProfile]);
+  }, [router, session?.user]);
 
   const handleNext = async () => {
     if (currentStep === "welcome") {
@@ -157,8 +142,6 @@ export default function OnboardingPage() {
           method: "PUT",
           body: JSON.stringify({ footShape, footVolume }),
         });
-        const normalized = normalizeBackendFootProfile({ footShape, footVolume });
-        if (normalized) setFootProfile(normalized);
       } catch (error) {
         console.error("Failed to save foot data:", error);
       } finally {
@@ -245,7 +228,7 @@ export default function OnboardingPage() {
     router.push("/stash");
   };
 
-  if (sessionLoading) {
+  if (userLoading) {
     return <FullPageLoading text="Loading" />;
   }
 

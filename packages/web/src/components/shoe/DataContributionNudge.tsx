@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { useFootProfileStore } from "@/stores/footProfileStore";
+import { useFootProfile } from "@/hooks/useFootProfile";
 import { CheckCircle, Circle } from "lucide-react";
 
 interface DataContributionNudgeProps {
@@ -20,7 +20,8 @@ export function DataContributionNudge({
   stashCount,
   ratedCount,
 }: DataContributionNudgeProps) {
-  const { profile: footProfile } = useFootProfileStore();
+  const { profile: footProfile, isLoading: profileLoading } =
+    useFootProfile();
 
   const steps: ContributionStep[] = useMemo(
     () => [
@@ -52,7 +53,7 @@ export function DataContributionNudge({
   const totalSteps = steps.length;
   const isComplete = completedCount === totalSteps;
 
-  if (isComplete) return null;
+  if (profileLoading || isComplete) return null;
 
   const progressPct = (completedCount / totalSteps) * 100;
   const nextStep = steps.find((s) => !s.done);

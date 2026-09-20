@@ -7,13 +7,14 @@ import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLoading } from "@/contexts/LoadingContext";
 import ShoeImage from "@/components/ShoeImage";
-import { useFootProfileStore } from "@/stores/footProfileStore";
+import { useFootProfile } from "@/hooks/useFootProfile";
 import { useUserData } from "@/hooks/useUserData";
 
 export default function DashboardPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const { profile: footProfile } = useFootProfileStore();
+  const { profile: footProfile, isLoading: profileLoading } =
+    useFootProfile();
   const { showLoader, hideLoader } = useLoading();
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function DashboardPage() {
     router.replace("/auth/login");
   }, [isPending, router, session?.user]);
 
-  const { userData, userStashData } = useUserData(session);
+  const { userData, userStashData } = useUserData();
 
   const isLoadingData = !!session?.user && userData === undefined;
 
@@ -50,8 +51,8 @@ export default function DashboardPage() {
       ).toFixed(1)
       : "—";
   const favCount = userShoes.filter((shoe) => shoe.isFavourite).length;
-  const footShape = footProfile?.shape || userData?.footShape;
-  const footVolume = footProfile?.volume || userData?.footVolume;
+  const footShape = footProfile?.shape;
+  const footVolume = footProfile?.volume;
   const hasFootProfile = !!(footShape && footVolume);
 
   return (
@@ -138,7 +139,11 @@ export default function DashboardPage() {
           >
             <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-red origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 ease-out" />
             <div className="relative">
-              {hasFootProfile ? (
+              {profileLoading ? (
+                <div className="font-ball-pill text-2xl text-brand-chalk">
+                  Foot profile
+                </div>
+              ) : hasFootProfile ? (
                 <>
                   <div className="font-ball-pill text-2xl text-brand-chalk group-hover:text-brand-red transition-colors duration-500 capitalize">
                     {footShape} <span className="text-brand-putty/30">/</span>{" "}

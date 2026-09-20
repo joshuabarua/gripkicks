@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import type { Doc } from 'convex/_generated/dataModel';
-import { useUserStore } from '@/stores/userStore';
+import { useCurrentUser } from './useCurrentUser';
 import {
   aggressivenessToScore,
   disciplineToVersatility,
@@ -45,12 +45,8 @@ interface LearningInsights {
 }
 
 export function useUserPreferenceLearning() {
-  const { user } = useUserStore();
-
-  // Get Convex user data using Better Auth ID
-  const userData = useQuery(api.users.findByBetterAuthId,
-    user ? { betterAuthId: user.id } : "skip"
-  );
+  const { convexUser } = useCurrentUser();
+  const userData = convexUser;
 
   // Get user's stash using Convex user ID
   const userShoes = useQuery(api.stash.getUserStash,

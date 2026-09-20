@@ -6,7 +6,6 @@ import { ConvexProviderWithAuth, ConvexReactClient } from "convex/react";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { LoadingProvider } from "@/contexts/LoadingContext";
-import FootProfileSync from "@/components/FootProfileSync";
 import { useBetterAuthForConvex } from "@/lib/auth";
 
 const queryClient = new QueryClient({
@@ -41,7 +40,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <LoadingProvider>
         <ConvexProviderWithAuth client={convex} useAuth={useBetterAuthForConvex}>
           <QueryClientProvider client={queryClient}>
-            <FootProfileSync />
             {children}
           </QueryClientProvider>
         </ConvexProviderWithAuth>

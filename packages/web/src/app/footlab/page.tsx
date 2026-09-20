@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { Loader2, Check, Footprints } from 'lucide-react';
 import { useSession } from '@/lib/auth';
 import { fetchApi } from '@/lib/api-client';
-import { normalizeBackendFootProfile, useFootProfileStore } from '@/stores/footProfileStore';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -125,7 +124,6 @@ function VolumeArch({ volume, active }: { volume: FootVolume; active: boolean })
 export default function FootLabPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const setProfile = useFootProfileStore((state) => state.setProfile);
   const [selectedFootShape, setSelectedFootShape] = useState<FootShape | null>(null);
   const [selectedFootVolume, setSelectedFootVolume] = useState<FootVolume | null>(null);
   const [savedFootShape, setSavedFootShape] = useState<FootShape | null>(null);
@@ -141,12 +139,7 @@ export default function FootLabPage() {
       const response = await fetchApi<{ footShape?: string; footVolume?: string; onboardingComplete?: boolean }>('/api/v1/profile');
       if (response.isOk()) {
         const data = response.value;
-        const normalizedProfile = normalizeBackendFootProfile(data);
         setOnboardingComplete(Boolean(data.onboardingComplete));
-
-        if (normalizedProfile) {
-          setProfile(normalizedProfile);
-        }
 
         if (data.footShape) {
           setSavedFootShape(data.footShape as FootShape);
@@ -160,7 +153,7 @@ export default function FootLabPage() {
     } catch (error) {
       console.error('Failed to load foot profile:', error);
     }
-  }, [setProfile]);
+  }, []);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -206,13 +199,6 @@ export default function FootLabPage() {
         }
         return;
       }
-
-      const normalizedProfile = normalizeBackendFootProfile({
-        footShape: result.value.footShape || selectedFootShape,
-        footVolume: result.value.footVolume || selectedFootVolume,
-      });
-
-      if (normalizedProfile) setProfile(normalizedProfile);
 
       setSavedFootShape((result.value.footShape as FootShape) || selectedFootShape);
       setSavedFootVolume((result.value.footVolume as FootVolume) || selectedFootVolume);

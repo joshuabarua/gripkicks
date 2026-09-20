@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
-import { useSession } from "@/lib/auth";
+import { useCurrentUser } from "./useCurrentUser";
 import type { CommunitySignal, ShoeRecommendation } from "@/types/shoe";
 
 export interface AggregatedRating {
@@ -72,13 +72,8 @@ const DEFAULT_PAGE_SIZE = 20;
 export function useFindMyShoe(
   pageSize: number = DEFAULT_PAGE_SIZE,
 ): UseFindMyShoeReturn {
-  const { data: session } = useSession();
+  const { convexUser, isLoading: userLoading } = useCurrentUser();
   const [currentPage, setCurrentPage] = useState(1);
-
-  const convexUser = useQuery(
-    api.users.findByBetterAuthId,
-    session?.user?.id ? { betterAuthId: session.user.id } : "skip",
-  );
 
   const userStash = useQuery(
     api.stash.getUserStash,
@@ -102,10 +97,7 @@ export function useFindMyShoe(
   const paginatedResult = useQuery(recommendationsQuery, recommendationsArgs);
 
   const isLoading =
-    session === undefined ||
-    convexUser === undefined ||
-    userStash === undefined ||
-    paginatedResult === undefined;
+    userLoading || userStash === undefined || paginatedResult === undefined;
 
   const hasProfile = useMemo(() => {
     return !!(convexUser?.footShape && convexUser?.footVolume);
