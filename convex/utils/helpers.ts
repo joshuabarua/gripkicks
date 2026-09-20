@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import { shoeVariantPatterns } from "./shoeVariants";
 
 export const footShapeValidator = v.union(
   v.literal("egyptian"),
@@ -37,28 +38,11 @@ function cleanupModelName(name: string) {
 }
 
 function deriveModelName(name: string) {
-  return cleanupModelName(
-    name
-      .replace(/\blow\s*volume\b/gi, " ")
-      .replace(/\blv\b/gi, " ")
-      .replace(/\bhigh\s*volume\b/gi, " ")
-      .replace(/\bhv\b/gi, " ")
-      .replace(/\bmid\s*volume\b/gi, " ")
-      .replace(/\bmv\b/gi, " ")
-      .replace(/\bwomen'?s\b/gi, " ")
-      .replace(/\bwomens\b/gi, " ")
-      .replace(/\bwomen\b/gi, " ")
-      .replace(/\bw\b$/gi, " ")
-      .replace(/\bmen'?s\b/gi, " ")
-      .replace(/\bmens\b/gi, " ")
-      .replace(/\bmen\b/gi, " ")
-      .replace(/\bm\b$/gi, " ")
-      .replace(/\bkids\b/gi, " ")
-      .replace(/\bkid\b/gi, " ")
-      .replace(/\byouth\b/gi, " ")
-      .replace(/\bjunior\b/gi, " ")
-      .replace(/\bjr\b/gi, " "),
-  );
+  let baseName = name;
+  for (const { pattern } of shoeVariantPatterns) {
+    baseName = baseName.replace(pattern, " ");
+  }
+  return cleanupModelName(baseName);
 }
 
 function deriveVariantLabel(
@@ -67,12 +51,12 @@ function deriveVariantLabel(
 ) {
   const labels = new Set<string>();
 
-  if (/\blow\s*volume\b|\blv\b/i.test(name)) labels.add("LV");
-  if (/\bhigh\s*volume\b|\bhv\b/i.test(name)) labels.add("HV");
-  if (/\bmid\s*volume\b|\bmv\b/i.test(name)) labels.add("MV");
-  if (/\bwomen'?s\b|\bwomens\b|\bwomen\b|\bw\b$/i.test(name) || gender === "women") labels.add("Women");
-  if (/\bmen'?s\b|\bmens\b|\bmen\b|\bm\b$/i.test(name) || gender === "men") labels.add("Men");
-  if (/\bkids\b|\bkid\b|\byouth\b|\bjunior\b|\bjr\b/i.test(name) || gender === "kids") labels.add("Kids");
+  for (const { testPattern, label } of shoeVariantPatterns) {
+    if (testPattern.test(name)) labels.add(label);
+  }
+  if (gender === "women") labels.add("Women");
+  if (gender === "men") labels.add("Men");
+  if (gender === "kids") labels.add("Kids");
 
   const variantLabel = Array.from(labels).join(" ").trim();
   return variantLabel || undefined;
