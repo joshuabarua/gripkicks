@@ -33,7 +33,7 @@ export default function EditShoeDialog({
     <AnimatePresence>
       {editingShoe && (
         <Dialog open={!!editingShoe} onOpenChange={() => setEditingShoe(null)}>
-          <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] w-[min(96vw,56rem)] max-w-4xl rounded-lg hal-glow shadow-2xl p-0 overflow-hidden">
+          <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] w-[min(96vw,56rem)] max-w-4xl max-h-[90dvh] flex flex-col rounded-lg hal-glow shadow-2xl p-0 overflow-hidden">
             <DialogHeader className="space-y-3 border-b border-white/[0.06] px-5 py-6 sm:px-8 sm:py-7">
               <DialogTitle className="text-white font-so-cloudy uppercase text-fluid-xl">Edit Shoe Stats</DialogTitle>
               <DialogDescription className="text-fluid-sm text-neutral-500 font-sora">
@@ -41,7 +41,7 @@ export default function EditShoeDialog({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-6 px-5 py-6 sm:space-y-8 sm:px-8 sm:py-8">
+            <div className="space-y-6 px-5 py-6 sm:space-y-8 sm:px-8 sm:py-8 overflow-y-auto flex-1 min-h-0">
               <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="size" className="text-neutral-400 font-sora text-xs">Size</Label>
@@ -214,6 +214,7 @@ export default function EditShoeDialog({
                 {removeShoe && (
                   <Button
                     variant="destructive"
+                    aria-label="Remove shoe"
                     onClick={removeShoe}
                     className="px-4 bg-red-900/30 border border-red-500/20 text-red-400 hover:bg-red-900/50 rounded-lg"
                   >

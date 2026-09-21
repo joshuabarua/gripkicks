@@ -151,7 +151,7 @@ export default function ShoeStatsModal({
   return (
     <TooltipProvider>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] max-w-2xl p-0 overflow-hidden rounded-lg hal-glow shadow-2xl">
+        <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] max-w-2xl max-h-[90dvh] overflow-y-auto p-0 rounded-lg hal-glow shadow-2xl">
           <DialogTitle className="sr-only">
             Shoe Rank - {shoeName}
           </DialogTitle>
@@ -167,6 +167,7 @@ export default function ShoeStatsModal({
             <div className="absolute top-fluid-sm right-fluid-sm flex items-center gap-fluid-xs z-10">
               {onToggleFavourite && (
                 <button
+                  aria-label="Toggle favourite"
                   onClick={onToggleFavourite}
                   className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
                 >
@@ -175,6 +176,7 @@ export default function ShoeStatsModal({
               )}
               {onEditShoe && (
                 <button
+                  aria-label="Edit shoe"
                   onClick={onEditShoe}
                   className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
                 >
@@ -183,6 +185,7 @@ export default function ShoeStatsModal({
               )}
               {onRemoveShoe && (
                 <button
+                  aria-label="Remove shoe"
                   onClick={onRemoveShoe}
                   className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-red-950/50 flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
                 >
@@ -190,6 +193,7 @@ export default function ShoeStatsModal({
                 </button>
               )}
               <button
+                aria-label="Close"
                 onClick={onClose}
                 className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
               >

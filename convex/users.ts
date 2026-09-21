@@ -337,6 +337,7 @@ export const serviceUpdate = internalMutation({
     name: v.optional(v.string()),
     image: v.optional(v.string()),
     emailVerified: v.optional(v.boolean()),
+    isAdmin: v.optional(v.boolean()),
     footShape: v.optional(footShapeValidator),
     footVolume: v.optional(v.string()),
     favoriteShoeId: v.optional(v.union(v.id("shoes"), v.null())),

@@ -47,7 +47,9 @@ const nextConfig: NextConfig = {
 
   async rewrites() {
     const apiUrl =
-      process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:3001";
+      process.env["API_INTERNAL_URL"] ||
+      process.env["NEXT_PUBLIC_API_URL"] ||
+      "http://localhost:3001";
 
     return [
       {

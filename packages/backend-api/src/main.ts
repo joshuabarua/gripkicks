@@ -62,7 +62,13 @@ const imageUploadLimiter = createRateLimit({
 });
 
 app.use(`${API_BASE}/*`, apiLimiter);
-app.use("/api/auth/*", authLimiter);
+app.use("/api/auth/sign-in/*", authLimiter);
+app.use("/api/auth/sign-up/*", authLimiter);
+app.use("/api/auth/forget-password", authLimiter);
+app.use("/api/auth/forget-password/*", authLimiter);
+app.use("/api/auth/reset-password", authLimiter);
+app.use("/api/auth/reset-password/*", authLimiter);
+app.use("/api/auth/*", apiLimiter);
 app.use(`${API_BASE}/auth/change-email`, accountMutationLimiter);
 app.use(`${API_BASE}/auth/change-password`, accountMutationLimiter);
 app.use(`${API_BASE}/auth/delete-account`, accountMutationLimiter);

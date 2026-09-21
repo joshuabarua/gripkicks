@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const localBaseUrl = "http://127.0.0.1:3000";
+const localBaseUrl = "http://localhost:3000";
 const externalBaseUrl = process.env["E2E_BASE_URL"]?.replace(/\/+$/, "");
 const baseURL = externalBaseUrl || localBaseUrl;
 const isCI = Boolean(process.env["CI"]);
@@ -20,6 +20,7 @@ export default defineConfig({
   },
   use: {
     baseURL,
+    ...(process.env["E2E_CHANNEL"] ? { channel: process.env["E2E_CHANNEL"] } : {}),
     actionTimeout: 10_000,
     navigationTimeout: 30_000,
     screenshot: "only-on-failure",
