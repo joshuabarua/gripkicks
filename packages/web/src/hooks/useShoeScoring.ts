@@ -538,11 +538,9 @@ function calculateRadarMetrics(
   const aggressiveness = aggressivenessToScore(shoe.aggressiveness, 2.5);
 
   let stiffness = 2.5;
-  if (shoe.stiffness === "very_stiff") stiffness = 5;
-  else if (shoe.stiffness === "stiff") stiffness = 4;
+  if (shoe.stiffness === "stiff") stiffness = 5;
   else if (shoe.stiffness === "medium") stiffness = 3;
-  else if (shoe.stiffness === "soft") stiffness = 2;
-  else if (shoe.stiffness === "very_soft") stiffness = 1;
+  else if (shoe.stiffness === "soft") stiffness = 1;
 
   let volumeSupport = 2.5;
   if (shoe.volume === "low_volume" || shoe.volume === "low") volumeSupport = 4;

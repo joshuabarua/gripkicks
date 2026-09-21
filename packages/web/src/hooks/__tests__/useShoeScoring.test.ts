@@ -11,8 +11,8 @@ const baseShoe = {
   brand: "TestBrand",
   aggressiveness: "moderate",
   stiffness: "medium",
-  climbingDiscipline: "all_around",
-  volume: "medium_volume",
+  climbingDiscipline: "sport",
+  volume: "medium",
 } as unknown as Shoe;
 
 const approvedEnrichment = {

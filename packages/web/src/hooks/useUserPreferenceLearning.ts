@@ -31,8 +31,8 @@ interface LearningInsights {
     comfortRange: { min: number; max: number };
     performanceRange: { min: number; max: number };
     durabilityRange: { min: number; max: number };
-    aggressivenessLevel: 'low' | 'moderate' | 'high' | 'very_high';
-    climbingStyle: 'indoor' | 'bouldering' | 'sport' | 'trad' | 'all_around';
+    aggressivenessLevel: 'flat' | 'moderate' | 'aggressive';
+    climbingStyle: 'bouldering' | 'competition' | 'gym' | 'sport' | 'trad';
     brandAffinity: Record<string, number>;
     volumePreference: 'low' | 'medium' | 'high';
   };
@@ -205,11 +205,9 @@ function generateLearningInsights(
   };
 
   // Determine aggressiveness level
-  let aggressivenessLevel: 'low' | 'moderate' | 'high' | 'very_high' = 'moderate';
-  if (profile.aggressiveness >= 4.5) aggressivenessLevel = 'very_high';
-  else if (profile.aggressiveness >= 3.5) aggressivenessLevel = 'high';
-  else if (profile.aggressiveness >= 2.5) aggressivenessLevel = 'moderate';
-  else aggressivenessLevel = 'low';
+  let aggressivenessLevel: 'flat' | 'moderate' | 'aggressive' = 'moderate';
+  if (profile.aggressiveness >= 4) aggressivenessLevel = 'aggressive';
+  else if (profile.aggressiveness < 2) aggressivenessLevel = 'flat';
 
   // Determine climbing style
   const disciplineScores = profile.preferredDisciplines.map(discipline => {
@@ -217,11 +215,11 @@ function generateLearningInsights(
     return { discipline, count };
   }).sort((a, b) => b.count - a.count);
 
-  let climbingStyle: 'indoor' | 'bouldering' | 'sport' | 'trad' | 'all_around' = 'all_around';
+  let climbingStyle: 'bouldering' | 'competition' | 'gym' | 'sport' | 'trad' = 'gym';
   if (disciplineScores.length > 0) {
     const firstDisciplineScore = disciplineScores[0];
     if (firstDisciplineScore) {
-      climbingStyle = firstDisciplineScore.discipline as 'indoor' | 'bouldering' | 'sport' | 'trad' | 'all_around';
+      climbingStyle = firstDisciplineScore.discipline as 'bouldering' | 'competition' | 'gym' | 'sport' | 'trad';
     }
   }
 

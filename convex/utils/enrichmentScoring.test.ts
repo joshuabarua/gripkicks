@@ -2,25 +2,25 @@ import { describe, expect, it } from "vitest";
 import { calculateEnrichmentScores } from "./enrichmentScoring";
 
 describe("calculateEnrichmentScores", () => {
-  it("returns balanced scores for a moderate all-around shoe", () => {
+  it("returns balanced scores for a moderate sport shoe", () => {
     expect(
       calculateEnrichmentScores(
         {
           aggressiveness: "moderate",
           stiffness: "medium",
-          climbingDiscipline: "all_around",
+          climbingDiscipline: "sport",
         },
         {},
       ),
     ).toEqual({
       comfort: 6,
-      performance: 6,
-      durability: 5,
+      performance: 7,
+      durability: 4.5,
       sensitivity: 4.5,
       edging: 5.6,
       smearing: 4.3,
       toeHooking: 5.5,
-      heelHooking: 6,
+      heelHooking: 6.3,
     });
   });
 
@@ -46,11 +46,11 @@ describe("calculateEnrichmentScores", () => {
     });
   });
 
-  it("rewards stiff neutral shoes for trad durability and edging", () => {
+  it("rewards stiff flat shoes for trad durability and edging", () => {
     expect(
       calculateEnrichmentScores(
         {
-          aggressiveness: "neutral",
+          aggressiveness: "flat",
           stiffness: "stiff",
           climbingDiscipline: "trad",
         },

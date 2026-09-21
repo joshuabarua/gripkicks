@@ -40,10 +40,9 @@ describe("sizingDeviationToScore", () => {
 
 describe("aggressivenessToScore", () => {
   it("maps the enum values to 1-5", () => {
-    expect(aggressivenessToScore("very_high", 3)).toBe(5);
-    expect(aggressivenessToScore("high", 3)).toBe(4);
+    expect(aggressivenessToScore("aggressive", 3)).toBe(5);
     expect(aggressivenessToScore("moderate", 3)).toBe(3);
-    expect(aggressivenessToScore("low", 3)).toBe(1);
+    expect(aggressivenessToScore("flat", 3)).toBe(1);
   });
 
   it("uses the caller-provided fallback for unknown or missing values", () => {
@@ -55,11 +54,11 @@ describe("aggressivenessToScore", () => {
 
 describe("disciplineToVersatility", () => {
   it("maps the enum values to 1-5", () => {
-    expect(disciplineToVersatility("all_around", 3)).toBe(5);
     expect(disciplineToVersatility("trad", 3)).toBe(4);
     expect(disciplineToVersatility("sport", 3)).toBe(3);
     expect(disciplineToVersatility("bouldering", 3)).toBe(3);
-    expect(disciplineToVersatility("indoor", 3)).toBe(2);
+    expect(disciplineToVersatility("gym", 3)).toBe(2);
+    expect(disciplineToVersatility("competition", 3)).toBe(2);
   });
 
   it("uses the caller-provided fallback for unknown or missing values", () => {

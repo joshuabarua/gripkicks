@@ -27,7 +27,7 @@ export const calculateDefaultStats = (shoe: ShoeCharacteristics): DefaultStats =
   } else if (aggressiveness === 'aggressive') {
     comfort = 4;
     performance = 8;
-  } else if (aggressiveness === 'flat' || aggressiveness === 'neutral') {
+  } else if (aggressiveness === 'flat') {
     comfort = 7;
     performance = 5;
   }
@@ -45,13 +45,9 @@ export const calculateDefaultStats = (shoe: ShoeCharacteristics): DefaultStats =
   } else if (discipline === 'competition') {
     performance += 2;
     comfort -= 1;
-  } else if (discipline === 'indoor' || discipline === 'gym') {
+  } else if (discipline === 'gym') {
     comfort += 0.5;
     durability -= 0.5;
-  } else if (discipline === 'all-around') {
-    comfort += 0.5;
-    performance += 0.5;
-    durability += 0.5;
   }
 
   if (stiffness === 'soft') {

@@ -11,18 +11,17 @@ export function sizingDeviationToScore(sizingDeviation?: number): number | null 
 }
 
 const AGGRESSIVENESS_SCORES: Record<string, number> = {
-  very_high: 5,
-  high: 4,
+  aggressive: 5,
   moderate: 3,
-  low: 1,
+  flat: 1,
 };
 
 const DISCIPLINE_VERSATILITY_SCORES: Record<string, number> = {
-  all_around: 5,
   trad: 4,
   sport: 3,
   bouldering: 3,
-  indoor: 2,
+  gym: 2,
+  competition: 2,
 };
 
 export function aggressivenessToScore(

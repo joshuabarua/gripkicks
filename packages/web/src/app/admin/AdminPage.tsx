@@ -269,7 +269,6 @@ export default function AdminDashboard() {
     "bouldering",
     "trad",
     "competition",
-    "all-around",
   ];
   const volumeOptions = ["low", "medium", "high"];
 

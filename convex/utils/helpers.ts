@@ -284,6 +284,7 @@ const baseShoeFieldsValidator = {
   officialSpecs: v.optional(shoeOfficialSpecsValidator),
   defaultScores: v.optional(shoeDefaultScoresValidator),
   enrichment: v.optional(shoeEnrichmentValidator),
+  perceivedAggressiveness: v.optional(v.number()),
 };
 
 export const commonShoeFieldsValidator = {

@@ -34,10 +34,9 @@ interface AdvancedFiltersProps {
 
 const aggressivenessOptions = [
   { label: 'All', value: 'all' },
-  { label: 'Low', value: 'low' },
+  { label: 'Flat', value: 'flat' },
   { label: 'Moderate', value: 'moderate' },
-  { label: 'High', value: 'high' },
-  { label: 'Very High', value: 'very_high' },
+  { label: 'Aggressive', value: 'aggressive' },
 ];
 
 const stiffnessOptions = [
@@ -45,7 +44,6 @@ const stiffnessOptions = [
   { label: 'Soft', value: 'soft' },
   { label: 'Medium', value: 'medium' },
   { label: 'Stiff', value: 'stiff' },
-  { label: 'Very Stiff', value: 'very_stiff' },
 ];
 
 const disciplineOptions = [
@@ -53,9 +51,8 @@ const disciplineOptions = [
   { label: 'Sport', value: 'sport' },
   { label: 'Bouldering', value: 'bouldering' },
   { label: 'Trad', value: 'trad' },
-  { label: 'Multi-pitch', value: 'multi_pitch' },
-  { label: 'Indoor', value: 'indoor' },
-  { label: 'All-around', value: 'all_around' },
+  { label: 'Gym', value: 'gym' },
+  { label: 'Competition', value: 'competition' },
 ];
 
 const volumeOptions = [

@@ -55,12 +55,11 @@ const getDisciplineTooltip = (value: string) => {
   const base = "The climbing style this shoe is optimized for.\n\n";
   const options = "OPTIONS: Gym • Sport • Bouldering • Trad • Competition\n\n";
   switch (value.toLowerCase()) {
-    case 'gym': return base + options + "GYM/INDOOR: Optimized for plastic holds with softer rubber and comfort for high-volume sessions. Good all-rounders for indoor training. Examples: Kubo, Tarantulace, Veloce.";
+    case 'gym': return base + options + "GYM: Optimized for plastic holds with softer rubber and comfort for high-volume sessions. Good all-rounders for indoor training. Examples: Kubo, Tarantulace, Veloce.";
     case 'sport': return base + options + "SPORT: Designed for bolted outdoor routes. Emphasis on edging precision, heel/toe hooks, and performance on steep terrain. Examples: Aragon, Mistral, Genius.";
     case 'bouldering': return base + options + "BOULDERING: Built for short, powerful problems. Prioritizes sensitivity, toe power, aggressive heel cups, and precise footwork. Examples: Skwama, Mandala, Tarantula Boulder.";
     case 'trad': return base + options + "TRAD: Comfort-focused for long multi-pitch days placing gear. Stiffer for crack climbing and standing on small edges for hours. Examples: Mythos, Finale, TC Pro.";
     case 'competition': return base + options + "COMPETITION: Maximum performance for comp-style climbing. Extremely sensitive with aggressive fit for dynamic moves and coordination. Examples: Ondra Comp, Solution Comp.";
-    case 'all-around': return base + options + "ALL-AROUND: Jack of all trades. Good for climbers who want one shoe for everything from gym to crag without specializing.";
     default: return base + options;
   }
 };
