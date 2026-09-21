@@ -128,6 +128,7 @@ export const createOrUpdateFromBetterAuth = internalMutation({
       ctx,
       args.betterAuthId,
       args.email,
+      args.emailVerified,
     );
 
     if (existingUser) {

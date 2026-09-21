@@ -51,7 +51,7 @@ export const createUser = internalMutation({
   handler: async (ctx, args) => {
     // 1. Check if user already exists by Better Auth ID, falling back to
     //    email and linking when the row has no betterAuthId
-    const existing = await findOrLinkUserByAuth(ctx, args.betterAuthId, args.email);
+    const existing = await findOrLinkUserByAuth(ctx, args.betterAuthId, args.email, args.emailVerified);
 
     if (existing) {
       // Return existing user in Better Auth format

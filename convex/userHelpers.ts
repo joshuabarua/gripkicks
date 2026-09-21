@@ -21,6 +21,7 @@ export async function findOrLinkUserByAuth(
   ctx: MutationCtx,
   betterAuthId: string,
   email: string,
+  emailVerified: boolean,
 ): Promise<Doc<"users"> | null> {
   const byAuthId = await ctx.db
     .query("users")
@@ -33,10 +34,13 @@ export async function findOrLinkUserByAuth(
     .withIndex("by_email", (q) => q.eq("email", email))
     .first();
 
-  if (byEmail && !byEmail.betterAuthId) {
+  if (!byEmail) return null;
+
+  if (!byEmail.betterAuthId) {
+    if (!emailVerified) return null;
     await ctx.db.patch(byEmail._id, { betterAuthId });
     return { ...byEmail, betterAuthId };
   }
 
-  return byEmail;
+  return emailVerified ? byEmail : null;
 }
