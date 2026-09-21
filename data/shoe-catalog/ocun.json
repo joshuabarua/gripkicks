@@ -4,17 +4,135 @@
   "imagekitFolder": "gripkicks/imgs/shoes/ocun/",
   "filenameToName": {},
   "shoes": [
-    { "name": "Ozone", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
-    { "name": "Ozone Pro", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
-    { "name": "Ozone Plus", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
-    { "name": "Havoc", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
-    { "name": "Havoc Pro", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
-    { "name": "Rival", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
-    { "name": "Advancer", "aggressiveness": "flat", "stiffness": "medium", "climbingDiscipline": "gym", "volume": "high", "footShapeCompat": ["egyptian", "roman", "greek", "germanic", "celtic"] },
-    { "name": "Pearl", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
-    { "name": "Jett", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "low", "footShapeCompat": ["egyptian", "greek"] },
-    { "name": "Diamond Pro", "aggressiveness": "aggressive", "stiffness": "soft", "climbingDiscipline": "bouldering", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
-    { "name": "Crest LU", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "trad", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "germanic"] },
-    { "name": "Crest QC", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] }
+    {
+      "name": "Ozone",
+      "aggressiveness": "aggressive",
+      "stiffness": "medium",
+      "climbingDiscipline": "sport",
+      "volume": "medium",
+      "footShapeCompat": [
+        "egyptian",
+        "roman"
+      ]
+    },
+    {
+      "name": "Ozone QC",
+      "aggressiveness": "aggressive",
+      "stiffness": "medium",
+      "climbingDiscipline": "sport",
+      "volume": "medium",
+      "footShapeCompat": [
+        "egyptian",
+        "roman"
+      ]
+    },
+    {
+      "name": "Ozone Plus",
+      "aggressiveness": "aggressive",
+      "stiffness": "soft",
+      "climbingDiscipline": "bouldering",
+      "volume": "medium",
+      "footShapeCompat": [
+        "egyptian",
+        "roman",
+        "greek"
+      ]
+    },
+    {
+      "name": "Havoc",
+      "aggressiveness": "aggressive",
+      "stiffness": "medium",
+      "climbingDiscipline": "sport",
+      "volume": "medium",
+      "footShapeCompat": [
+        "egyptian",
+        "roman",
+        "greek"
+      ]
+    },
+    {
+      "name": "Rival",
+      "aggressiveness": "moderate",
+      "stiffness": "medium",
+      "climbingDiscipline": "sport",
+      "volume": "medium",
+      "footShapeCompat": [
+        "egyptian",
+        "roman",
+        "greek"
+      ]
+    },
+    {
+      "name": "Advancer",
+      "aggressiveness": "flat",
+      "stiffness": "medium",
+      "climbingDiscipline": "gym",
+      "volume": "high",
+      "footShapeCompat": [
+        "egyptian",
+        "roman",
+        "greek",
+        "germanic",
+        "celtic"
+      ]
+    },
+    {
+      "name": "Pearl",
+      "aggressiveness": "moderate",
+      "stiffness": "medium",
+      "climbingDiscipline": "sport",
+      "volume": "low",
+      "footShapeCompat": [
+        "egyptian",
+        "greek"
+      ]
+    },
+    {
+      "name": "Jett",
+      "aggressiveness": "aggressive",
+      "stiffness": "soft",
+      "climbingDiscipline": "bouldering",
+      "volume": "low",
+      "footShapeCompat": [
+        "egyptian",
+        "greek"
+      ]
+    },
+    {
+      "name": "Diamond S",
+      "aggressiveness": "aggressive",
+      "stiffness": "soft",
+      "climbingDiscipline": "bouldering",
+      "volume": "medium",
+      "footShapeCompat": [
+        "egyptian",
+        "roman",
+        "greek"
+      ]
+    },
+    {
+      "name": "Crest LU",
+      "aggressiveness": "moderate",
+      "stiffness": "medium",
+      "climbingDiscipline": "trad",
+      "volume": "medium",
+      "footShapeCompat": [
+        "egyptian",
+        "roman",
+        "germanic"
+      ]
+    },
+    {
+      "name": "Crest QC",
+      "aggressiveness": "moderate",
+      "stiffness": "medium",
+      "climbingDiscipline": "sport",
+      "volume": "medium",
+      "footShapeCompat": [
+        "egyptian",
+        "roman",
+        "greek"
+      ]
+    }
   ]
 }

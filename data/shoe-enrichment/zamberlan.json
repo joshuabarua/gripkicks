@@ -1,0 +1,47 @@
+[
+  {
+    "brand": "Zamberlan",
+    "name": "Free Blast",
+    "officialUrl": "https://www.zamberlan.com/en-eu/products/217-free-blast-suede-red-orange",
+    "description": "Low-cut Made in Italy hiking shoe with suede leather upper, PU toe rand, to-the-toe lacing, EVA midsole and a Zamberlan Vibram Junko outsole with Megagrip compound; resoleable.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "trad",
+      "stiffness": "medium",
+      "volume": "high",
+      "rubber": { "brand": "Vibram", "compound": "Megagrip (Junko outsole)" }
+    },
+    "officialSpecs": {
+      "closure": "To-the-toe lacing",
+      "upper": "Suede leather, Hydrobloc treated, PU toe rand",
+      "lining": "Mesh",
+      "midsole": "EVA",
+      "sole": "Zamberlan Vibram Junko with Megagrip compound",
+      "weight": "415 g (half pair, size 42)"
+    }
+  },
+  {
+    "brand": "Zamberlan",
+    "name": "Salathe",
+    "officialUrl": "https://www.zamberlan.com/en-eu/products/215-salathe-rr-lilac-yellow",
+    "description": "Low-cut car-to-summit approach shoe with suede upper, stretch over-foot wraps instead of a tongue, to-the-toe lacing, dual-density EVA midsole and Vibram Pepe outsole with Megagrip compound.",
+    "confidence": 0.88,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "trad",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Vibram", "compound": "Megagrip (Pepe outsole)" }
+    },
+    "officialSpecs": {
+      "closure": "To-the-toe lacing",
+      "upper": "Suede leather with stretch over-foot wraps and 360-degree rubber/PU rand",
+      "midsole": "Dual-density microporous EVA",
+      "sole": "Vibram Pepe with Megagrip compound",
+      "weight": "445 g (half pair, US 8)"
+    }
+  }
+]

@@ -1,0 +1,103 @@
+[
+  {
+    "brand": "Simond",
+    "name": "Rock+",
+    "officialUrl": "https://www.decathlon.co.uk/p/climbing-shoes-rock-grey/_/R-p-167271?mc=8495195&c=TURQUOISE_BLUE",
+    "description": "Entry-level shoe with a neutral flat profile, low asymmetry and spacious high-volume fit; two rip-tab straps, synthetic polyamide/PU upper and Vibram XS Grip rubber.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "gym",
+      "stiffness": "medium",
+      "volume": "high",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    },
+    "officialSpecs": {
+      "closure": "2 rip-tab (Velcro) straps",
+      "upper": "65% polyamide, 35% polyurethane (synthetic)",
+      "lining": "100% polyester",
+      "sole": "Vibram XS Grip",
+      "weight": "7.2 oz per shoe (approx. 204 g)"
+    }
+  },
+  {
+    "brand": "Simond",
+    "name": "Cliff",
+    "officialUrl": "https://weighmyrack.com/shoe/simond-cliff",
+    "description": "Slipper-style shoe with a single Velcro strap and elasticated inserts; leather upper and flat, straight last aimed at beginners for indoor climbing, cragging and bouldering.",
+    "confidence": 0.7,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "gym"
+    },
+    "officialSpecs": {
+      "closure": "Slipper with 1 Velcro strap",
+      "upper": "Leather"
+    }
+  },
+  {
+    "brand": "Simond",
+    "name": "Edge",
+    "officialUrl": "https://www.alpinetrek.co.uk/simond-climbing-shoe-edge-climbing-shoes/",
+    "description": "Performance shoe with a downturned, highly asymmetric last and heel tension; slipper design with a single Velcro strap, stretchy microfiber upper and 4 mm Vibram XS Grip sole.",
+    "confidence": 0.75,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "soft",
+      "volume": "medium",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    },
+    "officialSpecs": {
+      "closure": "Slipper with 1 Velcro strap",
+      "upper": "Synthetic microfiber (stretchy)",
+      "sole": "Vibram XS Grip, 4 mm",
+      "sensitivity": "Soft sole for foot sensitivity",
+      "rigidity": "Soft"
+    }
+  },
+  {
+    "brand": "Simond",
+    "name": "Rock",
+    "officialUrl": "https://www.weighmyrack.com/shoe/simond-rock-0",
+    "description": "Beginner lace-up shoe with a flat last and a midsole covering the front of the foot for edge precision; cotton upper, suited to indoor, sport, bouldering and multi-pitch climbing.",
+    "confidence": 0.65,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "gym"
+    },
+    "officialSpecs": {
+      "closure": "Laces",
+      "upper": "Cotton",
+      "midsole": "Rubber midsole covering the front of the foot"
+    }
+  },
+  {
+    "brand": "Simond",
+    "name": "Vertika",
+    "officialUrl": "https://www.simond.com/en-GB/product/men-s-climbing-shoe-vertika-blue-red_332119--c231c57m8646350",
+    "description": "Technical progression shoe with a slightly asymmetric pointed shape, moderate heel tension and a supportive midsole; two rip-tab straps, Lorica/leather upper and 4 mm Vibram XS Grip sole.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    },
+    "officialSpecs": {
+      "closure": "2 rip-tab (Velcro) straps",
+      "upper": "Lorica synthetic leather forefoot, split leather upper",
+      "lining": "Synthetic leather lining",
+      "midsole": "Reinforced midsole for support and power",
+      "sole": "Vibram XS Grip, 4 mm",
+      "weight": "570 g (pair, EU 42)",
+      "rigidity": "Moderately rigid sole"
+    }
+  }
+]

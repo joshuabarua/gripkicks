@@ -1,0 +1,27 @@
+[
+  {
+    "brand": "Rock Pillars",
+    "name": "Ozone",
+    "officialUrl": "https://www.ocun.com/product/ozone3",
+    "description": "Aggressive asymmetric Velcro shoe built on the Asymmetrix last with the patented 3-Force system; microfiber upper, 3D midsole, rubberized toe patch and 4 mm Vibram XS Grip sole.",
+    "confidence": 0.82,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "stiff",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip"
+      }
+    },
+    "officialSpecs": {
+      "closure": "2 Velcro straps",
+      "upper": "Microfiber",
+      "midsole": "3D Fit Middle",
+      "sole": "Vibram XS Grip, 4 mm",
+      "weight": "470 g (pair)"
+    }
+  }
+]

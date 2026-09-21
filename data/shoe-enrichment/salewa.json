@@ -1,0 +1,46 @@
+[
+  {
+    "brand": "Salewa",
+    "name": "Wildfire",
+    "officialUrl": "https://www.salewa.com/en-gb/wildfire-men_s-shoes-00-0000063485",
+    "description": "Technical approach shoe with a POMOCA Speed Mtn outsole in Butylic compound rubber, toe climbing zone, mesh upper with EXA Shell injected 3D cage, 3F system, climbing lacing and OrthoLite footbed.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "trad",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Pomoca", "compound": "Butylic (Speed Mtn)" }
+    },
+    "officialSpecs": {
+      "closure": "Climbing lacing",
+      "upper": "Robust mesh with EXA Shell injected 3D cage",
+      "lining": "Breathable mesh",
+      "sole": "POMOCA Speed Mtn, Butylic compound",
+      "weight": "380 g (single shoe)"
+    }
+  },
+  {
+    "brand": "Salewa",
+    "name": "Mountain Trainer 2",
+    "officialUrl": "https://www.salewa.com/en-gb/mountain-trainer-2-gore-tex_-men_s-shoes-00-0000061356",
+    "description": "Low-cut alpine approach shoe with 1.6 mm suede upper, 360-degree rubber rand, GORE-TEX Extended Comfort lining, expanded PU midsole and Vibram outsole with via ferrata tread zone and 3F system.",
+    "confidence": 0.85,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "trad",
+      "stiffness": "stiff",
+      "volume": "medium"
+    },
+    "officialSpecs": {
+      "closure": "Climbing lacing with 3F system",
+      "upper": "1.6 mm suede leather with 360-degree rubber rand",
+      "lining": "GORE-TEX Extended Comfort",
+      "midsole": "Expanded PU",
+      "sole": "Vibram multifunctional outsole with via ferrata tread zone",
+      "weight": "458 g (single shoe)"
+    }
+  }
+]

@@ -3,8 +3,5 @@
   "brandKey": "mammut",
   "imagekitFolder": "gripkicks/imgs/shoes/mammut/",
   "filenameToName": {},
-  "shoes": [
-    { "name": "Rocker Advanced", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
-    { "name": "Cliffhanger", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] }
-  ]
+  "shoes": []
 }

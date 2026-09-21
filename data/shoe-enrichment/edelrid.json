@@ -1,0 +1,72 @@
+[
+  {
+    "brand": "Edelrid",
+    "name": "Typhoon",
+    "officialUrl": "https://weighmyrack.com/shoe/edelrid-typhoon",
+    "description": "Aggressive downturned performance shoe for bouldering and sport climbing; asymmetric cambered last, two opposing Velcro straps, high-tension heel cup, leather/synthetic leather upper and Edelrid E-Grip sole.",
+    "confidence": 0.8,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "volume": "high",
+      "rubber": {
+        "brand": "Edelrid",
+        "compound": "E-Grip"
+      }
+    },
+    "officialSpecs": {
+      "closure": "2 Velcro straps",
+      "upper": "Natural leather and synthetic leather",
+      "sole": "E-Grip",
+      "weight": "540 g (pair)"
+    }
+  },
+  {
+    "brand": "Edelrid",
+    "name": "Cyclone",
+    "officialUrl": "https://weighmyrack.com/shoe/edelrid-cyclone",
+    "description": "Top-of-range Edelrid shoe with an extremely cambered, aggressive asymmetric last; rapid lace-slipper closure, Lorica synthetic leather upper, thermoformed midsole, 2-Tension Frame and E-Grip Plus sole.",
+    "confidence": 0.78,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "volume": "high",
+      "rubber": {
+        "brand": "Edelrid",
+        "compound": "E-Grip Plus"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Rapid lacing (lace-slipper)",
+      "upper": "Lorica synthetic leather",
+      "midsole": "Thermoformed midsole",
+      "sole": "E-Grip Plus",
+      "weight": "490 g (pair)"
+    }
+  },
+  {
+    "brand": "Edelrid",
+    "name": "Reptile",
+    "officialUrl": "https://www.alpinetrek.co.uk/edelrid-reptile-climbing-shoes/",
+    "description": "Straight-cut comfort shoe for beginners, traditionalists and rental use; toe-start lacing, all-leather upper, reinforced midsole, Comfort Tension Heel and durable E-Grip sole.",
+    "confidence": 0.78,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "gym",
+      "volume": "high",
+      "rubber": {
+        "brand": "Edelrid",
+        "compound": "E-Grip"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Laces (toe-start lacing)",
+      "upper": "Leather",
+      "midsole": "Reinforced midsole",
+      "sole": "E-Grip"
+    }
+  }
+]

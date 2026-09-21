@@ -1,0 +1,303 @@
+[
+  {
+    "brand": "Boreal",
+    "name": "Joker",
+    "officialUrl": "https://europe.borealoutdoor.com/product/joker/",
+    "description": "Third-generation velcro comfort shoe with split leather and microfiber upper, 3D Air Net lining and Zenith Quattro outsole, for training, courses and long routes.",
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Quattro"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Double strap (hook-and-loop)",
+      "upper": "Split leather and microfiber with Air Net side panels",
+      "lining": "One-piece 3D lining",
+      "midsole": "Special anti-deformation recycled midsole",
+      "sole": "Boreal Zenith Quattro, 4-4.5 mm depending on size",
+      "weight": "546 g per pair (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Joker Lace",
+    "officialUrl": "https://europe.borealoutdoor.com/product/joker-lace/",
+    "description": "Lace-up version of the Joker comfort shoe with split leather and microfiber upper, 3D Air Net lining and Zenith Quattro outsole for long routes and training.",
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "trad",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Quattro"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Lace-up (long lace system)",
+      "upper": "Split leather and microfiber with Air Net side panels",
+      "lining": "One-piece 3D lining",
+      "midsole": "Special anti-deformation recycled midsole",
+      "sole": "Boreal Zenith Quattro, 4-4.5 mm depending on size",
+      "weight": "578 g per pair (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Joker Plus",
+    "officialUrl": "https://europe.borealoutdoor.com/product/joker-plus-wmns-v-rd/",
+    "description": "All-day velcro shoe with split leather upper, padded HFS heel, half-stiff midsole and FS-Quattro outsole for training, multi-pitch and long crag days.",
+    "confidence": 0.8,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "FS-Quattro"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Reinforced double strap (hook-and-loop)",
+      "upper": "Premium split leather with HFS padded heel",
+      "lining": "PU Air Net",
+      "midsole": "Half stiff midsole",
+      "sole": "Boreal FS-Quattro, 4-4.6 mm depending on size"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Diabolo",
+    "officialUrl": "https://web.archive.org/web/20170511095156/http://www.borealoutdoor.com/en/products/details/11260-diabolo",
+    "description": "Discontinued versatile velcro shoe combining performance precision with intermediate comfort; split leather and microfiber upper, unlined, Zenith Pro outsole.",
+    "confidence": 0.85,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "soft",
+      "volume": "low",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Pro"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Double strap (hook-and-loop) with integrated tongue",
+      "upper": "Split leather and microfiber",
+      "lining": "Unlined",
+      "midsole": "Special anti-deformation midsole",
+      "sole": "Boreal Zenith Pro, 4-4.5 mm depending on size",
+      "weight": "505 g per pair (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Mutant",
+    "officialUrl": "https://europe.borealoutdoor.com/product/mutant/",
+    "description": "Aggressive shoe with elastic and strap footwrap closure, thin rubber toe patch and Zenith Pro outsole, built for hard routes and boulders.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "bouldering",
+      "stiffness": "soft",
+      "volume": "low",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Pro"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Elastic and strap footwrap closure",
+      "upper": "Split leather with thin rubber zone over toes",
+      "lining": "Unlined",
+      "midsole": "Special anti-deformation midsole",
+      "sole": "Boreal Zenith Pro, 4-4.5 mm depending on size",
+      "weight": "460 g per pair (UK 6)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Dharma",
+    "officialUrl": "https://europe.borealoutdoor.com/product/dharma/",
+    "description": "Downturned performance shoe with lined split leather upper and Zenith Pro 2.0 outsole, built for micro edges and pockets on steep sport routes and boulders.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Pro 2.0"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Hook-and-loop straps",
+      "upper": "Split leather with recycled textile tongue",
+      "lining": "Lined",
+      "midsole": "Special recycled anti-deformation midsole",
+      "sole": "Boreal Zenith Pro 2.0, 4-4.5 mm depending on size",
+      "weight": "545 g per pair (UK 7)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Satori",
+    "officialUrl": "https://europe.borealoutdoor.com/product/satori/",
+    "description": "Top-end microfiber performance shoe with strap closure, moulded heel, one-piece rubber toe box and Zenith Ultra 2.0 rubber for steep bouldering and sport.",
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "bouldering",
+      "stiffness": "soft",
+      "volume": "high",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Ultra 2.0"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Strap (hook-and-loop) closure with integrated elastic tongue",
+      "upper": "Synthetic microfiber with 3D moulded heel cup and one-piece rubber toe box",
+      "lining": "Lined",
+      "midsole": "Midsole with Toe Flexion System",
+      "sole": "Boreal Zenith Ultra 2.0, 4.0 mm",
+      "weight": "490 g per pair (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Alpha",
+    "officialUrl": "https://europe.borealoutdoor.com/product/alpha/",
+    "description": "Entry-level microfiber shoe with double velcro closure, padded CHS heel and Zenith Quattro 2.0 outsole for indoor training and long climbing sessions.",
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "gym",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Quattro 2.0"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Double strap (hook-and-loop)",
+      "upper": "Microfiber with padded CHS heel",
+      "lining": "Unlined",
+      "midsole": "Special anti-deformation midsole, medium-soft",
+      "sole": "Boreal Zenith Quattro 2.0, 4-4.5 mm depending on size",
+      "weight": "485 g per pair (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Ace",
+    "officialUrl": "https://europe.borealoutdoor.com/product/ace/",
+    "description": "Slightly downturned lace-up with split leather upper, stiffer midsole, rubber toe patch and Zenith Pro outsole for trad and multi-pitch climbing.",
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "trad",
+      "stiffness": "stiff",
+      "volume": "low",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Pro"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Split leather with extra rubber toe patch",
+      "lining": "Unlined",
+      "midsole": "Special anti-deformation midsole, stiffer",
+      "sole": "Boreal Zenith Pro, 4-4.5 mm depending on size",
+      "weight": "575 g per pair (UK 7)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Ninja Junior",
+    "officialUrl": "https://europe.borealoutdoor.com/product/ninja-jr/",
+    "description": "Kids' climbing shoe with split leather upper, adjustable heel, single velcro strap and Zenith Quattro outsole, using the same materials as the adult models.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "gym",
+      "stiffness": "medium",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Quattro"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Single strap (hook-and-loop) with adjustable heel",
+      "upper": "Split leather with padded CHS heel",
+      "lining": "Unlined",
+      "midsole": "Special anti-deformation midsole",
+      "sole": "Boreal Zenith Quattro, 4-4.6 mm depending on size",
+      "weight": "320 g per pair (EUR 29-30)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Lynx",
+    "officialUrl": "https://europe.borealoutdoor.com/product/lynx/",
+    "description": "All-round lace-up with subtly downturned split leather last, padded neoprene tongue, V2 Rand heel and Zenith Pro outsole for routes, bouldering and slabs.",
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "rubber": {
+        "brand": "Boreal",
+        "compound": "Zenith Pro"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Lace-up (nylon lace loop system)",
+      "upper": "Split leather with integral padded neoprene tongue",
+      "lining": "Unlined",
+      "midsole": "Special anti-deformation midsole",
+      "sole": "Boreal Zenith Pro, 4-4.5 mm depending on size",
+      "weight": "470 g per pair (UK 6)"
+    }
+  },
+  {
+    "brand": "Boreal",
+    "name": "Zen",
+    "officialUrl": "https://www.outdoorreview.com/product/product-archives/outdoor-equipment/climbing-mountaineering/rock-shoes/boreal-usa/zen.html",
+    "description": "Discontinued velcro shoe with slipper-like fit, leather upper and cotton lining, used for indoor and sport climbing in the early 2000s.",
+    "confidence": 0.55,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "high"
+    },
+    "officialSpecs": {
+      "closure": "Hook-and-loop straps over cushioned tongue",
+      "upper": "Leather",
+      "lining": "Cotton"
+    }
+  }
+]

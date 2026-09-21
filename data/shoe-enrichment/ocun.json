@@ -1,0 +1,278 @@
+[
+  {
+    "brand": "Ocun",
+    "name": "Ozone",
+    "officialUrl": "https://www.ocun.com/product/ozone3",
+    "description": "High-precision performance shoe on the asymmetric Asymmetrix last with patented 3-Force system, Vibram XS Grip sole, 3D midsole and dual Velcro closure, built for micro edges and pockets.",
+    "confidence": 0.92,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip"
+      }
+    },
+    "officialSpecs": {
+      "closure": "2 opposing Velcro straps",
+      "upper": "Microfiber",
+      "midsole": "3D Fit Middle",
+      "sole": "Vibram XS Grip, 4 mm",
+      "weight": "470 g (pair)"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Ozone QC",
+    "officialUrl": "https://www.ocun.com/product/ozone-qc2",
+    "description": "No 'Ozone Pro' model exists in Ocun's lineup; entry reflects the Ozone QC, a highly asymmetric competition shoe with patented 3-Force system and Vibram XS Grip sole.",
+    "confidence": 0.45,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "competition",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip"
+      }
+    },
+    "officialSpecs": {
+      "closure": "2 Velcro straps",
+      "upper": "Microfiber",
+      "lining": "Natural leather insole",
+      "midsole": "3D Fit Middle",
+      "sole": "Vibram XS Grip, 4 mm"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Ozone Plus",
+    "officialUrl": "https://www.ocun.com/product/ozone-plus2",
+    "description": "Wide-fit version of the Ozone on the Asymetrix Plus last: highly asymmetric competition shoe with 3-Force system, Vibram XS Grip sole and a roomier toe box. Discontinued; succeeded by Ozone HV.",
+    "confidence": 0.85,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "high",
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip"
+      }
+    },
+    "officialSpecs": {
+      "closure": "2 Velcro straps",
+      "upper": "Microfiber",
+      "lining": "Natural leather insole",
+      "midsole": "3D Fit Middle",
+      "sole": "Vibram XS Grip, 4 mm",
+      "weight": "480 g (pair)"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Havoc",
+    "officialUrl": "https://www.ocun.com/product/havoc3",
+    "description": "All-round performance shoe for bouldering and sport climbing with moderate asymmetry, soft 2D Toe Soft midsole, CAT 1.5 sole and a molded 3D toe patch; dual Velcro straps.",
+    "confidence": 0.92,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "soft",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Ocun",
+        "compound": "CAT 1.5"
+      }
+    },
+    "officialSpecs": {
+      "closure": "2 Velcro straps with elastic tongue",
+      "upper": "Microfiber",
+      "midsole": "2D Toe Soft",
+      "sole": "CAT rubber 1.5, 4 mm",
+      "weight": "432 g (pair)"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Rival",
+    "officialUrl": "https://www.ocun.com/product/rival",
+    "description": "Children's competition climbing shoe with soft slipper construction, elastic band plus single Velcro strap, rubber toe patch and CAT 1.5 sole; sizes UK 2-5.",
+    "confidence": 0.85,
+    "reviewStatus": "pending",
+    "metrics": {
+      "climbingDiscipline": "competition",
+      "stiffness": "soft",
+      "rubber": {
+        "brand": "Ocun",
+        "compound": "CAT 1.5"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Slipper with elastic band and 1 Velcro strap",
+      "upper": "Microfiber",
+      "lining": "Canvas insole",
+      "midsole": "2D Fit Soft",
+      "sole": "CAT rubber 1.5, 4 mm",
+      "weight": "165-178 g (single shoe)"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Advancer",
+    "officialUrl": "https://www.ocun.com/product/advancer-qc3",
+    "description": "Flat-profiled shoe on the slightly asymmetric Advantic last with stiff 2D Fit Hard midsole and CAT 1.5 sole, for gym training and all-day climbing. Specs from the Advancer QC.",
+    "confidence": 0.85,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "gym",
+      "stiffness": "stiff",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Ocun",
+        "compound": "CAT 1.5"
+      }
+    },
+    "officialSpecs": {
+      "closure": "2 opposing Velcro straps",
+      "upper": "Microfiber",
+      "midsole": "2D Fit Hard",
+      "sole": "CAT rubber 1.5, 4 mm",
+      "weight": "438 g (pair)"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Pearl",
+    "officialUrl": "https://www.ocun.com/product/pearl2",
+    "description": "Narrow-fit lace-up performance shoe with radical downturn and slight asymmetry, 2D Fit Soft midsole and CAT 1.5 sole; balances firmness and sensitivity on slabs, edges and pockets.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "low",
+      "rubber": {
+        "brand": "Ocun",
+        "compound": "CAT 1.5"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Microfiber",
+      "midsole": "2D Fit Soft",
+      "sole": "CAT rubber 1.5, 4 mm",
+      "weight": "430 g (pair)"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Jett",
+    "officialUrl": "https://www.ocun.com/product/jett-qc",
+    "description": "Comfort-oriented sport shoe on the medium-asymmetry All-round last with stiff 2D Fit Hard midsole, CAT 1.5 sole and dual opposing Velcro straps. Specs from the Jett QC.",
+    "confidence": 0.8,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "stiff",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Ocun",
+        "compound": "CAT 1.5"
+      }
+    },
+    "officialSpecs": {
+      "closure": "2 opposing Velcro straps",
+      "upper": "Microfiber",
+      "midsole": "2D Fit Hard",
+      "sole": "CAT rubber 1.5, 4 mm",
+      "weight": "496 g (pair)"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Diamond S",
+    "officialUrl": "https://www.ocun.com/product/diamond-s3",
+    "description": "No 'Diamond Pro' model exists in Ocun's lineup; entry reflects the Diamond S, a highly asymmetric, deeply downturned bouldering shoe with Excentric 2.0 last and CAT 1.5 rubber.",
+    "confidence": 0.5,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "bouldering",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": {
+        "brand": "Ocun",
+        "compound": "CAT 1.5"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Velcro strap with tongue loop",
+      "upper": "Microfiber",
+      "midsole": "3D Fit Middle",
+      "sole": "CAT rubber 1.5, 4 mm",
+      "weight": "450 g (pair)"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Crest LU",
+    "officialUrl": "https://weighmyrack.com/shoe/ocun-crest-lu-0",
+    "description": "Comfortable lace-up beginner shoe with straight, near-symmetric last, flat profile, durable CAT 1.1 sole and rubberized toe; suited to all-day routes and multipitch climbing.",
+    "confidence": 0.7,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "trad",
+      "stiffness": "medium",
+      "volume": "high",
+      "rubber": {
+        "brand": "Ocun",
+        "compound": "CAT 1.1"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Microfiber / synthetic leather",
+      "midsole": "2.0 mm Troniflex",
+      "sole": "CAT rubber 1.1",
+      "weight": "440 g (pair)"
+    }
+  },
+  {
+    "brand": "Ocun",
+    "name": "Crest QC",
+    "officialUrl": "https://www.ocun.com/product/crest-qc4",
+    "description": "Entry-level Velcro shoe with straight last, very low asymmetry, flat profile and durable CAT 1.1 sole; comfortable fit for beginners indoors and on rock. Retired model.",
+    "confidence": 0.8,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "high",
+      "rubber": {
+        "brand": "Ocun",
+        "compound": "CAT 1.1"
+      }
+    },
+    "officialSpecs": {
+      "closure": "Velcro strap(s)",
+      "upper": "Microfiber",
+      "lining": "Canvas insole",
+      "midsole": "2D Fit Middle",
+      "sole": "CAT rubber 1.1, 4 mm",
+      "weight": "420 g (pair)"
+    }
+  }
+]

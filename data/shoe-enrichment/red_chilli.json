@@ -1,0 +1,296 @@
+[
+  {
+    "brand": "Red Chili",
+    "name": "Voltage",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/voltage-3",
+    "description": "High-end climbing shoe with an aggressive downturn, wide anatomical last, double Velcro closure and Vibram XS Grip rubber for steep sport climbing and bouldering.",
+    "confidence": 0.92,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    },
+    "officialSpecs": {
+      "closure": "Double Velcro",
+      "upper": "Microfiber 2.0mm",
+      "lining": "Suede leather footbed",
+      "midsole": "RC-TENSION",
+      "sole": "Vibram XS Grip 4.0mm front, RX-1 Allround 3.0mm heel, RX-1 Allround 2.0mm rand and toe patch"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Voltage 2",
+    "officialUrl": "https://weighmyrack.com/shoe/red-chili-voltage-ii",
+    "description": "Aggressive downturned shoe with a sock-like knitted tongue, two offset Velcro straps, RC-Tension midsole and Vibram XS Grip rubber for sport climbing and bouldering.",
+    "confidence": 0.75,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    },
+    "officialSpecs": {
+      "closure": "2 Velcro closures",
+      "upper": "Microfiber 2.0mm",
+      "lining": "Suede leather footbed, knitted fabric tongue",
+      "midsole": "RC-Tension",
+      "sole": "Vibram XS Grip, RX-1 Allround rand",
+      "weight": "273 g (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Voltage Lace",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/voltage-lace",
+    "description": "Lace-up version of the Voltage with a powerful downturn, slightly stiffer forefoot, asymmetric lacing and a large moulded toe patch for steep sport routes.",
+    "confidence": 0.92,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    },
+    "officialSpecs": {
+      "closure": "Lace",
+      "upper": "Suede leather / Microfiber 2.0mm",
+      "lining": "Microfiber 0.5mm, microfiber/suede leather footbed",
+      "midsole": "RC-TENSION",
+      "sole": "Vibram XS Grip 4.0mm front, RX-1 Allround 3.0mm heel, RX-1 Allround 2.0mm rand, RX-1 Allround 2.0mm moulded toe patch",
+      "weight": "267 g (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Voltage LV",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/voltage-lv",
+    "description": "Low-volume version of the Voltage for narrow feet, with a strong downturn, double VCR closure, RC-Tension midsole and Vibram XS Grip rubber.",
+    "confidence": 0.92,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "low",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    },
+    "officialSpecs": {
+      "closure": "Double VCR",
+      "upper": "Microfiber 2.0mm, polyester knit tongue",
+      "lining": "Microfiber 2.0mm / suede leather (toe box) footbed",
+      "midsole": "RC-TENSION",
+      "sole": "Vibram XS Grip 4.0mm front and heel, RX-1 Allround 2.0mm rand and toe patch",
+      "weight": "237 g (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Atomyc",
+    "officialUrl": "https://weighmyrack.com/shoe/red-chili-atomyc-2",
+    "description": "Aggressive, soft downturned shoe with a slipper-style entry, single Velcro strap, two-part sole and Vibram XS Grip rubber for bouldering and steep climbing. Discontinued.",
+    "confidence": 0.7,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "bouldering",
+      "stiffness": "soft",
+      "volume": "low",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    },
+    "officialSpecs": {
+      "closure": "Slipper with 1 Velcro closure",
+      "upper": "Low-stretch microfiber",
+      "lining": "Leather footbed",
+      "midsole": "Soft pre-tensioned midsole, two-part sole structure",
+      "sole": "Vibram XS Grip 4.5mm, slingshot rand"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Sausalito",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/sausalito",
+    "description": "Comfort-oriented all-round lace-up with a wide last for wide or problem feet, hemp footbed, RC-Support midsole and RX-1 Allround rubber.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Red Chili", "compound": "RX-1 Allround" }
+    },
+    "officialSpecs": {
+      "closure": "Lace",
+      "upper": "Suede leather forefoot, microfiber hindfoot",
+      "lining": "Microfiber, hemp footbed",
+      "midsole": "RC-SUPPORT",
+      "sole": "RX-1 Allround, 2.0mm rand",
+      "weight": "255 g (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Charger",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/charger",
+    "description": "Comfortable training shoe with a moderate downturn and pre-tensioning, neutral rand, double Velcro closure and a durable double-layer rubber forefoot.",
+    "confidence": 0.85,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Red Chili", "compound": "RX-1 Allround" }
+    },
+    "officialSpecs": {
+      "closure": "2 Velcro closures",
+      "upper": "Microfiber 2.0mm forefoot, suede leather 2.0mm hindfoot, mesh tongue",
+      "lining": "Suede 2.0mm",
+      "midsole": "RC-SUPPORT",
+      "sole": "RX-1 Allround, 2.0mm heel and rand, 2.0mm toe patch",
+      "weight": "260 g (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Corona",
+    "officialUrl": "https://weighmyrack.com/shoe/red-chili-corona-vcr",
+    "description": "All-round technical shoe with an asymmetric shape, flat toe box, double VCR straps, low-stretch microfiber upper and RX-2 rubber. Discontinued.",
+    "confidence": 0.7,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "trad",
+      "stiffness": "medium",
+      "volume": "high",
+      "rubber": { "brand": "Red Chili", "compound": "RX-2" }
+    },
+    "officialSpecs": {
+      "closure": "2 Velcro closures",
+      "upper": "Microfiber with rubber toe cap",
+      "lining": "Leather footbed, breathable neoprene tongue",
+      "midsole": "Leather",
+      "sole": "RX-2 4.2mm",
+      "weight": "215 g (UK 8)"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Fusion",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/fusion",
+    "description": "Versatile performance-oriented all-round shoe with a speed-lace closure system, neoprene tongue, RC-Support midsole and RX-1 Allround rubber.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "gym",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Red Chili", "compound": "RX-1 Allround" }
+    },
+    "officialSpecs": {
+      "closure": "Speed lace",
+      "upper": "Microfiber 2.0mm forefoot, suede leather 2.0mm hindfoot, neoprene 3.0mm tongue",
+      "lining": "Microfiber 0.5mm / 0.8mm, microfiber/suede leather footbed",
+      "midsole": "RC-SUPPORT",
+      "sole": "RX-1 Allround, 2.0mm rand",
+      "weight": "269 g (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Puzzle",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/puzzle",
+    "description": "Soft, flexible children's climbing shoe with a strong downturn, single VCR strap, one-piece microfiber upper and RX-2 Techgrip rubber.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "gym",
+      "stiffness": "soft",
+      "volume": "high",
+      "rubber": { "brand": "Red Chili", "compound": "RX-2 Techgrip" }
+    },
+    "officialSpecs": {
+      "closure": "Single VCR",
+      "upper": "Microfiber 2.0mm, recycled polyester knit tongue",
+      "midsole": "RX-PRECISION",
+      "sole": "RX-2 Techgrip 3.0mm front and heel, 2.0mm rand",
+      "weight": "140 g (UK 1.0)"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Spirit",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/spirit",
+    "description": "Comfortable shoe for beginners and advanced climbers with a triple VCR closure, padded 3D mesh tongue, hemp footbed and RX-2 Techgrip rubber.",
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "moderate",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Red Chili", "compound": "RX-2 Techgrip" }
+    },
+    "officialSpecs": {
+      "closure": "Triple VCR",
+      "upper": "Microfiber 2.0mm, padded 3D mesh tongue",
+      "lining": "Hemp footbed",
+      "midsole": "RC-SUPPORT",
+      "sole": "RX-2 Techgrip, 2.0mm rand",
+      "weight": "254 g (UK 7.5)"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Session",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/session-4",
+    "description": "Durable rental and training shoe with a suede leather upper, double VCR closure, hemp footbed and RX-1 Allround rubber. Current version is the Session 4.",
+    "confidence": 0.85,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "flat",
+      "climbingDiscipline": "gym",
+      "stiffness": "medium",
+      "volume": "high",
+      "rubber": { "brand": "Red Chili", "compound": "RX-1 Allround" }
+    },
+    "officialSpecs": {
+      "closure": "Double VCR",
+      "upper": "Suede leather 2.0mm, padded 3D mesh tongue",
+      "lining": "Hemp footbed",
+      "midsole": "RC-SUPPORT",
+      "sole": "RX-1 Allround, 4.0mm rand"
+    }
+  },
+  {
+    "brand": "Red Chili",
+    "name": "Mystix",
+    "officialUrl": "https://redchiliclimbing.com/gb-en/shop/climbing-shoes/mystix",
+    "description": "High-end shoe with a powerful downturn and pointed last, a crossed single-pull strap closure, CAD-developed RX-Flex midsole and Vibram XS Grip rubber.",
+    "confidence": 0.88,
+    "reviewStatus": "pending",
+    "metrics": {
+      "aggressiveness": "aggressive",
+      "climbingDiscipline": "sport",
+      "stiffness": "medium",
+      "volume": "medium",
+      "rubber": { "brand": "Vibram", "compound": "XS Grip" }
+    },
+    "officialSpecs": {
+      "closure": "Crossed single-pull strap",
+      "upper": "Microfiber, elastic mesh tongue",
+      "midsole": "RX-FLEX",
+      "sole": "Vibram XS Grip 4.0mm front, 3.5mm heel, RX-1 Allround 2.0mm rand, RX-1 Allround 2.0mm moulded toe patch",
+      "weight": "252 g (UK 7.5)"
+    }
+  }
+]

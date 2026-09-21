@@ -4,9 +4,16 @@
   "imagekitFolder": "gripkicks/imgs/shoes/rock_pillars/",
   "filenameToName": {},
   "shoes": [
-    { "name": "Ozone", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
-    { "name": "Vector", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] },
-    { "name": "Fusion", "aggressiveness": "aggressive", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman"] },
-    { "name": "Karma", "aggressiveness": "moderate", "stiffness": "medium", "climbingDiscipline": "sport", "volume": "medium", "footShapeCompat": ["egyptian", "roman", "greek"] }
+    {
+      "name": "Ozone",
+      "aggressiveness": "aggressive",
+      "stiffness": "medium",
+      "climbingDiscipline": "sport",
+      "volume": "medium",
+      "footShapeCompat": [
+        "egyptian",
+        "roman"
+      ]
+    }
   ]
 }
