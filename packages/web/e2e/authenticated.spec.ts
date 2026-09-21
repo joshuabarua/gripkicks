@@ -103,7 +103,7 @@ test.describe("authenticated staging critical paths", () => {
     });
 
     await login(page, userEmail!, userPassword!, "/footlab");
-    await expect(page.getByRole("heading", { level: 1, name: /Know your\s+foot/i })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /FOOT LAB/i })).toBeVisible();
 
     const profileResponse = await profileResponsePromise;
     expect(profileResponse.ok()).toBe(true);
@@ -140,7 +140,7 @@ test.describe("authenticated staging critical paths", () => {
           );
         });
         await page.goto("/footlab");
-        await expect(page.getByRole("heading", { level: 1, name: /Know your\s+foot/i })).toBeVisible();
+        await expect(page.getByRole("heading", { level: 1, name: /FOOT LAB/i })).toBeVisible();
         const restoreProfileResponse = await restoreProfileResponsePromise;
         expect(restoreProfileResponse.ok()).toBe(true);
         await expect(footShapeButton(page, nextShape)).toHaveClass(/border-brand-red/);
