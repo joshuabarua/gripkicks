@@ -14,7 +14,7 @@ const Scene = () => {
       gl: {
         preserveDrawingBuffer: false,
       },
-      dpr: [1, 1.5] as [number, number],
+      dpr: 1,
     }),
     [],
   );
