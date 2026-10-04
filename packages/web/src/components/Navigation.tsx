@@ -133,7 +133,7 @@ const Navigation: React.FC = () => {
   return (
     <motion.nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 px-6 py-2 bg-black/90 backdrop-blur-md h-12 flex items-center justify-between"
+      className="fixed top-0 left-0 right-0 z-50 px-6 py-2 border-b border-white/20 bg-brand-base/95 backdrop-blur-md h-12 flex items-center justify-between"
       initial={{ y: 0 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
@@ -168,7 +168,7 @@ const Navigation: React.FC = () => {
                   initial="closed"
                   exit="closed"
                 >
-                  <div className="flex h-full flex-col p-4 pt-16">
+                  <div className="flex h-full flex-col p-4 pt-14">
                     {session?.user && (
                       <motion.div
                         custom={-1}

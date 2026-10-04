@@ -360,7 +360,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="pt-16 text-center"
+            className="pt-14 text-center"
           >
             <div className="w-full h-px bg-white/[0.06] mb-16" />
 

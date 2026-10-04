@@ -19,7 +19,7 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-black border-t border-white/[0.06] relative">
+    <footer className="bg-brand-surface border-t border-white/20 relative">
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
           <div className="md:col-span-2">
@@ -31,13 +31,13 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="font-sora text-[9px] uppercase tracking-[0.35em] text-brand-putty/30 mb-4">Product</p>
+            <p className="font-sora text-[11px] uppercase tracking-[0.35em] text-brand-putty/90 mb-4">Product</p>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="font-sora text-sm text-brand-putty/50 hover:text-brand-red transition-colors duration-500"
+                    className="font-sora text-sm text-brand-putty/90 hover:text-brand-chalk transition-colors duration-500"
                   >
                     {link.title}
                   </Link>
@@ -47,13 +47,13 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="font-sora text-[9px] uppercase tracking-[0.35em] text-brand-putty/30 mb-4">Company</p>
+            <p className="font-sora text-[11px] uppercase tracking-[0.35em] text-brand-putty/90 mb-4">Company</p>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="font-sora text-sm text-brand-putty/50 hover:text-brand-red transition-colors duration-500"
+                    className="font-sora text-sm text-brand-putty/90 hover:text-brand-chalk transition-colors duration-500"
                   >
                     {link.title}
                   </Link>
@@ -63,20 +63,20 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-white/[0.06] flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="font-sora text-xs text-brand-putty/25">
+        <div className="mt-16 pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="font-sora text-xs text-brand-putty/85">
             &copy; {new Date().getFullYear()} GripKicks
           </p>
           <div className="flex items-center gap-6">
             <Link
               href="/privacy"
-              className="font-sora text-xs text-brand-putty/25 hover:text-brand-red transition-colors duration-500"
+              className="font-sora text-xs text-brand-putty/85 hover:text-brand-chalk transition-colors duration-500"
             >
               Privacy
             </Link>
             <Link
               href="/about"
-              className="font-sora text-xs text-brand-putty/25 hover:text-brand-red transition-colors duration-500"
+              className="font-sora text-xs text-brand-putty/85 hover:text-brand-chalk transition-colors duration-500"
             >
               About
             </Link>

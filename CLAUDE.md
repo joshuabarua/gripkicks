@@ -23,3 +23,11 @@ The UI leverages an orientation-based fluid responsive design system, avoiding r
 2. **No Accent-Colored Text**: The orange/red accent (`brand-red`) is for shapes, borders, buttons only. Never use it on body text, headings, or marketing copy.
 3. **Minimal Copy**: Strip all "weird ass fluff" — mission statements, value propositions, founder stories, FAQ sections. Keep only functional UI labels.
 4. **Editorial Test Themes**: Homepage variations follow editorial hybrid aesthetic (japanese, retro, gorp) with grain overlays, halftone patterns, serif italic typography hierarchy.
+
+## Verification and Image Maintenance
+
+- Use Yarn 4. Run `yarn lint` and `yarn test:run` for normal verification. On resource-constrained machines, run `yarn workspace web test:run --maxWorkers=1`, `yarn test:convex --maxWorkers=1`, and `yarn test:shoe-images` separately. Avoid running parallel test workers alongside background removal.
+- For local browser checks, set `E2E_CHANNEL=chrome` to use installed Chrome when the bundled Playwright Chromium browser is unavailable.
+- Background removal uses Python 3.11 with `scripts/shoe-image-requirements.txt`. Create the virtual environment under the ignored `temp/` directory. Run `scripts/prepare-shoe-images.py` after selecting exact-model source images in `data/shoe-image-selections.json`.
+- Review the generated checkerboard contact sheets before `yarn backfill:shoe-images approve --reviewed`. Uploads preserve existing ImageKit files, verify the original PNG bytes, and use each catalog's ImageKit folder.
+- Run `yarn backfill:shoe-images plan` before `apply`. Fill missing database images only. Verify development before using `--prod`; production requires `CONVEX_PROD_URL`. Existing-image snapshots and downloads stay under `temp/shoe-images/`.

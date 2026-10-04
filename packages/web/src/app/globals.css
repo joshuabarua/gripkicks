@@ -122,8 +122,8 @@ body {
 		--accent-foreground: 0 0% 100%;
 		--destructive: 0 90% 63%;
 		--destructive-foreground: 0 0% 100%;
-		--border: 0 0% 100% / 0.06;
-		--input: 0 0% 100% / 0.06;
+		--border: 0 0% 100% / 0.16;
+		--input: 0 0% 100% / 0.2;
 		--ring: 0 90% 63%;
 		--chart-1: 0 90% 63%;
 		--chart-2: 210 35% 55%;
@@ -149,7 +149,7 @@ body {
 		--brand-soft-surface: rgb(var(--brand-charcoal-rgb));
 		--brand-text-primary: rgb(var(--brand-chalk-rgb));
 		--brand-text-secondary: rgb(var(--brand-putty-rgb));
-		--brand-border: rgb(var(--brand-border-rgb) / 0.06);
+		--brand-border: rgb(var(--brand-border-rgb) / 0.16);
 		--brand-red: rgb(var(--brand-red-rgb));
 		--brand-accent-orange: var(--brand-red);
 		--brand-accent-blue: rgb(var(--brand-blue-rgb));
@@ -176,8 +176,8 @@ body {
 		--accent-foreground: 0 0% 100%;
 		--destructive: 0 90% 63%;
 		--destructive-foreground: 0 0% 100%;
-		--border: 0 0% 100% / 0.06;
-		--input: 0 0% 100% / 0.06;
+		--border: 0 0% 100% / 0.16;
+		--input: 0 0% 100% / 0.2;
 		--ring: 0 90% 63%;
 		--chart-1: 0 90% 63%;
 		--chart-2: 210 35% 55%;
@@ -549,11 +549,11 @@ a {
 }
 
 .monolith-border {
-	border: 1px solid rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.16);
 	transition: border-color 0.5s ease;
 }
 .monolith-border:hover {
-	border-color: rgba(244, 91, 91, 0.2);
+	border-color: rgb(var(--brand-red-rgb) / 0.6);
 }
 
 @keyframes redline-in {
@@ -581,7 +581,7 @@ a {
 }
 
 *:focus-visible {
-	outline: 1px solid rgba(244, 91, 91, 0.5);
+	outline: 2px solid var(--brand-red);
 	outline-offset: 2px;
 }
 

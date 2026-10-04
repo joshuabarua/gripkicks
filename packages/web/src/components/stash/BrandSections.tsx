@@ -5,6 +5,7 @@ import type { UserShoe } from "@/types/api";
 import type { SpecialLabelType } from "@/utils/specialLabels";
 import type { ShoeVariantGroup } from "@/utils/shoeVariants";
 import { BrandLogo } from "@/components/stash/BrandLogo";
+import { getBrandDescription } from "@/utils/sanctuaryDescriptions";
 
 interface BrandGroup {
   brand: string;
@@ -28,18 +29,25 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: brandIndex * 0.15 }}
         >
-          <div className="flex items-center gap-fluid-sm mb-fluid-lg">
-            <h2><BrandLogo brand={brand} /></h2>
-            <div className="flex-1 h-px bg-neutral-800" />
-            <span className="font-sora text-[10px] text-neutral-600 tracking-wider">{models.length} {models.length === 1 ? "MODEL" : "MODELS"}</span>
+          <div className="mb-fluid-lg space-y-3">
+            <div className="flex items-center gap-fluid-md">
+              <h2 aria-label={brand}><BrandLogo brand={brand} /></h2>
+              <div className="flex-1 h-px bg-white/20" />
+              <span className="font-sora text-xs text-brand-putty tracking-wider">{models.length} {models.length === 1 ? "MODEL" : "MODELS"}</span>
+            </div>
+            {getBrandDescription(brand) && (
+              <p className="max-w-2xl font-sora text-sm leading-relaxed text-brand-putty">
+                {getBrandDescription(brand)}
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-fluid-lg">
             {models.map((model, modelIndex) => (
-              <div key={model.groupKey} className="flex flex-wrap gap-fluid-md">
+              <div key={model.groupKey} className="min-w-0 flex flex-col gap-fluid-md">
                 {model.variants.map(({ item: shoe, variantLabel }, variantIndex) => (
-                  <div key={shoe._id} className="space-y-2">
+                  <div key={shoe._id} className="w-full min-w-0 space-y-2">
                     {model.variants.length > 1 && (
-                      <p className="pl-1 font-sora text-[10px] uppercase tracking-wider text-neutral-500">
+                      <p className="pl-1 font-sora text-[10px] uppercase tracking-wider text-brand-putty">
                         {variantLabel || "Standard"}
                       </p>
                     )}
@@ -69,6 +77,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
   const prevLabelsKeys = Object.keys(prevProps.specialLabels);
   const nextLabelsKeys = Object.keys(nextProps.specialLabels);
   if (prevLabelsKeys.length !== nextLabelsKeys.length) return false;
+  if (prevLabelsKeys.some((key) => prevProps.specialLabels[key]?.type !== nextProps.specialLabels[key]?.type)) return false;
 
   // Check if any group structure changed
   for (let i = 0; i < prevProps.groups.length; i++) {
@@ -87,9 +96,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
       if (prevModel.groupKey !== nextModel.groupKey) return false;
       if (prevModel.variants.length !== nextModel.variants.length) return false;
 
-      const prevVariantIds = prevModel.variants.map((v) => v.item._id).sort().join(",");
-      const nextVariantIds = nextModel.variants.map((v) => v.item._id).sort().join(",");
-      if (prevVariantIds !== nextVariantIds) return false;
+      if (nextModel.variants.some((variant, index) => variant.item !== prevModel.variants[index]?.item || variant.variantLabel !== prevModel.variants[index]?.variantLabel)) return false;
     }
   }
 

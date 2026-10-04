@@ -280,24 +280,5 @@
       "sole": "Boreal Zenith Pro, 4-4.5 mm depending on size",
       "weight": "470 g per pair (UK 6)"
     }
-  },
-  {
-    "brand": "Boreal",
-    "name": "Zen",
-    "officialUrl": "https://www.outdoorreview.com/product/product-archives/outdoor-equipment/climbing-mountaineering/rock-shoes/boreal-usa/zen.html",
-    "description": "Discontinued velcro shoe with slipper-like fit, leather upper and cotton lining, used for indoor and sport climbing in the early 2000s.",
-    "confidence": 0.55,
-    "reviewStatus": "pending",
-    "metrics": {
-      "aggressiveness": "moderate",
-      "climbingDiscipline": "sport",
-      "stiffness": "medium",
-      "volume": "high"
-    },
-    "officialSpecs": {
-      "closure": "Hook-and-loop straps over cushioned tongue",
-      "upper": "Leather",
-      "lining": "Cotton"
-    }
   }
 ]

@@ -68,7 +68,7 @@ const config: Config = {
 					green: 'rgb(var(--brand-green-rgb) / <alpha-value>)',
 					text: 'rgb(var(--brand-chalk-rgb) / <alpha-value>)',
 					'text-secondary': 'rgb(var(--brand-putty-rgb) / <alpha-value>)',
-					border: 'rgb(var(--brand-border-rgb) / 0.06)',
+					border: 'rgb(var(--brand-border-rgb) / 0.16)',
 					chalk: 'rgb(var(--brand-chalk-rgb) / <alpha-value>)',
 					putty: 'rgb(var(--brand-putty-rgb) / <alpha-value>)',
 					charcoal: 'rgb(var(--brand-charcoal-rgb) / <alpha-value>)',

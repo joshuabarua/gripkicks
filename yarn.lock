@@ -11701,6 +11701,7 @@ __metadata:
     hono: "npm:^4.8.0"
     postcss: "npm:^8.5.1"
     prettier: "npm:^3.4.2"
+    sharp: "npm:0.34.5"
     tailwindcss: "npm:^3.4.17"
     typescript: "npm:@typescript/typescript6@^6.0.2"
     vitest: "npm:4.0.18"
@@ -16822,7 +16823,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sharp@npm:^0.34.5":
+"sharp@npm:0.34.5, sharp@npm:^0.34.5":
   version: 0.34.5
   resolution: "sharp@npm:0.34.5"
   dependencies:

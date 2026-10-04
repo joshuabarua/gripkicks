@@ -7,6 +7,7 @@ import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo } from "@/components/stash/BrandLogo";
 import type { UserShoe } from "@/types/api";
 import { getShoeProfileCompletion } from "@/utils/shoeProfile";
+import { getShoeDescription } from "@/utils/sanctuaryDescriptions";
 
 interface CloudShoeProps {
   shoe: UserShoe;
@@ -77,8 +78,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
       whileHover={{ y: -3 }}
       whileTap={{ scale: 0.99 }}
     >
-      <article className="relative overflow-hidden rounded-xl border border-white/[0.09] bg-neutral-950/90 transition-colors duration-300 group-hover:border-white/20 group-focus-visible:border-brand-red">
-        <div className="flex min-h-11 items-center justify-between border-b border-white/[0.07] px-4 py-2.5">
+      <article className="relative overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-colors duration-300 group-hover:border-white/50 group-focus-visible:border-brand-red">
+        <div className="flex min-h-11 items-center justify-between border-b border-white/20 px-4 py-2.5">
           <BrandLogo brand={brand} size="sm" className="max-w-[70%]" />
           <div className="flex items-center gap-1.5">
             {specialLabel && (
@@ -94,8 +95,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
           </div>
         </div>
 
-        <div className="relative flex aspect-[4/3] items-center justify-center border-b border-white/[0.07] bg-black/35 p-4">
-          <div className="absolute left-3 top-3 rounded-sm border border-white/[0.09] bg-black/65 px-2 py-1 font-sora text-[9px] uppercase tracking-[0.14em] text-brand-putty/55">
+        <div className="relative flex aspect-[4/3] items-center justify-center border-b border-white/20 bg-brand-soft-surface p-4">
+          <div className="absolute left-3 top-3 rounded-sm border border-white/[0.09] bg-black/65 px-2 py-1 font-sora text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
             {gender ?? 'unisex'}
           </div>
           {isInView && (
@@ -123,28 +124,33 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
             <h3 className="truncate font-sora text-base font-semibold text-brand-chalk transition-colors group-hover:text-white">
               {name}
             </h3>
-            <p className="mt-1 truncate font-sora text-[10px] uppercase tracking-[0.14em] text-brand-putty/35">
-              {details?.variantLabel || details?.modelName || 'Standard'}
+            {details?.variantLabel && (
+              <p className="mt-1 font-sora text-[11px] uppercase tracking-[0.14em] text-brand-putty/80">
+                {details.variantLabel}
+              </p>
+            )}
+            <p className="mt-2 font-sora text-xs leading-relaxed text-brand-putty">
+              {getShoeDescription(details)}
             </p>
           </div>
 
-          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-white/[0.07] bg-white/[0.07]">
-            <div className="bg-neutral-950 px-3 py-2.5">
-              <dt className="font-sora text-[9px] uppercase tracking-[0.13em] text-brand-putty/35">Size</dt>
+          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-white/20 bg-white/20">
+            <div className="bg-brand-base px-3 py-2.5">
+              <dt className="font-sora text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Size</dt>
               <dd className="mt-1 truncate font-sora text-xs font-medium text-brand-chalk">{shoe.size || 'Not set'}</dd>
             </div>
-            <div className="bg-neutral-950 px-3 py-2.5">
-              <dt className="font-sora text-[9px] uppercase tracking-[0.13em] text-brand-putty/35">Condition</dt>
+            <div className="bg-brand-base px-3 py-2.5">
+              <dt className="font-sora text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Condition</dt>
               <dd className="mt-1 truncate font-sora text-xs font-medium text-brand-chalk">{formatCondition(shoe.condition)}</dd>
             </div>
           </dl>
 
           <div>
-            <p className="mb-2 font-sora text-[9px] uppercase tracking-[0.16em] text-brand-putty/35">Your ratings</p>
+            <p className="mb-2 font-sora text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Your ratings</p>
             <div className="grid grid-cols-3 gap-2">
               {ratingItems.map(([label, value]) => (
-                <div key={label} className="rounded-md border border-white/[0.07] bg-white/[0.025] px-2 py-2 text-center">
-                  <span className="block font-sora text-[9px] tracking-[0.12em] text-brand-putty/35">{label}</span>
+                <div key={label} className="rounded-md border border-white/20 bg-white/[0.025] px-2 py-2 text-center">
+                  <span className="block font-sora text-[11px] tracking-[0.12em] text-brand-putty/85">{label}</span>
                   <strong className="mt-0.5 block font-ball-pill text-lg font-normal text-brand-chalk">{value ?? '—'}</strong>
                 </div>
               ))}
@@ -161,7 +167,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
             }}
             className={`flex min-h-11 w-full items-center justify-between rounded-md border px-3 py-2 text-left transition-colors ${
               isComplete
-                ? 'border-white/[0.07] bg-white/[0.025] hover:bg-white/[0.05]'
+                ? 'border-white/20 bg-white/[0.025] hover:bg-white/[0.05]'
                 : 'border-brand-red/35 bg-brand-red/[0.08] hover:bg-brand-red/[0.14]'
             }`}
           >
@@ -173,12 +179,12 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
                 <span className="block truncate font-sora text-[11px] font-medium text-brand-chalk">
                   {isComplete ? 'Profile complete' : 'Add your fit'}
                 </span>
-                <span className="block truncate font-sora text-[9px] text-brand-putty/40">
+                <span className="block truncate font-sora text-[11px] text-brand-putty/85">
                   {completed} of {total} details added
                 </span>
               </span>
             </span>
-            <span className="ml-2 font-sora text-[10px] text-brand-putty/35">Edit</span>
+            <span className="ml-2 font-sora text-[10px] text-brand-putty/85">Edit</span>
           </button>
         </div>
       </article>
