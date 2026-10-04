@@ -113,5 +113,790 @@
     },
     "confidence": 0.97,
     "reviewStatus": "pending"
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Vapor S",
+    "officialUrl": "https://us.scarpa.com/products/vapor-s-men-s",
+    "description": "A slipper built for precise edging on sport and bouldering terrain, pairing a microfiber upper with a Talyn midsole and full Vibram XS Grip2 outsole.",
+    "officialSpecs": {
+      "closure": "Slip-on",
+      "upper": "Microfiber",
+      "midsole": "Talyn",
+      "sole": "Vibram® XS Grip2 (3.5 mm)",
+      "weight": "235g; 8.3oz (1/2 pair size 40.5)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Vapor S Women's",
+    "officialUrl": "https://us.scarpa.com/products/vapor-s-women-s",
+    "description": "Low-volume women's slipper for precise edging, with a microfiber upper, Talyn midsole and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Slip-on",
+      "upper": "Microfiber",
+      "midsole": "Talyn",
+      "sole": "Vibram® XS Grip2 (3.5 mm)",
+      "weight": "200g; 7.1oz (1/2 pair size 38)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Instinct S",
+    "officialUrl": "https://us.scarpa.com/products/instinct-s",
+    "description": "Soft, flexible slipper for steep bouldering and sport, with a microfiber and Alcantara upper and Vibram XS Grip2 outsole.",
+    "officialSpecs": {
+      "closure": "Slip-on",
+      "upper": "Microfiber with Alcantara",
+      "midsole": "Flexan Dynamic",
+      "sole": "Vibram® XS Grip2 (3.5 mm)",
+      "weight": "240g; 8.5oz (1/2 pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Boostic R",
+    "officialUrl": "https://us.scarpa.com/products/boostic-r",
+    "description": "High-tension edging shoe for steep sport, with a microsuede and eco-leather upper, thin Flexan midsole and Vibram XS Edge rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede + Eco Leather",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram® XS Edge (4mm)",
+      "weight": "245g; 8.6oz (1/2 pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Reflex VS",
+    "officialUrl": "https://us.scarpa.com/products/reflex-vs-men-s",
+    "description": "Entry-level dual-strap shoe with a suede and knit upper, flat profile and durable Scarpa Vision rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Metal Free Suede 2.0mm + Knit Fabric",
+      "sole": "Vision (4.0mm)",
+      "weight": "210g; 7.4oz (1/2 pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "Vision"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Reflex VS Women's",
+    "officialUrl": "https://us.scarpa.com/products/reflex-vs-women-s",
+    "description": "Women's entry-level dual-strap shoe with a suede and knit upper, flat profile and durable Scarpa Vision rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Metal Free Suede 2.0mm + Knit Fabric",
+      "sole": "Vision (4.0mm)",
+      "weight": "185g; 7.5oz (1/2 pair size 38)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "Vision"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Veloce Women's",
+    "officialUrl": "https://us.scarpa.com/products/veloce-women-s",
+    "description": "Comfortable women's gym shoe with a roomier toe box, microsuede upper and soft S-72 rubber for indoor sessions.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede",
+      "midsole": "Flexan 1.0",
+      "sole": "S-72 4mm",
+      "weight": "165g; 5.8oz (1/2 pair size 38)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "S-72"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Origin",
+    "officialUrl": "https://us.scarpa.com/products/origin-men-s",
+    "description": "Flat, comfortable shoe for newer climbers with a suede upper, 3/4-length nylon midsole and durable Vision rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "1.8mm Suede",
+      "midsole": "Nylon 1.4mm 3/4 length",
+      "sole": "Vision® (5mm)",
+      "weight": "215g; 7.6oz (1/2 pair size 40)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "Vision"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Origin Women's",
+    "officialUrl": "https://us.scarpa.com/products/origin-women-s",
+    "description": "Women's flat, comfortable shoe for newer climbers with a suede upper and durable Vision rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "1.8mm Suede",
+      "midsole": "Nylon 1.4mm 3/4 length",
+      "sole": "Vision® (5mm)",
+      "weight": "200g; 7.1oz (1/2 pair size 38)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "Vision"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Origin Orange",
+    "officialUrl": "https://us.scarpa.com/products/origin-men-s",
+    "description": "Flat, comfortable shoe for newer climbers with a suede upper, 3/4-length nylon midsole and durable Vision rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "1.8mm Suede",
+      "midsole": "Nylon 1.4mm 3/4 length",
+      "sole": "Vision® (5mm)",
+      "weight": "215g; 7.6oz (1/2 pair size 40)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "Vision"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Origin VS",
+    "officialUrl": "https://us.scarpa.com/products/origin-vs",
+    "description": "Velcro version of the Origin, pairing a breathable microsuede upper with a flat profile and durable S-72 rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede",
+      "sole": "S-72 (4mm)",
+      "weight": "230g; 8.1oz (1/2 pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "S-72"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Origin VS Turquoise Women's",
+    "officialUrl": "https://us.scarpa.com/products/origin-vs",
+    "description": "Velcro shoe for newer climbers, with a breathable microsuede upper, flat profile and durable S-72 rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede",
+      "sole": "S-72 (4mm)",
+      "weight": "230g; 8.1oz (1/2 pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "S-72"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Instinct VS Women's",
+    "officialUrl": "https://us.scarpa.com/products/instinct-vs-women-s",
+    "description": "Women's performance velcro shoe with a microsuede and leather upper, thin Flexan midsole and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede + Leather",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram® XS Grip2 (3.5 mm)",
+      "weight": "200g; 7.1oz (1/2 pair size 40)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Instinct VSR LV Women's",
+    "officialUrl": "https://us.scarpa.com/products/instinct-vsr-lv",
+    "description": "Low-volume soft shoe for steep bouldering, with a microsuede upper, minimal midsole and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram® XS Grip2 (3.5 mm)",
+      "weight": "230g; 8.1oz (1/2 pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Instinct VS Lace",
+    "officialUrl": "https://us.scarpa.com/products/instinct",
+    "description": "Lace-up Instinct for precise edging, with a microsuede and leather upper, Flexan midsole and Vibram XS Edge rubber.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Microsuede + Leather / Heat Welded Reinforcements",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram® XS Edge (4mm)",
+      "weight": "221g; 7.8oz (1/2 pair size 40)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Generator Mid Lace",
+    "officialUrl": "https://us.scarpa.com/products/generator-mid",
+    "description": "Mid-top trad shoe with a 2 mm eco-suede upper, supportive Dynamic Flexan midsole and Vibram XS Edge rubber for cracks and long routes.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "2mm Eco Suede",
+      "midsole": "Dynamic Flexan",
+      "sole": "Vibram® XS Edge (4mm)",
+      "weight": "310g; 10.9oz (1/2 size 40.5)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Drago Kids",
+    "officialUrl": "https://us.scarpa.com/products/drago-kid",
+    "description": "Soft, sensitive kids' shoe with a microfiber upper and Vibram XS Grip2 rubber on a downturned last.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microfiber",
+      "midsole": "Flexan",
+      "sole": "Vibram® XS Grip2 (3.5 mm)",
+      "weight": "110g (1/2 pair size 31)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Furia Air LS",
+    "officialUrl": "https://us.scarpa.com/products/furia-air",
+    "description": "Ultralight lace-up with a thin microsuede upper and Vibram XS Grip2 rubber for maximum sensitivity on steep terrain.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Microsuede",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram® XS Grip2 (3.0mm)",
+      "weight": "160g; 5.6oz (½ pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Drago XT",
+    "officialUrl": "https://us.scarpa.com/products/drago-xt",
+    "description": "Aggressive soft shoe for precise toe work, with a microsuede upper, minimal midsole and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram® XS Grip2 (3.5 mm)",
+      "weight": "200g; 7.1oz (1/2 pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Drago XT LV Women's",
+    "officialUrl": "https://us.scarpa.com/products/drago-xt",
+    "description": "Low-volume version of the Drago XT, a soft downturned shoe for precise toe work on steep boulders and sport routes.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram® XS Grip2 (3.5 mm)",
+      "weight": "200g; 7.1oz (1/2 pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Arpia V",
+    "officialUrl": "https://us.scarpa.com/products/arpia-v",
+    "description": "Versatile velcro shoe for progressing climbers, with a microsuede upper, slight downturn and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede",
+      "sole": "Vibram® XS Grip2 (3.5 mm)",
+      "weight": "244g; 8.6oz (1/2 pair size 40.5)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Vapor Lace",
+    "officialUrl": "https://us.scarpa.com/products/vapor-men-s",
+    "description": "Technical lace-up for trad and sport, with a microfiber upper, Flexan Dynamic midsole and Vibram XS Edge rubber.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Microfiber + Leather footbed + Soft Touch",
+      "midsole": "Flexan Dynamic 1.4mm",
+      "sole": "Vibram® XS Edge (3.5mm)",
+      "weight": "230g; 8.1oz (1/2 pair size 40)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Vapor Lace Women's",
+    "officialUrl": "https://us.scarpa.com/products/vapor-women-s",
+    "description": "Women's technical lace-up for trad and sport, with a microfiber upper, Flexan Dynamic midsole and Vibram XS Edge rubber.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Microfiber + Leather footbed + Soft Touch",
+      "midsole": "Flexan Dynamic 1.4mm",
+      "sole": "Vibram® XS Edge (3.5mm)",
+      "weight": "200g; 7.1oz (1/2 pair size 38)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Vapour LV Women's",
+    "officialUrl": "https://us.scarpa.com/products/vapor-v-lv",
+    "description": "Low-volume women's velcro shoe for sport and bouldering, with a microsuede upper and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede + Fabric",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram® XS Grip2 (3.5mm)",
+      "weight": "200g; 7.1oz (1/2 pair size 38)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Vapour V Turquoise Women's",
+    "officialUrl": "https://us.scarpa.com/products/vapor-v",
+    "description": "Women's velcro all-rounder for sport and bouldering, with a microsuede and fabric upper and Vibram XS Edge rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede + Fabric",
+      "midsole": "Flexan 1.0",
+      "sole": "Vibram® XS Grip Edge (3.5mm)",
+      "weight": "240g; 8.5oz (1/2 pair size 41)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Reflex V",
+    "officialUrl": "https://ca.scarpa.com/products/reflex-v-men-s",
+    "description": "Breathable knit velcro shoe for entry-level climbing, with a flat profile and durable Vision rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Zonal Stretch Knit Fabric",
+      "midsole": "Nylon 1.4mm 3/4 length",
+      "sole": "Vision® (5mm)",
+      "weight": "210g; 7.4oz (1/2 pair size 40)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "Vision"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Reflex Kids",
+    "officialUrl": "https://ca.scarpa.com/products/reflex-kid",
+    "description": "Comfortable kids' shoe with a stretch-knit upper, flat last and durable Vision rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Zonal Stretch Knit",
+      "midsole": "Nylon 1.4mm Length",
+      "sole": "SCARPA Vision Rubber (4mm)",
+      "weight": "130g; 4.6oz (1/2 pair size 31)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "Vision"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Generator",
+    "officialUrl": "https://ca.scarpa.com/products/generator-v-men-s",
+    "description": "Low-cut trad shoe with a 2 mm eco-suede upper, supportive midsole and Vibram XS Edge rubber for edging and cracks.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "2mm Eco Suede",
+      "midsole": "Dynamic Flexan",
+      "sole": "Vibram® XS Edge (4mm)",
+      "weight": "308g; 10.9oz (1/2 pair size 40.5)"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Quantix SF Women's",
+    "officialUrl": "https://ca.scarpa.com/products/quantix-sf-women-s",
+    "description": "Women's all-around performance shoe with SF tension randing, microfiber upper and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microfiber + Soft Touch + Alcantara",
+      "midsole": "Flexan Dynamic 1.4mm",
+      "weight": "220g; 7.8oz (_ pair size 38)",
+      "sole": "Vibram XS Grip2"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Veloce Lace",
+    "officialUrl": "https://scarpa.com/products/veloce-l-indoor-climbing-shoe-for-extended-use-70079-001-1",
+    "description": "Vegan-friendly lace-up for long indoor sessions, with a seamless microfiber toe area and 4 mm S-72 half sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Made of microfiber with a seamless construction in the toe area to ensure optimal comfort. The wide toe box reduces pressure on the toes, ensuring prolonged comfort.",
+      "sole": "Half sole 4 mm thick in S72, a soft, high-traction rubber adaptable to any surface."
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "S-72"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Veloce Lace Women's",
+    "officialUrl": "https://scarpa.com/products/veloce-l-woman-indoor-climbing-shoe-for-extended-use-70079-002-1",
+    "description": "Women's vegan-friendly lace-up for long indoor sessions, with a seamless microfiber upper and 4 mm S-72 half sole.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Made of microfiber with a seamless construction in the toe area to ensure optimal comfort. The wide toe box reduces pressure on the toes, ensuring prolonged comfort.",
+      "sole": "Half sole 4 mm thick in S72, a soft, high-traction rubber adaptable to any surface."
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "S-72"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Boostic",
+    "officialUrl": "https://scarpa.com/products/boostic-for-precise-edging-on-micro-holds-70071-000-2",
+    "description": "Precise edging shoe for micro footholds, with a multi-panel microfiber upper and full-length Vibram XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Multi-panel microfiber upper with an Alcantara insert wrapping the big toe for superior comfort. Elastic gusset facilitates foot entry, while dual Velcro straps ensure a secure fit, providing stability during use.",
+      "midsole": "Minimal 1 mm Flexan insert designed to optimize sensitivity.",
+      "sole": "Vibram® XS EDGE, full-length with a thickness of 3,5 mm, provides support across the entire arch, ensuring stability and high performance even on small edges."
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Mago",
+    "officialUrl": "https://scarpa.com/products/mago-the-power-of-focus-70077-000-1",
+    "description": "High-precision shoe for micro footholds, with perforated microfiber panels, TPS forefoot insert and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Made up of perforated elastic microfiber panels reinforced by a triple-layer microfiber frame. Combined with the lacing system, it ensures an optimal fit and effective wrapping, featuring a smooth inner surface in contact with the skin. The toe panel includes an extra-large microfiber insert extending under the footbed.",
+      "midsole": "The pre-shaped TPS insert provides a concave profile and good sensitivity on the big toe. The heel is reinforced with a Flexan strip to ensure tension and stability.",
+      "sole": "Vibram® XS GRIP 2 spread over 1/3 of the length, with a thickness of 3,5 mm to ensure maximum flexibility."
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Booster",
+    "officialUrl": "https://scarpa.com/products/booster-precise-climbing-shoe-70060-000-1",
+    "description": "Soft, precise slipper-style shoe with a multi-panel microfiber upper, minimal Flexan insert and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Slip-on",
+      "upper": "Constructed entirely from microfiber, composed of multiple shaped panels to ensure a precise and comfortable fit. The dual Velcro strap closure system facilitates easy entry and secures the foot, providing stability to the arch.",
+      "midsole": "A minimal Flexan insert designed to optimize sensitivity, with support strips extending along the entire length of the foot.",
+      "sole": "Vibram® XS GRIP 2 spread over 1/3 of the length, with a thickness of 3,5 mm to ensure maximum flexibility."
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Pikij Kids",
+    "officialUrl": "https://scarpa.com/products/piki-y-foot-friendly-kid-climbing-shoe-70045-003-1",
+    "description": "Foot-friendly kids' shoe with a microfiber and Lycra upper, wide velcro strap and full-length Vision rubber sole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Made of microfiber and Lycra, with a suede leather panel supporting the foot. The wide Velcro closure ensures quick and secure adjustment. An EVA insert positioned under the heel enhances impact absorption, contributing to the overall comfort of the shoe.",
+      "midsole": "The front lacks a midsole, relying instead on 4 mm of rubber and an EVA insert that together provide sufficient support for a lightweight user.",
+      "sole": "Full-length Vision rubber, 4 mm thick, designed to provide grip and durability."
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Scarpa",
+        "compound": "Vision"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Quantic",
+    "officialUrl": "https://www.scarpa.com.se/p/scarpa-quantic-herr/",
+    "description": "Versatile velcro shoe for gym, sport and multipitch, with a microsuede upper, HT-Tension rand and full-length Vibram XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede",
+      "midsole": "HT-Tension; insole Flexan",
+      "sole": "Vibram XS Edge (3.5 mm)",
+      "weight": "190 g (1/2 pair size 40.5)"
+    },
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Quantic Women's",
+    "officialUrl": "https://www.scarpa.com.se/p/scarpa-quantic-dam/",
+    "description": "Women's versatile velcro shoe for gym, sport and multipitch, with a lower-volume fit, HT-Tension rand and Vibram XS Edge sole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Microsuede",
+      "midsole": "HT-Tension; insole Flexan",
+      "sole": "Vibram XS Edge (3.5 mm)",
+      "weight": "180 g (1/2 pair size 38)"
+    },
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
+  },
+  {
+    "brand": "Scarpa",
+    "name": "Maestro Women's",
+    "officialUrl": "https://ca.scarpa.com/products/maestro-eco-wmn",
+    "description": "Low-cut women's trad shoe with a 2 mm eco-leather upper, supportive Flexan Dynamic midsole and Vibram XS Edge rubber for technical face climbing.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "2.0mm Eco Leather",
+      "midsole": "Flexan Dynamic 1.4mm",
+      "sole": "Vibram® XS Edge (4mm)",
+      "weight": "227g; 8.0oz (1/2 pair size 38)"
+    },
+    "confidence": 0.9,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Edge"
+      }
+    }
   }
 ]

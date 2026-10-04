@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { memo, useEffect, useRef, useState } from 'react';
 import { Check, Pencil, Star } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
+import { BrandLogo } from "@/components/stash/BrandLogo";
 import type { UserShoe } from "@/types/api";
 import { getShoeProfileCompletion } from "@/utils/shoeProfile";
 
@@ -78,9 +79,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
     >
       <article className="relative overflow-hidden rounded-xl border border-white/[0.09] bg-neutral-950/90 transition-colors duration-300 group-hover:border-white/20 group-focus-visible:border-brand-red">
         <div className="flex min-h-11 items-center justify-between border-b border-white/[0.07] px-4 py-2.5">
-          <span className="max-w-[70%] truncate font-sora text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-putty/55">
-            {brand}
-          </span>
+          <BrandLogo brand={brand} size="sm" className="max-w-[70%]" />
           <div className="flex items-center gap-1.5">
             {specialLabel && (
               <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-brand-chalk">

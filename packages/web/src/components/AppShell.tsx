@@ -20,7 +20,6 @@ interface AppShellProps {
 
 export default function AppShell({ children }: AppShellProps) {
   useUserSync();
-  const [showBootLoader, setShowBootLoader] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
   const cloudflareBeaconToken = process.env["NEXT_PUBLIC_CF_BEACON_TOKEN"];
   const cloudflareBeaconSrc =
@@ -57,22 +56,10 @@ export default function AppShell({ children }: AppShellProps) {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isHydrated) return;
-
-    const minTimer = setTimeout(() => {
-      setShowBootLoader(false);
-    }, 300);
-
-    return () => {
-      clearTimeout(minTimer);
-    };
-  }, [isHydrated]);
-
   return (
     <>
       <div>
-        <BootLoader visible={showBootLoader} />
+        <BootLoader visible={!isHydrated} />
         {cloudflareBeaconToken ? (
           <Script
             src={cloudflareBeaconSrc}

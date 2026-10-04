@@ -49,5 +49,26 @@
     },
     "confidence": 0.98,
     "reviewStatus": "approved"
+  },
+  {
+    "brand": "Butora",
+    "name": "Altura",
+    "officialUrl": "https://www.butora.com/Product/Detail/view/pid/247",
+    "description": "Mid-top trad shoe for long crack and big-wall days, with a German leather upper, organic hemp lining and thick NEO Fuse rubber.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "German split leather",
+      "lining": "100% organic hemp",
+      "midsole": "Moisture-wicking split leather footbed",
+      "sole": "NEO Fuse rubber"
+    },
+    "confidence": 0.8,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Butora",
+        "compound": "NEO Fuse"
+      }
+    }
   }
 ]

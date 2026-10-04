@@ -635,5 +635,50 @@
     },
     "confidence": 0.97,
     "reviewStatus": "approved"
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Miura W",
+    "officialUrl": "https://www.lasportivausa.com/products/miura-womens",
+    "description": "Women's technical lace-up for edging on steep sport and boulders, with a leather upper, Dentex lining, forefoot LaspoFlex midsole and Vibram XS Grip2 rubber.",
+    "officialSpecs": {
+      "closure": "Lace-up",
+      "upper": "Leather",
+      "lining": "Dentex",
+      "midsole": "1.1mm LaspoFlex (forefoot only)",
+      "sole": "4mm Vibram XS Grip2",
+      "weight": "223 g (1/2 pair)",
+      "sensitivity": "2/5",
+      "rigidity": "4/5"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "Vibram",
+        "compound": "XS Grip 2"
+      }
+    }
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Stickit K",
+    "officialUrl": "https://www.lasportivausa.com/products/stickit",
+    "description": "Kids' shoe with a highly adjustable hook-and-loop fit system, unlined leather upper and 3 mm FriXion RS sole.",
+    "officialSpecs": {
+      "closure": "Hook-and-loop",
+      "upper": "Leather",
+      "lining": "Unlined",
+      "sole": "3mm FriXion RS",
+      "weight": "112 g"
+    },
+    "confidence": 0.95,
+    "reviewStatus": "pending",
+    "metrics": {
+      "rubber": {
+        "brand": "La Sportiva",
+        "compound": "FriXion RS"
+      }
+    }
   }
 ]

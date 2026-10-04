@@ -36,6 +36,7 @@ export default function DashboardPage() {
     } else {
       hideLoader("dashboard");
     }
+    return () => hideLoader("dashboard");
   }, [isPending, isLoadingData, showLoader, hideLoader]);
 
   if (!isPending && !session?.user) return null;

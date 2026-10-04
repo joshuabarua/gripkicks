@@ -401,6 +401,7 @@ export default function ShoeSanctuaryPage() {
     } else {
       hideLoader("stash-session");
     }
+    return () => hideLoader("stash-session");
   }, [sessionLoading, showLoader, hideLoader]);
 
   if (!session?.user) {

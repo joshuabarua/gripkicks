@@ -27,7 +27,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
   useEffect(() => {
     if (!isPublic && sessionLoading) {
       showLoader('session')
-      return
+      return () => hideLoader('session')
     }
     hideLoader('session')
   }, [isPublic, sessionLoading, showLoader, hideLoader])

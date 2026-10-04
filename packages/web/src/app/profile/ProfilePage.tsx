@@ -122,6 +122,7 @@ export default function ProfilePage() {
     } else {
       hideLoader('profile');
     }
+    return () => hideLoader('profile');
   }, [session?.user, sessionLoading, isLoading, showLoader, hideLoader]);
 
   if (!session?.user) {
