@@ -34,18 +34,18 @@ export function MatchScoreTooltip({ score, breakdown }: MatchScoreTooltipProps) 
     <TooltipProvider>
       <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>
-          <div className="cursor-help flex items-center gap-1.5 transition-opacity hover:opacity-80">
-            <span className="text-2xl font-bold text-white">{Math.round((score / 5) * 100)}%</span>
-            <Info className="w-4 h-4 text-brand-red/70" />
-          </div>
+          <button type="button" aria-label={`Match breakdown: ${Math.round((score / 5) * 100)}%`} className="flex min-h-11 items-center gap-2 rounded-lg px-2 font-sora text-brand-chalk hover:bg-brand-soft-surface">
+            <span className="text-xl font-semibold tabular-nums">{Math.round((score / 5) * 100)}%</span>
+            <Info aria-hidden="true" className="h-4 w-4 text-brand-putty" />
+          </button>
         </TooltipTrigger>
         <TooltipContent 
           side="bottom" 
           align="end" 
-          className="bg-neutral-950 border border-neutral-800 p-4 w-64 shadow-xl shadow-black/50"
+          className="w-64 border border-white/40 bg-brand-surface p-4 font-sora text-brand-chalk shadow-xl shadow-black/50"
         >
           <div className="space-y-3">
-            <p className="text-[11px] uppercase tracking-widest text-neutral-500 border-b border-neutral-800 pb-2 mb-2">
+            <p className="mb-2 border-b border-white/40 pb-2 text-sm font-semibold text-brand-chalk">
               Score Breakdown
             </p>
             

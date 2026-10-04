@@ -96,12 +96,12 @@ export function useFindMyShoe(
 
   const paginatedResult = useQuery(recommendationsQuery, recommendationsArgs);
 
-  const isLoading =
-    userLoading || userStash === undefined || paginatedResult === undefined;
-
   const hasProfile = useMemo(() => {
     return !!(convexUser?.footShape && convexUser?.footVolume);
   }, [convexUser]);
+
+  const isLoading =
+    userLoading || userStash === undefined || (hasProfile && paginatedResult === undefined);
 
   const hasShoes = useMemo(() => {
     return (userStash?.length ?? 0) > 0;

@@ -1,0 +1,54 @@
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { MatcherResults, type DisplayShoe } from "@/components/shoe/MatcherView";
+
+vi.mock("@/components/ShoeImage", () => ({ default: () => <div /> }));
+
+const baseShoe: DisplayShoe = { id: "shoe-1", brand: "Scarpa", name: "Origin Women's", primaryScore: 86, secondaryLabel: "match", metrics: { comfort: 4, performance: 3, durability: 4, aggressiveness: 2, versatility: 4 } };
+const shoe: DisplayShoe = { ...baseShoe, breakdown: { footTypeCompatibility: 4, volumeCompatibility: 4, userPreferenceMatch: 3, communityApproval: 4, overallRating: 4, learnedPreferenceBonus: 0, soleMateMatch: 2 } };
+const props = { personalShoes: [shoe], communityShoes: [{ ...baseShoe, id: "community-1", name: "Drago LV", secondaryLabel: "12 ratings", totalRatings: 12 }], footProfile: { shape: "Egyptian", volume: "Low" } };
+
+describe("Matcher results", () => {
+  it("keeps comparison views collapsed instead of competing with shoe cards", () => {
+    render(<MatcherResults {...props} />);
+    expect(screen.getByText("Radar map").closest("details")).not.toHaveAttribute("open");
+    expect(screen.getByText("Compare ratings").closest("details")).not.toHaveAttribute("open");
+    expect(screen.getByRole("article", { name: "Scarpa Origin Women's" })).toBeInTheDocument();
+    expect(within(screen.getByRole("article", { name: "Scarpa Origin Women's" })).getByText("86%")).toBeInTheDocument();
+  });
+
+  it("switches recommendation source without losing scores or variant names", () => {
+    render(<MatcherResults {...props} />);
+    fireEvent.click(screen.getByRole("button", { name: /Community/ }));
+    expect(screen.getByRole("button", { name: /Community/ })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("article", { name: "Scarpa Drago LV" })).toBeInTheDocument();
+    expect(screen.queryByRole("article", { name: "Scarpa Origin Women's" })).toBeNull();
+  });
+
+  it("makes match details available without hover", () => {
+    render(<MatcherResults {...props} />);
+    const summary = screen.getByText("Match details");
+    fireEvent.click(summary);
+    expect(summary.closest("details")).toHaveAttribute("open");
+    expect(screen.getByText("Foot shape")).toBeVisible();
+  });
+
+  it("does not show a false empty state while a source is loading", () => {
+    render(<MatcherResults personalShoes={[]} communityShoes={[]} personalLoading />);
+    expect(screen.getByRole("status", { name: "Loading matcher" })).toBeInTheDocument();
+    expect(screen.queryByText("No shoe matches yet")).toBeNull();
+  });
+
+  it("offers profile setup when personal results cannot be shown", () => {
+    render(<MatcherResults personalShoes={[]} communityShoes={[]} footProfile={null} />);
+    expect(screen.getByRole("link", { name: "Set up foot profile" })).toHaveAttribute("href", "/footlab");
+  });
+
+  it("renders shoe cards before hydration without entrance opacity", () => {
+    const html = renderToStaticMarkup(<MatcherResults {...props} />);
+    expect(html).toContain("Origin Women");
+    expect(html).not.toContain("opacity:0");
+  });
+});

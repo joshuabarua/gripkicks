@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { CheckCircle, Circle } from "lucide-react";
 
 interface DataContributionNudgeProps {
   stashCount: number;
@@ -16,97 +15,26 @@ interface ContributionStep {
   href?: string;
 }
 
-export function DataContributionNudge({
-  stashCount,
-  ratedCount,
-}: DataContributionNudgeProps) {
+export function DataContributionNudge({ stashCount, ratedCount }: DataContributionNudgeProps) {
   const { convexUser, isLoading } = useCurrentUser();
+  const steps: ContributionStep[] = useMemo(() => [
+    { label: "Set foot shape", done: !!convexUser?.footShape, href: "/footlab" },
+    { label: "Set foot volume", done: !!convexUser?.footVolume, href: "/footlab" },
+    { label: "Add a shoe to your Sanctuary", done: stashCount > 0, href: "/stash" },
+    { label: "Rate a shoe you own", done: ratedCount > 0, href: "/stash" },
+  ], [convexUser, stashCount, ratedCount]);
+  const completedCount = steps.filter((step) => step.done).length;
+  const nextStep = steps.find((step) => !step.done);
 
-  const steps: ContributionStep[] = useMemo(
-    () => [
-      {
-        label: "Set foot shape",
-        done: !!convexUser?.footShape,
-        href: "/footlab",
-      },
-      {
-        label: "Set foot volume",
-        done: !!convexUser?.footVolume,
-        href: "/footlab",
-      },
-      {
-        label: "Add a shoe to your Sanctuary",
-        done: stashCount > 0,
-        href: "/stash",
-      },
-      {
-        label: "Rate a shoe you own",
-        done: ratedCount > 0,
-        href: "/stash",
-      },
-    ],
-    [convexUser, stashCount, ratedCount],
-  );
-
-  const completedCount = steps.filter((s) => s.done).length;
-  const totalSteps = steps.length;
-  const isComplete = completedCount === totalSteps;
-
-  if (isLoading || isComplete) return null;
-
-  const progressPct = (completedCount / totalSteps) * 100;
-  const nextStep = steps.find((s) => !s.done);
+  if (isLoading || !nextStep) return null;
 
   return (
-    <div className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-950 p-5">
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-0.5">
-            Recommendation accuracy
-          </p>
-          <p className="font-sora text-sm text-white">
-            {completedCount}/{totalSteps} signals provided
-          </p>
-        </div>
-        <span className="font-ball-pill text-2xl text-brand-red">
-          {Math.round(progressPct)}%
-        </span>
+    <section aria-label="Profile and ratings progress" className="flex flex-col justify-between gap-4 rounded-2xl border border-white/40 bg-brand-surface p-fluid-lg sm:flex-row sm:items-center">
+      <div>
+        <h2 className="font-sora text-base font-semibold text-brand-chalk">Profile and ratings</h2>
+        <p className="mt-2 font-sora text-sm text-brand-putty">{completedCount}/{steps.length} signals provided</p>
       </div>
-
-      <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden mb-4">
-        <div
-          className="h-full bg-brand-red rounded-full transition-all duration-500"
-          style={{ width: `${progressPct}%` }}
-        />
-      </div>
-
-      <div className="space-y-2">
-        {steps.map((step) => (
-          <div key={step.label} className="flex items-center gap-3">
-            {step.done ? (
-              <CheckCircle className="w-3.5 h-3.5 text-brand-red flex-shrink-0" />
-            ) : (
-              <Circle className="w-3.5 h-3.5 text-neutral-700 flex-shrink-0" />
-            )}
-            <span
-              className={`font-sora text-xs ${step.done ? "text-neutral-600 line-through" : "text-neutral-400"}`}
-            >
-              {step.label}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {nextStep?.href && (
-        <div className="mt-4 pt-4 border-t border-white/5">
-          <Link
-            href={nextStep.href}
-            className="font-sora text-xs text-brand-red hover:text-brand-red/80 transition-colors"
-          >
-            {nextStep.label} →
-          </Link>
-        </div>
-      )}
-    </div>
+      {nextStep.href && <Link href={nextStep.href} className="inline-flex min-h-11 shrink-0 items-center rounded-lg bg-brand-red px-5 py-3 font-sora text-sm font-semibold text-black hover:bg-brand-red/90">{nextStep.label}</Link>}
+    </section>
   );
 }

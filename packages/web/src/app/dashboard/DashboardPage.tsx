@@ -10,6 +10,7 @@ import ShoeImage from "@/components/ShoeImage";
 import { useFootProfile, type FootProfile } from "@/hooks/useFootProfile";
 import { useUserData } from "@/hooks/useUserData";
 import type { UserShoe } from "@/types/api";
+import { PageSurface } from "@/components/ui/PageSurface";
 
 const isRated = (score?: number): score is number => typeof score === "number" && Number.isFinite(score) && score >= 1 && score <= 10;
 
@@ -42,7 +43,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
   ];
 
   return (
-    <main aria-busy={isLoading} className="min-h-svh bg-brand-base text-brand-chalk [--brand-base-rgb:24_26_29] [--brand-surface-rgb:48_51_56] [--brand-charcoal-rgb:68_72_79]">
+    <PageSurface aria-busy={isLoading}>
       <div className="mx-auto max-w-6xl space-y-fluid-lg px-fluid-md py-fluid-lg md:px-fluid-xl">
         <header className="flex flex-wrap items-end justify-between gap-3 border-b border-white/40 pb-fluid-md">
           <h1 className="font-ball-pill text-fluid-4xl leading-none">Dashboard</h1>
@@ -145,7 +146,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
           </div>
         )}
       </div>
-    </main>
+    </PageSurface>
   );
 }
 
