@@ -41,7 +41,9 @@ export default function ShoeModel() {
       ior: 1.2,
       backside: true,
       transmission: 1,
-      samples: 2,
+      samples: 4,
+      resolution: 768,
+      backsideResolution: 512,
     };
   }, []);
 
@@ -59,7 +61,7 @@ export default function ShoeModel() {
       mesh.current.position.y = (Math.sin(t / (0.8 / speed))) * amplitude;
       mesh.current.position.z = 0.2 + (Math.sin(t / (2.5 / speed))) * 0.025;
       mesh.current.rotation.y = (t / 2) * speed;
-      mesh.current.rotation.z = 0.3 + Math.sin(t / (4.5 / speed)) * 0.1;
+      mesh.current.rotation.z = -0.2 + Math.sin(t / (4.5 / speed)) * 0.08;
     }
   }, [animationsEnabled, highPerformanceMode]);
 
@@ -80,6 +82,7 @@ export default function ShoeModel() {
             <mesh
               {...shoeNode}
               position={[0, -0.4, 0]}
+              scale={1.45}
               geometry={shoeNode.geometry}
             >
               <MeshTransmissionMaterial {...materialSettings} />
