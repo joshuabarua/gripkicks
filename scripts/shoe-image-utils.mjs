@@ -72,6 +72,25 @@ export function buildImagePlan(records, current, production = false) {
   });
 }
 
+export function verifyImagePreservation(records, before, after, environment) {
+  const removed = new Set(records.filter((shoe) => shoe.status === "removed" && shoe.removedFrom?.includes(environment)).map(imageKey));
+  if (after.some((shoe) => removed.has(imageKey(shoe)))) throw new Error("A removed catalog shoe is still present");
+  const baseline = before.filter((shoe) => !removed.has(imageKey(shoe)));
+  if (after.length !== baseline.length) throw new Error("Database shoe count changed during backfill");
+  const images = new Map(after.map((shoe) => [shoe._id, shoe.imageUrl]));
+  const approved = new Map(records.filter((shoe) => shoe.status === "approved").map((shoe) => [imageKey(shoe), shoe]));
+  const existing = baseline.filter((shoe) => shoe.imageUrl?.trim());
+  const repairedImages = [];
+  for (const shoe of existing) {
+    if (images.get(shoe._id) === shoe.imageUrl) continue;
+    const record = approved.get(imageKey(shoe));
+    const repair = record?.imageRepairs?.[environment];
+    if (!record?.devVerified || !record.sha256 || !record.imageUrl || repair?.failedStatus !== 404 || repair.previousImageUrl !== shoe.imageUrl || repair.imageUrl !== record.imageUrl || repair.sha256 !== record.sha256 || images.get(shoe._id) !== record.imageUrl) throw new Error(`Previously existing image changed: ${imageKey(shoe)}`);
+    repairedImages.push(imageKey(shoe));
+  }
+  return { existingImagesPreserved: existing.length - repairedImages.length, repairedImages };
+}
+
 export async function verifyTransparentImage(bytes, expectedHash) {
   if (expectedHash && sha256(bytes) !== expectedHash) throw new Error("Image bytes differ from reviewed asset");
   const image = sharp(bytes);

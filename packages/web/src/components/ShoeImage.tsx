@@ -94,7 +94,7 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setImageState((current) => current.key === imageKey && current.loading
-        ? { ...current, loading: false, timedOut: true }
+        ? { ...current, timedOut: true }
         : current);
     }, 5000);
     return () => clearTimeout(timer);
@@ -145,13 +145,12 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
   // Handle image load
   const handleLoad = () => {
     setImageState((current) => current.key === imageKey
-      ? { ...current, loading: false }
+      ? { ...current, loading: false, timedOut: false }
       : current);
   };
 
   // If image failed to load or timed out, show fallback
-  if (imageError || loadingTimeout) {
-    return (
+  const fallback = (
       <div className={className}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -165,12 +164,14 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
           }}
         />
       </div>
-    );
-  }
+  );
+
+  if (imageError) return fallback;
 
   return (
     <div className={`relative w-full h-full ${className}`}>
-      {imageLoading && (
+      {loadingTimeout && <div className="absolute inset-0">{fallback}</div>}
+      {imageLoading && !loadingTimeout && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-full">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
         </div>

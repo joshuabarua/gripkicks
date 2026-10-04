@@ -28,6 +28,7 @@ The UI leverages an orientation-based fluid responsive design system, avoiding r
 
 - Use Yarn 4. Run `yarn lint` and `yarn test:run` for normal verification. On resource-constrained machines, run `yarn workspace web test:run --maxWorkers=1`, `yarn test:convex --maxWorkers=1`, and `yarn test:shoe-images` separately. Avoid running parallel test workers alongside background removal.
 - For local browser checks, set `E2E_CHANNEL=chrome` to use installed Chrome when the bundled Playwright Chromium browser is unavailable.
+- Keep lazy shoe images mounted while loading; a timeout may show a temporary fallback but must not cancel the original request. Verify the Add Shoe dialog after waiting more than five seconds before scrolling, and check HTTP image delivery rather than database URL presence alone.
 - Background removal uses Python 3.11 with `scripts/shoe-image-requirements.txt`. Create the virtual environment under the ignored `temp/` directory. Run `scripts/prepare-shoe-images.py` after selecting exact-model source images in `data/shoe-image-selections.json`.
 - Review the generated checkerboard contact sheets before `yarn backfill:shoe-images approve --reviewed`. Uploads preserve existing ImageKit files, verify the original PNG bytes, and use each catalog's ImageKit folder.
 - Run `yarn backfill:shoe-images plan` before `apply`. Fill missing database images only. Verify development before using `--prod`; production requires `CONVEX_PROD_URL`. Existing-image snapshots and downloads stay under `temp/shoe-images/`.

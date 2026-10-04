@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import sharp from "sharp";
-import { buildImagePlan, extractCandidates, sha256, shoeSlug, validateImagePaths, verifyTransparentImage } from "./shoe-image-utils.mjs";
+import { buildImagePlan, extractCandidates, sha256, shoeSlug, validateImagePaths, verifyTransparentImage, verifyImagePreservation } from "./shoe-image-utils.mjs";
 
 const shoe = { brand: "Scarpa", name: "Drago LV", status: "approved", imageUrl: "https://ik.imagekit.io/example/drago_lv.png" };
 
@@ -43,6 +43,32 @@ test("archived HTTP image references use HTTPS and manufacturer media APIs are s
   const candidates = extractCandidates(html, "https://weighmyrack.com/shoe/drago", shoe);
   assert.equal(candidates.length, 2);
   assert.ok(candidates.every((candidate) => candidate.url.startsWith("https://")));
+});
+
+test("preservation rejects unapproved image changes", () => {
+  const before = [{ ...shoe, _id: "lv", imageUrl: "https://existing.example/shoe.png" }];
+  assert.throws(() => verifyImagePreservation([shoe], before, [{ ...before[0], imageUrl: shoe.imageUrl }], "prod"), /Previously existing image changed/);
+});
+
+test("preservation accepts only an audited exact-model 404 repair", () => {
+  const previousImageUrl = "https://existing.example/broken.png";
+  const record = { ...shoe, devVerified: true, sha256: "reviewed-hash", imageRepairs: { prod: { previousImageUrl, imageUrl: shoe.imageUrl, sha256: "reviewed-hash", failedStatus: 404 } } };
+  const before = [{ ...shoe, _id: "lv", imageUrl: previousImageUrl }];
+  const after = [{ ...before[0], imageUrl: shoe.imageUrl }];
+  assert.deepEqual(verifyImagePreservation([record], before, after, "prod"), { existingImagesPreserved: 0, repairedImages: ["Scarpa/Drago LV"] });
+  assert.throws(() => verifyImagePreservation([record], before, [{ ...after[0], imageUrl: "https://different.example/image.png" }], "prod"), /Previously existing image changed/);
+  assert.throws(() => verifyImagePreservation([record], before, after, "dev"), /Previously existing image changed/);
+  assert.throws(() => verifyImagePreservation([{ ...record, devVerified: false }], before, after, "prod"), /Previously existing image changed/);
+  assert.throws(() => verifyImagePreservation([{ ...record, sha256: undefined }], before, after, "prod"), /Previously existing image changed/);
+});
+
+test("preservation accounts for explicit removals without accepting other lost rows", () => {
+  const removed = { brand: "Salewa", name: "Wildfire", status: "removed", removedFrom: ["dev"] };
+  const active = { ...shoe, _id: "lv" };
+  const before = [active, { ...removed, _id: "removed" }];
+  assert.deepEqual(verifyImagePreservation([shoe, removed], before, [active], "dev"), { existingImagesPreserved: 1, repairedImages: [] });
+  assert.throws(() => verifyImagePreservation([shoe, removed], before, before, "dev"), /removed catalog shoe/);
+  assert.throws(() => verifyImagePreservation([shoe, removed], before, [], "dev"), /shoe count changed/);
 });
 
 test("transparent-image verification rejects opaque, empty, and altered files", async () => {

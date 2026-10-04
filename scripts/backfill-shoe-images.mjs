@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ConvexHttpClient } from "convex/browser";
 import sharp from "sharp";
-import { buildImagePlan, decode, extractCandidates, imageKey, shoeSlug as slug, validateImagePaths, verifyTransparentImage } from "./shoe-image-utils.mjs";
+import { buildImagePlan, decode, extractCandidates, imageKey, shoeSlug as slug, validateImagePaths, verifyTransparentImage, verifyImagePreservation } from "./shoe-image-utils.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 config({ path: path.join(root, ".env") });
@@ -204,20 +204,13 @@ if (command === "sources") {
   }
   if (command !== "plan") {
     const after = await client.query("shoes:listAll", {});
-    let preserved = null;
+    let preservation = { existingImagesPreserved: null, repairedImages: [] };
     try {
       const before = JSON.parse(await fs.readFile(snapshotPath, "utf8"));
       if (before.deploymentUrl !== deploymentUrl) throw new Error("Snapshot belongs to a different deployment");
-      const images = new Map(after.map((shoe) => [shoe._id, shoe.imageUrl]));
-      const removed = new Set(records.filter((shoe) => shoe.status === "removed" && shoe.removedFrom?.includes(environment)).map(imageKey));
-      if (after.some((shoe) => removed.has(imageKey(shoe)))) throw new Error("A removed catalog shoe is still present");
-      const baseline = before.shoes.filter((shoe) => !removed.has(imageKey(shoe)));
-      const existing = baseline.filter((shoe) => shoe.imageUrl?.trim());
-      for (const shoe of existing) if (images.get(shoe._id) !== shoe.imageUrl) throw new Error(`Previously existing image changed: ${imageKey(shoe)}`);
-      preserved = existing.length;
-      if (after.length !== baseline.length) throw new Error("Database shoe count changed during backfill");
+      preservation = verifyImagePreservation(records, before.shoes, after, environment);
     } catch (error) { if (error.code !== "ENOENT") throw error; }
-    console.log(JSON.stringify({ environment, total: after.length, missing: after.filter((shoe) => !shoe.imageUrl?.trim()).length, existingImagesPreserved: preserved, remaining: after.filter((shoe) => !shoe.imageUrl?.trim()).map(imageKey) }, null, 2));
+    console.log(JSON.stringify({ environment, total: after.length, missing: after.filter((shoe) => !shoe.imageUrl?.trim()).length, ...preservation, remaining: after.filter((shoe) => !shoe.imageUrl?.trim()).map(imageKey) }, null, 2));
   }
 } else {
   throw new Error("Usage: node scripts/backfill-shoe-images.mjs <audit|sources|discover|download|sheet|approve|upload|plan|apply|status> [--brand=Brand] [--prod]");

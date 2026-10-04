@@ -1284,7 +1284,10 @@
     "sourcePage": "https://www.outdoorreview.com/product/product-archives/outdoor-equipment/climbing-mountaineering/rock-shoes/boreal-usa/zen.html",
     "status": "removed",
     "removalReason": "Discontinued model removed at the user's request; retained here only as an audit record.",
-    "removedFrom": ["dev", "prod"],
+    "removedFrom": [
+      "dev",
+      "prod"
+    ],
     "candidates": []
   },
   {
@@ -5844,7 +5847,7 @@
     "imagekitFolder": "gripkicks/imgs/shoes/salewa/",
     "slug": "mountain_trainer_2",
     "sourcePage": "https://www.salewa.com/en-gb/mountain-trainer-2-gore-tex_-men_s-shoes-00-0000061356",
-    "status": "approved",
+    "status": "removed",
     "candidates": [
       {
         "url": "https://oberalp.imgix.net/d9f738e5-ef77-4e3d-9dcd-1927c897a21c.jpg?type=360",
@@ -5909,7 +5912,12 @@
     "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/salewa/mountain_trainer_2_side_profile.png",
     "imagekitFileId": "6ac20ad6ead997d09ac59a95",
     "devVerified": true,
-    "prodVerified": true
+    "prodVerified": true,
+    "removalReason": "Approach or hiking shoe removed from the climbing-shoe catalog at the user's request; uploaded assets retained.",
+    "removedFrom": [
+      "dev",
+      "prod"
+    ]
   },
   {
     "brand": "Salewa",
@@ -5919,7 +5927,7 @@
     "imagekitFolder": "gripkicks/imgs/shoes/salewa/",
     "slug": "wildfire",
     "sourcePage": "https://www.salewa.com/en-gb/wildfire-men_s-shoes-00-0000063485",
-    "status": "approved",
+    "status": "removed",
     "candidates": [
       {
         "url": "https://oberalp.imgix.net/92426bd1-384b-492d-aea5-162620007c0f.jpg?type=360",
@@ -5984,7 +5992,12 @@
     "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/salewa/wildfire_side_profile.png",
     "imagekitFileId": "6ac20ad8ead997d09ac5a029",
     "devVerified": true,
-    "prodVerified": true
+    "prodVerified": true,
+    "removalReason": "Approach or hiking shoe removed from the climbing-shoe catalog at the user's request; uploaded assets retained.",
+    "removedFrom": [
+      "dev",
+      "prod"
+    ]
   },
   {
     "brand": "Scarpa",
@@ -6052,7 +6065,17 @@
     },
     "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/scarpa/drago_lv_side_profile.png",
     "imagekitFileId": "6ac20ad9ead997d09ac5a4b0",
-    "devVerified": true
+    "devVerified": true,
+    "imageRepairs": {
+      "prod": {
+        "previousImageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/scarpa/dragoLV_m1.png",
+        "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/scarpa/drago_lv_side_profile.png",
+        "sha256": "201a6f92d280c62ec886c4dad1cc01d36a36300cb046acf5d015bbb94b71bc27",
+        "failedStatus": 404,
+        "reason": "Broken production URL replaced with the verified exact-model transparent image at the user's request."
+      }
+    },
+    "prodVerified": true
   },
   {
     "brand": "Simond",
@@ -7492,7 +7515,7 @@
     "imagekitFolder": "gripkicks/imgs/shoes/zamberlan/",
     "slug": "free_blast",
     "sourcePage": "https://www.zamberlan.com/en-eu/products/217-free-blast-suede-red-orange",
-    "status": "approved",
+    "status": "removed",
     "candidates": [
       {
         "url": "https://www.zamberlan.com/cdn/shop/files/0217PM1M_RI_FREEBLASTSUEDE_RedOrange_1-main.png?v=1786027953&width=1200",
@@ -7557,7 +7580,12 @@
     "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/zamberlan/free_blast_side_profile.png",
     "imagekitFileId": "6ac20af8ead997d09ac64f9b",
     "devVerified": true,
-    "prodVerified": true
+    "prodVerified": true,
+    "removalReason": "Approach or hiking shoe removed from the climbing-shoe catalog at the user's request; uploaded assets retained.",
+    "removedFrom": [
+      "dev",
+      "prod"
+    ]
   },
   {
     "brand": "Zamberlan",
@@ -7567,7 +7595,7 @@
     "imagekitFolder": "gripkicks/imgs/shoes/zamberlan/",
     "slug": "salathe",
     "sourcePage": "https://www.zamberlan.com/en-eu/products/215-salathe-rr-lilac-yellow",
-    "status": "approved",
+    "status": "removed",
     "candidates": [
       {
         "url": "https://www.zamberlan.com/cdn/shop/files/0215PM3G_AF_SALATHE_GTXRR_LilacYellow_1-main.png?v=1786027919&width=1200",
@@ -7632,6 +7660,148 @@
     "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/zamberlan/salathe_side_profile.png",
     "imagekitFileId": "6ac20afaead997d09ac658b3",
     "devVerified": true,
+    "prodVerified": true,
+    "removalReason": "Approach or hiking shoe removed from the climbing-shoe catalog at the user's request; uploaded assets retained.",
+    "removedFrom": [
+      "dev",
+      "prod"
+    ]
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "Miura W",
+    "devId": "js7e1sdg7m3jxd79tcpshr0cmn80dszd",
+    "brandKey": "la_sportiva",
+    "imagekitFolder": "gripkicks/imgs/shoes/la_sportiva/",
+    "slug": "miura_w",
+    "sourcePage": "https://www.lasportivausa.com/products/miura-womens",
+    "status": "approved",
+    "candidates": [],
+    "transparentPath": "temp/shoe-images/miura-w-reviewed.png",
+    "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/miura_w1.png?updatedAt=1770575758031",
+    "imagekitFileId": "6987999c5c7cd75eb8700ea2",
+    "sha256": "26577c70951bb662b0ac16e2f8c3a4b4f8590404084cde3277cbfb3ffdcf2eeb",
+    "imageStatistics": {
+      "width": 750,
+      "height": 600,
+      "transparentPixels": 0.5904044444444444
+    },
+    "imageProvenance": {
+      "type": "existing_imagekit_asset",
+      "reason": "Exact women's Miura lace-up; repairing a hyphen-versus-underscore URL typo."
+    },
+    "devVerified": true,
+    "imageRepairs": {
+      "dev": {
+        "previousImageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/miura-w1.png?updatedAt=1770042925428&v=1770495889254",
+        "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/miura_w1.png?updatedAt=1770575758031",
+        "sha256": "26577c70951bb662b0ac16e2f8c3a4b4f8590404084cde3277cbfb3ffdcf2eeb",
+        "failedStatus": 404,
+        "reason": "Verified exact-model image replaces a broken URL with explicit user approval."
+      },
+      "prod": {
+        "previousImageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/miura-w1.png?updatedAt=1770042925428&v=1770495889254",
+        "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/miura_w1.png?updatedAt=1770575758031",
+        "sha256": "26577c70951bb662b0ac16e2f8c3a4b4f8590404084cde3277cbfb3ffdcf2eeb",
+        "failedStatus": 404,
+        "reason": "Verified exact-model image replaces a broken URL with explicit user approval."
+      }
+    },
+    "prodVerified": true
+  },
+  {
+    "brand": "La Sportiva",
+    "name": "N/A:  Futura M",
+    "devId": "js71m13ppswre3h3w3e2gq3jp17zp2xs",
+    "brandKey": "la_sportiva",
+    "imagekitFolder": "gripkicks/imgs/shoes/la_sportiva/",
+    "slug": "futura_m",
+    "sourcePage": "https://shop.depotclimbing.co.uk/products/futura-2024-chalk",
+    "officialSourcePage": "https://www.lasportiva.com/en/shoes-climbing-futura-unisex-zfcs044",
+    "status": "approved",
+    "candidates": [
+      {
+        "url": "https://shop.depotclimbing.co.uk/cdn/shop/files/la-sportiva-futura-2024_1_webp.png?v=1777558001&width=1200",
+        "score": 110,
+        "localPath": "temp/shoe-images/futura-candidate-0.png",
+        "width": 800,
+        "height": 800,
+        "hasAlpha": true
+      },
+      {
+        "url": "https://shop.depotclimbing.co.uk/cdn/shop/files/la-sportiva-futura-2024_1_webp.png?v=1777558001",
+        "score": 90,
+        "localPath": "temp/shoe-images/futura-candidate-1.png",
+        "width": 800,
+        "height": 800,
+        "hasAlpha": true
+      },
+      {
+        "url": "https://shop.depotclimbing.co.uk/cdn/shop/files/la-sportiva-futura-2024_1_webp_60x80_crop_center.png?v=1777558001",
+        "score": 30,
+        "localPath": "temp/shoe-images/futura-candidate-2.png",
+        "width": 60,
+        "height": 80,
+        "hasAlpha": true
+      },
+      {
+        "url": "https://shop.depotclimbing.co.uk/cdn/shop/files/DSC03471.jpg?v=1724843280&width=1200",
+        "score": 20,
+        "localPath": "temp/shoe-images/futura-candidate-3.jpeg",
+        "width": 1200,
+        "height": 1200,
+        "hasAlpha": false
+      },
+      {
+        "url": "https://shop.depotclimbing.co.uk/cdn/shop/files/DSC03465.jpg?v=1756300480&width=1200",
+        "score": 20
+      },
+      {
+        "url": "https://shop.depotclimbing.co.uk/cdn/shop/files/DSC03476.jpg?v=1749219076&width=1200",
+        "score": 20
+      },
+      {
+        "url": "https://shop.depotclimbing.co.uk/cdn/shop/files/DSC03477.jpg?v=1749219076&width=1200",
+        "score": 20
+      },
+      {
+        "url": "https://shop.depotclimbing.co.uk/cdn/shop/files/DSC03484.jpg?v=1749219076&width=1200",
+        "score": 20
+      }
+    ],
+    "imageProvenance": {
+      "type": "retailer_product_photo",
+      "modelCode": "40O004004",
+      "modelYear": 2024,
+      "review": "Exact Futura No-Edge model and upper, sole and closure specifications; not the newer ZFCS166 successor."
+    },
+    "transparentPath": "temp/shoe-images/la_sportiva/futura_m/side.png",
+    "sourceImageUrl": "https://shop.depotclimbing.co.uk/cdn/shop/files/la-sportiva-futura-2024_1_webp.png?v=1777558001&width=1200",
+    "sha256": "78a7de65315a11df5561bc9b121cc62a6c3a941cde98b542310f7bf418e2c8f7",
+    "imageStatistics": {
+      "width": 867,
+      "height": 578,
+      "transparentPixels": 0.6422536447919286
+    },
+    "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/futura_m_side_profile.png",
+    "imagekitFileId": "6ac23530ead997d09a8c4676",
+    "devVerified": true,
+    "imageRepairs": {
+      "dev": {
+        "previousImageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/futura_m1.png?updatedAt=1769956490686",
+        "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/futura_m_side_profile.png",
+        "sha256": "78a7de65315a11df5561bc9b121cc62a6c3a941cde98b542310f7bf418e2c8f7",
+        "failedStatus": 404,
+        "reason": "Verified exact-model image replaces a broken URL with explicit user approval."
+      },
+      "prod": {
+        "previousImageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/futura_m1.png?updatedAt=1769956490686",
+        "imageUrl": "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/la_sportiva/futura_m_side_profile.png",
+        "sha256": "78a7de65315a11df5561bc9b121cc62a6c3a941cde98b542310f7bf418e2c8f7",
+        "failedStatus": 404,
+        "reason": "Verified exact-model image replaces a broken URL with explicit user approval."
+      }
+    },
     "prodVerified": true
   }
 ]

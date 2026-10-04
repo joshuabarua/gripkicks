@@ -3,8 +3,5 @@
   "brandKey": "salewa",
   "imagekitFolder": "gripkicks/imgs/shoes/salewa/",
   "filenameToName": {},
-  "shoes": [
-    { "name": "Wildfire", "aggressiveness": "flat", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] },
-    { "name": "Mountain Trainer 2", "aggressiveness": "flat", "stiffness": "stiff", "climbingDiscipline": "trad", "volume": "high", "footShapeCompat": ["egyptian", "roman", "germanic"] }
-  ]
+  "shoes": []
 }
