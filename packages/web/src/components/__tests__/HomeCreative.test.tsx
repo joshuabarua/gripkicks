@@ -24,6 +24,17 @@ describe("Homepage clarity", () => {
     expect(screen.getAllByTestId("hero-scene")).toHaveLength(2);
   });
 
+  it("keeps only an accessible scroll arrow over the shoe hero", () => {
+    render(<HomeCreative />);
+    const hero = within(screen.getByRole("region", { name: "Interactive climbing shoe" }));
+    const arrow = hero.getByRole("link", { name: "Scroll to homepage content" });
+    expect(arrow).toHaveAttribute("href", "#home-intro");
+    expect(arrow.textContent).toBe("");
+    expect(arrow.querySelector("svg")).toHaveClass("lucide-arrow-down");
+    expect(hero.queryByText("Climbing shoe catalog")).toBeNull();
+    expect(hero.queryByText("Explore tools")).toBeNull();
+  });
+
   it("sends signed-in climbers to their dashboard", () => {
     mocks.session.mockReturnValue({ data: { user: { id: "user-1" } } });
     render(<HomeCreative />);
@@ -53,9 +64,14 @@ describe("Homepage clarity", () => {
     }
   });
 
-  it("uses Sora for supporting headings instead of the removed serif font", () => {
+  it("restores original display-headed step tiles while retaining readable Sora copy", () => {
     render(<HomeCreative />);
-    expect(screen.getByRole("heading", { name: "Map your foot" })).toHaveClass("font-sora", "font-semibold");
+    const section = within(screen.getByRole("region", { name: "How it works" }));
+    expect(section.getAllByRole("article")).toHaveLength(3);
+    for (const title of ["Map your foot", "Rate your shoes", "Compare fits"]) {
+      expect(section.getByRole("heading", { name: title })).toHaveClass("font-ball-pill");
+    }
+    expect(section.getByText("Set your foot shape and volume.")).toHaveClass("font-sora");
     expect(screen.getByText("Climbing shoes, sizes and fit ratings.")).toHaveClass("font-sora");
   });
 

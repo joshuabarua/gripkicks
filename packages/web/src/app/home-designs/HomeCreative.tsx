@@ -25,8 +25,7 @@ function HeroSection({ isReducedEffects }: { isReducedEffects: boolean }) {
         <EtherField className="absolute inset-0 h-full w-full" paused={isReducedEffects} speed={isReducedEffects ? 0 : 0.7} ambientColor="#171c27" accentColor="#ff5a3d" />
       </div>
       <div className="absolute bottom-0 left-0 right-0 top-[10px] z-[1]"><Scene /></div>
-      <div className="pointer-events-none absolute bottom-fluid-lg left-fluid-md z-10 hidden border-l-4 border-brand-red bg-brand-base/90 px-5 py-3 font-sora text-sm text-brand-chalk sm:block md:left-fluid-xl">Climbing shoe catalog</div>
-      <Link href="#home-tools" className="group absolute bottom-fluid-lg right-fluid-md z-10 inline-flex min-h-11 items-center gap-3 rounded-full border border-brand-chalk bg-brand-chalk px-5 py-3 font-sora text-sm font-semibold text-brand-base md:right-fluid-xl focus-visible:outline-brand-chalk">Explore tools<ArrowDown aria-hidden="true" className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1 motion-reduce:transform-none" /></Link>
+      <Link href="#home-intro" aria-label="Scroll to homepage content" className="group absolute bottom-fluid-lg right-fluid-md z-10 flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-brand-base/70 text-brand-chalk transition-colors hover:bg-brand-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-chalk md:right-fluid-xl"><ArrowDown aria-hidden="true" className="h-6 w-6 transition-transform duration-300 group-hover:translate-y-1 motion-reduce:transform-none" /></Link>
     </section>
   );
 }
@@ -41,7 +40,7 @@ export default function HomeCreative() {
   return (
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
       <HeroSection isReducedEffects={isReducedEffects} />
-      <section aria-labelledby="home-title" className="relative overflow-hidden border-y border-white/30 bg-brand-surface px-fluid-md py-fluid-3xl text-brand-chalk md:px-fluid-xl">
+      <section id="home-intro" aria-labelledby="home-title" className="relative scroll-mt-14 overflow-hidden border-y border-white/30 bg-brand-surface px-fluid-md py-fluid-3xl text-brand-chalk md:px-fluid-xl">
         <div aria-hidden="true" className="grain-overlay !absolute !z-0" />
         <div className="relative mx-auto grid max-w-fluid-xl items-end gap-fluid-xl md:grid-cols-[1.2fr_1fr]">
           <h1 id="home-title" className="font-ball-pill text-[clamp(2.5rem,6vw,6.5rem)] leading-none">GRIPKICKS</h1>
@@ -75,13 +74,13 @@ function HowItWorksSection() {
   return (
     <section aria-labelledby="steps-title" className="px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div className="mx-auto max-w-fluid-xl">
-        <h2 id="steps-title" className="mb-fluid-xl font-ball-pill text-fluid-5xl leading-none">How it works</h2>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))] gap-fluid-lg">
+        <h2 id="steps-title" className="mb-fluid-2xl font-ball-pill text-fluid-5xl leading-none">How it works</h2>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] gap-px overflow-hidden border border-white/30 bg-brand-chalk/30">
           {steps.map((step) => (
-            <div key={step.title} className="border-t-4 border-brand-chalk bg-brand-surface p-fluid-lg">
-              <h3 className="font-sora text-fluid-2xl font-semibold leading-snug">{step.title}</h3>
-              <p className="mt-fluid-md font-sora text-base leading-relaxed text-brand-putty">{step.copy}</p>
-            </div>
+            <article key={step.title} className="flex min-h-[clamp(12rem,20vw,17rem)] flex-col justify-between gap-fluid-lg bg-brand-base p-fluid-xl">
+              <h3 className="break-words font-ball-pill text-fluid-3xl leading-tight">{step.title}</h3>
+              <p className="max-w-xs font-sora text-base leading-relaxed text-brand-putty">{step.copy}</p>
+            </article>
           ))}
         </div>
       </div>

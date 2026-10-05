@@ -23,7 +23,7 @@ The UI leverages an orientation-based fluid responsive design system, avoiding r
 2. **No Accent-Colored Text**: The orange/red accent (`brand-red`) is for shapes, borders, buttons only. Never use it on body text, headings, or marketing copy.
 3. **Minimal Copy**: Strip all "weird ass fluff" — mission statements, value propositions, founder stories, FAQ sections. Keep only functional UI labels.
 4. **Editorial Test Themes**: Homepage variations follow editorial hybrid aesthetic (japanese, retro, gorp) with grain overlays, halftone patterns, serif italic typography hierarchy.
-5. **Homepage Tone and Typography**: Keep large homepage panels graphite, reserving pale fills for small controls. Use Sora for supporting headlines and step titles. Do not load or use Basteleur. Keep the Tools grid at a maximum of two columns and omit decorative category icons.
+5. **Homepage Tone and Typography**: Keep large homepage panels graphite, reserving pale fills for small controls. Use Sora for supporting headlines and body copy; use Ball Pill for the original editorial setup-step headings. Do not load or use Basteleur. Keep the Tools grid at a maximum of two columns and omit decorative category icons. Keep hero navigation arrow-only, with an accessible label and no catalog badge.
 
 ## Verification and Image Maintenance
 
