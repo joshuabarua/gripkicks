@@ -10,7 +10,6 @@ import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
 import { CommunityMilestone } from "@/components/CommunityMilestone";
 import { PageSurface } from "@/components/ui/PageSurface";
-import WordmarkWatermark from "@/components/brand/WordmarkWatermark";
 
 const subscribe = () => () => undefined;
 const getClientSnapshot = () => true;
@@ -18,6 +17,7 @@ const getServerSnapshot = () => false;
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), { ssr: false, loading: () => null });
 const EtherField = dynamic(() => import("@/components/3d/EtherField"), { ssr: false, loading: () => null });
+const CloudBackground = dynamic(() => import("@/components/CloudBackground"), { ssr: false, loading: () => null });
 
 function HeroSection({ isReducedEffects }: { isReducedEffects: boolean }) {
   return (
@@ -26,7 +26,7 @@ function HeroSection({ isReducedEffects }: { isReducedEffects: boolean }) {
         <EtherField className="absolute inset-0 h-full w-full" paused={isReducedEffects} speed={isReducedEffects ? 0 : 0.7} ambientColor="#171c27" accentColor="#ff5a3d" />
       </div>
       <div className="absolute bottom-0 left-0 right-0 top-[10px] z-[1]"><Scene /></div>
-      <Link href="#home-intro" aria-label="Scroll to homepage content" className="group absolute bottom-fluid-lg right-fluid-md z-10 flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-brand-base/70 text-brand-chalk transition-colors hover:bg-brand-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-chalk md:right-fluid-xl"><ArrowDown aria-hidden="true" className="h-6 w-6 transition-transform duration-300 group-hover:translate-y-1 motion-reduce:transform-none" /></Link>
+      <Link href="#home-steps" aria-label="Scroll to homepage content" className="group absolute bottom-fluid-lg right-fluid-md z-10 flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-brand-base/70 text-brand-chalk transition-colors hover:bg-brand-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-chalk md:right-fluid-xl"><ArrowDown aria-hidden="true" className="h-6 w-6 transition-transform duration-300 group-hover:translate-y-1 motion-reduce:transform-none" /></Link>
     </section>
   );
 }
@@ -41,19 +41,6 @@ export default function HomeCreative() {
   return (
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
       <HeroSection isReducedEffects={isReducedEffects} />
-      <section id="home-intro" aria-labelledby="home-title" className="relative scroll-mt-14 overflow-hidden border-y border-white/10 bg-black px-fluid-md py-fluid-3xl text-brand-chalk md:px-fluid-xl">
-        <WordmarkWatermark lines={["GRIP", "KICKS"]} align="right" className="opacity-80" />
-        <div aria-hidden="true" className="absolute -left-24 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full border-[3rem] border-brand-red/80 md:h-96 md:w-96" />
-        <div aria-hidden="true" className="grain-overlay !absolute !z-0" />
-        <div className="relative z-10 mx-auto grid max-w-fluid-xl items-end gap-fluid-2xl md:grid-cols-[1.25fr_0.75fr]">
-          <h1 id="home-title" className="font-ball-pill text-[clamp(4rem,11vw,10rem)] leading-[0.78] tracking-[-0.04em]">GRIP<br />KICKS</h1>
-          <div className="rounded-[2rem] border border-white/15 bg-brand-base/80 p-fluid-xl backdrop-blur-sm">
-            <span aria-hidden="true" className="mb-fluid-lg block h-1.5 w-14 rounded-full bg-brand-red" />
-            <p className="font-sora text-fluid-2xl font-semibold leading-snug">Climbing shoes, sizes and fit ratings.</p>
-            <p className="mt-fluid-md max-w-md font-sora text-base leading-relaxed text-brand-putty">Set your foot profile. Log the shoes you climb in. Compare fit and community ratings.</p>
-          </div>
-        </div>
-      </section>
       <HowItWorksSection />
       <ToolsSection />
       <CommunityMilestone userCount={countData?.count} />
@@ -76,18 +63,31 @@ function HowItWorksSection() {
   ];
 
   return (
-    <section aria-labelledby="steps-title" className="relative overflow-hidden border-y border-white/[0.06] bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
-      <WordmarkWatermark lines={["FIT"]} align="right" />
-      <div className="relative z-10 mx-auto max-w-fluid-xl">
-        <h2 id="steps-title" className="mb-fluid-2xl font-ball-pill text-fluid-5xl leading-none">How it works</h2>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] gap-fluid-lg">
-          {steps.map((step) => (
-            <article key={step.title} className="flex min-h-[clamp(12rem,20vw,17rem)] flex-col justify-between gap-fluid-lg rounded-3xl border border-white/[0.06] bg-brand-surface p-fluid-xl transition-colors hover:border-brand-red/20">
-              <div>
-                <span aria-hidden="true" className="mb-fluid-lg block h-1 w-10 rounded-full bg-brand-red" />
-                <h3 className="break-words font-ball-pill text-fluid-3xl leading-tight">{step.title}</h3>
+    <section id="home-steps" aria-labelledby="steps-title" className="relative scroll-mt-14 overflow-hidden border-y border-white/10 bg-brand-base px-fluid-md py-fluid-3xl md:px-fluid-xl">
+      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(255,90,61,0.12),transparent_32%),linear-gradient(to_bottom,rgba(0,0,0,0.35),rgba(0,0,0,0.72))]" />
+      <div aria-hidden="true" className="absolute inset-0 opacity-70">
+        <CloudBackground />
+      </div>
+      <div aria-hidden="true" className="absolute inset-0 z-[11] bg-gradient-to-b from-black/30 via-black/10 to-black/65" />
+      <div className="relative z-20 mx-auto max-w-fluid-xl">
+        <div className="mb-fluid-2xl flex items-end justify-between gap-fluid-lg border-b border-white/25 pb-fluid-lg">
+          <h2 id="steps-title" className="font-so-cloudy text-[clamp(3.5rem,8vw,7rem)] uppercase leading-none text-white">How it works</h2>
+          <span className="hidden font-sora text-xs uppercase tracking-[0.2em] text-brand-putty sm:block">Three simple steps</span>
+        </div>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-fluid-lg">
+          {steps.map((step, index) => (
+            <article key={step.title} className="group overflow-hidden rounded-xl border border-white/30 bg-brand-surface/90 shadow-xl shadow-black/25 backdrop-blur-md transition-colors duration-300 hover:border-white/50">
+              <div className="flex min-h-12 items-center justify-between border-b border-white/20 px-5 py-3">
+                <span className="font-sora text-[11px] uppercase tracking-[0.18em] text-brand-putty">Step</span>
+                <span className="font-ball-pill text-2xl leading-none text-brand-chalk">{String(index + 1).padStart(2, "0")}</span>
               </div>
-              <p className="max-w-xs font-sora text-base leading-relaxed text-brand-putty">{step.copy}</p>
+              <div className="flex min-h-[15rem] flex-col justify-between gap-fluid-xl p-fluid-xl">
+                <span aria-hidden="true" className="block h-10 w-10 rounded-sm bg-brand-red" />
+                <div>
+                  <h3 className="break-words font-ball-pill text-fluid-3xl leading-tight text-white">{step.title}</h3>
+                  <p className="mt-fluid-md max-w-xs font-sora text-base leading-relaxed text-brand-putty">{step.copy}</p>
+                </div>
+              </div>
             </article>
           ))}
         </div>

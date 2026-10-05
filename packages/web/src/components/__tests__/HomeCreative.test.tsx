@@ -22,14 +22,14 @@ describe("Homepage clarity", () => {
   it("offers one clear account action and retains the shoe hero", () => {
     render(<HomeCreative />);
     expect(screen.getByRole("link", { name: "Create account" })).toHaveAttribute("href", "/auth/signup");
-    expect(screen.getAllByTestId("hero-scene")).toHaveLength(2);
+    expect(screen.getAllByTestId("hero-scene")).toHaveLength(3);
   });
 
   it("keeps only an accessible scroll arrow over the shoe hero", () => {
     render(<HomeCreative />);
     const hero = within(screen.getByRole("region", { name: "Interactive climbing shoe" }));
     const arrow = hero.getByRole("link", { name: "Scroll to homepage content" });
-    expect(arrow).toHaveAttribute("href", "#home-intro");
+    expect(arrow).toHaveAttribute("href", "#home-steps");
     expect(arrow.textContent).toBe("");
     expect(arrow.querySelector("svg")).toHaveClass("lucide-arrow-down");
     expect(hero.queryByText("Climbing shoe catalog")).toBeNull();
@@ -65,29 +65,29 @@ describe("Homepage clarity", () => {
     }
   });
 
-  it("restores display-headed step tiles on Privacy-style surfaces while retaining readable Sora copy", () => {
+  it("restyles step cards like Sanctuary tiles while retaining Ball Pill titles and Sora copy", () => {
     render(<HomeCreative />);
     const stepsRegion = screen.getByRole("region", { name: "How it works" });
-    expect(stepsRegion).toHaveClass("bg-black");
+    expect(stepsRegion).toHaveClass("bg-brand-base");
     const section = within(stepsRegion);
+    expect(section.getByRole("heading", { name: "How it works" })).toHaveClass("font-so-cloudy");
     const articles = section.getAllByRole("article");
     expect(articles).toHaveLength(3);
     for (const article of articles) {
-      expect(article).toHaveClass("rounded-3xl", "bg-brand-surface");
+      expect(article).toHaveClass("rounded-xl", "border-white/30", "bg-brand-surface/90");
     }
     for (const title of ["Map your foot", "Rate your shoes", "Compare fits"]) {
       expect(section.getByRole("heading", { name: title })).toHaveClass("font-ball-pill");
     }
     expect(section.getByText("Set your foot shape and volume.")).toHaveClass("font-sora");
-    expect(screen.getByText("Climbing shoes, sizes and fit ratings.")).toHaveClass("font-sora");
   });
 
-  it("keeps the intro bold black and the account panel graphite instead of chalk", () => {
+  it("removes the GRIP KICKS intro while keeping the account panel graphite", () => {
     render(<HomeCreative />);
-    const intro = screen.getByRole("region", { name: /GRIP\s?KICKS/i });
-    expect(intro).toHaveClass("bg-black", "text-brand-chalk");
-    expect(intro).not.toHaveClass("bg-brand-chalk");
-    expect(screen.getByRole("heading", { name: /GRIP\s?KICKS/i })).toHaveClass("font-ball-pill");
+    expect(screen.queryByRole("region", { name: /GRIP\s?KICKS/i })).toBeNull();
+    expect(screen.queryByRole("heading", { name: /GRIP\s?KICKS/i })).toBeNull();
+    expect(screen.queryByText("Climbing shoes, sizes and fit ratings.")).toBeNull();
+    expect(screen.queryByText("Set your foot profile. Log the shoes you climb in. Compare fit and community ratings.")).toBeNull();
     const account = screen.getByRole("region", { name: "GET STARTED" });
     expect(account).toHaveClass("bg-brand-surface", "text-brand-chalk");
     expect(account).not.toHaveClass("bg-brand-chalk");
@@ -128,7 +128,9 @@ describe("Homepage clarity", () => {
 
   it("renders readable homepage content before hydration", () => {
     const html = renderToStaticMarkup(<HomeCreative />);
-    expect(html).toContain("Climbing shoes, sizes and fit ratings.");
+    expect(html).toContain("How it works");
+    expect(html).toContain("Map your foot");
+    expect(html).not.toContain("Climbing shoes, sizes and fit ratings.");
     expect(html).not.toContain("opacity:0");
   });
 });
