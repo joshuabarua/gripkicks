@@ -41,13 +41,16 @@ export default function HomeCreative() {
   return (
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
       <HeroSection isReducedEffects={isReducedEffects} />
-      <section id="home-intro" aria-labelledby="home-title" className="relative scroll-mt-14 overflow-hidden border-y border-white/30 bg-brand-surface px-fluid-md py-fluid-3xl text-brand-chalk md:px-fluid-xl">
+      <section id="home-intro" aria-labelledby="home-title" className="relative scroll-mt-14 overflow-hidden border-y border-white/10 bg-black px-fluid-md py-fluid-3xl text-brand-chalk md:px-fluid-xl">
+        <WordmarkWatermark lines={["GRIP", "KICKS"]} align="right" className="opacity-80" />
+        <div aria-hidden="true" className="absolute -left-24 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full border-[3rem] border-brand-red/80 md:h-96 md:w-96" />
         <div aria-hidden="true" className="grain-overlay !absolute !z-0" />
-        <div className="relative mx-auto grid max-w-fluid-xl items-end gap-fluid-xl md:grid-cols-[1.2fr_1fr]">
-          <h1 id="home-title" className="font-ball-pill text-[clamp(2.5rem,6vw,6.5rem)] leading-none">GRIPKICKS</h1>
-          <div className="border-l-4 border-brand-chalk/30 pl-fluid-lg">
+        <div className="relative z-10 mx-auto grid max-w-fluid-xl items-end gap-fluid-2xl md:grid-cols-[1.25fr_0.75fr]">
+          <h1 id="home-title" className="font-ball-pill text-[clamp(4rem,11vw,10rem)] leading-[0.78] tracking-[-0.04em]">GRIP<br />KICKS</h1>
+          <div className="rounded-[2rem] border border-white/15 bg-brand-base/80 p-fluid-xl backdrop-blur-sm">
+            <span aria-hidden="true" className="mb-fluid-lg block h-1.5 w-14 rounded-full bg-brand-red" />
             <p className="font-sora text-fluid-2xl font-semibold leading-snug">Climbing shoes, sizes and fit ratings.</p>
-            <p className="mt-fluid-md max-w-md font-sora text-base leading-relaxed">Set your foot profile. Log the shoes you climb in. Compare fit and community ratings.</p>
+            <p className="mt-fluid-md max-w-md font-sora text-base leading-relaxed text-brand-putty">Set your foot profile. Log the shoes you climb in. Compare fit and community ratings.</p>
           </div>
         </div>
       </section>

@@ -13,6 +13,7 @@ vi.mock("next/dynamic", () => ({ default: () => () => <div data-testid="hero-sce
 
 beforeEach(() => {
   vi.clearAllMocks();
+  window.matchMedia = vi.fn().mockReturnValue({ matches: false, addListener: vi.fn(), removeListener: vi.fn() });
   mocks.session.mockReturnValue({ data: null });
   mocks.count.mockReturnValue({ count: 24 });
 });
@@ -81,20 +82,41 @@ describe("Homepage clarity", () => {
     expect(screen.getByText("Climbing shoes, sizes and fit ratings.")).toHaveClass("font-sora");
   });
 
-  it("keeps large editorial panels graphite instead of filling them with chalk", () => {
+  it("keeps the intro bold black and the account panel graphite instead of chalk", () => {
     render(<HomeCreative />);
-    for (const title of ["GRIPKICKS", "GET STARTED"]) {
-      const panel = screen.getByRole("region", { name: title });
-      expect(panel).toHaveClass("bg-brand-surface", "text-brand-chalk");
-      expect(panel).not.toHaveClass("bg-brand-chalk");
-    }
+    const intro = screen.getByRole("region", { name: /GRIP\s?KICKS/i });
+    expect(intro).toHaveClass("bg-black", "text-brand-chalk");
+    expect(intro).not.toHaveClass("bg-brand-chalk");
+    expect(screen.getByRole("heading", { name: /GRIP\s?KICKS/i })).toHaveClass("font-ball-pill");
+    const account = screen.getByRole("region", { name: "GET STARTED" });
+    expect(account).toHaveClass("bg-brand-surface", "text-brand-chalk");
+    expect(account).not.toHaveClass("bg-brand-chalk");
   });
 
-  it("does not show a fabricated zero while community data is loading", () => {
+  it("shows the live count and locked milestones on the community rail", () => {
+    render(<HomeCreative />);
+    const community = within(screen.getByRole("region", { name: "COMMUNITY BUILT" }));
+    expect(community.getByText("24")).toBeInTheDocument();
+    expect(community.getByText("climbers building the database")).toBeInTheDocument();
+    expect(community.getByText("26 to unlock foot profiles")).toBeInTheDocument();
+    for (const label of ["Foot profiles", "Community ratings", "Shoe data", "Climbing community"]) {
+      expect(community.getByText(label)).toBeInTheDocument();
+    }
+    expect(community.getAllByRole("img", { name: /locked$/ })).toHaveLength(4);
+    expect(community.getByText("24 / 50")).toBeInTheDocument();
+    expect(community.queryByText("Unlocked")).toBeNull();
+  });
+
+  it("does not show a fabricated zero or milestone rail while community data is loading", () => {
     mocks.count.mockReturnValue(undefined);
     render(<HomeCreative />);
     expect(screen.getByRole("status", { name: "Loading community count" })).toBeInTheDocument();
     expect(screen.queryByText("0", { exact: true })).toBeNull();
+    const community = within(screen.getByRole("region", { name: "COMMUNITY BUILT" }));
+    expect(community.queryByText("0 / 50")).toBeNull();
+    expect(community.queryByText("0 / 100")).toBeNull();
+    expect(community.queryAllByRole("img", { name: /locked$/ })).toHaveLength(0);
+    expect(community.queryByText("Foot profiles")).toBeNull();
   });
 
   it("keeps server-rendered account controls stable even when the client has a cached session", () => {
