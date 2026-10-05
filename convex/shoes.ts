@@ -23,9 +23,15 @@ export const list = query({
       .order("asc")
       .paginate(args.paginationOpts);
 
+    const page = await enrichShoesWithRubber(ctx, result.page);
     return {
       ...result,
-      page: await enrichShoesWithRubber(ctx, result.page),
+      page: await Promise.all(page.map(async (shoe) => {
+        const compatibility = await ctx.db.query("footShapeCompat")
+          .withIndex("by_shoe", (q) => q.eq("shoeId", shoe._id))
+          .collect();
+        return { ...shoe, footShapeCompat: compatibility.map((entry) => entry.footShape) };
+      })),
     };
   },
 });

@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Footprints, Layers, Target, Users } from "lucide-react";
 import { useSession } from "@/lib/auth";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
@@ -22,10 +22,11 @@ function HeroSection({ isReducedEffects }: { isReducedEffects: boolean }) {
   return (
     <section id="home-hero" aria-label="Interactive climbing shoe" className="relative h-[calc(100svh-3.5rem)] min-h-[360px] overflow-hidden">
       <div className="absolute inset-0">
-        <EtherField className="absolute inset-0 h-full w-full" paused={isReducedEffects} speed={isReducedEffects ? 0 : 0.7} ambientColor="#0a0d18" accentColor="#ff5a3d" />
+        <EtherField className="absolute inset-0 h-full w-full" paused={isReducedEffects} speed={isReducedEffects ? 0 : 0.7} ambientColor="#171c27" accentColor="#ff5a3d" />
       </div>
       <div className="absolute bottom-0 left-0 right-0 top-[10px] z-[1]"><Scene /></div>
-      <Link href="#home-tools" className="absolute bottom-fluid-lg right-fluid-md z-10 inline-flex min-h-11 items-center gap-3 rounded-lg border border-brand-chalk bg-brand-chalk px-5 py-3 font-sora text-sm font-semibold text-brand-base md:right-fluid-xl focus-visible:outline-brand-chalk">Explore tools<ArrowDown aria-hidden="true" className="h-4 w-4" /></Link>
+      <div className="pointer-events-none absolute bottom-fluid-lg left-fluid-md z-10 hidden border-l-4 border-brand-red bg-brand-base/90 px-5 py-3 font-sora text-sm text-brand-chalk sm:block md:left-fluid-xl">Climbing shoe catalog</div>
+      <Link href="#home-tools" className="group absolute bottom-fluid-lg right-fluid-md z-10 inline-flex min-h-11 items-center gap-3 rounded-full border border-brand-chalk bg-brand-chalk px-5 py-3 font-sora text-sm font-semibold text-brand-base md:right-fluid-xl focus-visible:outline-brand-chalk">Explore tools<ArrowDown aria-hidden="true" className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1 motion-reduce:transform-none" /></Link>
     </section>
   );
 }
@@ -40,41 +41,81 @@ export default function HomeCreative() {
   return (
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
       <HeroSection isReducedEffects={isReducedEffects} />
-      <section id="home-tools" className="scroll-mt-14 border-y border-brand-chalk bg-brand-chalk px-fluid-md py-fluid-2xl text-brand-base md:px-fluid-xl">
-        <div className="mx-auto flex max-w-6xl flex-col justify-between gap-fluid-lg md:flex-row md:items-center">
-          <div>
-            <h1 className="font-ball-pill text-fluid-4xl leading-none">GripKicks</h1>
-            <p className="mt-fluid-md font-sora text-base leading-relaxed">Climbing shoes, sizes and fit ratings.</p>
+      <section aria-labelledby="home-title" className="relative overflow-hidden border-y border-brand-chalk bg-brand-chalk px-fluid-md py-fluid-3xl text-brand-base md:px-fluid-xl">
+        <div aria-hidden="true" className="grain-overlay !absolute !z-0" />
+        <div className="relative mx-auto grid max-w-fluid-xl items-end gap-fluid-xl md:grid-cols-[1.2fr_1fr]">
+          <h1 id="home-title" className="font-ball-pill text-[clamp(2.5rem,6vw,6.5rem)] leading-none">GRIPKICKS</h1>
+          <div className="border-l-4 border-brand-base pl-fluid-lg">
+            <p className="font-basteleur text-fluid-2xl leading-snug">Climbing shoes, sizes and fit ratings.</p>
+            <p className="mt-fluid-md max-w-md font-sora text-base leading-relaxed">Set your foot profile. Log the shoes you climb in. Compare fit and community ratings.</p>
           </div>
-          {!hasHydrated || isPending ? <p role="status" className="font-sora text-sm">Loading account…</p> : <Link href={isAuthenticated ? "/dashboard" : "/auth/signup"} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-3 rounded-lg border border-brand-base bg-brand-red px-6 py-3 font-sora text-sm font-semibold text-black hover:bg-brand-red/90 focus-visible:outline-brand-base">{isAuthenticated ? "Open dashboard" : "Create account"}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link>}
         </div>
       </section>
+      <HowItWorksSection />
       <ToolsSection />
       <CommunityMilestone userCount={countData?.count} />
+      <section aria-labelledby="account-title" className="relative overflow-hidden border-t border-white/40 bg-brand-chalk px-fluid-md py-fluid-3xl text-brand-base md:px-fluid-xl">
+        <div aria-hidden="true" className="absolute -right-12 -top-20 h-64 w-64 rounded-full border-[3rem] border-brand-red/70" />
+        <div className="relative mx-auto flex max-w-fluid-xl flex-wrap items-end justify-between gap-fluid-xl">
+          <h2 id="account-title" className="font-ball-pill text-[clamp(2.5rem,6vw,6.5rem)] leading-none">{hasHydrated && isAuthenticated ? "YOUR DASHBOARD" : "GET STARTED"}</h2>
+          {!hasHydrated || isPending ? <p role="status" className="font-sora text-sm">Loading account…</p> : <Link href={isAuthenticated ? "/dashboard" : "/auth/signup"} className="group inline-flex min-h-14 shrink-0 items-center justify-center gap-5 rounded-full border border-brand-base bg-brand-base px-7 py-4 font-sora text-base font-semibold text-brand-chalk transition-colors hover:bg-brand-red hover:text-black focus-visible:outline-brand-base">{isAuthenticated ? "Open dashboard" : "Create account"}<ArrowUpRight aria-hidden="true" className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 motion-reduce:transform-none" /></Link>}
+        </div>
+      </section>
     </PageSurface>
+  );
+}
+
+function HowItWorksSection() {
+  const steps = [
+    { title: "Map your foot", copy: "Set your foot shape and volume." },
+    { title: "Rate your shoes", copy: "Record size, comfort, performance and durability." },
+    { title: "Compare fits", copy: "Check catalog matches and ratings from climbers with your foot profile." },
+  ];
+
+  return (
+    <section aria-labelledby="steps-title" className="px-fluid-md py-fluid-3xl md:px-fluid-xl">
+      <div className="mx-auto max-w-fluid-xl">
+        <h2 id="steps-title" className="mb-fluid-xl font-ball-pill text-fluid-5xl leading-none">How it works</h2>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))] gap-fluid-lg">
+          {steps.map((step) => (
+            <div key={step.title} className="border-t-4 border-brand-chalk bg-brand-surface p-fluid-lg">
+              <h3 className="font-basteleur text-fluid-2xl leading-snug">{step.title}</h3>
+              <p className="mt-fluid-md font-sora text-base leading-relaxed text-brand-putty">{step.copy}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
 function ToolsSection() {
   const tools = [
-    { title: "Foot Lab", copy: "Set your foot shape and volume.", href: "/footlab" },
-    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash" },
-    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher" },
-    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate" },
+    { title: "Foot Lab", copy: "Set your foot shape and volume.", href: "/footlab", icon: Footprints },
+    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash", icon: Layers },
+    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher", icon: Target },
+    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate", icon: Users },
   ];
 
   return (
-    <section aria-labelledby="tools-title" className="px-fluid-md py-fluid-2xl md:px-fluid-xl">
-      <div className="mx-auto max-w-6xl space-y-fluid-lg">
-        <h2 id="tools-title" className="font-sora text-fluid-2xl font-semibold">Tools</h2>
-        <div className="grid gap-fluid-lg md:grid-cols-2">
+    <section id="home-tools" aria-labelledby="tools-title" className="scroll-mt-14 border-y border-white/40 bg-brand-surface px-fluid-md py-fluid-3xl md:px-fluid-xl">
+      <div className="mx-auto max-w-fluid-xl">
+        <div className="mb-fluid-xl flex items-center gap-fluid-lg">
+          <h2 id="tools-title" className="font-ball-pill text-fluid-5xl leading-none">Tools</h2>
+          <span aria-hidden="true" className="h-px flex-1 bg-brand-chalk/60" />
+        </div>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,28rem),1fr))] gap-px overflow-hidden border border-white/40 bg-brand-chalk/40">
           {tools.map((tool) => (
-            <Link key={tool.href} href={tool.href} className="group flex min-h-44 items-start justify-between gap-5 rounded-2xl border border-white/40 bg-brand-surface p-fluid-lg transition-colors hover:bg-brand-soft-surface focus-visible:bg-brand-soft-surface">
-              <div>
-                <h3 className="font-sora text-xl font-semibold">{tool.title}</h3>
-                <p className="mt-3 max-w-sm font-sora text-base leading-relaxed text-brand-putty">{tool.copy}</p>
+            <Link key={tool.href} href={tool.href} className="group relative flex min-h-[clamp(14rem,22vw,22rem)] min-w-0 flex-col justify-between gap-fluid-xl overflow-hidden bg-brand-base p-fluid-xl transition-colors duration-500 hover:bg-brand-soft-surface focus-visible:bg-brand-soft-surface focus-visible:outline-brand-chalk focus-visible:-outline-offset-4">
+              <span aria-hidden="true" className="absolute bottom-0 left-0 top-0 w-1.5 origin-bottom scale-y-0 bg-brand-red transition-transform duration-500 group-hover:scale-y-100 group-focus-visible:scale-y-100 motion-reduce:transition-none" />
+              <div className="flex items-start justify-between gap-4">
+                <tool.icon aria-hidden="true" strokeWidth={1.5} className="h-8 w-8 shrink-0 text-brand-putty" />
+                <ArrowUpRight aria-hidden="true" className="h-8 w-8 shrink-0 text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
               </div>
-              <ArrowUpRight aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-brand-chalk transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transform-none" />
+              <div className="transition-transform duration-500 group-hover:translate-x-2 group-focus-visible:translate-x-2 motion-reduce:transform-none">
+                <h3 className="break-words font-ball-pill text-fluid-5xl leading-none">{tool.title}</h3>
+                <p className="mt-fluid-md max-w-sm font-sora text-base leading-relaxed text-brand-putty">{tool.copy}</p>
+              </div>
             </Link>
           ))}
         </div>

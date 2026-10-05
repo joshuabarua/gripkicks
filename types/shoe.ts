@@ -23,6 +23,12 @@ export interface ShoeRecommendation {
   }[];
 }
 
+export interface MatchSignals {
+  footShape: "listed" | "not-listed" | "unknown";
+  volume: boolean;
+  preferences: boolean;
+}
+
 export interface CommunitySignal {
   label: string;
   value: string;

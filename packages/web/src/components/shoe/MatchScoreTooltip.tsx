@@ -1,6 +1,9 @@
 "use client";
 
 import { Info } from "lucide-react";
+import type { MatchSignals } from "@/types/shoe";
+import { describeMatchSignal } from "@/utils/matchSignals";
+import { toHundredPointScale } from "convex/utils/scoring";
 import {
   Tooltip,
   TooltipContent,
@@ -10,6 +13,7 @@ import {
 
 interface MatchScoreTooltipProps {
   score: number;
+  signals?: MatchSignals;
   breakdown: {
     footTypeCompatibility: number; // Max 5, weight 30%
     volumeCompatibility: number;   // Max 5, weight 20%
@@ -20,7 +24,7 @@ interface MatchScoreTooltipProps {
   };
 }
 
-export function MatchScoreTooltip({ score, breakdown }: MatchScoreTooltipProps) {
+export function MatchScoreTooltip({ score, breakdown, signals }: MatchScoreTooltipProps) {
   // Convert scores (out of 5) to their weighted percentage contribution
   const footScorePct = ((breakdown.footTypeCompatibility / 5) * 30).toFixed(0);
   const volumeScorePct = ((breakdown.volumeCompatibility / 5) * 20).toFixed(0);
@@ -34,8 +38,8 @@ export function MatchScoreTooltip({ score, breakdown }: MatchScoreTooltipProps) 
     <TooltipProvider>
       <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>
-          <button type="button" aria-label={`Match breakdown: ${Math.round((score / 5) * 100)}%`} className="flex min-h-11 items-center gap-2 rounded-lg px-2 font-sora text-brand-chalk hover:bg-brand-soft-surface">
-            <span className="text-xl font-semibold tabular-nums">{Math.round((score / 5) * 100)}%</span>
+          <button type="button" aria-label={`Match breakdown: ${toHundredPointScale(score, 5)}%`} className="flex min-h-11 items-center gap-2 rounded-lg px-2 font-sora text-brand-chalk hover:bg-brand-soft-surface">
+            <span className="text-xl font-semibold tabular-nums">{toHundredPointScale(score, 5)}%</span>
             <Info aria-hidden="true" className="h-4 w-4 text-brand-putty" />
           </button>
         </TooltipTrigger>
@@ -52,15 +56,15 @@ export function MatchScoreTooltip({ score, breakdown }: MatchScoreTooltipProps) 
             <div className="space-y-2 text-sm">
               <div className="flex justify-between items-center">
                 <span className="text-neutral-400">Foot Shape Match</span>
-                <span className="text-green-400">+{footScorePct}%</span>
+                <span className="text-brand-chalk">{describeMatchSignal(signals, "footShape") ?? `+${footScorePct}%`}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-neutral-400">Volume Match</span>
-                <span className="text-green-400">+{volumeScorePct}%</span>
+                <span className="text-brand-chalk">{describeMatchSignal(signals, "volume") ?? `+${volumeScorePct}%`}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-neutral-400">Preference Match</span>
-                <span className="text-green-400">+{preferenceScorePct}%</span>
+                <span className="text-brand-chalk">{describeMatchSignal(signals, "preferences") ?? `+${preferenceScorePct}%`}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-neutral-400">Community Approval</span>

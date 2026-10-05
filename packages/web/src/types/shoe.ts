@@ -1,1 +1,1 @@
-export type { CommunitySignal, ShoeRecommendation } from "../../../../types/shoe";
+export type { CommunitySignal, MatchSignals, ShoeRecommendation } from "../../../../types/shoe";

@@ -9,7 +9,9 @@ import {
   aggressivenessToScore,
   disciplineToVersatility,
   toFivePointScale,
+  normalizeVolume,
 } from "convex/utils/scoring";
+import type { MatchSignals } from "@/types/shoe";
 
 interface SoleMateAggregate {
   shoeId: string;
@@ -21,11 +23,12 @@ interface SoleMateAggregate {
   avgSizingDeviationScore?: number | null;
 }
 
-type Shoe = Doc<"shoes">;
+type Shoe = Doc<"shoes"> & { footShapeCompat?: Array<Doc<"footShapeCompat">["footShape"]> };
 
 interface ShoeScore {
   shoe: Shoe;
   totalScore: number;
+  signals: MatchSignals;
   breakdown: {
     footTypeCompatibility: number;
     volumeCompatibility: number;
@@ -103,7 +106,7 @@ export function useShoeScoring(userPreferences?: {
   const soleMateData = useQuery(
     api.stash.getSoleMateAggregates,
     footProfile?.shape && footProfile?.volume
-      ? { footShape: footProfile.shape, footVolume: footProfile.volume }
+      ? { footShape: footProfile.shape.toLowerCase(), footVolume: footProfile.volume.toLowerCase() }
       : "skip",
   );
 
@@ -203,13 +206,15 @@ export function calculateShoeScore(
   );
 
   // Calculate weighted total score
-  const totalScore =
+  const totalScore = Math.min(
+    5,
     footTypeScore * 0.3 +
     volumeScore * 0.2 +
     preferenceScore * 0.25 +
     communityScore * 0.15 +
     overallRatingScore * 0.1 +
-    learnedPreferenceBonus;
+    learnedPreferenceBonus,
+  );
 
   // Calculate radar metrics
   const metrics = calculateRadarMetrics(
@@ -234,6 +239,11 @@ export function calculateShoeScore(
   return {
     shoe,
     totalScore,
+    signals: {
+      footShape: footProfile && shoe.footShapeCompat?.length ? footTypeScore === 5 ? "listed" : "not-listed" : "unknown",
+      volume: !!(footProfile && normalizeVolume(footProfile.volume) && normalizeVolume(shoe.volume)),
+      preferences: !!userPreferences,
+    },
     breakdown: {
       footTypeCompatibility: footTypeScore,
       volumeCompatibility: volumeScore,
@@ -254,36 +264,7 @@ function calculateFootTypeCompatibility(
 ): number {
   if (!footProfile) return 2.5; // Neutral score if no profile
 
-  const footTypeCompatibility: Record<string, Record<string, number>> = {
-    Egyptian: {
-      low_volume: 4.5,
-      medium_volume: 3.5,
-      high_volume: 2.0,
-    },
-    Roman: {
-      low_volume: 3.0,
-      medium_volume: 4.5,
-      high_volume: 3.5,
-    },
-    Greek: {
-      low_volume: 2.0,
-      medium_volume: 3.0,
-      high_volume: 4.5,
-    },
-    Germanic: {
-      low_volume: 2.5,
-      medium_volume: 3.5,
-      high_volume: 4.0,
-    },
-    Celtic: {
-      low_volume: 3.5,
-      medium_volume: 4.0,
-      high_volume: 3.0,
-    },
-  };
-
-  const shoeVolume = shoe.volume?.toLowerCase() || "medium_volume";
-  return footTypeCompatibility[footProfile.shape]?.[shoeVolume] || 2.5;
+  return shoe.footShapeCompat?.some((shape) => shape === footProfile.shape.toLowerCase()) ? 5 : 2.5;
 }
 
 function calculateVolumeCompatibility(
@@ -292,26 +273,11 @@ function calculateVolumeCompatibility(
 ): number {
   if (!footProfile) return 2.5;
 
-  const volumeMapping: Record<string, Record<string, number>> = {
-    Low: {
-      low_volume: 5.0,
-      medium_volume: 3.0,
-      high_volume: 1.0,
-    },
-    Medium: {
-      low_volume: 3.0,
-      medium_volume: 5.0,
-      high_volume: 3.0,
-    },
-    High: {
-      low_volume: 1.0,
-      medium_volume: 3.0,
-      high_volume: 5.0,
-    },
-  };
-
-  const shoeVolume = shoe.volume?.toLowerCase() || "medium_volume";
-  return volumeMapping[footProfile.volume]?.[shoeVolume] || 2.5;
+  const shoeVolume = normalizeVolume(shoe.volume);
+  const userVolume = normalizeVolume(footProfile.volume);
+  if (!shoeVolume || !userVolume) return 2.5;
+  const levels = { low: 0, medium: 1, high: 2 };
+  return 5 - Math.abs(levels[shoeVolume] - levels[userVolume]) * 2;
 }
 
 function getCatalogBaseline(

@@ -23,7 +23,36 @@ const approvedEnrichment = {
   reviewStatus: "approved" as const,
 };
 
+describe("calculateShoeScore fit signals", () => {
+  it("marks missing preferences as unavailable rather than reporting a 50% match", () => {
+    const score = calculateShoeScore(baseShoe, { shape: "Roman", volume: "Medium" }, undefined, []);
+    expect(score.signals.preferences).toBe(false);
+    expect(score.signals.footShape).toBe("unknown");
+  });
+  it("varies volume compatibility for the catalog's low, medium and high volumes", () => {
+    const scores = ["low", "medium", "high"].map((volume) => calculateShoeScore({ ...baseShoe, volume }, { shape: "Roman", volume: "Low" }, undefined, []));
+    expect(new Set(scores.map((score) => score.breakdown.volumeCompatibility)).size).toBe(3);
+    expect(scores[0]!.breakdown.volumeCompatibility).toBeGreaterThan(scores[2]!.breakdown.volumeCompatibility);
+  });
+
+  it.each(["low", "low_volume", "Low Volume"])("normalizes the volume alias %s", (volume) => {
+    const score = calculateShoeScore({ ...baseShoe, volume }, { shape: "Roman", volume: "Low" }, undefined, []);
+    expect(score.breakdown.volumeCompatibility).toBe(5);
+  });
+
+  it("uses recorded foot shape compatibility instead of giving every shoe 50%", () => {
+    const compatible = calculateShoeScore({ ...baseShoe, footShapeCompat: ["roman"] }, { shape: "Roman", volume: "Medium" }, undefined, []);
+    const incompatible = calculateShoeScore({ ...baseShoe, footShapeCompat: ["egyptian"] }, { shape: "Roman", volume: "Medium" }, undefined, []);
+    expect(compatible.breakdown.footTypeCompatibility).toBeGreaterThan(incompatible.breakdown.footTypeCompatibility);
+  });
+});
+
 describe("calculateShoeScore scale consistency", () => {
+  it("keeps learned bonuses inside the 5-point personal score scale", () => {
+    const shoe = { ...baseShoe, footShapeCompat: ["roman" as const], avgComfortScore: 10, avgPerformanceRating: 10, avgDurabilityRating: 10 };
+    const score = calculateShoeScore(shoe, { shape: "Roman", volume: "Medium" }, { comfort: 5, performance: 5, durability: 5 }, [{ shoeId: "shoe-1", count: 20 }], { preferredBrands: ["TestBrand"], preferredVolumes: ["medium"], preferredDisciplines: ["sport"], confidence: 1, sampleSize: 10, aggressiveness: 3 });
+    expect(score.totalScore).toBeLessThanOrEqual(5);
+  });
   it("scores a rated shoe and an identical catalog-baseline shoe at comparable magnitude", () => {
     const ratedShoe = {
       ...baseShoe,
@@ -119,6 +148,6 @@ describe("calculateShoeScore scale consistency", () => {
 
     expect(score.breakdown.communityApproval).toBeLessThanOrEqual(5);
     expect(score.metrics.durability).toBeLessThanOrEqual(5);
-    expect(score.totalScore).toBeLessThanOrEqual(5.5);
+    expect(score.totalScore).toBeLessThanOrEqual(5);
   });
 });

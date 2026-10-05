@@ -491,8 +491,8 @@ export const getCommunityTopShoes = query({
         const avgRawSizingDeviation = avg(bucket.rawSizingDeviation);
         const enrichedDurability =
           avgFitLongevity === null ? avgDurability : avgDurability * 0.85 + avgFitLongevity * 0.15;
-        const sizingSignal = avgSizingDeviation === null ? 0 : avgSizingDeviation * 0.1;
-        const compositeScore = ((avgComfort + avgPerformance + enrichedDurability) / 3) + sizingSignal;
+        const ratingAverage = (avgComfort + avgPerformance + enrichedDurability) / 3;
+        const compositeScore = avgSizingDeviation === null ? ratingAverage : ratingAverage * 0.9 + avgSizingDeviation * 0.1;
 
         return {
           _id: shoe._id,

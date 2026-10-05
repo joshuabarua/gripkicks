@@ -46,6 +46,17 @@ describe("Matcher results", () => {
     expect(screen.getByRole("link", { name: "Set up foot profile" })).toHaveAttribute("href", "/footlab");
   });
 
+  it("does not present unavailable signals as 50% compatibility", () => {
+    const unknown: DisplayShoe = { ...shoe, signals: { footShape: "unknown", volume: false, preferences: false }, breakdown: { ...shoe.breakdown!, footTypeCompatibility: 2.5, volumeCompatibility: 2.5, userPreferenceMatch: 2.5 } };
+    render(<MatcherResults {...props} personalShoes={[unknown]} />);
+    fireEvent.click(screen.getByText("Match details"));
+    const card = within(screen.getByRole("article", { name: "Scarpa Origin Women's" }));
+    expect(card.getAllByText("Not recorded")).toHaveLength(2);
+    expect(card.getByText("Not learned")).toBeVisible();
+    expect(card.queryByText("50%")).toBeNull();
+    expect(screen.getByRole("link", { name: "Rate your shoes" })).toHaveAttribute("href", "/stash");
+  });
+
   it("renders shoe cards before hydration without entrance opacity", () => {
     const html = renderToStaticMarkup(<MatcherResults {...props} />);
     expect(html).toContain("Origin Women");

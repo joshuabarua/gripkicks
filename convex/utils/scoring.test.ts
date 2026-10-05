@@ -5,6 +5,7 @@ import {
   fitLongevityToScore,
   sizingDeviationToScore,
   toFivePointScale,
+  toHundredPointScale,
 } from "./scoring";
 
 describe("fitLongevityToScore", () => {
@@ -72,5 +73,11 @@ describe("toFivePointScale", () => {
     expect(toFivePointScale(10)).toBe(5);
     expect(toFivePointScale(7)).toBe(3.5);
     expect(toFivePointScale(2)).toBe(1);
+  });
+});
+
+describe("toHundredPointScale", () => {
+  it.each([[7.95, 10, 80], [4, 5, 80], [10, 10, 100], [5, 5, 100], [11, 10, 100], [5.5, 5, 100], [-1, 10, 0], [9.95, 10, 100]] as const)("maps %s out of %s to %s/100", (value, maximum, expected) => {
+    expect(toHundredPointScale(value, maximum)).toBe(expected);
   });
 });

@@ -11,7 +11,9 @@ import { useFootProfile } from "@/hooks/useFootProfile";
 import { MatchScoreTooltip } from "./MatchScoreTooltip";
 import { DataContributionNudge } from "@/components/DataContributionNudge";
 import { RadarGrid, type RadarShoe, type RadarUserPosition } from "./RadarGrid";
-import type { CommunitySignal } from "@/types/shoe";
+import type { CommunitySignal, MatchSignals } from "@/types/shoe";
+import { describeMatchSignal } from "@/utils/matchSignals";
+import { toFivePointScale, toHundredPointScale } from "convex/utils/scoring";
 
 type Mode = "personal" | "community";
 
@@ -25,6 +27,7 @@ export interface DisplayShoe {
   brandAggressiveness?: number;
   totalRatings?: number;
   communitySignals?: CommunitySignal[];
+  signals?: MatchSignals;
   metrics: {
     comfort: number;
     performance: number;
@@ -56,9 +59,9 @@ export function MatcherView() {
       brand: s.shoe.brand,
       name: s.shoe.name,
       ...(s.shoe.imageUrl ? { imageUrl: s.shoe.imageUrl } : {}),
-      primaryScore: Math.round((s.totalScore / 5) * 100),
+      primaryScore: toHundredPointScale(s.totalScore, 5),
       secondaryLabel: "match",
-      ...(s.shoe.brandAggressiveness !== undefined ? { brandAggressiveness: s.shoe.brandAggressiveness } : {}),
+      ...(s.shoe.brandAggressiveness !== undefined ? { brandAggressiveness: toFivePointScale(s.shoe.brandAggressiveness) } : {}),
       metrics: {
         comfort: s.metrics.comfort,
         performance: s.metrics.performance,
@@ -67,6 +70,7 @@ export function MatcherView() {
         versatility: s.metrics.versatility,
       },
       breakdown: s.breakdown,
+      signals: s.signals,
     }));
   }, [scoredShoes]);
 
@@ -77,17 +81,17 @@ export function MatcherView() {
       brand: s.brand,
       name: s.name,
       ...(s.imageUrl ? { imageUrl: s.imageUrl } : {}),
-      primaryScore: Math.round((s.compositeScore / 5) * 100),
+      primaryScore: toHundredPointScale(s.compositeScore, 10),
       secondaryLabel: `${s.totalRatings} ratings`,
-      ...(s.brandAggressiveness !== undefined ? { brandAggressiveness: s.brandAggressiveness } : {}),
+      ...(s.brandAggressiveness !== undefined ? { brandAggressiveness: toFivePointScale(s.brandAggressiveness) } : {}),
       totalRatings: s.totalRatings,
       communitySignals: s.communitySignals ?? [],
       metrics: {
-        comfort: s.avgComfort,
-        performance: s.avgPerformance,
-        durability: s.avgDurability,
-        aggressiveness: s.avgAggressiveness,
-        versatility: Math.max(0, 5 - s.avgAggressiveness),
+        comfort: toFivePointScale(s.avgComfort),
+        performance: toFivePointScale(s.avgPerformance),
+        durability: toFivePointScale(s.avgDurability),
+        aggressiveness: toFivePointScale(s.avgAggressiveness),
+        versatility: Math.max(0, 5 - toFivePointScale(s.avgAggressiveness)),
       },
     }));
   }, [communityShoes]);
@@ -127,7 +131,8 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
       <section aria-label="Recommendation source" className="flex flex-col justify-between gap-fluid-lg rounded-2xl border border-brand-chalk bg-brand-chalk p-fluid-lg text-brand-base lg:flex-row lg:items-center">
         <div>
           <h2 className="font-sora text-fluid-2xl font-semibold">{mode === "personal" ? "Your shoe matches" : "Community ratings"}</h2>
-          <p className="mt-2 font-sora text-base leading-relaxed text-brand-base/80">{mode === "personal" ? "Shoes ranked using your profile and fit ratings." : "Shoes ranked using ratings from all climbers."}</p>
+          <p className="mt-2 font-sora text-base leading-relaxed text-brand-base/80">{mode === "personal" ? "Fit estimates from catalog attributes and available ratings. Not a fit guarantee." : "Shoes ranked using ratings from all climbers."}</p>
+          {mode === "personal" && activeShoes.some((shoe) => shoe.signals && !shoe.signals.preferences) && <p className="mt-3 font-sora text-sm">Preferences need 3 complete shoe ratings. <Link href="/stash" className="underline underline-offset-4">Rate your shoes</Link></p>}
         </div>
         <div aria-label="Choose recommendation source" className="grid grid-cols-2 gap-2 rounded-xl border border-brand-base/40 p-2">
           {([["personal", "For you", personalShoes.length, personalLoading], ["community", "Community", communityShoes.length, communityLoading]] as const).map(([value, label, count, loading]) => (
@@ -233,7 +238,7 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
               <details className="border-t border-white/40 pt-2">
                 <summary className="min-h-11 cursor-pointer py-3 font-sora text-sm font-medium">Match details</summary>
                 <dl className="space-y-3 pb-2 font-sora text-sm text-brand-putty">
-                  {([["Foot shape", shoe.breakdown.footTypeCompatibility], ["Volume", shoe.breakdown.volumeCompatibility], ["Preferences", shoe.breakdown.userPreferenceMatch]] as const).map(([label, value]) => <div key={label} className="flex justify-between gap-4"><dt>{label}</dt><dd className="tabular-nums text-brand-chalk">{(value * 20).toFixed(0)}%</dd></div>)}
+                  {([["footShape", "Foot shape", shoe.breakdown.footTypeCompatibility], ["volume", "Volume", shoe.breakdown.volumeCompatibility], ["preferences", "Preferences", shoe.breakdown.userPreferenceMatch]] as const).map(([field, label, value]) => <div key={field} className="flex justify-between gap-4"><dt>{label}</dt><dd className="tabular-nums text-brand-chalk">{describeMatchSignal(shoe.signals, field) ?? `${(value * 20).toFixed(0)}%`}</dd></div>)}
                 </dl>
               </details>
             )}
@@ -266,7 +271,7 @@ function Leaderboard({ shoes, mode, hoveredId, onHoverChange }: { shoes: Display
             <MetricCell label="Durability" value={shoe.metrics.durability} />
           </dl>
           <div className="font-sora">
-            {mode === "personal" && shoe.breakdown ? <MatchScoreTooltip score={shoe.primaryScore / 20} breakdown={shoe.breakdown} /> : <p className="text-lg font-semibold tabular-nums">{shoe.primaryScore}/100</p>}
+            {mode === "personal" && shoe.breakdown ? <MatchScoreTooltip score={shoe.primaryScore / 20} breakdown={shoe.breakdown} {...(shoe.signals ? { signals: shoe.signals } : {})} /> : <p className="text-lg font-semibold tabular-nums">{shoe.primaryScore}/100</p>}
           </div>
           {shoe.communitySignals?.length ? <div className="xl:col-span-3"><SignalCell signals={shoe.communitySignals} /></div> : null}
         </article>

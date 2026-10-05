@@ -31,13 +31,15 @@ describe("Homepage clarity", () => {
     expect(screen.queryByRole("link", { name: "Create account" })).toBeNull();
   });
 
-  it("keeps the four tools distinct without repeating a setup section", () => {
+  it("restores the original page sections while keeping the four tools distinct", () => {
     render(<HomeCreative />);
     expect(screen.getByRole("link", { name: /Foot Lab/ })).toHaveAttribute("href", "/footlab");
     expect(screen.getByRole("link", { name: /Sanctuary/ })).toHaveAttribute("href", "/stash");
     expect(screen.getByRole("link", { name: /Matcher/ })).toHaveAttribute("href", "/matcher");
     expect(screen.getByRole("link", { name: /Sole Mate/ })).toHaveAttribute("href", "/matcher?tab=mate");
-    expect(screen.queryByText("How it works")).toBeNull();
+    expect(screen.getByRole("heading", { name: "How it works" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "GET STARTED" })).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Create account" })).toHaveLength(1);
   });
 
   it("does not show a fabricated zero while community data is loading", () => {

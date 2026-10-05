@@ -42,6 +42,15 @@ export function disciplineToVersatility(
     : fallback;
 }
 
+export function normalizeVolume(value?: string | null): "low" | "medium" | "high" | undefined {
+  const normalized = value?.trim().toLowerCase().replace(/[_\s-]+volume$/, "");
+  return normalized === "low" || normalized === "medium" || normalized === "high" ? normalized : undefined;
+}
+
+export function toHundredPointScale(value: number, maximum: 5 | 10): number {
+  return Math.round(Math.min(100, Math.max(0, (value / maximum + Number.EPSILON) * 100)));
+}
+
 export function toFivePointScale(value: number): number {
   return value / 2;
 }
