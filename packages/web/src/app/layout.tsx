@@ -2,11 +2,6 @@ import "./globals.css";
 import localFont from "next/font/local";
 import AppShell from "@/components/AppShell";
 
-const basteleur = localFont({
-  src: "../../public/fonts/Basteleur-Bold.otf",
-  variable: "--font-basteleur",
-});
-
 const sora = localFont({
   src: "../../public/fonts/Sora.ttf",
   variable: "--font-sora",
@@ -29,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`min-h-screen bg-background antialiased ${basteleur.variable} ${sora.variable} ${ballPill.variable} ${soCloudy.variable}`}>
+      <body className={`min-h-screen bg-background antialiased ${sora.variable} ${ballPill.variable} ${soCloudy.variable}`}>
         <AppShell>{children}</AppShell>
       </body>
     </html>

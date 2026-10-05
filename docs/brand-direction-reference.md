@@ -33,7 +33,7 @@ Use this as the visual source of truth for the product.
 
 | Role    | Recommendation               | Use                                   |
 | ------- | ---------------------------- | ------------------------------------- |
-| Display | Tanker or Basteleur          | Homepage headings and hero statements |
+| Display | Ball Pill or Tanker          | Homepage headings and hero statements |
 | Body    | Sora                         | Reading copy, specs, controls         |
 | Utility | Sora uppercase with tracking | Labels and captions                   |
 

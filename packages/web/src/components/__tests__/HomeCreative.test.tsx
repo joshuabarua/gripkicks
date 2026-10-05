@@ -1,6 +1,6 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import HomeCreative from "@/app/home-designs/HomeCreative";
 
@@ -40,6 +40,32 @@ describe("Homepage clarity", () => {
     expect(screen.getByRole("heading", { name: "How it works" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "GET STARTED" })).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Create account" })).toHaveLength(1);
+  });
+
+  it("keeps link arrows without decorative tool icons", () => {
+    render(<HomeCreative />);
+    const links = within(screen.getByRole("region", { name: "Tools" })).getAllByRole("link");
+    expect(links).toHaveLength(4);
+    for (const link of links) {
+      const icons = link.querySelectorAll("svg");
+      expect(icons).toHaveLength(1);
+      expect(icons[0]).toHaveClass("lucide-arrow-up-right");
+    }
+  });
+
+  it("uses Sora for supporting headings instead of the removed serif font", () => {
+    render(<HomeCreative />);
+    expect(screen.getByRole("heading", { name: "Map your foot" })).toHaveClass("font-sora", "font-semibold");
+    expect(screen.getByText("Climbing shoes, sizes and fit ratings.")).toHaveClass("font-sora");
+  });
+
+  it("keeps large editorial panels graphite instead of filling them with chalk", () => {
+    render(<HomeCreative />);
+    for (const title of ["GRIPKICKS", "GET STARTED"]) {
+      const panel = screen.getByRole("region", { name: title });
+      expect(panel).toHaveClass("bg-brand-surface", "text-brand-chalk");
+      expect(panel).not.toHaveClass("bg-brand-chalk");
+    }
   });
 
   it("does not show a fabricated zero while community data is loading", () => {

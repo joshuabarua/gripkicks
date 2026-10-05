@@ -10,7 +10,6 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				basteleur: ['var(--font-basteleur)'],
 				sora: ['var(--font-sora)'],
 				'ball-pill': ['var(--font-ball-pill)'],
 				'so-cloudy': ['var(--font-so-cloudy)']

@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowDown, ArrowUpRight, Footprints, Layers, Target, Users } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useSession } from "@/lib/auth";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
@@ -41,12 +41,12 @@ export default function HomeCreative() {
   return (
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
       <HeroSection isReducedEffects={isReducedEffects} />
-      <section aria-labelledby="home-title" className="relative overflow-hidden border-y border-brand-chalk bg-brand-chalk px-fluid-md py-fluid-3xl text-brand-base md:px-fluid-xl">
+      <section aria-labelledby="home-title" className="relative overflow-hidden border-y border-white/30 bg-brand-surface px-fluid-md py-fluid-3xl text-brand-chalk md:px-fluid-xl">
         <div aria-hidden="true" className="grain-overlay !absolute !z-0" />
         <div className="relative mx-auto grid max-w-fluid-xl items-end gap-fluid-xl md:grid-cols-[1.2fr_1fr]">
           <h1 id="home-title" className="font-ball-pill text-[clamp(2.5rem,6vw,6.5rem)] leading-none">GRIPKICKS</h1>
-          <div className="border-l-4 border-brand-base pl-fluid-lg">
-            <p className="font-basteleur text-fluid-2xl leading-snug">Climbing shoes, sizes and fit ratings.</p>
+          <div className="border-l-4 border-brand-chalk/30 pl-fluid-lg">
+            <p className="font-sora text-fluid-2xl font-semibold leading-snug">Climbing shoes, sizes and fit ratings.</p>
             <p className="mt-fluid-md max-w-md font-sora text-base leading-relaxed">Set your foot profile. Log the shoes you climb in. Compare fit and community ratings.</p>
           </div>
         </div>
@@ -54,11 +54,11 @@ export default function HomeCreative() {
       <HowItWorksSection />
       <ToolsSection />
       <CommunityMilestone userCount={countData?.count} />
-      <section aria-labelledby="account-title" className="relative overflow-hidden border-t border-white/40 bg-brand-chalk px-fluid-md py-fluid-3xl text-brand-base md:px-fluid-xl">
+      <section aria-labelledby="account-title" className="relative overflow-hidden border-t border-white/40 bg-brand-surface px-fluid-md py-fluid-3xl text-brand-chalk md:px-fluid-xl">
         <div aria-hidden="true" className="absolute -right-12 -top-20 h-64 w-64 rounded-full border-[3rem] border-brand-red/70" />
         <div className="relative mx-auto flex max-w-fluid-xl flex-wrap items-end justify-between gap-fluid-xl">
           <h2 id="account-title" className="font-ball-pill text-[clamp(2.5rem,6vw,6.5rem)] leading-none">{hasHydrated && isAuthenticated ? "YOUR DASHBOARD" : "GET STARTED"}</h2>
-          {!hasHydrated || isPending ? <p role="status" className="font-sora text-sm">Loading account…</p> : <Link href={isAuthenticated ? "/dashboard" : "/auth/signup"} className="group inline-flex min-h-14 shrink-0 items-center justify-center gap-5 rounded-full border border-brand-base bg-brand-base px-7 py-4 font-sora text-base font-semibold text-brand-chalk transition-colors hover:bg-brand-red hover:text-black focus-visible:outline-brand-base">{isAuthenticated ? "Open dashboard" : "Create account"}<ArrowUpRight aria-hidden="true" className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 motion-reduce:transform-none" /></Link>}
+          {!hasHydrated || isPending ? <p role="status" className="font-sora text-sm">Loading account…</p> : <Link href={isAuthenticated ? "/dashboard" : "/auth/signup"} className="group inline-flex min-h-14 shrink-0 items-center justify-center gap-5 rounded-full border border-brand-chalk/60 bg-brand-chalk px-7 py-4 font-sora text-base font-semibold text-brand-base transition-colors hover:bg-brand-red hover:text-black focus-visible:outline-brand-chalk">{isAuthenticated ? "Open dashboard" : "Create account"}<ArrowUpRight aria-hidden="true" className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 motion-reduce:transform-none" /></Link>}
         </div>
       </section>
     </PageSurface>
@@ -79,7 +79,7 @@ function HowItWorksSection() {
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))] gap-fluid-lg">
           {steps.map((step) => (
             <div key={step.title} className="border-t-4 border-brand-chalk bg-brand-surface p-fluid-lg">
-              <h3 className="font-basteleur text-fluid-2xl leading-snug">{step.title}</h3>
+              <h3 className="font-sora text-fluid-2xl font-semibold leading-snug">{step.title}</h3>
               <p className="mt-fluid-md font-sora text-base leading-relaxed text-brand-putty">{step.copy}</p>
             </div>
           ))}
@@ -91,10 +91,10 @@ function HowItWorksSection() {
 
 function ToolsSection() {
   const tools = [
-    { title: "Foot Lab", copy: "Set your foot shape and volume.", href: "/footlab", icon: Footprints },
-    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash", icon: Layers },
-    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher", icon: Target },
-    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate", icon: Users },
+    { title: "Foot Lab", copy: "Set your foot shape and volume.", href: "/footlab" },
+    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash" },
+    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher" },
+    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate" },
   ];
 
   return (
@@ -104,14 +104,11 @@ function ToolsSection() {
           <h2 id="tools-title" className="font-ball-pill text-fluid-5xl leading-none">Tools</h2>
           <span aria-hidden="true" className="h-px flex-1 bg-brand-chalk/60" />
         </div>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,28rem),1fr))] gap-px overflow-hidden border border-white/40 bg-brand-chalk/40">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,max(28rem,calc(50%_-_1px))),1fr))] gap-px overflow-hidden border border-white/40 bg-brand-chalk/40">
           {tools.map((tool) => (
             <Link key={tool.href} href={tool.href} className="group relative flex min-h-[clamp(14rem,22vw,22rem)] min-w-0 flex-col justify-between gap-fluid-xl overflow-hidden bg-brand-base p-fluid-xl transition-colors duration-500 hover:bg-brand-soft-surface focus-visible:bg-brand-soft-surface focus-visible:outline-brand-chalk focus-visible:-outline-offset-4">
               <span aria-hidden="true" className="absolute bottom-0 left-0 top-0 w-1.5 origin-bottom scale-y-0 bg-brand-red transition-transform duration-500 group-hover:scale-y-100 group-focus-visible:scale-y-100 motion-reduce:transition-none" />
-              <div className="flex items-start justify-between gap-4">
-                <tool.icon aria-hidden="true" strokeWidth={1.5} className="h-8 w-8 shrink-0 text-brand-putty" />
-                <ArrowUpRight aria-hidden="true" className="h-8 w-8 shrink-0 text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
-              </div>
+              <ArrowUpRight aria-hidden="true" className="h-8 w-8 shrink-0 self-end text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
               <div className="transition-transform duration-500 group-hover:translate-x-2 group-focus-visible:translate-x-2 motion-reduce:transform-none">
                 <h3 className="break-words font-ball-pill text-fluid-5xl leading-none">{tool.title}</h3>
                 <p className="mt-fluid-md max-w-sm font-sora text-base leading-relaxed text-brand-putty">{tool.copy}</p>
