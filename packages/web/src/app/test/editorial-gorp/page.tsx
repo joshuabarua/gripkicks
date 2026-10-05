@@ -59,7 +59,7 @@ export default function EditorialGorp() {
       </div>
 
       <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-end font-mono text-[9px] uppercase tracking-widest z-10">
-        <span>fig. 01 — fit scan, in the field</span>
+        <span>fig. 01, fit scan, in the field</span>
       </div>
     </section>
   );

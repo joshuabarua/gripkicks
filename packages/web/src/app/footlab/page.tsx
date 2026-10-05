@@ -37,7 +37,7 @@ const footShapeInfo: Record<FootShape, { name: string; description: string; fit:
   germanic: {
     name: 'Germanic',
     description: 'Big toe dominant, rest similar length',
-    fit: 'Best in wide-fit shoes',
+    fit: 'Best in wide fit shoes',
   },
   celtic: {
     name: 'Celtic',
@@ -49,18 +49,18 @@ const footShapeInfo: Record<FootShape, { name: string; description: string; fit:
 const footVolumeInfo: Record<FootVolume, { name: string; description: string; fit: string }> = {
   low: {
     name: 'Low',
-    description: 'Narrow foot, low instep — looks slim from the side',
+    description: 'Narrow foot with a low instep. It looks slim from the side.',
     fit: 'Performance shoes with a snug fit',
   },
   medium: {
     name: 'Medium',
-    description: 'Average width and height — most standard shoes work',
-    fit: 'All-around climbing shoes',
+    description: 'Average width and height. Most standard shoes work.',
+    fit: 'All around climbing shoes',
   },
   high: {
     name: 'High',
-    description: 'Wide foot with high instep — looks full from the side',
-    fit: 'Comfort or wide-fit shoes',
+    description: 'Wide foot with a high instep. It looks full from the side.',
+    fit: 'Comfort or wide fit shoes',
   },
 };
 
@@ -256,7 +256,7 @@ export default function FootLabPage() {
             FOOT LAB
           </h1>
           <p className="font-sora text-neutral-400 text-lg max-w-lg">
-            Set your foot shape and volume — used to match climbing shoes.
+            Set your foot shape and volume. It helps me match you with climbing shoes.
           </p>
         </motion.div>
 
@@ -269,7 +269,7 @@ export default function FootLabPage() {
           >
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <h2 className="font-ball-pill text-2xl text-brand-chalk mb-2">Foot Lab is ready — finish setup when you want</h2>
+                <h2 className="font-ball-pill text-2xl text-brand-chalk mb-2">Foot Lab is ready. Finish setup whenever you want.</h2>
                 <p className="font-sora text-sm text-brand-putty/70 max-w-2xl">
                   You can use Foot Lab now, or continue onboarding to finish setup.
                 </p>

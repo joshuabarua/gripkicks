@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Users, Footprints } from "lucide-react";
 import { PageSurface } from "@/components/ui/PageSurface";
 import ShoeImage from "@/components/ShoeImage";
+import { BrandLogo } from "@/components/stash/BrandLogo";
 import type { SoleMateClimberMatch } from "@/hooks/useFindMyShoe";
 
 export function MatcherWorkspace({ activeTab, children }: { activeTab: "seek" | "mate"; children: ReactNode }) {
@@ -79,7 +80,7 @@ function SoleMateCard({ match }: { match: SoleMateClimberMatch }) {
               <ShoeImage brand={rating.shoe.brand} shoeName={rating.shoe.name} imageUrl={rating.shoe.imageUrl} slug={rating.shoe.slug} gender={rating.shoe.gender === "men" || rating.shoe.gender === "women" || rating.shoe.gender === "kids" || rating.shoe.gender === "unisex" ? rating.shoe.gender : undefined} context="thumbnail" className="p-2" transformation={[{ height: 64, width: 80, crop: "at_max", format: "png" }]} />
             </div>
             <div className="min-w-0">
-              <p className="font-sora text-sm text-brand-putty">{rating.shoe.brand}</p>
+              <BrandLogo brand={rating.shoe.brand} size="sm" />
               <h4 className="mt-1 break-words font-sora text-base font-semibold">{rating.shoe.name}</h4>
             </div>
             <div className="col-start-2 flex items-baseline gap-2 font-sora sm:col-auto sm:block sm:text-right">

@@ -10,6 +10,7 @@ import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
 import { CommunityMilestone } from "@/components/CommunityMilestone";
 import { PageSurface } from "@/components/ui/PageSurface";
+import WordmarkWatermark from "@/components/brand/WordmarkWatermark";
 
 const subscribe = () => () => undefined;
 const getClientSnapshot = () => true;
@@ -72,13 +73,17 @@ function HowItWorksSection() {
   ];
 
   return (
-    <section aria-labelledby="steps-title" className="px-fluid-md py-fluid-3xl md:px-fluid-xl">
-      <div className="mx-auto max-w-fluid-xl">
+    <section aria-labelledby="steps-title" className="relative overflow-hidden border-y border-white/[0.06] bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
+      <WordmarkWatermark lines={["FIT"]} align="right" />
+      <div className="relative z-10 mx-auto max-w-fluid-xl">
         <h2 id="steps-title" className="mb-fluid-2xl font-ball-pill text-fluid-5xl leading-none">How it works</h2>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] gap-px overflow-hidden border border-white/30 bg-brand-chalk/30">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] gap-fluid-lg">
           {steps.map((step) => (
-            <article key={step.title} className="flex min-h-[clamp(12rem,20vw,17rem)] flex-col justify-between gap-fluid-lg bg-brand-base p-fluid-xl">
-              <h3 className="break-words font-ball-pill text-fluid-3xl leading-tight">{step.title}</h3>
+            <article key={step.title} className="flex min-h-[clamp(12rem,20vw,17rem)] flex-col justify-between gap-fluid-lg rounded-3xl border border-white/[0.06] bg-brand-surface p-fluid-xl transition-colors hover:border-brand-red/20">
+              <div>
+                <span aria-hidden="true" className="mb-fluid-lg block h-1 w-10 rounded-full bg-brand-red" />
+                <h3 className="break-words font-ball-pill text-fluid-3xl leading-tight">{step.title}</h3>
+              </div>
               <p className="max-w-xs font-sora text-base leading-relaxed text-brand-putty">{step.copy}</p>
             </article>
           ))}

@@ -46,16 +46,12 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
               <div key={model.groupKey} className="min-w-0 flex flex-col gap-fluid-md">
                 {model.variants.map(({ item: shoe, variantLabel }, variantIndex) => (
                   <div key={shoe._id} className="w-full min-w-0 space-y-2">
-                    {model.variants.length > 1 && (
-                      <p className="pl-1 font-sora text-[10px] uppercase tracking-wider text-brand-putty">
-                        {variantLabel || "Standard"}
-                      </p>
-                    )}
                     <CloudShoe
                       shoe={shoe}
                       onClick={() => onSelect(shoe)}
                       onEdit={() => onEdit(shoe)}
                       index={variantIndex + modelIndex * 10 + brandIndex * 100}
+                      variantLabel={variantLabel}
                       specialLabel={specialLabels[shoe._id]}
                     />
                   </div>

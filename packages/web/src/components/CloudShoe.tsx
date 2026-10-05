@@ -14,6 +14,7 @@ interface CloudShoeProps {
   onClick: () => void;
   onEdit: () => void;
   index: number;
+  variantLabel?: string | null | undefined;
   specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode } | undefined;
 }
 
@@ -22,13 +23,14 @@ function formatCondition(condition?: string) {
   return condition.replaceAll('-', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialLabel }) => {
+const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, variantLabel, specialLabel }) => {
   const details = shoe.shoe ?? shoe.shoeDetails;
   const brand = details?.brand ?? 'Unknown Brand';
   const name = details?.name ?? 'Unknown Shoe';
   const imageUrl = details?.imageUrl;
   const slug = details?.slug;
   const gender = details?.gender;
+  const cardLabel = variantLabel?.trim() || details?.variantLabel?.trim() || (gender ? gender[0]!.toUpperCase() + gender.slice(1) : "Unisex");
   const [isInView, setIsInView] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const profileCompletion = getShoeProfileCompletion(shoe);
@@ -97,7 +99,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
 
         <div className="relative flex aspect-[4/3] items-center justify-center border-b border-white/20 bg-brand-soft-surface p-4">
           <div className="absolute left-3 top-3 rounded-sm border border-white/[0.09] bg-black/65 px-2 py-1 font-sora text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
-            {gender ?? 'unisex'}
+            {cardLabel}
           </div>
           {isInView && (
             <ShoeImage
@@ -124,11 +126,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
             <h3 className="truncate font-sora text-base font-semibold text-brand-chalk transition-colors group-hover:text-white">
               {name}
             </h3>
-            {details?.variantLabel && (
-              <p className="mt-1 font-sora text-[11px] uppercase tracking-[0.14em] text-brand-putty/80">
-                {details.variantLabel}
-              </p>
-            )}
             <p className="mt-2 font-sora text-xs leading-relaxed text-brand-putty">
               {getShoeDescription(details)}
             </p>
@@ -151,7 +148,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
               {ratingItems.map(([label, value]) => (
                 <div key={label} className="rounded-md border border-white/20 bg-white/[0.025] px-2 py-2 text-center">
                   <span className="block font-sora text-[11px] tracking-[0.12em] text-brand-putty/85">{label}</span>
-                  <strong className="mt-0.5 block font-ball-pill text-lg font-normal text-brand-chalk">{value ?? '—'}</strong>
+                  <strong className={`mt-0.5 block font-normal text-brand-chalk ${value === undefined ? 'font-sora text-[11px]' : 'font-ball-pill text-lg'}`}>{value ?? 'Not rated'}</strong>
                 </div>
               ))}
             </div>
@@ -195,6 +192,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, specialL
   return (
     prevProps.shoe === nextProps.shoe &&
     prevProps.index === nextProps.index &&
+    prevProps.variantLabel === nextProps.variantLabel &&
     prevProps.onClick === nextProps.onClick &&
     prevProps.onEdit === nextProps.onEdit &&
     prevProps.specialLabel?.type === nextProps.specialLabel?.type

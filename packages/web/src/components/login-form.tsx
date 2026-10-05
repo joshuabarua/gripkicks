@@ -145,7 +145,7 @@ export function LoginForm() {
                 onError: (ctx) => {
                   setError(
                     ctx.error.message ||
-                      "Google sign-in is currently unavailable.",
+                      "Google login is currently unavailable.",
                   );
                 },
               },

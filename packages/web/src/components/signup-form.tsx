@@ -240,7 +240,7 @@ export function SignupForm() {
                 onError: (ctx) => {
                   const message =
                     ctx.error.message ||
-                    "Google sign-up is currently unavailable. Try email for now.";
+                    "Google signup is currently unavailable. Try email for now.";
                   setError(message);
                   track(analyticsEvents.signupFailed, {
                     method: "google",

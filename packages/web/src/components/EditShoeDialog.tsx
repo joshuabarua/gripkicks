@@ -34,11 +34,31 @@ export default function EditShoeDialog({
       {editingShoe && (
         <Dialog open={!!editingShoe} onOpenChange={() => setEditingShoe(null)}>
           <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] w-[min(96vw,56rem)] max-w-4xl max-h-[90dvh] flex flex-col rounded-lg hal-glow shadow-2xl p-0 overflow-hidden">
-            <DialogHeader className="space-y-3 border-b border-white/[0.06] px-5 py-6 sm:px-8 sm:py-7">
+            <DialogHeader className="relative min-h-[5.5rem] space-y-3 border-b border-white/[0.06] px-5 py-6 pr-[9.5rem] sm:px-8 sm:py-7 sm:pr-[12rem]">
               <DialogTitle className="text-white font-so-cloudy uppercase text-fluid-xl">Edit Shoe Stats</DialogTitle>
               <DialogDescription className="text-fluid-sm text-neutral-500 font-sora">
-                {(editingShoe.shoe?.name || editingShoe.shoeDetails?.name || 'Unknown Shoe')} — {(editingShoe.shoe?.brand || editingShoe.shoeDetails?.brand || 'Unknown Brand')}
+                {(editingShoe.shoe?.name || editingShoe.shoeDetails?.name || 'Unknown Shoe')}, {(editingShoe.shoe?.brand || editingShoe.shoeDetails?.brand || 'Unknown Brand')}
               </DialogDescription>
+              <div className="absolute right-4 top-4 flex items-center gap-2">
+                {removeShoe && (
+                  <Button
+                    variant="destructive"
+                    aria-label="Remove shoe"
+                    onClick={removeShoe}
+                    className="h-11 w-11 shrink-0 border border-red-500/20 bg-red-900/30 p-0 text-red-400 hover:bg-red-900/50 rounded-lg"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
+                <Button
+                  aria-label="Save shoe changes"
+                  className="min-h-11 shrink-0 bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill rounded-lg px-4"
+                  onClick={updateShoeStats}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Save
+                </Button>
+              </div>
             </DialogHeader>
 
             <div className="space-y-6 px-5 py-6 sm:space-y-8 sm:px-8 sm:py-8 overflow-y-auto flex-1 min-h-0">
@@ -106,9 +126,9 @@ export default function EditShoeDialog({
                     className="w-full px-4 py-3 bg-neutral-900 text-white border border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20 transition-colors"
                   >
                     <option value="">How long did the fit last?</option>
-                    <option value="1-3 months">1-3 months</option>
-                    <option value="3-6 months">3-6 months</option>
-                    <option value="6+ months">6+ months</option>
+                    <option value="1-3 months">1 to 3 months</option>
+                    <option value="3-6 months">3 to 6 months</option>
+                    <option value="6+ months">6 months or more</option>
                   </select>
                 </div>
 
@@ -201,33 +221,6 @@ export default function EditShoeDialog({
                     />
                   </div>
                 )}
-              </div>
-
-              <div className="flex flex-col gap-3 border-t border-white/[0.06] pt-6 sm:flex-row">
-                <Button
-                  variant="outline"
-                  className="flex-1 border-white/[0.06] bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800 hover:border-white/10 rounded-lg py-3"
-                  onClick={() => setEditingShoe(null)}
-                >
-                  Cancel
-                </Button>
-                {removeShoe && (
-                  <Button
-                    variant="destructive"
-                    aria-label="Remove shoe"
-                    onClick={removeShoe}
-                    className="px-4 bg-red-900/30 border border-red-500/20 text-red-400 hover:bg-red-900/50 rounded-lg"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                )}
-                <Button
-                  className="flex-1 bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill rounded-lg py-3"
-                  onClick={updateShoeStats}
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Changes
-                </Button>
               </div>
             </div>
           </DialogContent>

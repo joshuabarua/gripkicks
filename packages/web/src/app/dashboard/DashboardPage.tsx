@@ -11,6 +11,8 @@ import { useFootProfile, type FootProfile } from "@/hooks/useFootProfile";
 import { useUserData } from "@/hooks/useUserData";
 import type { UserShoe } from "@/types/api";
 import { PageSurface } from "@/components/ui/PageSurface";
+import LiquidGlassBackdrop from "@/components/brand/LiquidGlassBackdrop";
+import WordmarkWatermark from "@/components/brand/WordmarkWatermark";
 
 const isRated = (score?: number): score is number => typeof score === "number" && Number.isFinite(score) && score >= 1 && score <= 10;
 
@@ -30,7 +32,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
     }
     return totals;
   }, { favourites: 0, comfort: 0, rated: 0 }), [userShoes]);
-  const average = summary.rated ? (summary.comfort / summary.rated).toFixed(1) : "—";
+  const average = summary.rated ? (summary.comfort / summary.rated).toFixed(1) : "Not rated";
   const nextAction = !footProfile
     ? { title: "Set your foot profile", description: "Add your foot shape and volume before comparing shoe fit.", label: "Set up foot profile", href: "/footlab" }
     : !userShoes.length
@@ -43,38 +45,42 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
   ];
 
   return (
-    <PageSurface aria-busy={isLoading}>
+    <PageSurface aria-busy={isLoading} className="bg-black">
       <div className="mx-auto max-w-6xl space-y-fluid-lg px-fluid-md py-fluid-lg md:px-fluid-xl">
-        <header className="flex flex-wrap items-end justify-between gap-3 border-b border-white/40 pb-fluid-md">
-          <h1 className="font-ball-pill text-fluid-4xl leading-none">Dashboard</h1>
-          <p className="font-sora text-sm text-brand-putty">Hey {firstName}</p>
+        <header className="relative flex min-h-[13rem] items-end overflow-hidden rounded-3xl border border-white/[0.06] bg-black p-fluid-lg sm:min-h-[16rem] sm:p-fluid-xl">
+          <LiquidGlassBackdrop align="right" />
+          <WordmarkWatermark lines={["DASH"]} align="right" />
+          <div className="relative z-10 flex w-full flex-wrap items-end justify-between gap-3">
+            <h1 className="font-ball-pill text-fluid-4xl leading-none">Dashboard</h1>
+            <p className="font-sora text-sm text-brand-putty">Hey {firstName}</p>
+          </div>
         </header>
 
         {isLoading ? (
           <div role="status" aria-label="Loading dashboard" className="space-y-fluid-md">
             <p className="font-sora text-sm text-brand-putty">Loading your dashboard…</p>
-            <div aria-hidden="true" className="h-32 animate-pulse rounded-2xl border border-white/40 bg-brand-surface motion-reduce:animate-none" />
-            <div aria-hidden="true" className="h-64 animate-pulse rounded-2xl border border-white/40 bg-brand-surface motion-reduce:animate-none" />
+            <div aria-hidden="true" className="h-32 animate-pulse rounded-3xl border border-white/[0.06] bg-brand-surface motion-reduce:animate-none" />
+            <div aria-hidden="true" className="h-64 animate-pulse rounded-3xl border border-white/[0.06] bg-brand-surface motion-reduce:animate-none" />
           </div>
         ) : (
           <div className="space-y-fluid-lg">
-            <section aria-labelledby="next-step-title" className="flex flex-col justify-between gap-fluid-md rounded-2xl border border-brand-chalk border-l-4 border-l-brand-red bg-brand-chalk p-fluid-lg text-brand-base sm:flex-row sm:items-center">
+            <section aria-labelledby="next-step-title" className="flex flex-col justify-between gap-fluid-md rounded-3xl border border-white/[0.06] bg-brand-surface p-fluid-lg sm:flex-row sm:items-center">
               <div>
-                <p className="mb-2 font-sora text-sm font-semibold uppercase tracking-widest text-brand-base/80">Next step</p>
+                <p className="mb-2 font-sora text-sm font-semibold uppercase tracking-widest text-brand-putty">Next step</p>
                 <h2 id="next-step-title" className="font-sora text-fluid-2xl font-semibold leading-tight">{nextAction.title}</h2>
-                <p className="mt-2 max-w-lg font-sora text-base leading-relaxed text-brand-base/80">{nextAction.description}</p>
+                <p className="mt-2 max-w-lg font-sora text-base leading-relaxed text-brand-putty">{nextAction.description}</p>
               </div>
-              <Link href={nextAction.href} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-3 rounded-lg border border-brand-base bg-brand-red px-5 py-3 font-sora text-sm font-semibold text-black transition-colors hover:bg-brand-red/90 focus-visible:outline-brand-base">
+              <Link href={nextAction.href} className="inline-flex min-h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-brand-red/30 bg-brand-red px-5 py-3 font-ball-pill text-sm uppercase text-black transition-colors hover:bg-brand-red/80 focus-visible:outline-brand-red sm:w-auto">
                 {nextAction.label}<ArrowUpRight aria-hidden="true" className="h-4 w-4" />
               </Link>
             </section>
 
-            <dl aria-label="Collection summary" className="grid grid-cols-3 divide-x divide-white/40 overflow-hidden rounded-2xl border border-white/40 bg-brand-surface">
+            <dl aria-label="Collection summary" className="grid grid-cols-3 divide-x divide-white/[0.06] overflow-hidden rounded-3xl border border-white/[0.06] bg-brand-surface">
               {metrics.map((metric) => (
                 <div key={metric.label} className="min-w-0 px-3 py-fluid-md sm:px-fluid-lg">
                   <dt className="font-sora text-sm font-medium text-brand-chalk">{metric.label}</dt>
                   <dd className="mt-2">
-                    <span className="font-sora text-fluid-3xl font-semibold tabular-nums leading-none">
+                    <span className={`font-sora font-semibold tabular-nums leading-none ${metric.value === "Not rated" ? "text-sm" : "text-fluid-3xl"}`}>
                       {metric.value}
                       {metric.label === "Avg comfort" && summary.rated > 0 && <span className="ml-1 font-sora text-sm text-brand-putty">/10</span>}
                     </span>
@@ -85,15 +91,15 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
             </dl>
 
             <div className="grid items-start gap-fluid-lg lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
-              <section aria-labelledby="collection-title" className="min-w-0 overflow-hidden rounded-2xl border border-white/40 bg-brand-surface">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/40 p-fluid-md">
+              <section aria-labelledby="collection-title" className="min-w-0 overflow-hidden rounded-3xl border border-white/[0.06] bg-brand-surface">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] p-fluid-md">
                   <h2 id="collection-title" className="font-sora text-lg font-semibold">Your collection</h2>
-                  <Link href="/stash" className="inline-flex min-h-11 items-center gap-2 font-sora text-sm font-medium text-brand-chalk underline decoration-white/60 underline-offset-4 transition-colors hover:decoration-white">
+                  <Link href="/stash" className="inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-lg border border-white/20 px-4 py-2 font-sora text-sm font-medium text-brand-chalk transition-colors hover:border-white/40 hover:bg-white/5 focus-visible:outline-brand-chalk">
                     Open Sanctuary<ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                   </Link>
                 </div>
                 {userShoes.length ? (
-                  <ul className="divide-y divide-white/40">
+                  <ul className="divide-y divide-white/[0.06]">
                     {userShoes.slice(0, 3).map((shoe) => {
                       const details = shoe.shoe ?? shoe.shoeDetails;
                       const brand = details?.brand ?? "Unknown brand";
@@ -101,7 +107,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
                       return (
                         <li key={shoe._id}>
                           <Link href="/stash" aria-label={`View ${brand} ${name} in Sanctuary`} className="group flex min-h-24 items-center gap-3 p-fluid-md transition-colors hover:bg-brand-soft-surface focus-visible:bg-brand-soft-surface sm:gap-4">
-                            <div className="h-16 w-20 shrink-0 overflow-hidden rounded-lg border border-brand-chalk bg-brand-chalk">
+                            <div className="h-16 w-20 shrink-0 overflow-hidden rounded-lg border border-white/[0.06] bg-brand-chalk">
                               <ShoeImage brand={brand} shoeName={name} imageUrl={details?.imageUrl} slug={details?.slug} gender={details?.gender} context="thumbnail" className="p-2" transformation={[{ height: 64, width: 80, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 80 }]} />
                             </div>
                             <div className="min-w-0 flex-1">
@@ -128,13 +134,13 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
                 )}
               </section>
 
-              <section aria-labelledby="profile-title" className="rounded-2xl border border-white/40 bg-brand-surface p-fluid-lg">
+              <section aria-labelledby="profile-title" className="rounded-3xl border border-white/[0.06] bg-black p-fluid-lg">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 id="profile-title" className="font-sora text-lg font-semibold">Foot profile</h2>
-                  {footProfile && <Link href="/footlab" aria-label="Edit foot profile" className="inline-flex min-h-11 items-center gap-2 font-sora text-sm font-medium text-brand-chalk underline decoration-white/60 underline-offset-4 transition-colors hover:decoration-white">Edit<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link>}
+                  {footProfile && <Link href="/footlab" aria-label="Edit foot profile" className="inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-lg border border-white/20 px-4 py-2 font-sora text-sm font-medium text-brand-chalk transition-colors hover:border-white/40 hover:bg-white/5 focus-visible:outline-brand-chalk">Edit<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link>}
                 </div>
                 {footProfile ? (
-                  <dl className="mt-fluid-md grid grid-cols-2 gap-4 border-t border-white/40 pt-fluid-md">
+                  <dl className="mt-fluid-md grid grid-cols-2 gap-4 border-t border-white/[0.06] pt-fluid-md">
                     <div><dt className="font-sora text-sm text-brand-putty">Shape</dt><dd className="mt-2 font-sora text-base font-semibold">{footProfile.shape}</dd></div>
                     <div><dt className="font-sora text-sm text-brand-putty">Volume</dt><dd className="mt-2 font-sora text-base font-semibold">{footProfile.volume}</dd></div>
                   </dl>

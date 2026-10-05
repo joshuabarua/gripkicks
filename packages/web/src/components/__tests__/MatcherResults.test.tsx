@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { MatcherResults, type DisplayShoe } from "@/components/shoe/MatcherView";
 
 vi.mock("@/components/ShoeImage", () => ({ default: () => <div /> }));
+vi.mock("next/image", () => ({ default: ({ fill, unoptimized, ...props }: React.ImgHTMLAttributes<HTMLImageElement> & { fill?: boolean; unoptimized?: boolean }) => { void fill; void unoptimized; return React.createElement("img", props); } }));
 
 const baseShoe: DisplayShoe = { id: "shoe-1", brand: "Scarpa", name: "Origin Women's", primaryScore: 86, secondaryLabel: "match", metrics: { comfort: 4, performance: 3, durability: 4, aggressiveness: 2, versatility: 4 } };
 const shoe: DisplayShoe = { ...baseShoe, breakdown: { footTypeCompatibility: 4, volumeCompatibility: 4, userPreferenceMatch: 3, communityApproval: 4, overallRating: 4, learnedPreferenceBonus: 0, soleMateMatch: 2 } };
@@ -25,6 +26,15 @@ describe("Matcher results", () => {
     expect(screen.getByRole("button", { name: /Community/ })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("article", { name: "Scarpa Drago LV" })).toBeInTheDocument();
     expect(screen.queryByRole("article", { name: "Scarpa Origin Women's" })).toBeNull();
+  });
+
+  it("shows the brand logo on result cards across recommendation sources", () => {
+    render(<MatcherResults {...props} />);
+    const personalCard = within(screen.getByRole("article", { name: "Scarpa Origin Women's" }));
+    expect(personalCard.getByRole("img", { name: "Scarpa logo" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Community/ }));
+    const communityCard = within(screen.getByRole("article", { name: "Scarpa Drago LV" }));
+    expect(communityCard.getByRole("img", { name: "Scarpa logo" })).toBeInTheDocument();
   });
 
   it("makes match details available without hover", () => {

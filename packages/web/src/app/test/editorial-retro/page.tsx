@@ -38,7 +38,7 @@ export default function EditorialRetro() {
       />
 
       <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-between font-mono text-[10px] uppercase tracking-widest z-10">
-        <span className="font-serif italic normal-case tracking-normal text-xs md:text-sm">Plate I. — &ldquo;The Solutions, in studio.&rdquo;</span>
+        <span className="font-serif italic normal-case tracking-normal text-xs md:text-sm">Plate I: &ldquo;The Solutions, in studio.&rdquo;</span>
         <span className="hidden md:inline">photographed on tri-x</span>
       </div>
     </section>

@@ -464,7 +464,7 @@ export default function ShoeSanctuaryPage() {
         </>
       )}
 
-      <div className="fixed inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/85 pointer-events-none z-0" />
+      <div className="fixed inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/65 pointer-events-none z-0" />
 
       <div className="relative z-20">
         <section className="px-fluid-lg md:px-fluid-xl pt-fluid-xl pb-fluid-lg">

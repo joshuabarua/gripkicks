@@ -11,26 +11,26 @@ interface PerspectiveTextProps {
 
 export default function NavButton({ isActive, toggleMenu }: NavButtonProps) {
     return (
-        <div className={"nav-button"}>
+        <button
+            type="button"
+            aria-label={isActive ? "Close menu" : "Open menu"}
+            aria-expanded={isActive}
+            onClick={toggleMenu}
+            className={"nav-button translate-y-[3px] border-0 bg-transparent p-0"}
+        >
             <motion.div
                 className={"nav-slider"}
                 animate={{ top: isActive ? "-100%" : "0%" }}
                 transition={{ duration: 0.5, type: "tween", ease: [0.76, 0, 0.24, 1] }}
             >
-                <div
-                    className={"nav-el"}
-                    onClick={() => { toggleMenu() }}
-                >
+                <div aria-hidden="true" className={"nav-el"}>
                     <PerspectiveText label="Menu" />
                 </div>
-                <div
-                    className={"nav-el"}
-                    onClick={() => { toggleMenu() }}
-                >
+                <div aria-hidden="true" className={"nav-el"}>
                     <PerspectiveText label="Close" />
                 </div>
             </motion.div>
-        </div>
+        </button>
     )
 }
 

@@ -24,8 +24,8 @@ const NavLogo = dynamic(() => import("@/components/3d/NavLogo"), {
 const menu = {
   open: {
     width: "360px",
-    height: "440px",
-    top: "-15px",
+    height: "400px",
+    top: "-12px",
     right: "-15px",
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] },
   },
@@ -78,8 +78,8 @@ const Navigation: React.FC = () => {
     ? {
         open: {
           width: "min(92vw, 320px)",
-          height: "400px",
-          top: "-12px",
+          height: "370px",
+          top: "-9px",
           right: "-10px",
           transition: {
             duration: 0.75,
@@ -133,7 +133,7 @@ const Navigation: React.FC = () => {
   return (
     <motion.nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 px-6 py-2 border-b border-white/20 bg-brand-base/95 backdrop-blur-md h-12 flex items-center justify-between"
+      className="fixed top-0 left-0 right-0 z-50 px-6 py-2 border-b border-white/20 bg-brand-base/55 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_30px_rgba(0,0,0,0.18)] h-12 flex items-center justify-between"
       initial={{ y: 0 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
@@ -168,7 +168,7 @@ const Navigation: React.FC = () => {
                   initial="closed"
                   exit="closed"
                 >
-                  <div className="flex h-full flex-col p-4 pt-14">
+                  <div className="flex h-full flex-col p-4 pt-12">
                     {session?.user && (
                       <motion.div
                         custom={-1}
@@ -200,13 +200,13 @@ const Navigation: React.FC = () => {
                           }
                         }}
                       >
-                        <div className="mb-4 rounded-2xl border border-black/10 bg-black/10 p-3 text-black">
-                          <div className="flex items-center gap-3">
+                        <div className="mb-3 rounded-2xl border border-black/10 bg-black/10 p-2.5 text-black sm:p-3">
+                          <div className="flex items-center gap-3 pr-12">
                             <UserAvatar
                               userId={session.user.id}
                               name={session.user.name}
                               email={session.user.email}
-                              className="h-11 w-11 rounded-full border border-black/10 shrink-0"
+                              className="h-10 w-10 rounded-full border border-black/10 shrink-0"
                             />
                             <div className="min-w-0 flex-1">
                               <p className="truncate font-sora text-sm font-semibold leading-none">
@@ -216,15 +216,15 @@ const Navigation: React.FC = () => {
                                 {session.user.email}
                               </p>
                             </div>
-                            <Link
-                              href="/profile"
-                              onClick={closeMenu}
-                              className="flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 font-sora text-[10px] font-semibold uppercase tracking-wider text-black transition-colors hover:bg-black/10 shrink-0"
-                            >
-                              <User className="h-3.5 w-3.5" />
-                              <span>Profile</span>
-                            </Link>
                           </div>
+                          <Link
+                            href="/profile"
+                            onClick={closeMenu}
+                            className="mt-2 inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-xl px-2.5 py-1.5 font-sora text-[10px] font-semibold uppercase tracking-wider text-black transition-colors hover:bg-black/10"
+                          >
+                            <User className="h-3.5 w-3.5" />
+                            <span>Profile</span>
+                          </Link>
                         </div>
                       </motion.div>
                     )}

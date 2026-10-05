@@ -26,6 +26,41 @@ describe("Sanctuary content", () => {
     expect(onSelect).toHaveBeenCalled();
   });
 
+  it("shows a variant label exactly once without repeating the gender", () => {
+    const withVariant: UserShoe = { ...shoe, shoe: { ...shoe.shoe!, gender: "men" } };
+    render(<CloudShoe shoe={withVariant} onClick={onSelect} onEdit={onEdit} index={0} variantLabel="LV" />);
+    expect(screen.getAllByText("LV")).toHaveLength(1);
+    expect(screen.queryByText("Men")).toBeNull();
+  });
+
+  it("falls back to a single gender label when no variant label exists", () => {
+    const noVariant: UserShoe = { ...shoe, shoe: { ...shoe.shoe!, gender: "men" } };
+    render(<CloudShoe shoe={noVariant} onClick={onSelect} onEdit={onEdit} index={0} />);
+    expect(screen.getAllByText("Men")).toHaveLength(1);
+  });
+
+  it("lets each card own its grouped variant label instead of repeating it above the card", () => {
+    const lvShoe: UserShoe = { ...shoe, shoe: { ...shoe.shoe!, name: "Drago LV", modelName: "Drago", gender: "men" } };
+    const womensShoe: UserShoe = { ...shoe, _id: "stash-2", shoe: { ...shoe.shoe!, name: "Drago Women's", modelName: "Drago", gender: "women" } };
+    const group = [{
+      brand: "Scarpa",
+      models: [{
+        brand: "Scarpa",
+        groupKey: "scarpa/drago",
+        baseName: "Drago",
+        variants: [
+          { item: lvShoe, variantLabel: "LV" },
+          { item: womensShoe, variantLabel: "Women" },
+        ],
+      }],
+    }];
+    render(<BrandSections groups={group} specialLabels={{}} onSelect={onSelect} onEdit={onEdit} />);
+    expect(screen.queryByText("Standard")).toBeNull();
+    expect(screen.getAllByText("LV")).toHaveLength(1);
+    expect(screen.queryByText("Men", { exact: true })).toBeNull();
+    expect(screen.getAllByText("Women")).toHaveLength(1);
+  });
+
   it("does not render brand content when the collection is empty", () => {
     render(<BrandSections groups={[]} specialLabels={{}} onSelect={onSelect} onEdit={onEdit} />);
     expect(screen.queryByRole("heading")).toBeNull();

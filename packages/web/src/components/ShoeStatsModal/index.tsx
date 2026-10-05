@@ -153,7 +153,7 @@ export default function ShoeStatsModal({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] max-w-2xl max-h-[90dvh] overflow-y-auto p-0 rounded-lg hal-glow shadow-2xl">
           <DialogTitle className="sr-only">
-            Shoe Rank - {shoeName}
+            Shoe rank: {shoeName}
           </DialogTitle>
           <DialogDescription className="sr-only">
             View detailed rank and ratings for the {shoeName} climbing shoe including comfort, performance, and durability ratings.

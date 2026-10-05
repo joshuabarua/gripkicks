@@ -533,7 +533,7 @@ export default function AdminDashboard() {
                           <option value="">Select rubber technology...</option>
                           {rubberTechnologies?.map((rubber) => (
                             <option key={rubber._id} value={rubber._id}>
-                              {rubber.brand} - {rubber.compound}
+                              {rubber.brand}: {rubber.compound}
                             </option>
                           ))}
                         </select>
@@ -541,7 +541,7 @@ export default function AdminDashboard() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-white/70 text-sm mb-1">
-                            Brand Aggressiveness (1–5)
+                            Brand Aggressiveness (1 to 5)
                           </label>
                           <input
                             type="number"
@@ -563,7 +563,7 @@ export default function AdminDashboard() {
                         </div>
                         <div>
                           <label className="block text-white/70 text-sm mb-1">
-                            Brand Stiffness (1–5)
+                            Brand Stiffness (1 to 5)
                           </label>
                           <input
                             type="number"
@@ -1135,7 +1135,7 @@ export default function AdminDashboard() {
                                 <option value="">Select</option>
                                 {rubberTechnologies?.map((rubber) => (
                                   <option key={rubber._id} value={rubber._id}>
-                                    {rubber.brand} - {rubber.compound}
+                                    {rubber.brand}: {rubber.compound}
                                   </option>
                                 ))}
                               </select>

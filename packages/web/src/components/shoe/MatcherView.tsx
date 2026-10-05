@@ -5,6 +5,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import ShoeImage from "@/components/ShoeImage";
+import { BrandLogo } from "@/components/stash/BrandLogo";
 import { useShoeScoring } from "@/hooks/useShoeScoring";
 import { useUserPreferenceLearning } from "@/hooks/useUserPreferenceLearning";
 import { useFootProfile } from "@/hooks/useFootProfile";
@@ -226,11 +227,11 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
           <div className="space-y-4 p-fluid-lg">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="font-sora text-sm text-brand-putty">{shoe.brand}</p>
-                <h3 className="mt-1 break-words font-sora text-lg font-semibold leading-snug">{shoe.name}</h3>
+                <BrandLogo brand={shoe.brand} size="sm" />
+                <h3 className="mt-2 break-words font-sora text-lg font-semibold leading-snug">{shoe.name}</h3>
               </div>
               <div className="shrink-0 text-right font-sora">
-                <p className="text-xl font-semibold tabular-nums">{mode === "personal" && !hasProfile ? "—" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
+                <p className={`font-semibold tabular-nums ${mode === "personal" && !hasProfile ? "text-sm" : "text-xl"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
                 <p className="mt-1 text-sm text-brand-putty">{mode === "personal" ? hasProfile ? "Match" : "Profile needed" : shoe.secondaryLabel}</p>
               </div>
             </div>
@@ -262,7 +263,7 @@ function Leaderboard({ shoes, mode, hoveredId, onHoverChange }: { shoes: Display
             </div>
             <div className="min-w-0">
               <h3 className="break-words font-sora text-base font-semibold">{shoe.name}</h3>
-              <p className="mt-1 font-sora text-sm text-brand-putty">{shoe.brand}</p>
+              <BrandLogo brand={shoe.brand} size="sm" className="mt-1" />
             </div>
           </div>
           <dl className="grid grid-cols-3 gap-4">

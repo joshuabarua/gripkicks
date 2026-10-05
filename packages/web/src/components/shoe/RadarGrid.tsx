@@ -44,14 +44,14 @@ interface QuadrantInfo {
 const quadrants: Record<QuadrantKey, QuadrantInfo> = {
   comfort: {
     name: "Comfort",
-    description: "Low aggression and all-day comfort.",
+    description: "Low aggression and all day comfort.",
     corner: "top-left",
     icon: <Heart aria-hidden="true" className="h-4 w-4" />,
     borderColor: "border-green-400/40",
     bgColor: "bg-green-400/5",
   },
   "all-rounder": {
-    name: "All-Rounder",
+    name: "All rounder",
     description: "Balanced comfort and performance.",
     corner: "top-right",
     icon: <Zap aria-hidden="true" className="h-4 w-4" />,

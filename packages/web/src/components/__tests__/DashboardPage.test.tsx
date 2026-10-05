@@ -28,7 +28,7 @@ describe("DashboardPage", () => {
   it("renders visible content before hydration without a device-dependent entrance fade", () => {
     const html = renderToStaticMarkup(<DashboardOverview firstName="Josh" userShoes={[shoe]} footProfile={{ shape: "Egyptian", volume: "Low" }} />);
     expect(html).toContain("Find your next shoe");
-    expect(html).not.toContain("opacity:0");
+    expect(html).not.toMatch(/opacity:\s*0[";]/);
     expect(html).not.toContain("translateY(");
   });
 
@@ -38,6 +38,27 @@ describe("DashboardPage", () => {
     expect(screen.queryByText("Where to next?")).toBeNull();
     expect(screen.queryByText("Sole Mate")).toBeNull();
     expect(screen.queryByText("Matcher")).toBeNull();
+  });
+
+  it("wraps the dashboard header in a Privacy-style atmospheric panel", () => {
+    render(<DashboardPage />);
+    expect(screen.getByRole("main")).toHaveClass("bg-black");
+    const heading = screen.getByRole("heading", { name: "Dashboard" });
+    const hero = heading.closest("header");
+    expect(hero).not.toBeNull();
+    expect(hero).toHaveClass("relative", "overflow-hidden", "rounded-3xl", "bg-black");
+    expect(hero!.textContent).toContain("DASH");
+  });
+
+  it("styles dashboard actions like Foot Lab buttons without underlined links", () => {
+    render(<DashboardPage />);
+    const primary = screen.getByRole("link", { name: "Find shoes" });
+    expect(primary).toHaveClass("bg-brand-red", "font-ball-pill", "w-full", "sm:w-auto");
+    for (const name of ["Open Sanctuary", "Edit foot profile"]) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveClass("rounded-lg", "border", "border-white/20", "min-h-11");
+      expect(link.className).not.toContain("underline");
+    }
   });
 
   it("prioritizes creating a missing foot profile", () => {
@@ -64,7 +85,7 @@ describe("DashboardPage", () => {
   it("does not present missing ratings as zero", () => {
     render(<DashboardPage />);
     expect(screen.getByText("No rated shoes")).toBeInTheDocument();
-    expect(screen.getByText("Not rated")).toBeInTheDocument();
+    expect(screen.getAllByText("Not rated").length).toBeGreaterThanOrEqual(2);
   });
 
   it("waits for the stash query instead of showing a false empty state", () => {

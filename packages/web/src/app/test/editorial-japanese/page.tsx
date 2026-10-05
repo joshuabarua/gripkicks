@@ -37,7 +37,7 @@ export default function EditorialJapanese() {
       </div>
 
       <div className="absolute inset-x-0 bottom-0 px-6 py-3 flex items-end justify-between font-mono text-[9px] uppercase tracking-widest z-10">
-        <span>fig. 01 — specimen · solutions 40.5eu</span>
+        <span>fig. 01, specimen · solutions 40.5eu</span>
         <span className="hidden md:inline">scale 1:1 · morphology</span>
         <span>t+00:42</span>
       </div>

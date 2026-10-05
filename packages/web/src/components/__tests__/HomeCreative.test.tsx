@@ -64,10 +64,16 @@ describe("Homepage clarity", () => {
     }
   });
 
-  it("restores original display-headed step tiles while retaining readable Sora copy", () => {
+  it("restores display-headed step tiles on Privacy-style surfaces while retaining readable Sora copy", () => {
     render(<HomeCreative />);
-    const section = within(screen.getByRole("region", { name: "How it works" }));
-    expect(section.getAllByRole("article")).toHaveLength(3);
+    const stepsRegion = screen.getByRole("region", { name: "How it works" });
+    expect(stepsRegion).toHaveClass("bg-black");
+    const section = within(stepsRegion);
+    const articles = section.getAllByRole("article");
+    expect(articles).toHaveLength(3);
+    for (const article of articles) {
+      expect(article).toHaveClass("rounded-3xl", "bg-brand-surface");
+    }
     for (const title of ["Map your foot", "Rate your shoes", "Compare fits"]) {
       expect(section.getByRole("heading", { name: title })).toHaveClass("font-ball-pill");
     }
