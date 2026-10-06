@@ -1683,6 +1683,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dicebear/core@npm:^10.7.0":
+  version: 10.7.0
+  resolution: "@dicebear/core@npm:10.7.0"
+  checksum: 10c0/1aae82c5300f27dfbed212daccb8d23d969a2de1411bb8a5f2fd0058c952b8a7e7bad51b7ca2ecf2e713ceb532198ade2d888d9b496a38ba1e6c63442d900db7
+  languageName: node
+  linkType: hard
+
+"@dicebear/styles@npm:^10.6.0":
+  version: 10.6.0
+  resolution: "@dicebear/styles@npm:10.6.0"
+  checksum: 10c0/91e7ff5b56c6e123fd5e35623611e815c9c9870c701abd8dfa3428406fbd3b695821b3e56280743bb0823a4f181e2174902bd5a980108750928da62e55be151d
+  languageName: node
+  linkType: hard
+
 "@egjs/hammerjs@npm:^2.0.17":
   version: 2.0.17
   resolution: "@egjs/hammerjs@npm:2.0.17"
@@ -19126,6 +19140,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "web@workspace:packages/web"
   dependencies:
+    "@dicebear/core": "npm:^10.7.0"
+    "@dicebear/styles": "npm:^10.6.0"
     "@playwright/test": "npm:1.62.1"
     "@radix-ui/react-checkbox": "npm:^1.3.3"
     "@radix-ui/react-dialog": "npm:^1.1.15"

@@ -1,3 +1,6 @@
+import { Avatar, Style } from "@dicebear/core";
+import blobsDefinition from "@dicebear/styles/blobs.json";
+
 type AvatarIdentity = {
   userId?: string | null | undefined;
   email?: string | null | undefined;
@@ -19,18 +22,18 @@ function getAvatarSeed({ userId, email }: AvatarIdentity) {
   return email || userId || "gripkicks";
 };
 
+const blobsStyle = new Style(blobsDefinition);
+
 export const getDicebearAvatarUrl = (identity: AvatarIdentity, size = 128) => {
   const seed = getAvatarSeed(identity);
   const index = hashString(seed) % BRAND_BACKGROUNDS.length;
   const backgroundColor = BRAND_BACKGROUNDS[index] || BRAND_BACKGROUNDS[0] || "f97316";
-  const params = new URLSearchParams({
-    seed,
-    backgroundColor,
-    radius: "50",
-    size: String(size),
-  });
 
-  return `https://api.dicebear.com/9.x/slice/svg?${params.toString()}`;
+  return new Avatar(blobsStyle, {
+    seed,
+    backgroundColor: [backgroundColor],
+    size,
+  }).toDataUri();
 };
 
 export const getInitials = ({ name, email }: AvatarIdentity) => {
