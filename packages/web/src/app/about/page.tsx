@@ -36,19 +36,19 @@ export default function AboutPage() {
       </section>
 
       <section className="bg-brand-surface px-6 py-24 md:px-12 lg:px-16">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             {...fadeUp}
             transition={{ duration: 0.8, delay: 0.1 }}
             className="rounded-3xl border border-white/6 bg-black p-8 md:p-12"
           >
             <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
-              <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:aspect-[3/4] sm:h-auto sm:w-[85%]">
+              <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:aspect-[3/4] sm:h-auto sm:w-1/2">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? ""}/gripkicks/imgs/web_assets/josh.jpg`}
                   alt="Josh"
                   fill
-                  sizes="(min-width: 640px) 85vw, 100vw"
+                  sizes="(min-width: 640px) 50vw, 100vw"
                   className="object-contain"
                 />
               </div>
