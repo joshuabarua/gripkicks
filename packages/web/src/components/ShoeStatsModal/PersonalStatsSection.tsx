@@ -27,7 +27,7 @@ export default function PersonalStatsSection({
       <h3 className="font-ball-pill text-lg text-white mb-3">
         Your Ratings
         {!hasPersonalScores && (
-          <span className="text-sm font-normal text-neutral-500 font-sora ml-2">
+          <span className="text-sm font-normal text-neutral-500 font-mono ml-2">
             Catalog baseline
           </span>
         )}
@@ -41,12 +41,12 @@ export default function PersonalStatsSection({
         >
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="w-4 h-4 text-brand-red" />
-            <span className="text-xs text-neutral-400 font-sora">Comfort</span>
+            <span className="text-xs text-neutral-400 font-mono">Comfort</span>
           </div>
           <div className="text-2xl font-ball-pill text-white">
             {(comfortScore ?? defaultStats.comfort).toFixed(1)}
           </div>
-          <span className="font-sora text-[9px] uppercase tracking-wider text-neutral-600">
+          <span className="font-mono text-[9px] uppercase tracking-wider text-neutral-600">
             {comfortScore !== undefined ? 'Personal' : 'Baseline'}
           </span>
         </motion.div>
@@ -59,12 +59,12 @@ export default function PersonalStatsSection({
         >
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-4 h-4 text-brand-red" />
-            <span className="text-xs text-neutral-400 font-sora">Performance</span>
+            <span className="text-xs text-neutral-400 font-mono">Performance</span>
           </div>
           <div className="text-2xl font-ball-pill text-white">
             {(performanceRating ?? defaultStats.performance).toFixed(1)}
           </div>
-          <span className="font-sora text-[9px] uppercase tracking-wider text-neutral-600">
+          <span className="font-mono text-[9px] uppercase tracking-wider text-neutral-600">
             {performanceRating !== undefined ? 'Personal' : 'Baseline'}
           </span>
         </motion.div>
@@ -77,12 +77,12 @@ export default function PersonalStatsSection({
         >
           <div className="flex items-center gap-2 mb-2">
             <Shield className="w-4 h-4 text-brand-red" />
-            <span className="text-xs text-neutral-400 font-sora">Durability</span>
+            <span className="text-xs text-neutral-400 font-mono">Durability</span>
           </div>
           <div className="text-2xl font-ball-pill text-white">
             {(durabilityRating ?? defaultStats.durability).toFixed(1)}
           </div>
-          <span className="font-sora text-[9px] uppercase tracking-wider text-neutral-600">
+          <span className="font-mono text-[9px] uppercase tracking-wider text-neutral-600">
             {durabilityRating !== undefined ? 'Personal' : 'Baseline'}
           </span>
         </motion.div>

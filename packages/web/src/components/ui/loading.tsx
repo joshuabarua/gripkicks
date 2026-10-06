@@ -18,7 +18,7 @@ export function LoadingBar({
   return (
     <div className={`flex items-center gap-3 ${size === "full" ? "h-full w-full" : ""}`}>
       {showLabel && (
-        <span className="font-sora text-[10px] text-brand-putty/60">
+        <span className="font-mono text-[10px] text-brand-putty/60">
           {value === undefined ? "Loading" : `${Math.round(value)}%`}
         </span>
       )}
@@ -44,7 +44,7 @@ export function FullPageLoading({ text = "Loading" }: { text?: string }) {
     <section className="mx-auto min-h-[65svh] w-full max-w-7xl px-fluid-lg py-fluid-2xl" role="status" aria-label={text} aria-busy="true">
       <div className="flex items-center gap-fluid-md border-b border-white/10 pb-fluid-lg">
         <span aria-hidden="true" className="h-2 w-2 rounded-sm bg-brand-red" />
-        <span className="font-sora text-xs uppercase tracking-[0.2em] text-brand-chalk">{text}</span>
+        <span className="font-mono text-xs uppercase tracking-[0.2em] text-brand-chalk">{text}</span>
         <div aria-hidden="true" className="ml-auto"><LoadingBar size="lg" /></div>
       </div>
       <div aria-hidden="true" className="space-y-fluid-xl pt-fluid-xl">

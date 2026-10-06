@@ -103,7 +103,7 @@ export default function NavLinks({ footerAction }: NavLinksProps) {
                             animate="enter"
                             exit="exit"
                         >
-                            <Link href={link.href} className="font-sora text-[10px] font-semibold uppercase tracking-wider nav-secondary-link group">
+                            <Link href={link.href} className="font-mono text-[10px] font-semibold uppercase tracking-wider nav-secondary-link group">
                                 {link.title}
                             </Link>
                         </motion.div>

@@ -27,7 +27,7 @@ export default function AboutPage() {
           <motion.p
             {...fadeUp}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-sora text-lg md:text-xl text-brand-putty/70 max-w-2xl mx-auto leading-relaxed text-center"
+            className="font-mono text-lg md:text-xl text-brand-putty/70 max-w-2xl mx-auto leading-relaxed text-center"
           >
             Hi there!
           </motion.p>
@@ -41,7 +41,7 @@ export default function AboutPage() {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="rounded-3xl border border-white/[0.06] bg-black p-8 md:p-12"
           >
-            <div className="space-y-6 font-sora text-base md:text-lg text-brand-putty/80 leading-relaxed">
+            <div className="space-y-6 font-mono text-base md:text-lg text-brand-putty/80 leading-relaxed">
               <p>My name&apos;s Josh. I&apos;m a climber, developer and guy with weird shaped feet.</p>
               <p>Over all my years of climbing, every shoe has felt like it should fit better. Call it an obsession or cope, but I believe shoes really affect how we move on the wall. I&apos;ve had enough heel hooks rip my shoe off and enough big, puffy air gaps in my toe box.</p>
               <p>So, I built this to find my Cinderella shoe. One day I&apos;ll find the perfect pair. Maybe, just maybe, I&apos;ll help some other climbers find theirs too.</p>

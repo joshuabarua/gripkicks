@@ -550,7 +550,7 @@ export default function ShoeSanctuaryPage() {
                 <div className="w-full max-w-4xl space-y-4">
                   <div className="text-center mb-6">
                     <LoadingBar size="lg" />
-                    <span className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-600 mt-4 block">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-600 mt-4 block">
                       Loading your collection
                     </span>
                   </div>
@@ -571,7 +571,7 @@ export default function ShoeSanctuaryPage() {
                 <h3 className="font-ball-pill text-fluid-3xl text-white mb-fluid-xs">
                   NO SHOES YET
                 </h3>
-                <p className="font-sora text-brand-putty mb-fluid-md max-w-sm">
+                <p className="font-mono text-brand-putty mb-fluid-md max-w-sm">
                   Add your first shoe to get started.
                 </p>
               </motion.div>
@@ -579,7 +579,7 @@ export default function ShoeSanctuaryPage() {
 
             {!isLoading && userShoes.length > 0 && filteredShoes.length === 0 && (
               <div className="flex flex-col items-center justify-center py-fluid-3xl text-center">
-                <p className="font-sora text-brand-putty max-w-sm">
+                <p className="font-mono text-brand-putty max-w-sm">
                   No shoes match the selected filters.
                 </p>
               </div>

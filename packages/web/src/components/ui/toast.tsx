@@ -255,11 +255,11 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
       <div className="flex-shrink-0 mt-0.5">{icons[toast.type]}</div>
 
       <div className="flex-1 min-w-0">
-        <p className="font-sora text-sm font-medium text-white">
+        <p className="font-mono text-sm font-medium text-white">
           {toast.message}
         </p>
         {toast.description && (
-          <p className="font-sora text-xs text-neutral-400 mt-1">
+          <p className="font-mono text-xs text-neutral-400 mt-1">
             {toast.description}
           </p>
         )}
@@ -271,7 +271,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
                   toast.onRetry?.();
                   onClose();
                 }}
-                className="text-xs font-sora text-brand-red hover:text-white transition-colors duration-500"
+                className="text-xs font-mono text-brand-red hover:text-white transition-colors duration-500"
               >
                 Retry
               </button>
@@ -285,7 +285,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
                       action.onClick();
                       onClose();
                     }}
-                    className="text-xs font-sora text-blue-400 hover:text-blue-300 transition-colors"
+                    className="text-xs font-mono text-blue-400 hover:text-blue-300 transition-colors"
                   >
                     {action.label}
                   </button>

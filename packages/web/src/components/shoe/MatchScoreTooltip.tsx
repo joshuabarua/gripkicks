@@ -38,7 +38,7 @@ export function MatchScoreTooltip({ score, breakdown, signals }: MatchScoreToolt
     <TooltipProvider>
       <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>
-          <button type="button" aria-label={`Match breakdown: ${toHundredPointScale(score, 5)}%`} className="flex min-h-11 items-center gap-2 rounded-lg px-2 font-sora text-brand-chalk hover:bg-brand-soft-surface">
+          <button type="button" aria-label={`Match breakdown: ${toHundredPointScale(score, 5)}%`} className="flex min-h-11 items-center gap-2 rounded-lg px-2 font-mono text-brand-chalk hover:bg-brand-soft-surface">
             <span className="text-xl font-semibold tabular-nums">{toHundredPointScale(score, 5)}%</span>
             <Info aria-hidden="true" className="h-4 w-4 text-brand-putty" />
           </button>
@@ -46,7 +46,7 @@ export function MatchScoreTooltip({ score, breakdown, signals }: MatchScoreToolt
         <TooltipContent 
           side="bottom" 
           align="end" 
-          className="w-64 border border-white/40 bg-brand-surface p-4 font-sora text-brand-chalk shadow-xl shadow-black/50"
+          className="w-64 border border-white/40 bg-brand-surface p-4 font-mono text-brand-chalk shadow-xl shadow-black/50"
         >
           <div className="space-y-3">
             <p className="mb-2 border-b border-white/40 pb-2 text-sm font-semibold text-brand-chalk">

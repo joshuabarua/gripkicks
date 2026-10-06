@@ -37,7 +37,7 @@ export function BrandLogo({ brand, className = "", size = "md" }: BrandLogoProps
 
   if (!logo) {
     return (
-      <span className={`uppercase leading-none text-brand-chalk ${size === "sm" ? "truncate font-sora text-[10px] font-semibold tracking-[0.16em]" : "font-so-cloudy text-fluid-3xl"} ${className}`}>
+      <span className={`uppercase leading-none text-brand-chalk ${size === "sm" ? "truncate font-mono text-[10px] font-semibold tracking-[0.16em]" : "font-ball-pill text-fluid-3xl"} ${className}`}>
         {brand}
       </span>
     );

@@ -27,16 +27,16 @@ export default function CommunityStatsSection({
       <h3 className="font-ball-pill text-lg text-white mb-3">Community Rank</h3>
       {showCommunityAverages ? (
         <>
-          <p className="text-xs text-neutral-500 font-sora tracking-wider mb-3">Based on {totalRatings} user ratings</p>
+          <p className="text-xs text-neutral-500 font-mono tracking-wider mb-3">Based on {totalRatings} user ratings</p>
           {popularityCount && popularityCount > 100 && (
             <div className="mb-3 p-3 bg-neutral-900 rounded-2xl border border-neutral-800">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-neutral-400 font-sora">Popularity</span>
+                <span className="text-sm text-neutral-400 font-mono">Popularity</span>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-white font-ball-pill">
                     {popularityCount} climbers
                   </span>
-                  <span className="text-xs text-neutral-500 font-sora">
+                  <span className="text-xs text-neutral-500 font-mono">
                     ({totalShoesInDatabase ? ((popularityCount / totalShoesInDatabase) * 100).toFixed(1) : '0'}%)
                   </span>
                 </div>
@@ -50,7 +50,7 @@ export default function CommunityStatsSection({
               transition={{ delay: 0.4 }}
             >
               <div className="flex justify-between items-center mb-1.5">
-                <span className="text-sm text-neutral-400 font-sora">Comfort</span>
+                <span className="text-sm text-neutral-400 font-mono">Comfort</span>
                 <span className="text-sm font-bold text-white font-ball-pill">{comfortScore.toFixed(1)}/10</span>
               </div>
               <div className="w-full bg-neutral-800 rounded-full h-2.5 overflow-hidden">
@@ -69,7 +69,7 @@ export default function CommunityStatsSection({
               transition={{ delay: 0.5 }}
             >
               <div className="flex justify-between items-center mb-1.5">
-                <span className="text-sm text-neutral-400 font-sora">Performance</span>
+                <span className="text-sm text-neutral-400 font-mono">Performance</span>
                 <span className="text-sm font-bold text-white font-ball-pill">{performanceRating.toFixed(1)}/10</span>
               </div>
               <div className="w-full bg-neutral-800 rounded-full h-2.5 overflow-hidden">
@@ -88,7 +88,7 @@ export default function CommunityStatsSection({
               transition={{ delay: 0.6 }}
             >
               <div className="flex justify-between items-center mb-1.5">
-                <span className="text-sm text-neutral-400 font-sora">Durability</span>
+                <span className="text-sm text-neutral-400 font-mono">Durability</span>
                 <span className="text-sm font-bold text-white font-ball-pill">{durabilityRating.toFixed(1)}/10</span>
               </div>
               <div className="w-full bg-neutral-800 rounded-full h-2.5 overflow-hidden">
@@ -106,8 +106,8 @@ export default function CommunityStatsSection({
         <div className="relative">
           <div className="absolute inset-0 flex items-center justify-center z-10">
             <div className="bg-neutral-900/90 backdrop-blur-sm rounded-2xl px-5 py-3 text-center border border-neutral-800">
-              <p className="text-white text-sm font-sora">{3 - (totalRatings || 0)} more member rankings required</p>
-              <p className="text-neutral-500 text-xs font-sora mt-1">for average shoe score</p>
+              <p className="text-white text-sm font-mono">{3 - (totalRatings || 0)} more member rankings required</p>
+              <p className="text-neutral-500 text-xs font-mono mt-1">for average shoe score</p>
             </div>
           </div>
           <div className="blur-sm opacity-30 space-y-4">

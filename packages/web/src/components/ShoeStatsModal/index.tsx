@@ -256,7 +256,7 @@ export default function ShoeStatsModal({
                       )}
                   </div>
                 </div>
-                <p className="text-brand-putty/40 font-sora text-fluid-sm mt-fluid-xs">{shoeBrand}</p>
+                <p className="text-brand-putty/40 font-mono text-fluid-sm mt-fluid-xs">{shoeBrand}</p>
               </div>
             </div>
           </div>

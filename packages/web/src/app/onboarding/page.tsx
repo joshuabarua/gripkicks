@@ -225,12 +225,12 @@ export default function OnboardingPage() {
           {/* Progress */}
           <div className="mb-12">
             <div className="flex justify-between items-center mb-4">
-              <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30">
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/30">
                 Step {stepIndex + 1} of {steps.length}
               </p>
               <button
                 onClick={handleSkipOnboarding}
-                className="font-sora text-xs text-brand-putty/40 hover:text-brand-red transition-colors duration-500"
+                className="font-mono text-xs text-brand-putty/40 hover:text-brand-red transition-colors duration-500"
               >
                 Skip for now
               </button>
@@ -276,7 +276,7 @@ export default function OnboardingPage() {
 
                   <div className="space-y-6">
                     <div>
-                      <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                      <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
                         Select shape
                       </Label>
                       <div className="grid grid-cols-2 gap-3 mt-3">
@@ -318,10 +318,10 @@ export default function OnboardingPage() {
                                 : "border-white/[0.06] hover:border-white/10 bg-black/50"
                             }`}
                           >
-                            <div className="font-sora font-medium text-white text-sm">
+                            <div className="font-mono font-medium text-white text-sm">
                               {shape.label}
                             </div>
-                            <div className="font-sora text-[10px] text-neutral-500 mt-1 leading-tight">
+                            <div className="font-mono text-[10px] text-neutral-500 mt-1 leading-tight">
                               {shape.desc}
                             </div>
                           </motion.button>
@@ -330,7 +330,7 @@ export default function OnboardingPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                      <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
                         Foot volume
                       </Label>
                       <div className="grid grid-cols-3 gap-3 mt-3">
@@ -350,10 +350,10 @@ export default function OnboardingPage() {
                                 : "border-white/[0.06] hover:border-white/10 bg-black/50"
                             }`}
                           >
-                            <div className="font-sora font-medium text-white text-sm">
+                            <div className="font-mono font-medium text-white text-sm">
                               {volume.label}
                             </div>
-                            <div className="font-sora text-[10px] text-neutral-500 mt-1 leading-tight">
+                            <div className="font-mono text-[10px] text-neutral-500 mt-1 leading-tight">
                               {volume.desc}
                             </div>
                           </motion.button>
@@ -386,7 +386,7 @@ export default function OnboardingPage() {
 
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                      <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
                         Search shoes
                       </Label>
                       <div className="mt-2">
@@ -414,10 +414,10 @@ export default function OnboardingPage() {
                             />
                           </div>
                           <div>
-                            <h3 className="font-sora font-semibold text-white">
+                            <h3 className="font-mono font-semibold text-white">
                               {selectedShoe.name}
                             </h3>
-                            <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-500">
+                            <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-500">
                               {selectedShoe.brand}
                             </p>
                           </div>
@@ -429,7 +429,7 @@ export default function OnboardingPage() {
                       <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                            <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
                               Size
                             </Label>
                             <Select
@@ -459,7 +459,7 @@ export default function OnboardingPage() {
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                            <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
                               Condition
                             </Label>
                             <Select
@@ -488,7 +488,7 @@ export default function OnboardingPage() {
 
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                            <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
                               Comfort
                             </Label>
                             <div className="flex items-center gap-2 mt-2">
@@ -508,7 +508,7 @@ export default function OnboardingPage() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                            <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
                               Performance
                             </Label>
                             <div className="flex items-center gap-2 mt-2">
@@ -530,7 +530,7 @@ export default function OnboardingPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                          <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
                             Notes (optional)
                           </Label>
                           <Textarea

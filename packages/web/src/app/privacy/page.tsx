@@ -74,7 +74,7 @@ export default function PrivacyPage() {
           <motion.p
             {...fadeUp}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-sora text-xl md:text-2xl text-brand-putty/70 max-w-2xl leading-relaxed"
+            className="font-mono text-xl md:text-2xl text-brand-putty/70 max-w-2xl leading-relaxed"
           >
             How GripKicks handles your data.
           </motion.p>
@@ -110,7 +110,7 @@ export default function PrivacyPage() {
                   className="text-center"
                 >
                   <div className="font-ball-pill text-4xl md:text-5xl text-brand-chalk mb-2">{stat.value}</div>
-                  <p className="font-sora text-sm text-brand-putty/50">{stat.label}</p>
+                  <p className="font-mono text-sm text-brand-putty/50">{stat.label}</p>
                 </motion.div>
               ))}
             </div>
@@ -137,7 +137,7 @@ export default function PrivacyPage() {
                   <promise.icon className="w-6 h-6 text-brand-red" />
                 </div>
                 <h3 className="font-ball-pill text-xl mb-3 text-brand-chalk">{promise.title}</h3>
-                <p className="font-sora text-sm text-brand-putty/60 leading-relaxed">{promise.body}</p>
+                <p className="font-mono text-sm text-brand-putty/60 leading-relaxed">{promise.body}</p>
               </motion.div>
             ))}
           </div>
@@ -165,16 +165,16 @@ export default function PrivacyPage() {
                 className="bg-black border border-white/[0.06] rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-4"
               >
                 <div>
-                  <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-brand-putty/40 mb-1">What</p>
-                  <p className="font-sora text-brand-chalk font-medium">{row.what}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand-putty/40 mb-1">What</p>
+                  <p className="font-mono text-brand-chalk font-medium">{row.what}</p>
                 </div>
                 <div>
-                  <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-brand-putty/40 mb-1">Why</p>
-                  <p className="font-sora text-brand-putty/60 text-sm">{row.why}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand-putty/40 mb-1">Why</p>
+                  <p className="font-mono text-brand-putty/60 text-sm">{row.why}</p>
                 </div>
                 <div>
-                  <p className="font-sora text-[10px] uppercase tracking-[0.2em] text-brand-putty/40 mb-1">How long</p>
-                  <p className="font-sora text-brand-putty/60 text-sm">{row.kept}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand-putty/40 mb-1">How long</p>
+                  <p className="font-mono text-brand-putty/60 text-sm">{row.kept}</p>
                 </div>
               </motion.div>
             ))}
@@ -185,7 +185,7 @@ export default function PrivacyPage() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-8 bg-brand-red/5 border border-brand-red/20 rounded-2xl p-6"
           >
-            <p className="font-sora text-sm text-brand-putty/60">
+            <p className="font-mono text-sm text-brand-putty/60">
               <span className="text-brand-chalk font-medium">What we don&apos;t collect:</span> browsing habits, location data, device fingerprints, contacts, photos, or anything else not needed to match climbing shoes.
             </p>
           </motion.div>

@@ -15,7 +15,7 @@ const VARIATIONS = [
 
 export default function HomeDesignsIndex() {
   return (
-    <main className="min-h-screen bg-[#EEEBE5] text-[#111111] font-sora selection:bg-[#111111] selection:text-[#EEEBE5]">
+    <main className="min-h-screen bg-[#EEEBE5] text-[#111111] font-mono selection:bg-[#111111] selection:text-[#EEEBE5]">
       <div className="max-w-[1800px] mx-auto px-6 md:px-12 py-12 md:py-24">
         
         {/* Header Section */}
@@ -58,7 +58,7 @@ export default function HomeDesignsIndex() {
                     <h2 className="font-ball-pill text-5xl md:text-7xl lg:text-[7rem] uppercase leading-none mb-6 lg:-ml-4 transition-transform duration-500 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:translate-x-6">
                       {v.label}
                     </h2>
-                    <p className="font-sora text-lg md:text-xl text-[#8C877E] max-w-xl transition-all duration-500 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:translate-x-6 group-hover:text-[#111111]">
+                    <p className="font-mono text-lg md:text-xl text-[#8C877E] max-w-xl transition-all duration-500 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:translate-x-6 group-hover:text-[#111111]">
                       {v.desc}
                     </p>
                   </div>

@@ -98,7 +98,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, variantL
         </div>
 
         <div className="relative flex aspect-[4/3] items-center justify-center border-b border-white/20 bg-brand-soft-surface p-4">
-          <div className="absolute left-3 top-3 rounded-sm border border-white/[0.09] bg-black/65 px-2 py-1 font-sora text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
+          <div className="absolute left-3 top-3 rounded-sm border border-white/[0.09] bg-black/65 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
             {cardLabel}
           </div>
           {isInView && (
@@ -123,32 +123,32 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, variantL
 
         <div className="space-y-4 p-4">
           <div className="min-w-0">
-            <h3 className="truncate font-sora text-base font-semibold text-brand-chalk transition-colors group-hover:text-white">
+            <h3 className="truncate font-mono text-base font-semibold text-brand-chalk transition-colors group-hover:text-white">
               {name}
             </h3>
-            <p className="mt-2 font-sora text-xs leading-relaxed text-brand-putty">
+            <p className="mt-2 font-mono text-xs leading-relaxed text-brand-putty">
               {getShoeDescription(details)}
             </p>
           </div>
 
           <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-white/20 bg-white/20">
             <div className="bg-brand-base px-3 py-2.5">
-              <dt className="font-sora text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Size</dt>
-              <dd className="mt-1 truncate font-sora text-xs font-medium text-brand-chalk">{shoe.size || 'Not set'}</dd>
+              <dt className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Size</dt>
+              <dd className="mt-1 truncate font-mono text-xs font-medium text-brand-chalk">{shoe.size || 'Not set'}</dd>
             </div>
             <div className="bg-brand-base px-3 py-2.5">
-              <dt className="font-sora text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Condition</dt>
-              <dd className="mt-1 truncate font-sora text-xs font-medium text-brand-chalk">{formatCondition(shoe.condition)}</dd>
+              <dt className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Condition</dt>
+              <dd className="mt-1 truncate font-mono text-xs font-medium text-brand-chalk">{formatCondition(shoe.condition)}</dd>
             </div>
           </dl>
 
           <div>
-            <p className="mb-2 font-sora text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Your ratings</p>
+            <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Your ratings</p>
             <div className="grid grid-cols-3 gap-2">
               {ratingItems.map(([label, value]) => (
                 <div key={label} className="rounded-md border border-white/20 bg-white/[0.025] px-2 py-2 text-center">
-                  <span className="block font-sora text-[11px] tracking-[0.12em] text-brand-putty/85">{label}</span>
-                  <strong className={`mt-0.5 block font-normal text-brand-chalk ${value === undefined ? 'font-sora text-[11px]' : 'font-ball-pill text-lg'}`}>{value ?? 'Not rated'}</strong>
+                  <span className="block font-mono text-[11px] tracking-[0.12em] text-brand-putty/85">{label}</span>
+                  <strong className={`mt-0.5 block font-normal text-brand-chalk ${value === undefined ? 'font-mono text-[11px]' : 'font-ball-pill text-lg'}`}>{value ?? 'Not rated'}</strong>
                 </div>
               ))}
             </div>
@@ -173,15 +173,15 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, variantL
                 {isComplete ? <Check className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
               </span>
               <span className="min-w-0">
-                <span className="block truncate font-sora text-[11px] font-medium text-brand-chalk">
+                <span className="block truncate font-mono text-[11px] font-medium text-brand-chalk">
                   {isComplete ? 'Profile complete' : 'Add your fit'}
                 </span>
-                <span className="block truncate font-sora text-[11px] text-brand-putty/85">
+                <span className="block truncate font-mono text-[11px] text-brand-putty/85">
                   {completed} of {total} details added
                 </span>
               </span>
             </span>
-            <span className="ml-2 font-sora text-[10px] text-brand-putty/85">Edit</span>
+            <span className="ml-2 font-mono text-[10px] text-brand-putty/85">Edit</span>
           </button>
         </div>
       </article>

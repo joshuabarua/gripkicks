@@ -103,7 +103,7 @@ function FilterButtonGroup({ options, selectedValue, onChange, layout = 'grid' }
           type="button"
           onClick={() => onChange(option.value)}
           aria-pressed={selectedValue === option.value}
-          className={`min-h-11 px-3 py-1.5 rounded-full text-xs font-sora transition-all border ${selectedValue === option.value
+          className={`min-h-11 px-3 py-1.5 rounded-full text-xs font-mono transition-all border ${selectedValue === option.value
             ? 'bg-brand-red text-black border-brand-red'
             : 'bg-neutral-900/60 text-brand-putty border-white/30 hover:border-brand-red/40 hover:text-white'
             }`}

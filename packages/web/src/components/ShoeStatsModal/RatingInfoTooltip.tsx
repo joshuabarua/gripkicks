@@ -27,13 +27,13 @@ export default function RatingInfoTooltip({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="flex items-center gap-2 text-xs text-neutral-500 cursor-help font-sora">
+        <div className="flex items-center gap-2 text-xs text-neutral-500 cursor-help font-mono">
           <Info className="w-3.5 h-3.5 text-brand-red/50" />
           <span>{getMessage()}</span>
         </div>
       </TooltipTrigger>
       <TooltipContent className="bg-neutral-900 border border-neutral-700">
-        <p className="font-sora text-neutral-300">Ratings stay unrated until you set them. Community score only appears once enough member ratings exist.</p>
+        <p className="font-mono text-neutral-300">Ratings stay unrated until you set them. Community score only appears once enough member ratings exist.</p>
       </TooltipContent>
     </Tooltip>
   );

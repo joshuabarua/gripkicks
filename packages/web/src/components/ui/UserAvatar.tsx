@@ -49,7 +49,7 @@ export function UserAvatar({
       <div
         className={`${className} bg-neutral-900 border border-neutral-800 flex items-center justify-center`}
       >
-        <span className="font-sora text-xs text-white/80">
+        <span className="font-mono text-xs text-white/80">
           {getInitials(initialsIdentity)}
         </span>
       </div>

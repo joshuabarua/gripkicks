@@ -10,7 +10,7 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sora: ['var(--font-sora)'],
+				mono: ['var(--font-dm-mono)', 'ui-monospace', 'monospace'],
 				'ball-pill': ['var(--font-ball-pill)'],
 				'so-cloudy': ['var(--font-so-cloudy)']
 			},

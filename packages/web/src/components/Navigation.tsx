@@ -25,7 +25,7 @@ const menu = {
   open: {
     width: "360px",
     height: "400px",
-    top: "-12px",
+    top: "-17px",
     right: "-15px",
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] },
   },
@@ -76,20 +76,20 @@ const Navigation: React.FC = () => {
     orientation === "portrait" && screenWidth > 0 && screenWidth < 768;
   const menuVariants = isPhonePortrait
     ? {
-        open: {
-          width: "min(92vw, 320px)",
-          height: "370px",
-          top: "-9px",
-          right: "-10px",
-          transition: {
-            duration: 0.75,
-            type: "tween",
-            ease: [0.76, 0, 0.24, 1],
-          },
+      open: {
+        width: "min(92vw, 320px)",
+        height: "370px",
+        top: "-10px",
+        right: "-10px",
+        transition: {
+          duration: 0.75,
+          type: "tween",
+          ease: [0.76, 0, 0.24, 1],
         },
-        closed: menu.closed,
-        closedText: menu.closedText,
-      }
+      },
+      closed: menu.closed,
+      closedText: menu.closedText,
+    }
     : menu;
 
   useEffect(() => {
@@ -158,7 +158,7 @@ const Navigation: React.FC = () => {
 
       <div className="flex-1 flex justify-end items-center z-20">
         {isAuthenticated ? (
-          <div className="relative flex items-center ">
+          <div className="relative flex translate-y-px items-center">
             <AnimatePresence mode="wait">
               {isActive && (
                 <motion.div
@@ -200,8 +200,8 @@ const Navigation: React.FC = () => {
                           }
                         }}
                       >
-                        <div className="mb-3 rounded-2xl border border-black/10 bg-black/10 p-2.5 text-black sm:p-3">
-                          <div className="flex items-center gap-3 pr-12">
+                        <div className="mb-3 rounded-2xl border border-black/10 bg-black/10 p-2 text-black sm:p-3">
+                          <div className="flex items-center gap-3 pr-12 pt-8">
                             <UserAvatar
                               userId={session.user.id}
                               name={session.user.name}

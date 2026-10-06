@@ -68,8 +68,8 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-medium truncate text-brand-chalk font-sora text-sm">{shoe.name}</h3>
-                    <p className="text-xs text-brand-putty/50 font-sora uppercase tracking-wider mt-0.5">{shoe.brand}</p>
+                    <h3 className="font-medium truncate text-brand-chalk font-mono text-sm">{shoe.name}</h3>
+                    <p className="text-xs text-brand-putty/50 font-mono uppercase tracking-wider mt-0.5">{shoe.brand}</p>
                   </div>
                   {selectedShoe?._id === shoe._id && (
                     <div className="w-5 h-5 rounded-full bg-brand-red flex items-center justify-center shrink-0">

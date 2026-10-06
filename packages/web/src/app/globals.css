@@ -91,7 +91,8 @@
 }
 
 body {
-	font-family: var(--font-sora), Arial, Helvetica, sans-serif;
+	font-family: var(--font-dm-mono), ui-monospace, monospace;
+	font-synthesis-weight: none;
 }
 
 /* Fix for SoCloudy font character mapping */
@@ -196,6 +197,48 @@ body {
 	}
 	.font-ball-pill {
 		text-transform: uppercase;
+	}
+}
+
+@keyframes lab-rise {
+	from {
+		opacity: 0;
+		transform: translate3d(0, 20px, 0);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@layer components {
+	.lab-card {
+		@apply relative overflow-hidden rounded-lg border border-white/[0.06] bg-brand-charcoal transition-all duration-500 hover:border-white/10;
+	}
+	.lab-card-lift {
+		@apply hover:-translate-y-1 motion-reduce:transform-none;
+	}
+	.lab-card-active {
+		@apply border-brand-red/40 bg-brand-red/10;
+	}
+	.lab-button {
+		@apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-red px-6 py-3 font-ball-pill text-lg uppercase text-black transition-colors duration-500 hover:bg-brand-red/80 focus-visible:outline-brand-red;
+	}
+	.lab-button-ghost {
+		@apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-5 py-3 font-mono text-xs font-medium uppercase tracking-wider text-brand-chalk transition-colors duration-500 hover:border-white/20 hover:bg-white/5 focus-visible:outline-brand-chalk;
+	}
+	.lab-label {
+		@apply font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-500;
+	}
+	.lab-rise {
+		animation: lab-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+		animation-delay: var(--rise-delay, 0ms);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.lab-rise {
+		animation: none;
 	}
 }
 
@@ -512,7 +555,8 @@ a {
 	}
 }
 
-.hal-glow {
+.hal-glow,
+.lab-card-active {
 	box-shadow: 0 0 8px rgba(244, 91, 91, 0.15), 0 0 24px rgba(244, 91, 91, 0.05);
 }
 
@@ -531,7 +575,8 @@ a {
 	position: relative;
 	overflow: hidden;
 }
-.monolith-card::before {
+.monolith-card::before,
+.lab-card::before {
 	content: '';
 	position: absolute;
 	left: 0;
@@ -544,7 +589,8 @@ a {
 	transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
 	z-index: 10;
 }
-.monolith-card:hover::before {
+.monolith-card:hover::before,
+.lab-card:hover::before {
 	transform: scaleY(1);
 }
 

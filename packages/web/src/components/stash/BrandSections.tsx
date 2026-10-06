@@ -33,10 +33,10 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onSelec
             <div className="flex items-center gap-fluid-md">
               <h2 aria-label={brand}><BrandLogo brand={brand} /></h2>
               <div className="flex-1 h-px bg-white/20" />
-              <span className="font-sora text-xs text-brand-putty tracking-wider">{models.length} {models.length === 1 ? "MODEL" : "MODELS"}</span>
+              <span className="font-mono text-xs text-brand-putty tracking-wider">{models.length} {models.length === 1 ? "MODEL" : "MODELS"}</span>
             </div>
             {getBrandDescription(brand) && (
-              <p className="max-w-2xl font-sora text-sm leading-relaxed text-brand-putty">
+              <p className="max-w-2xl font-mono text-sm leading-relaxed text-brand-putty">
                 {getBrandDescription(brand)}
               </p>
             )}

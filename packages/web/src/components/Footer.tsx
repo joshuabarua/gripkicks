@@ -31,13 +31,13 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="font-sora text-[11px] uppercase tracking-[0.35em] text-brand-putty/90 mb-4">Product</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-brand-putty/90 mb-4">Product</p>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="font-sora text-sm text-brand-putty/90 hover:text-brand-chalk transition-colors duration-500"
+                    className="font-mono text-sm text-brand-putty/90 hover:text-brand-chalk transition-colors duration-500"
                   >
                     {link.title}
                   </Link>
@@ -47,13 +47,13 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="font-sora text-[11px] uppercase tracking-[0.35em] text-brand-putty/90 mb-4">Company</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-brand-putty/90 mb-4">Company</p>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="font-sora text-sm text-brand-putty/90 hover:text-brand-chalk transition-colors duration-500"
+                    className="font-mono text-sm text-brand-putty/90 hover:text-brand-chalk transition-colors duration-500"
                   >
                     {link.title}
                   </Link>
@@ -64,19 +64,19 @@ export default function Footer() {
         </div>
 
         <div className="mt-16 pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="font-sora text-xs text-brand-putty/85">
+          <p className="font-mono text-xs text-brand-putty/85">
             &copy; {new Date().getFullYear()} GripKicks
           </p>
           <div className="flex items-center gap-6">
             <Link
               href="/privacy"
-              className="font-sora text-xs text-brand-putty/85 hover:text-brand-chalk transition-colors duration-500"
+              className="font-mono text-xs text-brand-putty/85 hover:text-brand-chalk transition-colors duration-500"
             >
               Privacy
             </Link>
             <Link
               href="/about"
-              className="font-sora text-xs text-brand-putty/85 hover:text-brand-chalk transition-colors duration-500"
+              className="font-mono text-xs text-brand-putty/85 hover:text-brand-chalk transition-colors duration-500"
             >
               About
             </Link>

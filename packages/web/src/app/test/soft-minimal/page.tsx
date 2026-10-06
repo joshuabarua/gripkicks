@@ -5,7 +5,7 @@ import { Scene, BackButton } from "../test-utils";
 
 export default function SoftMinimal() {
   return (
-    <main className="min-h-screen bg-[#FDFCFB] text-[#5A5856] font-sora selection:bg-[#EAE5DF] selection:text-[#5A5856]">
+    <main className="min-h-screen bg-[#FDFCFB] text-[#5A5856] font-mono selection:bg-[#EAE5DF] selection:text-[#5A5856]">
       <BackButton
         href="/test"
         className="top-8 left-8 lg:top-12 lg:left-12 gap-4 text-xs tracking-[0.3em] uppercase opacity-50 hover:opacity-100 transition-opacity"

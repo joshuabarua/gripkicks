@@ -93,7 +93,7 @@ export function AddShoeDialog({
           <DialogTitle className="text-white font-so-cloudy uppercase text-fluid-2xl text-center">
             Add New Shoe
           </DialogTitle>
-          <DialogDescription className="text-neutral-500 text-center font-sora text-fluid-sm">
+          <DialogDescription className="text-neutral-500 text-center font-mono text-fluid-sm">
             Search and add climbing shoes to your collection
           </DialogDescription>
         </DialogHeader>
@@ -109,7 +109,7 @@ export function AddShoeDialog({
           </div>
 
           <div className="flex items-center gap-fluid-sm">
-            <Label className="text-xs text-neutral-500 font-sora">Brand:</Label>
+            <Label className="text-xs text-neutral-500 font-mono">Brand:</Label>
             <select
               value={selectedBrand}
               onChange={(e) => onBrandChange(e.target.value)}
@@ -125,14 +125,14 @@ export function AddShoeDialog({
           </div>
 
           <div className="flex items-center gap-fluid-sm">
-            <Label className="text-xs text-neutral-500 font-sora">Gender:</Label>
+            <Label className="text-xs text-neutral-500 font-mono">Gender:</Label>
             <div className="flex flex-wrap gap-2">
               {genderOptions.map((option) => (
                 <button
                   key={option.value}
                   type="button"
                   onClick={() => onGenderChange(option.value)}
-                  className={`px-3 py-1 rounded-full text-xs font-sora transition-colors border ${selectedGender === option.value
+                  className={`px-3 py-1 rounded-full text-xs font-mono transition-colors border ${selectedGender === option.value
                       ? 'bg-brand-red text-black border-brand-red'
                       : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:border-brand-red/40'
                     }`}
@@ -165,10 +165,10 @@ export function AddShoeDialog({
                     />
                   </div>
                   <div>
-                    <p className="font-sora font-medium text-white">
+                    <p className="font-mono font-medium text-white">
                       {group.baseName}
                     </p>
-                    <p className="text-xs text-neutral-500 font-sora">{group.brand}</p>
+                    <p className="text-xs text-neutral-500 font-mono">{group.brand}</p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -180,10 +180,10 @@ export function AddShoeDialog({
                       className="group flex w-full items-center justify-between rounded-xl border border-neutral-800 bg-neutral-950/70 px-3 py-2 text-left transition-all duration-300 hover:border-brand-red/30 hover:bg-neutral-800"
                     >
                       <div>
-                        <p className="font-sora text-[10px] uppercase tracking-wider text-neutral-500">
+                        <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
                           {group.variants.length > 1 ? variantLabel || "Standard" : "Add shoe"}
                         </p>
-                        <p className="font-sora text-sm text-white transition-colors group-hover:text-brand-red">
+                        <p className="font-mono text-sm text-white transition-colors group-hover:text-brand-red">
                           {shoe.name}
                         </p>
                       </div>
@@ -198,7 +198,7 @@ export function AddShoeDialog({
             onEndReached={onLoadMore}
             hasMore={hasMore}
             isLoading={isLoadingMore}
-            completedIndicator={<span className="font-sora text-xs text-neutral-500">All shoes loaded</span>}
+            completedIndicator={<span className="font-mono text-xs text-neutral-500">All shoes loaded</span>}
           />
 
           {groupedSearchResults.length === 0 && !isLoadingMore && (
@@ -206,8 +206,8 @@ export function AddShoeDialog({
               <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-brand-red/10 flex items-center justify-center">
                 <Footprints className="w-6 h-6 text-brand-red" />
               </div>
-              <p className="font-sora text-white text-sm mb-1">No shoes match these filters</p>
-              <p className="font-sora text-neutral-500 text-xs">
+              <p className="font-mono text-white text-sm mb-1">No shoes match these filters</p>
+              <p className="font-mono text-neutral-500 text-xs">
                 Try clearing your dialog search, brand, or gender filter to view all shoes in the database.
               </p>
             </div>

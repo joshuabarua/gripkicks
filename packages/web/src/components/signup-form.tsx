@@ -61,7 +61,7 @@ export function SignupForm() {
           <div className="space-y-2">
             <Label
               htmlFor="first-name"
-              className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+              className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
             >
               First name
             </Label>
@@ -77,7 +77,7 @@ export function SignupForm() {
           <div className="space-y-2">
             <Label
               htmlFor="last-name"
-              className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+              className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
             >
               Last name
             </Label>
@@ -94,7 +94,7 @@ export function SignupForm() {
         <div className="space-y-2">
           <Label
             htmlFor="email"
-            className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+            className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
           >
             Email
           </Label>
@@ -111,7 +111,7 @@ export function SignupForm() {
         <div className="space-y-2">
           <Label
             htmlFor="password"
-            className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+            className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
           >
             Password
           </Label>
@@ -129,7 +129,7 @@ export function SignupForm() {
         <div className="space-y-2">
           <Label
             htmlFor="password_confirmation"
-            className="font-sora text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+            className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
           >
             Confirm password
           </Label>
@@ -145,7 +145,7 @@ export function SignupForm() {
           />
         </div>
         {error && (
-          <div className="text-red-400 text-sm font-sora bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+          <div className="text-red-400 text-sm font-mono bg-red-500/10 border border-red-500/20 rounded-xl p-3">
             {error}
           </div>
         )}
@@ -250,14 +250,14 @@ export function SignupForm() {
               },
             });
           }}
-          className="w-full border border-white/[0.06] hover:border-brand-red/30 text-brand-chalk font-sora text-sm py-3 transition-all duration-500 flex items-center justify-center gap-3"
+          className="w-full border border-white/[0.06] hover:border-brand-red/30 text-brand-chalk font-mono text-sm py-3 transition-all duration-500 flex items-center justify-center gap-3"
         >
           <GoogleIcon />
           Sign up with Google
         </motion.button>
       </div>
       <div className="text-center">
-        <span className="font-sora text-sm text-neutral-500">
+        <span className="font-mono text-sm text-neutral-500">
           Already have an account?{" "}
           <Link
             href={loginHref}

@@ -9,8 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-type FootShape = 'egyptian' | 'roman' | 'greek' | 'germanic' | 'celtic';
-type FootVolume = 'low' | 'medium' | 'high';
+import { ToeProfile, VolumeArch, type FootShape, type FootVolume } from '@/components/foot/FootGlyphs';
 
 // Zod schema for foot profile validation
 const footProfileSchema = z.object({
@@ -63,63 +62,6 @@ const footVolumeInfo: Record<FootVolume, { name: string; description: string; fi
     fit: 'Comfort or wide fit shoes',
   },
 };
-
-const TOE_HEIGHTS: Record<FootShape, number[]> = {
-  egyptian: [12, 10, 8, 6, 4],
-  roman: [10, 10, 9, 7, 5],
-  greek: [10, 12, 9, 7, 5],
-  germanic: [11, 8, 8, 8, 7],
-  celtic: [10, 11, 11, 8, 6],
-};
-
-const VOLUME_ARCH: Record<FootVolume, string> = {
-  low: 'M 8,44 C 30,37 50,37 72,44',
-  medium: 'M 8,44 C 22,18 58,18 72,44',
-  high: 'M 8,44 C 15,2 65,2 72,44',
-};
-
-function ToeProfile({ shape, active }: { shape: FootShape; active: boolean }) {
-  const heights = TOE_HEIGHTS[shape];
-  return (
-    <svg viewBox="0 0 100 66" className="w-full" style={{ height: 72 }}>
-      {heights.map((h, i) => {
-        const barH = (h / 12) * 58;
-        return (
-          <rect
-            key={i}
-            x={i * 19 + 4}
-            y={62 - barH}
-            width={14}
-            height={barH}
-            rx={7}
-            className={`transition-colors duration-300 ${active ? 'fill-brand-red' : 'fill-neutral-700'
-              }`}
-          />
-        );
-      })}
-    </svg>
-  );
-}
-
-function VolumeArch({ volume, active }: { volume: FootVolume; active: boolean }) {
-  return (
-    <svg viewBox="0 0 80 52" className="w-full" style={{ height: 56 }}>
-      <line
-        x1="8" y1="46" x2="72" y2="46"
-        strokeWidth="1"
-        className={active ? 'stroke-brand-red/30' : 'stroke-neutral-800'}
-      />
-      <path
-        d={VOLUME_ARCH[volume]}
-        fill="none"
-        strokeWidth="3"
-        strokeLinecap="round"
-        className={`transition-colors duration-300 ${active ? 'stroke-brand-red' : 'stroke-neutral-600'
-          }`}
-      />
-    </svg>
-  );
-}
 
 export default function FootLabPage() {
   const { data: session } = useSession();
@@ -230,7 +172,7 @@ export default function FootLabPage() {
             <Footprints className="w-8 h-8 text-brand-red" />
           </div>
           <h1 className="font-ball-pill text-5xl mb-3">FOOT PROFILE</h1>
-          <p className="font-sora text-neutral-500 mb-6">Log in to set up your foot profile</p>
+          <p className="font-mono text-neutral-500 mb-6">Log in to set up your foot profile</p>
           <Link
             href="/auth/login?callbackUrl=%2Ffootlab"
             className="inline-flex items-center justify-center rounded-lg bg-brand-red px-8 py-3 font-ball-pill text-lg text-black"
@@ -255,7 +197,7 @@ export default function FootLabPage() {
           <h1 className="font-ball-pill text-6xl md:text-8xl leading-none mb-4">
             FOOT LAB
           </h1>
-          <p className="font-sora text-neutral-400 text-lg max-w-lg">
+          <p className="font-mono text-neutral-400 text-lg max-w-lg">
             Set your foot shape and volume. It helps me match you with climbing shoes.
           </p>
         </motion.div>
@@ -270,7 +212,7 @@ export default function FootLabPage() {
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <h2 className="font-ball-pill text-2xl text-brand-chalk mb-2">Foot Lab is ready. Finish setup whenever you want.</h2>
-                <p className="font-sora text-sm text-brand-putty/70 max-w-2xl">
+                <p className="font-mono text-sm text-brand-putty/70 max-w-2xl">
                   You can use Foot Lab now, or continue onboarding to finish setup.
                 </p>
               </div>
@@ -293,7 +235,7 @@ export default function FootLabPage() {
         >
           <div className="mb-8">
             <h2 className="font-ball-pill text-2xl">Which toe is longest?</h2>
-            <p className="font-sora text-neutral-500 text-sm mt-0.5">Look at your bare foot from above and pick the closest match</p>
+            <p className="font-mono text-neutral-500 text-sm mt-0.5">Look at your bare foot from above and pick the closest match</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -317,14 +259,14 @@ export default function FootLabPage() {
                     <ToeProfile shape={shape} active={isSelected} />
                   </div>
                   <h3 className="font-ball-pill text-xl leading-none mb-1">{footShapeInfo[shape].name}</h3>
-                  <p className="font-sora text-[11px] text-neutral-500 leading-snug">{footShapeInfo[shape].description}</p>
+                  <p className="font-mono text-[11px] text-neutral-500 leading-snug">{footShapeInfo[shape].description}</p>
                   <AnimatePresence>
                     {isSelected && (
                       <motion.p
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="font-sora text-[10px] text-brand-putty/70 mt-2 overflow-hidden"
+                        className="font-mono text-[10px] text-brand-putty/70 mt-2 overflow-hidden"
                       >
                         {footShapeInfo[shape].fit}
                       </motion.p>
@@ -345,7 +287,7 @@ export default function FootLabPage() {
         >
           <div className="mb-8">
             <h2 className="font-ball-pill text-2xl">How full is your foot?</h2>
-            <p className="font-sora text-neutral-500 text-sm mt-0.5">Think about your foot width and instep height</p>
+            <p className="font-mono text-neutral-500 text-sm mt-0.5">Think about your foot width and instep height</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -369,14 +311,14 @@ export default function FootLabPage() {
                     <VolumeArch volume={volume} active={isSelected} />
                   </div>
                   <h3 className="font-ball-pill text-2xl leading-none mb-2">{footVolumeInfo[volume].name} Volume</h3>
-                  <p className="font-sora text-sm text-neutral-500 leading-snug mb-2">{footVolumeInfo[volume].description}</p>
+                  <p className="font-mono text-sm text-neutral-500 leading-snug mb-2">{footVolumeInfo[volume].description}</p>
                   <AnimatePresence>
                     {isSelected && (
                       <motion.p
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="font-sora text-[10px] text-brand-putty/70 overflow-hidden"
+                        className="font-mono text-[10px] text-brand-putty/70 overflow-hidden"
                       >
                         {footVolumeInfo[volume].fit}
                       </motion.p>
@@ -389,7 +331,7 @@ export default function FootLabPage() {
         </motion.div>
 
         {error && (
-          <div className="text-red-400 text-sm font-sora bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">{error}</div>
+          <div className="text-red-400 text-sm font-mono bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">{error}</div>
         )}
 
       </section>
@@ -408,7 +350,7 @@ export default function FootLabPage() {
                 <p className="font-ball-pill text-xl capitalize">
                   {selectedFootShape} <span className="text-neutral-500">·</span> {selectedFootVolume} volume
                 </p>
-                <p className="font-sora text-xs text-neutral-500">
+                <p className="font-mono text-xs text-neutral-500">
                   {isAlreadySaved ? 'Profile already saved' : 'Ready to save your profile'}
                 </p>
               </div>

@@ -2,9 +2,13 @@ import "./globals.css";
 import localFont from "next/font/local";
 import AppShell from "@/components/AppShell";
 
-const sora = localFont({
-  src: "../../public/fonts/Sora.ttf",
-  variable: "--font-sora",
+const dmMono = localFont({
+  src: [
+    { path: "../../public/fonts/DMMono-Light.ttf", weight: "300", style: "normal" },
+    { path: "../../public/fonts/DMMono-Regular.ttf", weight: "400", style: "normal" },
+    { path: "../../public/fonts/DMMono-Medium.ttf", weight: "500", style: "normal" },
+  ],
+  variable: "--font-dm-mono",
 });
 
 const ballPill = localFont({
@@ -24,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`min-h-screen bg-background antialiased ${sora.variable} ${ballPill.variable} ${soCloudy.variable}`}>
+      <body className={`min-h-screen bg-background antialiased ${dmMono.variable} ${ballPill.variable} ${soCloudy.variable}`}>
         <AppShell>{children}</AppShell>
       </body>
     </html>

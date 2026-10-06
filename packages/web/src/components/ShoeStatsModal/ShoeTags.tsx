@@ -23,7 +23,7 @@ function TagChip({ label, value, tooltip }: TagChipProps) {
       <Tooltip>
         <TooltipTrigger asChild>
           <button type="button" className="flex items-center gap-1.5 cursor-help">
-            <span className="text-[10px] text-neutral-500 flex items-center gap-1 font-sora">
+            <span className="text-[10px] text-neutral-500 flex items-center gap-1 font-mono">
               {label}
               <Info className="w-3 h-3 text-neutral-600" />
             </span>
@@ -33,7 +33,7 @@ function TagChip({ label, value, tooltip }: TagChipProps) {
           </button>
         </TooltipTrigger>
         <TooltipContent side="top" sideOffset={5} className="bg-neutral-900 border border-neutral-700 max-w-md z-[9999] shadow-xl" style={{ zIndex: 9999 }}>
-          <p className="text-sm text-neutral-300 leading-relaxed whitespace-pre-line font-sora">{tooltip}</p>
+          <p className="text-sm text-neutral-300 leading-relaxed whitespace-pre-line font-mono">{tooltip}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

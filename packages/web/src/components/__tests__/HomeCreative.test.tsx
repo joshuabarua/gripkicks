@@ -70,7 +70,7 @@ describe("Homepage clarity", () => {
     const stepsRegion = screen.getByRole("region", { name: "How it works" });
     expect(stepsRegion).toHaveClass("bg-brand-base");
     const section = within(stepsRegion);
-    expect(section.getByRole("heading", { name: "How it works" })).toHaveClass("font-so-cloudy");
+    expect(section.getByRole("heading", { name: "How it works" })).toHaveClass("font-ball-pill");
     const articles = section.getAllByRole("article");
     expect(articles).toHaveLength(3);
     for (const article of articles) {
@@ -79,7 +79,7 @@ describe("Homepage clarity", () => {
     for (const title of ["Map your foot", "Rate your shoes", "Compare fits"]) {
       expect(section.getByRole("heading", { name: title })).toHaveClass("font-ball-pill");
     }
-    expect(section.getByText("Set your foot shape and volume.")).toHaveClass("font-sora");
+    expect(section.getByText("Set your foot shape and volume.")).toHaveClass("font-mono");
   });
 
   it("removes the GRIP KICKS intro while keeping the account panel graphite", () => {

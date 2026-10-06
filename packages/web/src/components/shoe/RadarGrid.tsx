@@ -164,7 +164,7 @@ export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confi
 
   return (
     <section aria-label="Shoe radar map" className="space-y-fluid-md">
-      <div className="flex flex-wrap justify-between gap-3 font-sora text-sm text-brand-putty">
+      <div className="flex flex-wrap justify-between gap-3 font-mono text-sm text-brand-putty">
         <p>Focus or tap a shoe for details. Scroll the map on smaller screens.</p>
         <p>Marker size: {confidenceLabel ?? "Confidence"}</p>
       </div>
@@ -192,7 +192,7 @@ export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confi
           {positions.map((pos, index) => <ShoeMarker key={pos.id} pos={pos} rank={index + 1} isHovered={hoveredId === pos.id} onHover={onHoverChange} />)}
         </div>
       </div>
-      <p className="font-sora text-sm text-brand-putty">Nearby markers are separated; dashed lines show metric positions. {userPos && "Cyan marker: your preferences. "}Arrows: community aggression compared with brand specification.</p>
+      <p className="font-mono text-sm text-brand-putty">Nearby markers are separated; dashed lines show metric positions. {userPos && "Cyan marker: your preferences. "}Arrows: community aggression compared with brand specification.</p>
     </section>
   );
 }
@@ -209,11 +209,11 @@ function ShoeMarker({ pos, rank, isHovered, onHover }: { pos: ReturnType<typeof 
         <span className={`block overflow-hidden rounded-lg bg-brand-chalk shadow-lg ${rank === 1 || isHovered ? "border-2 border-brand-red" : "border border-white/40"}`} style={{ width: sizePx, height: sizePx }}>
           <ShoeImage brand={pos.brand} shoeName={pos.name} imageUrl={pos.imageUrl} className="p-1" transformation={[{ height: 80, width: 80, crop: "at_max", format: "png" }]} />
         </span>
-        <span className={`absolute -left-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 font-sora text-xs font-semibold ${rank === 1 ? "bg-brand-red text-black" : "bg-brand-soft-surface text-brand-chalk"}`}>{rank}</span>
-        <span className="absolute -bottom-2 -right-2 rounded-full border border-white/40 bg-brand-base px-2 py-1 font-sora text-xs font-semibold tabular-nums text-brand-chalk">{pos.primaryScore}</span>
+        <span className={`absolute -left-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 font-mono text-xs font-semibold ${rank === 1 ? "bg-brand-red text-black" : "bg-brand-soft-surface text-brand-chalk"}`}>{rank}</span>
+        <span className="absolute -bottom-2 -right-2 rounded-full border border-white/40 bg-brand-base px-2 py-1 font-mono text-xs font-semibold tabular-nums text-brand-chalk">{pos.primaryScore}</span>
         {showBrandArrow && <span aria-hidden="true" title={`Community says ${brandDelta < 0 ? "softer" : "harder"} than brand spec`} className="pointer-events-none absolute -right-4 top-1/2 -translate-y-1/2 text-brand-putty"><BrandDriftArrow direction={brandDelta < 0 ? "up" : "down"} magnitude={arrowMagnitude} /></span>}
         {isHovered && (
-          <span role="tooltip" className={`pointer-events-none absolute block w-56 rounded-xl border border-white/40 bg-brand-base p-4 text-left font-sora text-sm text-brand-chalk shadow-xl ${pos.y < 0.35 ? "top-full mt-4" : "bottom-full mb-4"} ${pos.x < 0.2 ? "left-0" : pos.x > 0.8 ? "right-0" : "left-1/2 -translate-x-1/2"}`}>
+          <span role="tooltip" className={`pointer-events-none absolute block w-56 rounded-xl border border-white/40 bg-brand-base p-4 text-left font-mono text-sm text-brand-chalk shadow-xl ${pos.y < 0.35 ? "top-full mt-4" : "bottom-full mb-4"} ${pos.x < 0.2 ? "left-0" : pos.x > 0.8 ? "right-0" : "left-1/2 -translate-x-1/2"}`}>
             <span className="block font-semibold leading-snug">{pos.name}</span>
             <span className="mt-1 block text-brand-putty">{pos.brand}</span>
             <span className="mt-3 flex justify-between gap-3"><span className="text-brand-putty">{pos.primaryScoreLabel ?? "Score"}</span><span className="font-semibold tabular-nums">{pos.primaryScore}</span></span>
@@ -240,14 +240,14 @@ function UserMarker({ x, y, label }: { x: number; y: number; label: string }) {
   return (
     <div className="pointer-events-none absolute z-20" style={{ left: `${x * 100}%`, top: `${y * 100}%`, transform: "translate(-50%, -50%)" }}>
       <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-cyan-400 bg-brand-base"><div className="h-3 w-3 rounded-full bg-cyan-400" /></div>
-      <div className="absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-cyan-400 px-3 py-1 font-sora text-sm font-semibold text-black">{label}</div>
+      <div className="absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-cyan-400 px-3 py-1 font-mono text-sm font-semibold text-black">{label}</div>
     </div>
   );
 }
 
 function AxisLabel({ position, children }: { position: "top" | "bottom" | "left" | "right"; children: React.ReactNode }) {
   const classes = { top: "top-4 left-1/2 -translate-x-1/2", bottom: "bottom-4 left-1/2 -translate-x-1/2", left: "left-4 top-1/2 -translate-y-1/2", right: "right-4 top-1/2 -translate-y-1/2" };
-  return <div className={`pointer-events-none absolute z-20 font-sora text-sm text-brand-putty ${classes[position]}`}><span style={position === "left" || position === "right" ? { writingMode: "vertical-lr", ...(position === "left" ? { transform: "rotate(180deg)" } : {}) } : undefined}>{children}</span></div>;
+  return <div className={`pointer-events-none absolute z-20 font-mono text-sm text-brand-putty ${classes[position]}`}><span style={position === "left" || position === "right" ? { writingMode: "vertical-lr", ...(position === "left" ? { transform: "rotate(180deg)" } : {}) } : undefined}>{children}</span></div>;
 }
 
 function QuadrantTile({ quadrant, extraBorder }: { quadrant: QuadrantInfo; extraBorder: string }) {
@@ -255,5 +255,5 @@ function QuadrantTile({ quadrant, extraBorder }: { quadrant: QuadrantInfo; extra
 }
 
 function QuadrantCornerLabel({ quadrant, count }: { quadrant: QuadrantInfo; count: number }) {
-  return <div title={quadrant.description} className={`pointer-events-none absolute z-20 flex items-center gap-2 rounded-lg border border-white/40 bg-brand-base px-3 py-2 font-sora text-sm text-brand-chalk ${cornerPositionClass[quadrant.corner]}`}>{quadrant.icon}<span>{quadrant.name}</span><span className="tabular-nums text-brand-putty">{count}</span></div>;
+  return <div title={quadrant.description} className={`pointer-events-none absolute z-20 flex items-center gap-2 rounded-lg border border-white/40 bg-brand-base px-3 py-2 font-mono text-sm text-brand-chalk ${cornerPositionClass[quadrant.corner]}`}>{quadrant.icon}<span>{quadrant.name}</span><span className="tabular-nums text-brand-putty">{count}</span></div>;
 }

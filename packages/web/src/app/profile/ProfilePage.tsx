@@ -130,7 +130,7 @@ export default function ProfilePage() {
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="text-center">
           <h1 className="font-ball-pill text-4xl mb-4">NOT LOGGED IN</h1>
-          <p className="font-sora text-neutral-500 mb-6">
+          <p className="font-mono text-neutral-500 mb-6">
             Please log in to view your profile
           </p>
           <Link
@@ -154,7 +154,7 @@ export default function ProfilePage() {
             transition={{ duration: 0.8 }}
             className="mb-12"
           >
-            <p className="font-sora text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Your Account</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Your Account</p>
             <div className="flex items-center gap-6">
               <div className="relative">
                 <UserAvatar
@@ -169,7 +169,7 @@ export default function ProfilePage() {
                 <h1 className="font-ball-pill text-4xl md:text-5xl">
                   {displayName}
                 </h1>
-                <p className="font-sora text-neutral-500 mt-1">
+                <p className="font-mono text-neutral-500 mt-1">
                   {displayEmail}
                 </p>
               </div>
@@ -192,14 +192,14 @@ export default function ProfilePage() {
                     <Link href="/footlab">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
-                        className="font-sora text-[10px] text-brand-red cursor-pointer uppercase tracking-wide"
+                        className="font-mono text-[10px] text-brand-red cursor-pointer uppercase tracking-wide"
                       >
                         Set up
                       </motion.span>
                     </Link>
                   )}
                 </div>
-                <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Foot Shape</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Foot Shape</p>
                 <p className="font-ball-pill text-2xl text-white capitalize">
                   {profile?.footShape
                     ? footShapeLabels[profile.footShape] || profile.footShape
@@ -216,14 +216,14 @@ export default function ProfilePage() {
                     <Link href="/stash">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
-                        className="font-sora text-[10px] text-brand-red cursor-pointer uppercase tracking-wide"
+                        className="font-mono text-[10px] text-brand-red cursor-pointer uppercase tracking-wide"
                       >
                         Choose
                       </motion.span>
                     </Link>
                   )}
                 </div>
-                <p className="font-sora text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Favourite Shoe</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Favourite Shoe</p>
                 <p className="font-ball-pill text-2xl text-white">
                   {favouriteShoe
                     ? `${favouriteShoe.brand} ${favouriteShoe.name}`
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                   <h3 className="font-ball-pill text-3xl text-black mb-3">
                     COMPLETE YOUR PROFILE
                   </h3>
-                  <ol className="font-sora text-sm text-black/70 space-y-1 mb-4">
+                  <ol className="font-mono text-sm text-black/70 space-y-1 mb-4">
                     <li>1. Set up your foot profile in Foot Lab</li>
                     <li>2. Add your first shoe with comfort ratings</li>
                     <li>3. Get shoe matches</li>
@@ -285,7 +285,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <h3 className="font-ball-pill text-2xl text-white">Profile Information</h3>
-                      <p className="font-sora text-sm text-neutral-500">Update your name and avatar</p>
+                      <p className="font-mono text-sm text-neutral-500">Update your name and avatar</p>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" className="hidden sm:flex border border-white/10 rounded-full px-6">
@@ -325,7 +325,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <h3 className="font-ball-pill text-2xl text-white">Security</h3>
-                      <p className="font-sora text-sm text-neutral-500">Change your password and email address</p>
+                      <p className="font-mono text-sm text-neutral-500">Change your password and email address</p>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" className="hidden sm:flex border border-white/10 rounded-full px-6">
@@ -361,7 +361,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <h3 className="font-ball-pill text-2xl text-red-500">Danger Zone</h3>
-                      <p className="font-sora text-sm text-neutral-500">Permanently delete your account</p>
+                      <p className="font-mono text-sm text-neutral-500">Permanently delete your account</p>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" className="hidden sm:flex border border-red-500/20 text-red-500 hover:bg-red-500/10 hover:text-red-400 rounded-full px-6">

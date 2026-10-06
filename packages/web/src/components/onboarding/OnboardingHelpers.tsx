@@ -34,7 +34,7 @@ export function BackButton({ onClick }: BackButtonProps) {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="border border-white/[0.06] hover:border-brand-red/30 text-brand-putty/50 font-sora text-sm px-6 py-3 transition-all duration-500 flex items-center gap-2"
+      className="border border-white/[0.06] hover:border-brand-red/30 text-brand-putty/50 font-mono text-sm px-6 py-3 transition-all duration-500 flex items-center gap-2"
     >
       <ChevronLeft className="w-4 h-4" /> Back
     </motion.button>

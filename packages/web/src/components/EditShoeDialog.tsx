@@ -36,7 +36,7 @@ export default function EditShoeDialog({
           <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] w-[min(96vw,56rem)] max-w-4xl max-h-[90dvh] flex flex-col rounded-lg hal-glow shadow-2xl p-0 overflow-hidden">
             <DialogHeader className="relative min-h-[5.5rem] space-y-3 border-b border-white/[0.06] px-5 py-6 pr-[9.5rem] sm:px-8 sm:py-7 sm:pr-[12rem]">
               <DialogTitle className="text-white font-so-cloudy uppercase text-fluid-xl">Edit Shoe Stats</DialogTitle>
-              <DialogDescription className="text-fluid-sm text-neutral-500 font-sora">
+              <DialogDescription className="text-fluid-sm text-neutral-500 font-mono">
                 {(editingShoe.shoe?.name || editingShoe.shoeDetails?.name || 'Unknown Shoe')}, {(editingShoe.shoe?.brand || editingShoe.shoeDetails?.brand || 'Unknown Brand')}
               </DialogDescription>
               <div className="absolute right-4 top-4 flex items-center gap-2">
@@ -64,7 +64,7 @@ export default function EditShoeDialog({
             <div className="space-y-6 px-5 py-6 sm:space-y-8 sm:px-8 sm:py-8 overflow-y-auto flex-1 min-h-0">
               <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="size" className="text-neutral-400 font-sora text-xs">Size</Label>
+                  <Label htmlFor="size" className="text-neutral-400 font-mono text-xs">Size</Label>
                   <select
                     id="size"
                     value={editForm.size || ''}
@@ -90,7 +90,7 @@ export default function EditShoeDialog({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="condition" className="text-neutral-400 font-sora text-xs">Condition</Label>
+                  <Label htmlFor="condition" className="text-neutral-400 font-mono text-xs">Condition</Label>
                   <select
                     id="condition"
                     value={editForm.condition || ''}
@@ -107,7 +107,7 @@ export default function EditShoeDialog({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="purchaseDate" className="text-neutral-400 font-sora text-xs">Purchase Date</Label>
+                  <Label htmlFor="purchaseDate" className="text-neutral-400 font-mono text-xs">Purchase Date</Label>
                   <Input
                     id="purchaseDate"
                     type="date"
@@ -118,7 +118,7 @@ export default function EditShoeDialog({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="fitLongevity" className="text-neutral-400 font-sora text-xs">Fit Longevity</Label>
+                  <Label htmlFor="fitLongevity" className="text-neutral-400 font-mono text-xs">Fit Longevity</Label>
                   <select
                     id="fitLongevity"
                     value={editForm.fitLongevity || ''}
@@ -133,7 +133,7 @@ export default function EditShoeDialog({
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="sizingDeviation" className="text-neutral-400 font-sora text-xs">Sizing Deviation</Label>
+                  <Label htmlFor="sizingDeviation" className="text-neutral-400 font-mono text-xs">Sizing Deviation</Label>
                   <Input
                     id="sizingDeviation"
                     type="number"
@@ -143,14 +143,14 @@ export default function EditShoeDialog({
                     onChange={(e) => setEditForm({ ...editForm, sizingDeviation: e.target.value ? Number(e.target.value) : undefined })}
                     className="h-12 bg-neutral-900 text-white border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20"
                   />
-                  <p className="font-sora text-[11px] text-neutral-600">
+                  <p className="font-mono text-[11px] text-neutral-600">
                     Negative means you sized down from your normal shoe size, positive means you sized up.
                   </p>
                 </div>
 
                 <div className="rounded-lg border border-white/[0.06] bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
-                    <Label htmlFor="comfortScore" className="text-neutral-400 font-sora text-xs">Comfort (1-10)</Label>
+                    <Label htmlFor="comfortScore" className="text-neutral-400 font-mono text-xs">Comfort (1-10)</Label>
                     <div className="group relative">
                       <HelpCircle className="w-3.5 h-3.5 text-neutral-600 cursor-help" />
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-xs text-neutral-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/[0.06]">
@@ -167,7 +167,7 @@ export default function EditShoeDialog({
 
                 <div className="rounded-lg border border-white/[0.06] bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
-                    <Label htmlFor="performanceRating" className="text-neutral-400 font-sora text-xs">Performance (1-10)</Label>
+                    <Label htmlFor="performanceRating" className="text-neutral-400 font-mono text-xs">Performance (1-10)</Label>
                     <div className="group relative">
                       <HelpCircle className="w-3.5 h-3.5 text-neutral-600 cursor-help" />
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-xs text-neutral-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/[0.06]">
@@ -184,7 +184,7 @@ export default function EditShoeDialog({
 
                 <div className="rounded-lg border border-white/[0.06] bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
-                    <Label htmlFor="durabilityRating" className="text-neutral-400 font-sora text-xs">Durability (1-10)</Label>
+                    <Label htmlFor="durabilityRating" className="text-neutral-400 font-mono text-xs">Durability (1-10)</Label>
                     <div className="group relative">
                       <HelpCircle className="w-3.5 h-3.5 text-neutral-600 cursor-help" />
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-xs text-neutral-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/[0.06]">
@@ -204,7 +204,7 @@ export default function EditShoeDialog({
                 <button
                   type="button"
                   onClick={() => setEditForm({ ...editForm, showNotes: !editForm.showNotes })}
-                  className="flex items-center justify-between w-full py-3 text-sm text-neutral-300 hover:text-white transition-colors font-sora"
+                  className="flex items-center justify-between w-full py-3 text-sm text-neutral-300 hover:text-white transition-colors font-mono"
                 >
                   <span>{editForm.showNotes ? 'Hide Additional Notes' : 'Add Additional Notes'}</span>
                   <ChevronDown className={`w-4 h-4 transition-transform ${editForm.showNotes ? 'rotate-180' : ''}`} />
@@ -245,7 +245,7 @@ function RatingSlider({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between text-xs text-neutral-500 font-sora">
+      <div className="flex items-center justify-between text-xs text-neutral-500 font-mono">
         <span>1</span>
         <span className="text-white font-medium">{isUnset ? 'Not rated yet' : `${displayValue}/10`}</span>
         <span>10</span>
