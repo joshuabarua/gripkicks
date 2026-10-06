@@ -504,7 +504,7 @@ export default function ShoeSanctuaryPage() {
                 Shoe Sanctuary
               </h1>
 
-              <div className="flex flex-wrap items-center gap-fluid-md">
+              <div className="flex flex-wrap items-center justify-between gap-fluid-md">
                 {userShoes.length > 0 && (
                   <StatsStrip
                     totalShoes={userShoes.length}
