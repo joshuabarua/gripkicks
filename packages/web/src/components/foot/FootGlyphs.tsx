@@ -37,16 +37,33 @@ export function ToeProfile({ shape, active, height = 72 }: { shape: FootShape; a
   );
 }
 
-export function RatingStar({ active, height = 56 }: { active: boolean; height?: number }) {
+export function RatingGauge({ active, height = 56 }: { active: boolean; height?: number }) {
   return (
-    <svg viewBox="0 0 80 76" className="w-full" style={{ height }} aria-hidden="true">
+    <svg viewBox="0 0 80 52" className="w-full" style={{ height }} aria-hidden="true">
       <path
-        d="M 40,8 L 49,30 L 72,31 L 55,46 L 61,68 L 40,55 L 19,68 L 25,46 L 8,31 L 31,30 Z"
+        d="M 12,46 A 28,28 0 0 1 68,46"
         fill="none"
         strokeWidth="3"
         strokeLinecap="round"
-        strokeLinejoin="round"
         className={`transition-colors duration-300 ${active ? 'stroke-brand-red' : 'stroke-neutral-600'}`}
+      />
+      <path
+        d="M 24.4,33.4 L 20.2,29.2 M 40,24 L 40,18 M 55.6,33.4 L 59.8,29.2"
+        fill="none"
+        strokeWidth="3"
+        strokeLinecap="round"
+        className={`transition-colors duration-300 ${active ? 'stroke-neutral-500' : 'stroke-neutral-700'}`}
+      />
+      <path
+        d="M 40,46 L 56,24"
+        fill="none"
+        strokeWidth="3"
+        strokeLinecap="round"
+        className={`transition-colors duration-300 ${active ? 'stroke-brand-red' : 'stroke-neutral-600'}`}
+      />
+      <circle
+        cx="40" cy="46" r="3.5"
+        className={`transition-colors duration-300 ${active ? 'fill-brand-red' : 'fill-neutral-600'}`}
       />
     </svg>
   );
