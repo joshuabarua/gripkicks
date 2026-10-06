@@ -7,6 +7,7 @@ import { ArrowUpRight, ChevronRight, Footprints } from "lucide-react";
 import { useSession } from "@/lib/auth";
 import { useLoading } from "@/contexts/LoadingContext";
 import ShoeImage from "@/components/ShoeImage";
+import { BrandLogo } from "@/components/stash/BrandLogo";
 import { useFootProfile, type FootProfile } from "@/hooks/useFootProfile";
 import { useUserData } from "@/hooks/useUserData";
 import type { UserShoe } from "@/types/api";
@@ -108,7 +109,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
                               <ShoeImage brand={brand} shoeName={name} imageUrl={details?.imageUrl} slug={details?.slug} gender={details?.gender} context="thumbnail" className="p-2" transformation={[{ height: 64, width: 80, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 80 }]} />
                             </div>
                             <div className="min-w-0 flex-1">
-                              <p className="font-mono text-sm text-brand-putty">{brand}</p>
+                              <BrandLogo brand={brand} size="sm" />
                               <h3 className="mt-1 truncate font-mono text-sm font-semibold text-brand-chalk">{name}</h3>
                               {shoe.size && <p className="mt-1 font-mono text-sm text-brand-putty">Size {shoe.size}</p>}
                             </div>

@@ -82,7 +82,7 @@ export function AddShoeDialog({
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-lg px-fluid-lg py-fluid-sm shadow-lg shadow-brand-red/20 transition-colors duration-500 flex items-center gap-fluid-sm w-fit"
+          className="bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-lg px-fluid-lg py-fluid-sm rounded-lg shadow-lg shadow-brand-red/20 transition-colors duration-500 flex items-center gap-fluid-sm w-fit"
         >
           <Plus className="w-5 h-5" />
           <span>Add Shoe</span>
