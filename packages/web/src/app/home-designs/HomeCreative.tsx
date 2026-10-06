@@ -11,7 +11,17 @@ import { CommunityMilestone } from "@/components/CommunityMilestone";
 import { PageSurface } from "@/components/ui/PageSurface";
 import { CompareArrows, RatingStar, ToeProfile } from "@/components/foot/FootGlyphs";
 
-const Scene = dynamic(() => import("@/components/3d/Scene"), { ssr: false, loading: () => null });
+const Scene = dynamic(() => import("@/components/3d/Scene"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="flex items-center gap-3">
+        <span className="h-2 w-2 animate-ping rounded-full bg-brand-red" />
+        <span className="lab-label">Loading</span>
+      </div>
+    </div>
+  ),
+});
 const EtherField = dynamic(() => import("@/components/3d/EtherField"), { ssr: false, loading: () => null });
 
 function HeroSection({ isReducedEffects }: { isReducedEffects: boolean }) {
