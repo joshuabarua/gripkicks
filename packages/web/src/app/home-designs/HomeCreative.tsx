@@ -45,8 +45,8 @@ export default function HomeCreative() {
       <HeroSection isReducedEffects={isReducedEffects} />
       <HowItWorksSection />
       <ToolsSection />
-      <CommunityMilestone userCount={countData?.count} />
       <VideoSection />
+      <CommunityMilestone userCount={countData?.count} />
     </PageSurface>
   );
 }
