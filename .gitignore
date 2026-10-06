@@ -78,3 +78,6 @@ license*
 # Project documentation
 prod-deployment-checklist.md
 stack-inventory.md
+
+# Scratch files (screenshots, probes, blender artifacts, shoe image pipeline)
+temp/
