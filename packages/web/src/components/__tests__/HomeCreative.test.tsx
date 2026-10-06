@@ -55,15 +55,15 @@ describe("Homepage clarity", () => {
     expect(screen.queryByText("YOUR DASHBOARD")).toBeNull();
   });
 
-  it("keeps link arrows with tool-card illustrations", () => {
+  it("keeps link arrows beside tool titles", () => {
     render(<HomeCreative />);
     const links = within(screen.getByRole("region", { name: "Tools" })).getAllByRole("link");
     expect(links).toHaveLength(4);
     for (const link of links) {
       expect(link).toHaveClass("lab-card", "lab-card-lift", "lab-rise");
-      expect(link.querySelector("svg.lucide-arrow-up-right")).not.toBeNull();
       const svgs = link.querySelectorAll("svg");
-      expect(link.querySelector("img") || svgs.length > 1).toBeTruthy();
+      expect(svgs).toHaveLength(1);
+      expect(svgs[0]).toHaveClass("lucide-arrow-up-right");
     }
   });
 
