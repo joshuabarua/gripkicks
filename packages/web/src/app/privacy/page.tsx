@@ -58,7 +58,7 @@ export default function PrivacyPage() {
         <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-white/6" />
 
         <div className="relative z-10 max-w-4xl mx-auto">
-          <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
+          <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.25 }}>
             <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.9] mb-8 text-brand-chalk">
               PRIVACY
             </h1>
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
 
           <motion.p
             {...fadeUp}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
             className="font-mono text-xl md:text-2xl text-brand-putty/70 max-w-2xl leading-relaxed"
           >
             How GripKicks handles your data.
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
 
           <motion.div
             {...fadeUp}
-            transition={{ duration: 0.8, delay: 0.1 }}
+            transition={{ duration: 0.8, delay: 0.25 }}
             className="bg-black border border-brand-red/20 rounded-3xl p-8 md:p-10"
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
                   key={stat.label}
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
+                  transition={{ duration: 0.5, delay: 0.4 + i * 0.25 }}
                   viewport={{ once: true }}
                   className="text-center"
                 >
@@ -122,7 +122,7 @@ export default function PrivacyPage() {
                 key={promise.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.08 }}
+                transition={{ duration: 0.6, delay: i * 0.22 }}
                 viewport={{ once: true }}
                 className="bg-brand-surface border border-white/6 rounded-3xl p-8 group hover:border-brand-red/20 transition-colors"
               >
@@ -150,7 +150,7 @@ export default function PrivacyPage() {
                 key={row.what}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
+                transition={{ duration: 0.5, delay: i * 0.25 }}
                 viewport={{ once: true }}
                 className="bg-black border border-white/6 rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-4"
               >
@@ -172,7 +172,7 @@ export default function PrivacyPage() {
 
           <motion.div
             {...fadeUp}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
             className="mt-8 bg-brand-red/5 border border-brand-red/20 rounded-2xl p-6"
           >
             <p className="font-mono text-sm text-brand-putty/60">

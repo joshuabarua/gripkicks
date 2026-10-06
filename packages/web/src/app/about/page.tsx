@@ -19,7 +19,7 @@ export default function AboutPage() {
         <WordmarkWatermark lines={['ABOUT']} align="right" />
 
         <div className="relative z-10 max-w-4xl mx-auto w-full">
-          <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
+          <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.25 }}>
             <h1 className="font-ball-pill text-6xl md:text-8xl lg:text-9xl leading-[0.85] mb-8 text-brand-chalk text-center">
               ABOUT
             </h1>
@@ -27,7 +27,7 @@ export default function AboutPage() {
 
           <motion.p
             {...fadeUp}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
             className="font-mono text-lg md:text-xl text-brand-putty/70 max-w-2xl mx-auto leading-relaxed text-center"
           >
             Hi there!
@@ -39,7 +39,7 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto">
           <motion.div
             {...fadeUp}
-            transition={{ duration: 0.8, delay: 0.1 }}
+            transition={{ duration: 0.8, delay: 0.25 }}
             className="rounded-3xl border border-white/6 bg-black p-8 md:p-12"
           >
             <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
