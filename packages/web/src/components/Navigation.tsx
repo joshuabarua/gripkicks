@@ -25,7 +25,7 @@ const menu = {
   open: {
     width: "360px",
     height: "400px",
-    top: "-12px",
+    top: "-4px",
     right: "-15px",
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] },
   },
@@ -79,7 +79,7 @@ const Navigation: React.FC = () => {
       open: {
         width: "min(92vw, 320px)",
         height: "370px",
-        top: "-7px",
+        top: "-4px",
         right: "-10px",
         transition: {
           duration: 0.75,
@@ -158,7 +158,7 @@ const Navigation: React.FC = () => {
 
       <div className="flex-1 flex justify-end items-center z-20">
         {isAuthenticated ? (
-          <div className="relative flex translate-y-px items-center">
+          <div className="relative flex translate-y-[0.5px] items-center">
             <AnimatePresence mode="wait">
               {isActive && (
                 <motion.div
@@ -173,21 +173,7 @@ const Navigation: React.FC = () => {
                       <NavLinks
                         profileSlot={
                           session?.user ? (
-                            <div className="flex items-center gap-2.5 rounded-xl border border-black/10 bg-black/10 p-1.5 pr-1 text-black">
-                              <UserAvatar
-                                userId={session.user.id}
-                                name={session.user.name}
-                                email={session.user.email}
-                                className="h-8 w-8 shrink-0 rounded-full border border-black/10"
-                              />
-                              <div className="min-w-0 flex-1">
-                                <p className="truncate font-mono text-xs font-semibold leading-none">
-                                  {session.user.name}
-                                </p>
-                                <p className="truncate pt-1 font-mono text-[10px] leading-none text-black/55">
-                                  {session.user.email}
-                                </p>
-                              </div>
+                            <div className="flex items-center gap-2.5 rounded-xl border border-black/10 bg-black/10 p-1.5 pl-1 text-black">
                               <Link
                                 href="/profile"
                                 onClick={closeMenu}
@@ -196,6 +182,20 @@ const Navigation: React.FC = () => {
                                 <User className="h-3.5 w-3.5" />
                                 <span>Profile</span>
                               </Link>
+                              <div className="min-w-0 flex-1 text-right">
+                                <p className="truncate font-mono text-xs font-semibold leading-none">
+                                  {session.user.name}
+                                </p>
+                                <p className="truncate pt-1 font-mono text-[10px] leading-none text-black/55">
+                                  {session.user.email}
+                                </p>
+                              </div>
+                              <UserAvatar
+                                userId={session.user.id}
+                                name={session.user.name}
+                                email={session.user.email}
+                                className="h-8 w-8 shrink-0 rounded-full border border-black/10"
+                              />
                             </div>
                           ) : undefined
                         }
