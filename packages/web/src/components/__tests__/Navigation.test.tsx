@@ -28,7 +28,7 @@ describe("Navigation", () => {
     const { container } = render(<Navigation />);
     const trigger = screen.getByRole("button", { name: "Open menu" });
     expect(trigger).toHaveAttribute("aria-expanded", "false");
-    expect(trigger.parentElement).toHaveClass("translate-y-[1px]");
+    expect(trigger.parentElement).toHaveClass("translate-y-[0.5px]");
     fireEvent.click(trigger);
     const closeTrigger = screen.getByRole("button", { name: "Close menu" });
     expect(closeTrigger).toHaveAttribute("aria-expanded", "true");

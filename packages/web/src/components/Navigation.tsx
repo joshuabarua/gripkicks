@@ -158,7 +158,7 @@ const Navigation: React.FC = () => {
 
       <div className="flex-1 flex justify-end items-center z-20">
         {isAuthenticated ? (
-          <div className="relative flex translate-y-[1px] items-center">
+          <div className="relative flex translate-y-[0.5px] items-center">
             <AnimatePresence mode="wait">
               {isActive && (
                 <motion.div
