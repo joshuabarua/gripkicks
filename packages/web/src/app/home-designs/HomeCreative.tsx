@@ -1,16 +1,16 @@
 "use client";
 
-import { useRef, useState, type CSSProperties } from "react";
+import { Fragment, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { ArrowDown, ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Play, RotateCcw, Users, Volume2, VolumeX } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
 import { CommunityMilestone } from "@/components/CommunityMilestone";
 import { PageSurface } from "@/components/ui/PageSurface";
-import { ToeProfile, VolumeArch } from "@/components/foot/FootGlyphs";
+import { CompareArrows, RatingStar, ToeProfile } from "@/components/foot/FootGlyphs";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), { ssr: false, loading: () => null });
 const EtherField = dynamic(() => import("@/components/3d/EtherField"), { ssr: false, loading: () => null });
@@ -107,8 +107,8 @@ function VideoSection() {
 function HowItWorksSection() {
   const steps = [
     { title: "Map your foot", copy: "Set your foot shape and volume.", glyph: <div className="w-20"><ToeProfile shape="egyptian" active height={48} /></div> },
-    { title: "Rate your shoes", copy: "Record size, comfort, performance and durability.", glyph: <div className="w-20"><VolumeArch volume="medium" active height={48} /></div> },
-    { title: "Compare fits", copy: "Check catalog matches and ratings from climbers with your foot profile.", glyph: <div className="w-20"><VolumeArch volume="high" active height={48} /></div> },
+    { title: "Rate your shoes", copy: "Record size, comfort, performance and durability.", glyph: <div className="w-20"><RatingStar active height={48} /></div> },
+    { title: "Compare fits", copy: "Check catalog matches and ratings from climbers with your foot profile.", glyph: <div className="w-20"><CompareArrows active height={48} /></div> },
   ];
 
   return (
@@ -136,10 +136,11 @@ function HowItWorksSection() {
 function ToolsSection() {
   const tools = [
     { title: "Foot Lab", copy: "Set your foot shape and volume.", href: "/footlab", image: "footlab.png" },
-    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash", image: "show%20sanc.png" },
-    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher", image: "one%20shoe.png" },
-    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate", image: "shoe%202wo.png" },
+    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash", image: "show%20sanc.png", zoom: true },
+    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher", images: ["one%20shoe.png", "shoe%202wo.png"] },
+    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate", icon: <Users className="h-6 w-6 text-black" /> },
   ];
+  const imageKitBase = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "";
 
   return (
     <section id="home-tools" aria-labelledby="tools-title" className="scroll-mt-14 border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
@@ -151,14 +152,27 @@ function ToolsSection() {
         <div className="grid gap-4 md:grid-cols-2">
           {tools.map((tool, index) => (
             <Link key={tool.href} href={tool.href} style={{ "--rise-delay": `${index * 50}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise group flex min-h-56 min-w-0 flex-col justify-between gap-fluid-xl p-fluid-xl focus-visible:outline-brand-chalk">
-              <div className="flex items-start justify-between">
-                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-brand-red p-2">
-                  <Image src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? ""}/gripkicks/imgs/web_assets/${tool.image}`} alt="" width={64} height={64} className="h-full w-full object-contain" />
-                </div>
-                <ArrowUpRight aria-hidden="true" className="h-8 w-8 shrink-0 text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
-              </div>
+              <ArrowUpRight aria-hidden="true" className="h-8 w-8 shrink-0 self-end text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
               <div>
-                <h3 className="wrap-break-word font-ball-pill text-fluid-4xl leading-none text-white">{tool.title}</h3>
+                <div className="flex items-center gap-fluid-md">
+                  {tool.images ? (
+                    <div className="flex shrink-0 items-center gap-1">
+                      {tool.images.map((image, imageIndex) => (
+                        <Fragment key={image}>
+                          {imageIndex > 0 && <span aria-hidden="true" className="font-mono text-base text-brand-putty">/</span>}
+                          <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-brand-red p-1.5">
+                            <Image src={`${imageKitBase}/gripkicks/imgs/web_assets/${image}`} alt="" width={64} height={64} className="h-full w-full object-contain" />
+                          </span>
+                        </Fragment>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-red p-1.5">
+                      {tool.icon ?? <Image src={`${imageKitBase}/gripkicks/imgs/web_assets/${tool.image}`} alt="" width={64} height={64} className={`h-full w-full ${tool.zoom ? "scale-[1.6] object-cover" : "object-contain"}`} />}
+                    </span>
+                  )}
+                  <h3 className="wrap-break-word font-ball-pill text-fluid-4xl leading-none text-white">{tool.title}</h3>
+                </div>
                 <p className="mt-fluid-md max-w-sm font-mono text-sm leading-relaxed text-neutral-400">{tool.copy}</p>
               </div>
             </Link>

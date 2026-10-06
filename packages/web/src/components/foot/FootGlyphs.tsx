@@ -37,6 +37,44 @@ export function ToeProfile({ shape, active, height = 72 }: { shape: FootShape; a
   );
 }
 
+export function RatingStar({ active, height = 56 }: { active: boolean; height?: number }) {
+  return (
+    <svg viewBox="0 0 80 76" className="w-full" style={{ height }} aria-hidden="true">
+      <path
+        d="M 40,8 L 49,30 L 72,31 L 55,46 L 61,68 L 40,55 L 19,68 L 25,46 L 8,31 L 31,30 Z"
+        fill="none"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`transition-colors duration-300 ${active ? 'stroke-brand-red' : 'stroke-neutral-600'}`}
+      />
+    </svg>
+  );
+}
+
+export function CompareArrows({ active, height = 56 }: { active: boolean; height?: number }) {
+  return (
+    <svg viewBox="0 0 80 52" className="w-full" style={{ height }} aria-hidden="true">
+      <path
+        d="M 8,14 H 56 M 48,6 L 62,14 L 48,22"
+        fill="none"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`transition-colors duration-300 ${active ? 'stroke-brand-red' : 'stroke-neutral-600'}`}
+      />
+      <path
+        d="M 72,38 H 24 M 32,30 L 18,38 L 32,46"
+        fill="none"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`transition-colors duration-300 ${active ? 'stroke-neutral-600' : 'stroke-neutral-700'}`}
+      />
+    </svg>
+  );
+}
+
 export function VolumeArch({ volume, active, height = 56 }: { volume: FootVolume; active: boolean; height?: number }) {
   return (
     <svg viewBox="0 0 80 52" className="w-full" style={{ height }} aria-hidden="true">
