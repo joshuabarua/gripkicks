@@ -223,16 +223,17 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
           <div className="relative h-48 border-b border-white/6 bg-black/40 p-fluid-lg sm:h-56">
             <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="h-full w-full" transformation={[{ height: 280, width: 400, crop: "at_max", format: "png" }]} />
             <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 font-mono text-sm font-semibold text-brand-chalk">{idx + 1}</span>
+            <div className="absolute bottom-3 right-3 rounded-lg bg-black/70 px-2.5 py-1.5 text-right font-mono backdrop-blur-sm">
+              <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-xs font-semibold" : "font-ball-pill text-lg"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
+              <p className="lab-label mt-0.5">{mode === "personal" ? hasProfile ? "Match" : "Profile needed" : shoe.secondaryLabel}</p>
+            </div>
           </div>
           <div className="space-y-4 p-fluid-lg">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex min-w-0 items-center gap-3">
-                <BrandLogo brand={shoe.brand} size="lg" className="shrink-0" />
+            <div className="flex min-w-0 items-center gap-3">
+              <BrandLogo brand={shoe.brand} size="lg" className="shrink-0" />
+              <div className="min-w-0">
+                <p className="font-mono text-xs uppercase tracking-wider text-brand-putty">{shoe.brand}</p>
                 <h3 className="wrap-break-word font-mono text-lg font-semibold leading-snug">{shoe.name}</h3>
-              </div>
-              <div className="shrink-0 text-right font-mono">
-                <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-sm font-semibold" : "font-ball-pill text-2xl"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
-                <p className="lab-label mt-1">{mode === "personal" ? hasProfile ? "Match" : "Profile needed" : shoe.secondaryLabel}</p>
               </div>
             </div>
             {shoe.breakdown && (
@@ -261,9 +262,12 @@ function Leaderboard({ shoes, mode, hoveredId, onHoverChange }: { shoes: Display
             <div className="h-14 w-16 shrink-0 overflow-hidden rounded-lg border border-white/6 bg-black/40">
               <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="p-2" transformation={[{ height: 56, width: 64, crop: "at_max", format: "png" }]} />
             </div>
-            <div className="flex min-w-0 items-center gap-3">
-              <BrandLogo brand={shoe.brand} size="lg" className="shrink-0" />
+            <div className="min-w-0">
               <h3 className="wrap-break-word font-mono text-base font-semibold">{shoe.name}</h3>
+              <div className="mt-1 flex items-center gap-2">
+                <BrandLogo brand={shoe.brand} size="sm" className="shrink-0" />
+                <span className="font-mono text-xs text-brand-putty">{shoe.brand}</span>
+              </div>
             </div>
           </div>
           <dl className="grid grid-cols-3 gap-4">
