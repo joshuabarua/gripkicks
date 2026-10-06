@@ -42,6 +42,7 @@ export default function HomeCreative() {
 
   return (
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
+      <div aria-hidden="true" className="grain-overlay-animated" />
       <HeroSection isReducedEffects={isReducedEffects} />
       <HowItWorksSection />
       <ToolsSection />

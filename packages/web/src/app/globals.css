@@ -795,6 +795,10 @@ a {
 		animation: none;
 		opacity: 0;
 	}
+
+	.grain-overlay-animated {
+		animation: none;
+	}
 }
 
 img,
