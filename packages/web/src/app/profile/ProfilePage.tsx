@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import {
-  Footprints,
-  Star,
   Edit2,
   Lock,
   AlertTriangle,
@@ -184,11 +182,8 @@ export default function ProfilePage() {
               className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
               <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-brand-red/10 rounded-xl flex items-center justify-center">
-                    <Footprints className="w-5 h-5 text-brand-red" />
-                  </div>
-                  {!profile?.footShape && (
+                {!profile?.footShape && (
+                  <div className="flex justify-end mb-4">
                     <Link href="/footlab">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
@@ -197,8 +192,8 @@ export default function ProfilePage() {
                         Set up
                       </motion.span>
                     </Link>
-                  )}
-                </div>
+                  </div>
+                )}
                 <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Foot Shape</p>
                 <p className="font-ball-pill text-2xl text-white capitalize">
                   {profile?.footShape
@@ -208,11 +203,8 @@ export default function ProfilePage() {
               </div>
 
               <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-brand-red/10 rounded-xl flex items-center justify-center">
-                    <Star className="w-5 h-5 text-brand-red" />
-                  </div>
-                  {!favouriteShoe && (
+                {!favouriteShoe && (
+                  <div className="flex justify-end mb-4">
                     <Link href="/stash">
                       <motion.span
                         whileHover={{ scale: 1.05 }}
@@ -221,8 +213,8 @@ export default function ProfilePage() {
                         Choose
                       </motion.span>
                     </Link>
-                  )}
-                </div>
+                  </div>
+                )}
                 <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Favourite Shoe</p>
                 <p className="font-ball-pill text-2xl text-white">
                   {favouriteShoe

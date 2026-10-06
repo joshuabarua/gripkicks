@@ -33,6 +33,7 @@ export const getDicebearAvatarUrl = (identity: AvatarIdentity, size = 128) => {
     seed,
     backgroundColor: [backgroundColor],
     size,
+    tags: ["animation"],
   }).toDataUri();
 };
 
