@@ -25,14 +25,14 @@ const menu = {
   open: {
     width: "360px",
     height: "400px",
-    top: "-17px",
+    top: "-16px",
     right: "-15px",
     transition: { duration: 0.75, type: "tween", ease: [0.76, 0, 0.24, 1] },
   },
   closed: {
     width: "72px",
     height: "28px",
-    top: "-0px",
+    top: "0px",
     right: "-0px",
     transition: {
       duration: 0.75,
@@ -158,7 +158,7 @@ const Navigation: React.FC = () => {
 
       <div className="flex-1 flex justify-end items-center z-20">
         {isAuthenticated ? (
-          <div className="relative flex translate-y-px items-center">
+          <div className="relative flex items-center">
             <AnimatePresence mode="wait">
               {isActive && (
                 <motion.div
@@ -201,7 +201,7 @@ const Navigation: React.FC = () => {
                         }}
                       >
                         <div className="mb-3 rounded-2xl border border-black/10 bg-black/10 p-2 text-black sm:p-3">
-                          <div className="flex items-center gap-3 pr-12 pt-8">
+                          <div className="flex items-center gap-3 pr-12 mt-10">
                             <UserAvatar
                               userId={session.user.id}
                               name={session.user.name}
