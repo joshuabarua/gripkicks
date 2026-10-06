@@ -167,11 +167,11 @@ export function AddShoeDialog({
                         : undefined}
                     />
                   </div>
-                  <div>
-                    <p className="font-mono font-medium text-white">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <BrandLogo brand={group.brand} size="sm" className="shrink-0" />
+                    <p className="truncate font-mono font-medium text-white">
                       {group.baseName}
                     </p>
-                    <div className="mt-1"><BrandLogo brand={group.brand} size="sm" /></div>
                   </div>
                 </div>
                 <div className="space-y-2">

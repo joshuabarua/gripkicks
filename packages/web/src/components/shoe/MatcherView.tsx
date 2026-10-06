@@ -226,9 +226,9 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
           </div>
           <div className="space-y-4 p-fluid-lg">
             <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <BrandLogo brand={shoe.brand} size="sm" />
-                <h3 className="mt-2 wrap-break-word font-mono text-lg font-semibold leading-snug">{shoe.name}</h3>
+              <div className="flex min-w-0 items-center gap-3">
+                <BrandLogo brand={shoe.brand} size="lg" className="shrink-0" />
+                <h3 className="wrap-break-word font-mono text-lg font-semibold leading-snug">{shoe.name}</h3>
               </div>
               <div className="shrink-0 text-right font-mono">
                 <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-sm font-semibold" : "font-ball-pill text-2xl"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
@@ -261,9 +261,9 @@ function Leaderboard({ shoes, mode, hoveredId, onHoverChange }: { shoes: Display
             <div className="h-14 w-16 shrink-0 overflow-hidden rounded-lg border border-white/6 bg-black/40">
               <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="p-2" transformation={[{ height: 56, width: 64, crop: "at_max", format: "png" }]} />
             </div>
-            <div className="min-w-0">
+            <div className="flex min-w-0 items-center gap-3">
+              <BrandLogo brand={shoe.brand} size="lg" className="shrink-0" />
               <h3 className="wrap-break-word font-mono text-base font-semibold">{shoe.name}</h3>
-              <BrandLogo brand={shoe.brand} size="sm" className="mt-1" />
             </div>
           </div>
           <dl className="grid grid-cols-3 gap-4">

@@ -8,6 +8,7 @@ import { BrandLogo } from "@/components/stash/BrandLogo";
 import type { UserShoe } from "@/types/api";
 import { getShoeProfileCompletion } from "@/utils/shoeProfile";
 import { getShoeDescription } from "@/utils/sanctuaryDescriptions";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface CloudShoeProps {
   shoe: UserShoe;
@@ -96,18 +97,30 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabe
         className="block w-full text-left outline-hidden focus-visible:border-brand-red"
       >
         <div className="flex min-h-11 items-center justify-between border-b border-white/20 px-4 py-2.5">
-          <BrandLogo brand={brand} size="sm" className="max-w-[70%]" />
+          <BrandLogo brand={brand} size="sm" tooltip className="max-w-[70%]" />
           <div className="flex items-center gap-1.5">
-            {specialLabel && (
-              <span role="img" aria-label={specialLabelTitles[specialLabel.type]} title={specialLabelTitles[specialLabel.type]} className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk">
-                {specialLabel.icon}
-              </span>
-            )}
-            {shoe.isFavourite && (
-              <span role="img" aria-label="Favourite" title="Marked as favourite" className="flex h-6 w-6 items-center justify-center rounded-sm bg-brand-red text-black">
-                <Star className="h-3 w-3 fill-current" />
-              </span>
-            )}
+            <TooltipProvider>
+              {specialLabel && (
+                <Tooltip delayDuration={150}>
+                  <TooltipTrigger asChild>
+                    <span role="img" aria-label={specialLabelTitles[specialLabel.type]} className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk">
+                      {specialLabel.icon}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>{specialLabelTitles[specialLabel.type]}</TooltipContent>
+                </Tooltip>
+              )}
+              {shoe.isFavourite && (
+                <Tooltip delayDuration={150}>
+                  <TooltipTrigger asChild>
+                    <span role="img" aria-label="Favourite" className="flex h-6 w-6 items-center justify-center rounded-sm bg-brand-red text-black">
+                      <Star className="h-3 w-3 fill-current" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>Marked as favourite</TooltipContent>
+                </Tooltip>
+              )}
+            </TooltipProvider>
           </div>
         </div>
 
@@ -197,6 +210,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabe
                 </ul>
               )}
 
+              <div className="space-y-4 pt-4">
               <button
                 type="button"
                 title={isComplete ? 'Size, condition, and ratings added' : `Missing: ${missingFields.join(', ')}`}
@@ -237,6 +251,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabe
                 <button type="button" onClick={onRemove} className="min-h-9 rounded-md border border-brand-red/35 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-brand-red/10">
                   Remove
                 </button>
+              </div>
               </div>
             </div>
           </motion.div>
