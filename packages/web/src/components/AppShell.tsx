@@ -56,6 +56,16 @@ export default function AppShell({ children }: AppShellProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const block = (event: MouseEvent) => {
+      if (event.target instanceof HTMLElement && /^(IMG|VIDEO|CANVAS)$/.test(event.target.tagName)) {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener("contextmenu", block);
+    return () => document.removeEventListener("contextmenu", block);
+  }, []);
+
   return (
     <>
       <div>

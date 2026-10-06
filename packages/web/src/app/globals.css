@@ -796,3 +796,9 @@ a {
 		opacity: 0;
 	}
 }
+
+img,
+video {
+	-webkit-user-drag: none;
+	user-select: none;
+}

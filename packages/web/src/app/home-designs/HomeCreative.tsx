@@ -81,6 +81,7 @@ function VideoSection() {
             src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT}/gripkicks/vids/20261005_GripKicks_v02.mp4`}
             playsInline
             preload="metadata"
+            controlsList="nodownload"
             onClick={togglePlay}
             onPlay={() => { setIsPlaying(true); setHasEnded(false); }}
             onPause={() => setIsPlaying(false)}
