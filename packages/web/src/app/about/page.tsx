@@ -43,13 +43,13 @@ export default function AboutPage() {
             className="rounded-3xl border border-white/6 bg-black p-8 md:p-12"
           >
             <div className="flex flex-col gap-8 sm:flex-row sm:items-stretch">
-              <div className="shrink-0 overflow-hidden rounded-2xl border border-white/10">
+              <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:h-auto sm:w-60">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? ""}/gripkicks/imgs/web_assets/josh.jpg`}
                   alt="Josh"
-                  width={1420}
-                  height={1882}
-                  className="h-72 w-auto object-cover sm:h-full"
+                  fill
+                  sizes="(min-width: 640px) 240px, 100vw"
+                  className="object-contain"
                 />
               </div>
               <div className="space-y-6 font-mono text-base md:text-lg text-brand-putty/80 leading-relaxed">

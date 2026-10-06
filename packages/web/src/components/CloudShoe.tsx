@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { memo, useEffect, useId, useRef, useState } from 'react';
-import { Check, ChevronDown, Pencil, Star } from 'lucide-react';
+import { Check, ChevronDown, Pencil, Star, Trash2 } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo } from "@/components/stash/BrandLogo";
 import type { UserShoe } from "@/types/api";
@@ -120,6 +120,36 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabe
                   <TooltipContent>Marked as favourite</TooltipContent>
                 </Tooltip>
               )}
+              <Tooltip delayDuration={150}>
+                <TooltipTrigger asChild>
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Edit ${brand} ${name}`}
+                    onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); onEdit(); } }}
+                    className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm border border-white/10 bg-white/6 text-brand-chalk transition-colors hover:bg-white/15"
+                  >
+                    <Pencil className="h-3 w-3" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>Edit shoe</TooltipContent>
+              </Tooltip>
+              <Tooltip delayDuration={150}>
+                <TooltipTrigger asChild>
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Remove ${brand} ${name}`}
+                    onClick={(e) => { e.stopPropagation(); onRemove(); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); onRemove(); } }}
+                    className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm border border-brand-red/30 bg-white/6 text-brand-red transition-colors hover:bg-brand-red/15"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>Remove from sanctuary</TooltipContent>
+              </Tooltip>
             </TooltipProvider>
           </div>
         </div>
@@ -239,17 +269,11 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabe
               </button>
 
               <div className="flex flex-wrap gap-2 border-t border-white/20 pt-3">
-                <button type="button" onClick={onEdit} className="min-h-9 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
-                  Edit
-                </button>
                 <button type="button" aria-pressed={shoe.isFavourite === true} onClick={onToggleFavourite} className="min-h-9 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
                   {shoe.isFavourite ? 'Unfavourite' : 'Favourite'}
                 </button>
                 <button type="button" onClick={onOpenStats} className="min-h-9 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
                   Full stats
-                </button>
-                <button type="button" onClick={onRemove} className="min-h-9 rounded-md border border-brand-red/35 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-brand-red/10">
-                  Remove
                 </button>
               </div>
               </div>

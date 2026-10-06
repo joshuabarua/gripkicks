@@ -41,16 +41,16 @@ describe("Sanctuary content", () => {
 
   it("exposes edit, favourite, full stats and remove actions when expanded", () => {
     render(<CloudShoe shoe={shoe} index={0} {...cardProps} />);
-    fireEvent.click(screen.getByRole("button", { name: "Show details for Scarpa Drago" }));
-    fireEvent.click(screen.getAllByRole("button", { name: "Edit" })[0]!);
+    fireEvent.click(screen.getByRole("button", { name: "Edit Scarpa Drago" }));
     expect(onEdit).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Remove Scarpa Drago" }));
+    expect(onRemove).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Show details for Scarpa Drago" }));
     fireEvent.click(screen.getByRole("button", { name: "Favourite" }));
     expect(screen.getByRole("button", { name: "Favourite" })).toHaveAttribute("aria-pressed", "false");
     expect(onToggleFavourite).toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Full stats" }));
     expect(onOpenStats).toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "Remove" }));
-    expect(onRemove).toHaveBeenCalled();
   });
 
   it("does not wrap interactive buttons inside a role=button card", () => {

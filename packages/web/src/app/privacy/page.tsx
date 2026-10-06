@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Shield, Trash2, Lock, Eye, EyeOff, Database } from 'lucide-react';
 import LiquidGlassBackdrop from '@/components/brand/LiquidGlassBackdrop';
 import WordmarkWatermark from '@/components/brand/WordmarkWatermark';
 
@@ -23,32 +22,26 @@ function SectionHeader({ heading }: { heading: string }) {
 
 const promises = [
   {
-    icon: Shield,
     title: 'YOUR DATA BELONGS TO YOU',
     body: 'Your foot profile, shoe ratings, and preferences belong to you. Export or delete them anytime.',
   },
   {
-    icon: EyeOff,
     title: 'ZERO DATA RESELLING',
     body: 'We do not sell or share your personal data with third parties.',
   },
   {
-    icon: Trash2,
     title: 'PERMANENT DELETION',
     body: 'Deleting your account removes your data permanently.',
   },
   {
-    icon: Lock,
     title: 'MINIMAL COLLECTION',
     body: 'We collect only what is needed to match shoes: your foot shape, your shoe ratings, and basic account info.',
   },
   {
-    icon: Eye,
     title: 'TRANSPARENT USE',
     body: 'Your ratings feed aggregate recommendations. Your foot profile matches you with similar climbers.',
   },
   {
-    icon: Database,
     title: 'COMMUNITY BENEFIT ONLY',
     body: 'Aggregated, anonymized data improves recommendations. Your individual data is never shared without your consent.',
   },
@@ -133,9 +126,6 @@ export default function PrivacyPage() {
                 viewport={{ once: true }}
                 className="bg-brand-surface border border-white/6 rounded-3xl p-8 group hover:border-brand-red/20 transition-colors"
               >
-                <div className="w-12 h-12 bg-brand-red/10 rounded-2xl flex items-center justify-center mb-6">
-                  <promise.icon className="w-6 h-6 text-brand-red" />
-                </div>
                 <h3 className="font-ball-pill text-xl mb-3 text-brand-chalk">{promise.title}</h3>
                 <p className="font-mono text-sm text-brand-putty/60 leading-relaxed">{promise.body}</p>
               </motion.div>
