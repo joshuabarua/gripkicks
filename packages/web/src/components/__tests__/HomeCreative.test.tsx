@@ -80,7 +80,7 @@ describe("Homepage clarity", () => {
       expect(article).toHaveClass("lab-card", "lab-card-lift", "lab-rise");
     }
     for (const label of ["01", "02", "03"]) {
-      expect(section.getByText(label)).toHaveClass("lab-label");
+      expect(section.queryByText(label)).toBeNull();
     }
     for (const title of ["Map your foot", "Rate your shoes", "Compare fits"]) {
       expect(section.getByRole("heading", { name: title })).toHaveClass("font-ball-pill");

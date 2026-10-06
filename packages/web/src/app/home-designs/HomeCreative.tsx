@@ -116,14 +116,13 @@ function HowItWorksSection() {
         <h2 id="steps-title" className="mb-fluid-2xl font-ball-pill text-fluid-5xl uppercase leading-none">How it works</h2>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-4">
           {steps.map((step, index) => (
-            <article key={step.title} style={{ "--rise-delay": `${index * 50}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise flex min-h-60 flex-col justify-between gap-fluid-xl p-fluid-xl">
-              <div className="flex items-start justify-between">
-                <span className="lab-label">{String(index + 1).padStart(2, "0")}</span>
-                {step.glyph}
-              </div>
-              <div>
-                <h3 className="wrap-break-word font-ball-pill text-fluid-3xl leading-tight text-white">{step.title}</h3>
-                <p className="mt-fluid-md max-w-xs font-mono text-sm leading-relaxed text-neutral-400">{step.copy}</p>
+            <article key={step.title} style={{ "--rise-delay": `${index * 50}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise flex min-h-60 flex-col justify-center gap-fluid-xl p-fluid-xl">
+              <div className="flex items-center gap-fluid-lg">
+                <div className="shrink-0">{step.glyph}</div>
+                <div className="min-w-0">
+                  <h3 className="wrap-break-word font-ball-pill text-fluid-3xl leading-tight text-white">{step.title}</h3>
+                  <p className="mt-fluid-md font-mono text-sm leading-relaxed text-neutral-400">{step.copy}</p>
+                </div>
               </div>
             </article>
           ))}
