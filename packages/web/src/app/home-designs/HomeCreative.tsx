@@ -2,6 +2,7 @@
 
 import { useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { ArrowDown, ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { useQuery } from "convex/react";
@@ -134,10 +135,10 @@ function HowItWorksSection() {
 
 function ToolsSection() {
   const tools = [
-    { title: "Foot Lab", copy: "Set your foot shape and volume.", href: "/footlab" },
-    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash" },
-    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher" },
-    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate" },
+    { title: "Foot Lab", copy: "Set your foot shape and volume.", href: "/footlab", image: "footlab.png" },
+    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash", image: "show%20sanc.png" },
+    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher", image: "one%20shoe.png" },
+    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate", image: "shoe%202wo.png" },
   ];
 
   return (
@@ -150,7 +151,12 @@ function ToolsSection() {
         <div className="grid gap-4 md:grid-cols-2">
           {tools.map((tool, index) => (
             <Link key={tool.href} href={tool.href} style={{ "--rise-delay": `${index * 50}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise group flex min-h-56 min-w-0 flex-col justify-between gap-fluid-xl p-fluid-xl focus-visible:outline-brand-chalk">
-              <ArrowUpRight aria-hidden="true" className="h-8 w-8 shrink-0 self-end text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
+              <div className="flex items-start justify-between">
+                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-brand-red p-2">
+                  <Image src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? ""}/gripkicks/imgs/web_assets/${tool.image}`} alt="" width={64} height={64} className="h-full w-full object-contain" />
+                </div>
+                <ArrowUpRight aria-hidden="true" className="h-8 w-8 shrink-0 text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
+              </div>
               <div>
                 <h3 className="wrap-break-word font-ball-pill text-fluid-4xl leading-none text-white">{tool.title}</h3>
                 <p className="mt-fluid-md max-w-sm font-mono text-sm leading-relaxed text-neutral-400">{tool.copy}</p>
