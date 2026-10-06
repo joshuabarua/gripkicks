@@ -47,7 +47,7 @@ function VideoSection() {
       <div className="mx-auto max-w-(--fluid-container-xl)">
         <div className="mx-auto w-full max-w-md overflow-hidden rounded-full border border-white/6">
           <video
-            src="https://ik.imagekit.io/ie871bk0r/gripkicks/vids/20261005_GripKicks_v02.mp4"
+            src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT}/gripkicks/vids/20261005_GripKicks_v02.mp4`}
             autoPlay
             muted
             loop
