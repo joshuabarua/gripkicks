@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { IKVideo } from "imagekitio-react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
@@ -36,7 +37,29 @@ export default function HomeCreative() {
       <HowItWorksSection />
       <ToolsSection />
       <CommunityMilestone userCount={countData?.count} />
+      <VideoSection />
     </PageSurface>
+  );
+}
+
+function VideoSection() {
+  return (
+    <section aria-label="GripKicks video" className="border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
+      <div className="mx-auto max-w-(--fluid-container-xl)">
+        <div className="mx-auto w-full max-w-md overflow-hidden rounded-full border border-white/6">
+          <IKVideo
+            path="vids/20261005_GripKicks_v02.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            transformation={[{ format: "auto", quality: "auto" }]}
+            className="block h-auto w-full"
+          />
+        </div>
+      </div>
+    </section>
   );
 }
 
