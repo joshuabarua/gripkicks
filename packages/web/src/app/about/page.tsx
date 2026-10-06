@@ -42,8 +42,8 @@ export default function AboutPage() {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="rounded-3xl border border-white/6 bg-black p-8 md:p-12"
           >
-            <div className="flex flex-col gap-8 sm:flex-row sm:items-stretch">
-              <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:h-auto sm:w-[85%]">
+            <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
+              <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:aspect-[3/4] sm:h-auto sm:w-[85%]">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? ""}/gripkicks/imgs/web_assets/josh.jpg`}
                   alt="Josh"
