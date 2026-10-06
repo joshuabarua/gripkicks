@@ -120,7 +120,10 @@ export function AddShoeDialog({
                 <SelectItem value="all" className="focus:bg-neutral-800 focus:text-white">All Brands</SelectItem>
                 {uniqueBrands.map((brand) => (
                   <SelectItem key={brand} value={brand} className="focus:bg-neutral-800 focus:text-white">
-                    <BrandLogo brand={brand} size="sm" />
+                    <span className="flex items-center gap-2.5">
+                      <BrandLogo brand={brand} size="sm" />
+                      <span className="font-mono text-xs text-brand-putty">{brand}</span>
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
