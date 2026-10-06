@@ -49,7 +49,7 @@ function HowItWorksSection() {
 
   return (
     <section id="home-steps" aria-labelledby="steps-title" className="scroll-mt-14 border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
-      <div className="mx-auto max-w-fluid-xl">
+      <div className="mx-auto max-w-(--fluid-container-xl)">
         <h2 id="steps-title" className="mb-fluid-2xl font-ball-pill text-fluid-5xl uppercase leading-none">How it works</h2>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-4">
           {steps.map((step, index) => (
@@ -80,7 +80,7 @@ function ToolsSection() {
 
   return (
     <section id="home-tools" aria-labelledby="tools-title" className="scroll-mt-14 border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
-      <div className="mx-auto max-w-fluid-xl">
+      <div className="mx-auto max-w-(--fluid-container-xl)">
         <div className="mb-fluid-xl flex items-center gap-fluid-lg">
           <h2 id="tools-title" className="font-ball-pill text-fluid-5xl uppercase leading-none">Tools</h2>
           <span aria-hidden="true" className="h-px flex-1 bg-white/10" />

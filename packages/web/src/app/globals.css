@@ -45,11 +45,6 @@
   --leading-tight: var(--leading-tight);
   --leading-snug: var(--leading-snug);
 
-  --container-fluid-sm: var(--container-sm);
-  --container-fluid-md: var(--container-md);
-  --container-fluid-lg: var(--container-lg);
-  --container-fluid-xl: var(--container-xl);
-
   --color-brand-base: rgb(var(--brand-base-rgb));
   --color-brand-surface: rgb(var(--brand-surface-rgb));
   --color-brand-soft-surface: rgb(var(--brand-charcoal-rgb));
@@ -219,10 +214,10 @@
     --leading-relaxed: 1.4;
 
     /* Container widths */
-    --container-sm: calc(640px * var(--scale));
-    --container-md: calc(768px * var(--scale));
-    --container-lg: calc(1024px * var(--scale));
-    --container-xl: calc(1280px * var(--scale));
+    --fluid-container-sm: calc(640px * var(--scale));
+    --fluid-container-md: calc(768px * var(--scale));
+    --fluid-container-lg: calc(1024px * var(--scale));
+    --fluid-container-xl: calc(1280px * var(--scale));
   }
 
   /* Portrait orientation defaults */

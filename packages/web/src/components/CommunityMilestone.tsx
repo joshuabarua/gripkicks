@@ -33,7 +33,7 @@ export function CommunityMilestone({ userCount }: { userCount?: number | undefin
   return (
     <section aria-labelledby="community-title" className="relative overflow-hidden border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div aria-hidden="true" className="absolute -right-24 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-brand-red/15 blur-3xl" />
-      <div className="relative z-10 mx-auto max-w-fluid-xl">
+      <div className="relative z-10 mx-auto max-w-(--fluid-container-xl)">
         <h2 id="community-title" className="font-ball-pill text-fluid-5xl leading-none">COMMUNITY BUILT</h2>
         {isLoaded ? (
           <div className="mt-fluid-md">
