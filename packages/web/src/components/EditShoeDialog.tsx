@@ -33,8 +33,8 @@ export default function EditShoeDialog({
     <AnimatePresence>
       {editingShoe && (
         <Dialog open={!!editingShoe} onOpenChange={() => setEditingShoe(null)}>
-          <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] w-[min(96vw,56rem)] max-w-4xl max-h-[90dvh] flex flex-col rounded-lg hal-glow shadow-2xl p-0 overflow-hidden">
-            <DialogHeader className="relative min-h-[5.5rem] space-y-3 border-b border-white/[0.06] px-5 py-6 pr-[9.5rem] sm:px-8 sm:py-7 sm:pr-[12rem]">
+          <DialogContent className="bg-neutral-950 text-white border border-white/6 w-[min(96vw,56rem)] max-w-4xl max-h-[90dvh] flex flex-col rounded-lg hal-glow shadow-2xl p-0 overflow-hidden">
+            <DialogHeader className="relative min-h-22 space-y-3 border-b border-white/6 px-5 py-6 pr-38 sm:px-8 sm:py-7 sm:pr-48">
               <DialogTitle className="text-white font-so-cloudy uppercase text-fluid-xl">Edit Shoe Stats</DialogTitle>
               <DialogDescription className="text-fluid-sm text-neutral-500 font-mono">
                 {(editingShoe.shoe?.name || editingShoe.shoeDetails?.name || 'Unknown Shoe')}, {(editingShoe.shoe?.brand || editingShoe.shoeDetails?.brand || 'Unknown Brand')}
@@ -69,7 +69,7 @@ export default function EditShoeDialog({
                     id="size"
                     value={editForm.size || ''}
                     onChange={(e) => setEditForm({ ...editForm, size: e.target.value })}
-                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20 transition-colors"
+                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-white/6 rounded-lg focus:border-brand-red/50 focus:outline-hidden focus:ring-1 focus:ring-brand-red/20 transition-colors"
                   >
                     <option value="">Select size</option>
                     {shoeSizes.map((size: ShoeSizeOption, index) => {
@@ -95,7 +95,7 @@ export default function EditShoeDialog({
                     id="condition"
                     value={editForm.condition || ''}
                     onChange={(e) => setEditForm({ ...editForm, condition: e.target.value })}
-                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20 transition-colors"
+                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-white/6 rounded-lg focus:border-brand-red/50 focus:outline-hidden focus:ring-1 focus:ring-brand-red/20 transition-colors"
                   >
                     <option value="">Select condition</option>
                     {conditions.map((condition) => (
@@ -113,7 +113,7 @@ export default function EditShoeDialog({
                     type="date"
                     value={editForm.purchaseDate ? new Date(editForm.purchaseDate).toISOString().split('T')[0] : ''}
                     onChange={(e) => setEditForm({ ...editForm, purchaseDate: e.target.value })}
-                    className="h-12 bg-neutral-900 text-white border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
+                    className="h-12 bg-neutral-900 text-white border-white/6 rounded-lg focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
                   />
                 </div>
 
@@ -123,7 +123,7 @@ export default function EditShoeDialog({
                     id="fitLongevity"
                     value={editForm.fitLongevity || ''}
                     onChange={(e) => setEditForm({ ...editForm, fitLongevity: e.target.value || undefined })}
-                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20 transition-colors"
+                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-white/6 rounded-lg focus:border-brand-red/50 focus:outline-hidden focus:ring-1 focus:ring-brand-red/20 transition-colors"
                   >
                     <option value="">How long did the fit last?</option>
                     <option value="1-3 months">1 to 3 months</option>
@@ -141,19 +141,19 @@ export default function EditShoeDialog({
                     placeholder="e.g. -0.5 or +1.0"
                     value={editForm.sizingDeviation ?? ''}
                     onChange={(e) => setEditForm({ ...editForm, sizingDeviation: e.target.value ? Number(e.target.value) : undefined })}
-                    className="h-12 bg-neutral-900 text-white border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20"
+                    className="h-12 bg-neutral-900 text-white border-white/6 rounded-lg focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20"
                   />
                   <p className="font-mono text-[11px] text-neutral-600">
                     Negative means you sized down from your normal shoe size, positive means you sized up.
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-white/[0.06] bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
+                <div className="rounded-lg border border-white/6 bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
                     <Label htmlFor="comfortScore" className="text-neutral-400 font-mono text-xs">Comfort (1-10)</Label>
                     <div className="group relative">
                       <HelpCircle className="w-3.5 h-3.5 text-neutral-600 cursor-help" />
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-xs text-neutral-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/[0.06]">
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-xs text-neutral-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/6">
                         How comfortable this shoe feels for your feet
                       </div>
                     </div>
@@ -165,12 +165,12 @@ export default function EditShoeDialog({
                   />
                 </div>
 
-                <div className="rounded-lg border border-white/[0.06] bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
+                <div className="rounded-lg border border-white/6 bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
                     <Label htmlFor="performanceRating" className="text-neutral-400 font-mono text-xs">Performance (1-10)</Label>
                     <div className="group relative">
                       <HelpCircle className="w-3.5 h-3.5 text-neutral-600 cursor-help" />
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-xs text-neutral-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/[0.06]">
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-xs text-neutral-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/6">
                         Rate how this shoe performs for your climbing style
                       </div>
                     </div>
@@ -182,12 +182,12 @@ export default function EditShoeDialog({
                   />
                 </div>
 
-                <div className="rounded-lg border border-white/[0.06] bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
+                <div className="rounded-lg border border-white/6 bg-brand-charcoal/60 p-4 sm:p-5 md:col-span-2">
                   <div className="mb-4 flex items-center gap-2">
                     <Label htmlFor="durabilityRating" className="text-neutral-400 font-mono text-xs">Durability (1-10)</Label>
                     <div className="group relative">
                       <HelpCircle className="w-3.5 h-3.5 text-neutral-600 cursor-help" />
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-xs text-neutral-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/[0.06]">
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-xs text-neutral-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/6">
                         How well this shoe holds up over time
                       </div>
                     </div>
@@ -200,7 +200,7 @@ export default function EditShoeDialog({
                 </div>
               </div>
 
-              <div className="border-t border-white/[0.06] pt-2">
+              <div className="border-t border-white/6 pt-2">
                 <button
                   type="button"
                   onClick={() => setEditForm({ ...editForm, showNotes: !editForm.showNotes })}
@@ -217,7 +217,7 @@ export default function EditShoeDialog({
                       onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
                       placeholder="Any additional notes about this shoe..."
                       rows={4}
-                      className="bg-neutral-900 text-white placeholder:text-neutral-600 border-white/[0.06] rounded-lg focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20 resize-none"
+                      className="bg-neutral-900 text-white placeholder:text-neutral-600 border-white/6 rounded-lg focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20 resize-none"
                     />
                   </div>
                 )}

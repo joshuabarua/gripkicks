@@ -155,14 +155,14 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
             <TileGrid shoes={activeShoes} mode={mode} hasProfile={hasProfile} />
           </section>
           <details className="lab-card">
-            <summary className="cursor-pointer rounded-lg p-fluid-lg font-mono text-lg font-semibold hover:bg-white/[0.03]">Radar map</summary>
-            <div className="border-t border-white/[0.08] p-fluid-md sm:p-fluid-lg">
+            <summary className="cursor-pointer rounded-lg p-fluid-lg font-mono text-lg font-semibold hover:bg-white/3">Radar map</summary>
+            <div className="border-t border-white/8 p-fluid-md sm:p-fluid-lg">
               <RadarGrid shoes={toRadarShoes(activeShoes, mode)} hoveredId={hoveredId} onHoverChange={setHoveredId} confidenceLabel={mode === "personal" ? "Match strength" : "Sample size"} {...(mode === "personal" && userPosition ? { userPosition } : {})} />
             </div>
           </details>
           <details className="lab-card">
-            <summary className="cursor-pointer rounded-lg p-fluid-lg font-mono text-lg font-semibold hover:bg-white/[0.03]">Compare ratings</summary>
-            <div className="border-t border-white/[0.08]">
+            <summary className="cursor-pointer rounded-lg p-fluid-lg font-mono text-lg font-semibold hover:bg-white/3">Compare ratings</summary>
+            <div className="border-t border-white/8">
               <Leaderboard shoes={activeShoes} mode={mode} hoveredId={hoveredId} onHoverChange={setHoveredId} />
             </div>
           </details>
@@ -212,7 +212,7 @@ function toRadarShoes(shoes: DisplayShoe[], mode: Mode): RadarShoe[] {
 function signalToneClass(tone: CommunitySignal["tone"]) {
   if (tone === "good") return "border-brand-red/60 bg-black/30 text-brand-chalk";
   if (tone === "warn") return "border-amber-400/60 bg-black/30 text-brand-chalk";
-  return "border-white/[0.12] bg-black/30 text-brand-chalk";
+  return "border-white/12 bg-black/30 text-brand-chalk";
 }
 
 function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mode; hasProfile: boolean }) {
@@ -220,7 +220,7 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
     <div className="grid items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {shoes.map((shoe, idx) => (
         <article key={shoe.id} aria-label={`${shoe.brand} ${shoe.name}`} style={{ "--rise-delay": `${Math.min(idx, 9) * 50}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise min-w-0">
-          <div className="relative h-48 border-b border-white/[0.06] bg-black/40 p-fluid-lg sm:h-56">
+          <div className="relative h-48 border-b border-white/6 bg-black/40 p-fluid-lg sm:h-56">
             <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="h-full w-full" transformation={[{ height: 280, width: 400, crop: "at_max", format: "png" }]} />
             <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 font-mono text-sm font-semibold text-brand-chalk">{idx + 1}</span>
           </div>
@@ -228,7 +228,7 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <BrandLogo brand={shoe.brand} size="sm" />
-                <h3 className="mt-2 break-words font-mono text-lg font-semibold leading-snug">{shoe.name}</h3>
+                <h3 className="mt-2 wrap-break-word font-mono text-lg font-semibold leading-snug">{shoe.name}</h3>
               </div>
               <div className="shrink-0 text-right font-mono">
                 <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-sm font-semibold" : "font-ball-pill text-2xl"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
@@ -236,7 +236,7 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
               </div>
             </div>
             {shoe.breakdown && (
-              <details className="border-t border-white/[0.08] pt-2">
+              <details className="border-t border-white/8 pt-2">
                 <summary className="min-h-11 cursor-pointer py-3 font-mono text-sm font-medium">Match details</summary>
                 <dl className="space-y-3 pb-2 font-mono text-sm text-brand-putty">
                   {([["footShape", "Foot shape", shoe.breakdown.footTypeCompatibility], ["volume", "Volume", shoe.breakdown.volumeCompatibility], ["preferences", "Preferences", shoe.breakdown.userPreferenceMatch]] as const).map(([field, label, value]) => <div key={field} className="flex justify-between gap-4"><dt>{label}</dt><dd className="tabular-nums text-brand-chalk">{describeMatchSignal(shoe.signals, field) ?? `${(value * 20).toFixed(0)}%`}</dd></div>)}
@@ -253,16 +253,16 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
 
 function Leaderboard({ shoes, mode, hoveredId, onHoverChange }: { shoes: DisplayShoe[]; mode: Mode; hoveredId: string | null; onHoverChange: (id: string | null) => void }) {
   return (
-    <div className="divide-y divide-white/[0.06]">
+    <div className="divide-y divide-white/6">
       {shoes.map((shoe, idx) => (
-        <article key={shoe.id} tabIndex={0} aria-label={`Compare ${shoe.brand} ${shoe.name}`} onMouseEnter={() => onHoverChange(shoe.id)} onMouseLeave={() => onHoverChange(null)} onFocus={() => onHoverChange(shoe.id)} onBlur={() => onHoverChange(null)} className={`grid items-center gap-fluid-lg p-fluid-lg transition-colors xl:grid-cols-[minmax(0,1.3fr)_minmax(0,2fr)_auto] ${hoveredId === shoe.id ? "bg-white/[0.04]" : "hover:bg-white/[0.04]"}`}>
+        <article key={shoe.id} tabIndex={0} aria-label={`Compare ${shoe.brand} ${shoe.name}`} onMouseEnter={() => onHoverChange(shoe.id)} onMouseLeave={() => onHoverChange(null)} onFocus={() => onHoverChange(shoe.id)} onBlur={() => onHoverChange(null)} className={`grid items-center gap-fluid-lg p-fluid-lg transition-colors xl:grid-cols-[minmax(0,1.3fr)_minmax(0,2fr)_auto] ${hoveredId === shoe.id ? "bg-white/4" : "hover:bg-white/4"}`}>
           <div className="flex min-w-0 items-center gap-4">
             <span className="font-mono text-base tabular-nums text-brand-putty">{idx + 1}</span>
-            <div className="h-14 w-16 shrink-0 overflow-hidden rounded-lg border border-white/[0.06] bg-black/40">
+            <div className="h-14 w-16 shrink-0 overflow-hidden rounded-lg border border-white/6 bg-black/40">
               <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="p-2" transformation={[{ height: 56, width: 64, crop: "at_max", format: "png" }]} />
             </div>
             <div className="min-w-0">
-              <h3 className="break-words font-mono text-base font-semibold">{shoe.name}</h3>
+              <h3 className="wrap-break-word font-mono text-base font-semibold">{shoe.name}</h3>
               <BrandLogo brand={shoe.brand} size="sm" className="mt-1" />
             </div>
           </div>
@@ -285,7 +285,7 @@ function MetricCell({ label, value }: { label: string; value: number }) {
   const pct = Math.min(100, Math.max(0, (value / 5) * 100));
   return (
     <div className="min-w-0 space-y-2 font-mono text-sm">
-      <dt className="break-words text-brand-putty">{label}</dt>
+      <dt className="wrap-break-word text-brand-putty">{label}</dt>
       <dd className="tabular-nums">{value.toFixed(1)}<span className="text-brand-putty">/5</span></dd>
       <div aria-hidden="true" className="h-1.5 overflow-hidden rounded-full bg-white/20"><div className="h-full rounded-full bg-brand-red" style={{ width: `${pct}%` }} /></div>
     </div>

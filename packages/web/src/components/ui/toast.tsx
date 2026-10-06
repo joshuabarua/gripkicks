@@ -250,9 +250,9 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 100, scale: 0.9 }}
       transition={{ type: "spring", duration: 0.4 }}
-      className={`flex items-start gap-3 px-4 py-3 rounded-2xl border backdrop-blur-sm shadow-lg ${styles[toast.type]}`}
+      className={`flex items-start gap-3 px-4 py-3 rounded-2xl border backdrop-blur-xs shadow-lg ${styles[toast.type]}`}
     >
-      <div className="flex-shrink-0 mt-0.5">{icons[toast.type]}</div>
+      <div className="shrink-0 mt-0.5">{icons[toast.type]}</div>
 
       <div className="flex-1 min-w-0">
         <p className="font-mono text-sm font-medium text-white">
@@ -298,7 +298,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
       {toast.type !== "loading" && (
         <button
           onClick={onClose}
-          className="flex-shrink-0 text-neutral-500 hover:text-neutral-300 transition-colors"
+          className="shrink-0 text-neutral-500 hover:text-neutral-300 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>

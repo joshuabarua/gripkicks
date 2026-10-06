@@ -61,8 +61,8 @@ export default function PrivacyPage() {
       <section className="relative flex min-h-[80vh] items-center px-6 md:px-12 lg:px-16 pt-32 pb-24 overflow-hidden">
         <LiquidGlassBackdrop align="right" />
         <WordmarkWatermark lines={['PRIVACY']} align="right" />
-        <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-white/[0.06]" />
-        <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-white/[0.06]" />
+        <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-white/6" />
+        <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-white/6" />
 
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
@@ -131,7 +131,7 @@ export default function PrivacyPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: i * 0.08 }}
                 viewport={{ once: true }}
-                className="bg-brand-surface border border-white/[0.06] rounded-3xl p-8 group hover:border-brand-red/20 transition-colors"
+                className="bg-brand-surface border border-white/6 rounded-3xl p-8 group hover:border-brand-red/20 transition-colors"
               >
                 <div className="w-12 h-12 bg-brand-red/10 rounded-2xl flex items-center justify-center mb-6">
                   <promise.icon className="w-6 h-6 text-brand-red" />
@@ -162,7 +162,7 @@ export default function PrivacyPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-black border border-white/[0.06] rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-4"
+                className="bg-black border border-white/6 rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-4"
               >
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand-putty/40 mb-1">What</p>

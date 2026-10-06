@@ -182,7 +182,7 @@ export default function EtherField({
       ro.disconnect();
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerleave", handlePointerLeave);
-      window.removeEventListener("blur", handlePointerLeave);
+      window.removeEventListener("blur-sm", handlePointerLeave);
       gl.deleteProgram(program);
       gl.deleteShader(vertexShader);
       gl.deleteShader(fragmentShader);

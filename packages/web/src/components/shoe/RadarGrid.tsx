@@ -206,7 +206,7 @@ function ShoeMarker({ pos, rank, isHovered, onHover }: { pos: ReturnType<typeof 
   return (
     <button type="button" aria-label={`${rank}. ${pos.brand} ${pos.name}. ${pos.primaryScoreLabel ?? "Score"} ${pos.primaryScore}`} aria-expanded={isHovered} onMouseEnter={() => onHover?.(pos.id)} onFocus={() => onHover?.(pos.id)} onBlur={() => onHover?.(null)} onClick={() => onHover?.(pos.id)} onKeyDown={(event) => { if (event.key === "Escape") onHover?.(null); }} className={`absolute rounded-lg ${isHovered ? "z-40" : "z-30"}`} style={{ left: `${pos.x * 100}%`, top: `${pos.y * 100}%`, transform: "translate(-50%, -50%)" }}>
       <span className="relative block">
-        <span className={`block overflow-hidden rounded-lg bg-brand-chalk shadow-lg ${rank === 1 || isHovered ? "border-2 border-brand-red" : "border border-white/40"}`} style={{ width: sizePx, height: sizePx }}>
+        <span className={`block overflow-hidden rounded-lg bg-black/40 shadow-lg ${rank === 1 || isHovered ? "border-2 border-brand-red" : "border border-white/40"}`} style={{ width: sizePx, height: sizePx }}>
           <ShoeImage brand={pos.brand} shoeName={pos.name} imageUrl={pos.imageUrl} className="p-1" transformation={[{ height: 80, width: 80, crop: "at_max", format: "png" }]} />
         </span>
         <span className={`absolute -left-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 font-mono text-xs font-semibold ${rank === 1 ? "bg-brand-red text-black" : "bg-brand-soft-surface text-brand-chalk"}`}>{rank}</span>

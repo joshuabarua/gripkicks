@@ -23,7 +23,7 @@ export default function WordmarkWatermark({
   return (
     <div
       aria-hidden
-      className={`pointer-events-none absolute inset-0 -z-0 flex flex-col justify-center overflow-hidden ${alignment} ${className}`}
+      className={`pointer-events-none absolute inset-0 z-0 flex flex-col justify-center overflow-hidden ${alignment} ${className}`}
     >
       {lines.map((line) => (
         <span

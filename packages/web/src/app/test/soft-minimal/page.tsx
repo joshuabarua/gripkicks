@@ -38,7 +38,7 @@ export default function SoftMinimal() {
             ].map((col, i) => (
                <div key={i} className="flex flex-col gap-6">
                   <span className="text-[10px] tracking-[0.2em] uppercase text-[#B5B1AB]">0{i + 1}</span>
-                  <div className="h-[1px] w-full bg-[#EAE5DF]" />
+                  <div className="h-px w-full bg-[#EAE5DF]" />
                   <h3 className="font-serif text-2xl text-[#3A3836]">{col.title}</h3>
                   <p className="font-light text-sm leading-8 text-[#8A8681]">{col.text}</p>
                </div>

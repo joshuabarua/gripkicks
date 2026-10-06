@@ -16,7 +16,7 @@ export default function CyberKinetic() {
 
       <BackButton
         href="/test"
-        className="w-12 h-12 bg-[#00FF41] text-[#050505] rounded-none hover:bg-white transition-colors uppercase font-bold text-xs z-[100]"
+        className="w-12 h-12 bg-[#00FF41] text-[#050505] rounded-none hover:bg-white transition-colors uppercase font-bold text-xs z-100"
       />
 
       <section className="relative min-h-screen flex flex-col justify-between pt-24 px-8 pb-8 z-10 w-full mb-32">

@@ -3,7 +3,7 @@ export default function MobileComingSoon() {
     <main className="flex min-h-dvh items-center justify-center overflow-hidden bg-black px-6 py-10 text-white md:hidden">
       <div className="relative w-full max-w-sm text-center">
         <div className="absolute inset-x-10 -top-28 h-56 rounded-full bg-brand-red/20 blur-3xl" />
-        <div className="relative rounded-[2rem] border border-white/[0.08] bg-brand-charcoal/80 p-8 shadow-2xl shadow-black/60">
+        <div className="relative rounded-4xl border border-white/8 bg-brand-charcoal/80 p-8 shadow-2xl shadow-black/60">
           <h1 className="font-ball-pill text-5xl leading-none text-brand-chalk">
             COMING SOON
           </h1>

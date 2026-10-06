@@ -105,12 +105,12 @@ export default function CommunityStatsSection({
       ) : (
         <div className="relative">
           <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="bg-neutral-900/90 backdrop-blur-sm rounded-2xl px-5 py-3 text-center border border-neutral-800">
+            <div className="bg-neutral-900/90 backdrop-blur-xs rounded-2xl px-5 py-3 text-center border border-neutral-800">
               <p className="text-white text-sm font-mono">{3 - (totalRatings || 0)} more member rankings required</p>
               <p className="text-neutral-500 text-xs font-mono mt-1">for average shoe score</p>
             </div>
           </div>
-          <div className="blur-sm opacity-30 space-y-4">
+          <div className="blur-xs opacity-30 space-y-4">
             <div>
               <div className="flex justify-between items-center mb-1">
                 <span className="text-sm text-neutral-500">Comfort</span>

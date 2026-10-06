@@ -94,10 +94,10 @@ export const getEffectiveShoeStats = (
 
 export const getStatBarColor = (value: number, isCommunityAverage: boolean): string => {
   if (isCommunityAverage) {
-    if (value >= 8) return 'bg-gradient-to-r from-green-400 to-green-600';
-    if (value >= 6) return 'bg-gradient-to-r from-yellow-400 to-yellow-600';
-    if (value >= 4) return 'bg-gradient-to-r from-orange-400 to-orange-600';
-    return 'bg-gradient-to-r from-red-400 to-red-600';
+    if (value >= 8) return 'bg-linear-to-r from-green-400 to-green-600';
+    if (value >= 6) return 'bg-linear-to-r from-yellow-400 to-yellow-600';
+    if (value >= 4) return 'bg-linear-to-r from-orange-400 to-orange-600';
+    return 'bg-linear-to-r from-red-400 to-red-600';
   }
-  return 'bg-gradient-to-r from-gray-500 to-gray-600';
+  return 'bg-linear-to-r from-gray-500 to-gray-600';
 };

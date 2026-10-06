@@ -16,7 +16,7 @@ export default function NavButton({ isActive, toggleMenu }: NavButtonProps) {
             aria-label={isActive ? "Close menu" : "Open menu"}
             aria-expanded={isActive}
             onClick={toggleMenu}
-            className={"nav-button border-0 bg-transparent p-0"}
+            className={"nav-button translate-y-[3px] border-0 bg-transparent p-0"}
         >
             <motion.div
                 className={"nav-slider"}

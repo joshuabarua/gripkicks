@@ -151,7 +151,7 @@ export default function ShoeStatsModal({
   return (
     <TooltipProvider>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="bg-neutral-950 text-white border border-white/[0.06] max-w-2xl max-h-[90dvh] overflow-y-auto p-0 rounded-lg hal-glow shadow-2xl">
+        <DialogContent className="bg-neutral-950 text-white border border-white/6 max-w-2xl max-h-[90dvh] overflow-y-auto p-0 rounded-lg hal-glow shadow-2xl">
           <DialogTitle className="sr-only">
             Shoe rank: {shoeName}
           </DialogTitle>
@@ -159,7 +159,7 @@ export default function ShoeStatsModal({
             View detailed rank and ratings for the {shoeName} climbing shoe including comfort, performance, and durability ratings.
           </DialogDescription>
 
-          <div className="relative p-fluid-lg border-b border-white/[0.06]">
+          <div className="relative p-fluid-lg border-b border-white/6">
             <div className="absolute inset-0 opacity-[0.07]">
               <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />
             </div>
@@ -169,7 +169,7 @@ export default function ShoeStatsModal({
                 <button
                   aria-label="Toggle favourite"
                   onClick={onToggleFavourite}
-                  className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
+                  className="w-8 h-8 rounded-sm bg-white/4 hover:bg-white/8 flex items-center justify-center transition-colors duration-300 border border-white/6"
                 >
                   <Star className={`w-3.5 h-3.5 ${shoe.isFavourite ? 'fill-brand-red text-brand-red' : 'text-neutral-600'}`} />
                 </button>
@@ -178,7 +178,7 @@ export default function ShoeStatsModal({
                 <button
                   aria-label="Edit shoe"
                   onClick={onEditShoe}
-                  className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
+                  className="w-8 h-8 rounded-sm bg-white/4 hover:bg-white/8 flex items-center justify-center transition-colors duration-300 border border-white/6"
                 >
                   <Edit className="w-3.5 h-3.5 text-neutral-600" />
                 </button>
@@ -187,7 +187,7 @@ export default function ShoeStatsModal({
                 <button
                   aria-label="Remove shoe"
                   onClick={onRemoveShoe}
-                  className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-red-950/50 flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
+                  className="w-8 h-8 rounded-sm bg-white/4 hover:bg-red-950/50 flex items-center justify-center transition-colors duration-300 border border-white/6"
                 >
                   <Trash2 className="w-3.5 h-3.5 text-neutral-600 hover:text-red-400" />
                 </button>
@@ -195,14 +195,14 @@ export default function ShoeStatsModal({
               <button
                 aria-label="Close"
                 onClick={onClose}
-                className="w-8 h-8 rounded-sm bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center transition-colors duration-300 border border-white/[0.06]"
+                className="w-8 h-8 rounded-sm bg-white/4 hover:bg-white/8 flex items-center justify-center transition-colors duration-300 border border-white/6"
               >
                 <X className="w-3.5 h-3.5 text-neutral-600" />
               </button>
             </div>
 
             <div className="relative flex items-center gap-5">
-              <div className="w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-brand-charcoal border border-white/[0.06] p-1">
+              <div className="w-28 h-28 shrink-0 rounded-lg overflow-hidden bg-brand-charcoal border border-white/6 p-1">
                 <div className="w-full h-full rounded-md overflow-hidden bg-neutral-800">
                   <ShoeImage
                     brand={shoeBrand}

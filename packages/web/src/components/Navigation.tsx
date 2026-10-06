@@ -209,10 +209,10 @@ const Navigation: React.FC = () => {
                               className="h-10 w-10 rounded-full border border-black/10 shrink-0"
                             />
                             <div className="min-w-0 flex-1">
-                              <p className="truncate font-sora text-sm font-semibold leading-none">
+                              <p className="truncate font-mono text-sm font-semibold leading-none">
                                 {session.user.name}
                               </p>
-                              <p className="truncate pt-1 font-sora text-[11px] leading-none text-black/55">
+                              <p className="truncate pt-1 font-mono text-[11px] leading-none text-black/55">
                                 {session.user.email}
                               </p>
                             </div>
@@ -220,7 +220,7 @@ const Navigation: React.FC = () => {
                           <Link
                             href="/profile"
                             onClick={closeMenu}
-                            className="mt-2 inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-xl px-2.5 py-1.5 font-sora text-[10px] font-semibold uppercase tracking-wider text-black transition-colors hover:bg-black/10"
+                            className="mt-2 inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-xl px-2.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-black transition-colors hover:bg-black/10"
                           >
                             <User className="h-3.5 w-3.5" />
                             <span>Profile</span>
@@ -234,7 +234,7 @@ const Navigation: React.FC = () => {
                           session?.user ? (
                             <SignOutButton
                               variant="ghost"
-                              className="h-auto rounded-xl px-3 py-2 font-sora text-[10px] font-semibold uppercase tracking-wider text-black hover:bg-black/10 hover:text-black"
+                              className="h-auto rounded-xl px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-black hover:bg-black/10 hover:text-black"
                               onClick={closeMenu}
                             />
                           ) : undefined

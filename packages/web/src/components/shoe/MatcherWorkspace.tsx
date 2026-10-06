@@ -66,24 +66,24 @@ export function SoleMateContent({ matches, isLoading, hasProfile }: { matches: S
 function SoleMateCard({ match }: { match: SoleMateClimberMatch }) {
   return (
     <article className="lab-card min-w-0 p-fluid-lg">
-      <header className="mb-fluid-lg flex items-center gap-4 border-b border-white/[0.08] pb-fluid-md">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/[0.06] bg-black/40">
+      <header className="mb-fluid-lg flex items-center gap-4 border-b border-white/8 pb-fluid-md">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/6 bg-black/40">
           {match.user.image ? <Image src={match.user.image} alt="" width={48} height={48} className="h-full w-full object-cover" /> : <Users aria-hidden="true" className="h-5 w-5 text-brand-chalk" />}
         </div>
         <div className="min-w-0">
-          <h3 className="break-words font-mono text-lg font-semibold">{match.user.name || "Climber"}</h3>
+          <h3 className="wrap-break-word font-mono text-lg font-semibold">{match.user.name || "Climber"}</h3>
           <p className="mt-1 font-mono text-sm text-brand-putty">{match.shoes.length} top {match.shoes.length === 1 ? "shoe" : "shoes"}</p>
         </div>
       </header>
       <ul className="space-y-4">
         {match.shoes.map((rating) => (
           <li key={rating.shoe._id} className="lab-card grid grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-3 p-3 sm:grid-cols-[5rem_minmax(0,1fr)_auto] sm:gap-4 sm:p-4">
-            <div className="h-16 w-full overflow-hidden rounded-lg border border-white/[0.06] bg-black/40">
+            <div className="h-16 w-full overflow-hidden rounded-lg border border-white/6 bg-black/40">
               <ShoeImage brand={rating.shoe.brand} shoeName={rating.shoe.name} imageUrl={rating.shoe.imageUrl} slug={rating.shoe.slug} gender={rating.shoe.gender === "men" || rating.shoe.gender === "women" || rating.shoe.gender === "kids" || rating.shoe.gender === "unisex" ? rating.shoe.gender : undefined} context="thumbnail" className="p-2" transformation={[{ height: 64, width: 80, crop: "at_max", format: "png" }]} />
             </div>
             <div className="min-w-0">
               <BrandLogo brand={rating.shoe.brand} size="sm" />
-              <h4 className="mt-1 break-words font-mono text-base font-semibold">{rating.shoe.name}</h4>
+              <h4 className="mt-1 wrap-break-word font-mono text-base font-semibold">{rating.shoe.name}</h4>
             </div>
             <div className="col-start-2 flex items-baseline gap-2 font-mono sm:col-auto sm:block sm:text-right">
               <p className="font-ball-pill text-2xl tabular-nums">{rating.matchScore}%</p>

@@ -36,7 +36,7 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
           placeholder="Search for shoes..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 bg-black border-white/[0.06] text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red rounded-none h-12"
+          className="pl-10 bg-black border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red rounded-none h-12"
         />
       </div>
 
@@ -49,7 +49,7 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
           {searchResults.map((shoe) => (
             <Card
               key={shoe._id}
-              className={`cursor-pointer transition-colors border-white/[0.06] rounded-none ${
+              className={`cursor-pointer transition-colors border-white/6 rounded-none ${
                 selectedShoe?._id === shoe._id
                   ? 'border-brand-red bg-brand-red/10'
                   : 'bg-black hover:bg-brand-surface'
@@ -58,7 +58,7 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
             >
               <CardContent className="p-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-black/50 border border-white/5 rounded-lg overflow-hidden flex-shrink-0">
+                  <div className="w-12 h-12 bg-black/50 border border-white/5 rounded-lg overflow-hidden shrink-0">
                     <ShoeImage
                       brand={shoe.brand}
                       shoeName={shoe.name}

@@ -10,7 +10,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div className="pointer-events-none fixed inset-x-0 top-0 z-[9999] h-0.5 overflow-hidden" aria-hidden="true">
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-9999 h-0.5 overflow-hidden" aria-hidden="true">
         {isLoading ? (
           <LoadingBar size="full" />
         ) : (

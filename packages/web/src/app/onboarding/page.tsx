@@ -271,7 +271,7 @@ export default function OnboardingPage() {
               )}
 
               {currentStep === "foot-data" && (
-                <div className="bg-brand-surface border border-white/[0.06] p-8">
+                <div className="bg-brand-surface border border-white/6 p-8">
                   <h2 className="font-ball-pill text-3xl mb-8">FOOT SHAPE</h2>
 
                   <div className="space-y-6">
@@ -315,7 +315,7 @@ export default function OnboardingPage() {
                             className={`p-3 rounded-2xl border text-left transition-all ${
                               footShape === shape.value
                                 ? "border-brand-red bg-brand-red/10"
-                                : "border-white/[0.06] hover:border-white/10 bg-black/50"
+                                : "border-white/6 hover:border-white/10 bg-black/50"
                             }`}
                           >
                             <div className="font-mono font-medium text-white text-sm">
@@ -347,7 +347,7 @@ export default function OnboardingPage() {
                             className={`p-3 rounded-2xl border text-center transition-all ${
                               footVolume === volume.value
                                 ? "border-brand-red bg-brand-red/10"
-                                : "border-white/[0.06] hover:border-white/10 bg-black/50"
+                                : "border-white/6 hover:border-white/10 bg-black/50"
                             }`}
                           >
                             <div className="font-mono font-medium text-white text-sm">
@@ -379,7 +379,7 @@ export default function OnboardingPage() {
               )}
 
               {currentStep === "first-shoe" && (
-                <div className="bg-brand-surface border border-white/[0.06] p-8">
+                <div className="bg-brand-surface border border-white/6 p-8">
                   <h2 className="font-ball-pill text-3xl mb-8">
                     ADD YOUR FIRST SHOE
                   </h2>
@@ -441,7 +441,7 @@ export default function OnboardingPage() {
                                 })
                               }
                             >
-                              <SelectTrigger className="bg-black border-white/[0.06] text-brand-chalk rounded-none h-12 focus:border-brand-red">
+                              <SelectTrigger className="bg-black border-white/6 text-brand-chalk rounded-none h-12 focus:border-brand-red">
                                 <SelectValue placeholder="Select size" />
                               </SelectTrigger>
                               <SelectContent className="bg-neutral-800 border-neutral-700">
@@ -471,7 +471,7 @@ export default function OnboardingPage() {
                                 })
                               }
                             >
-                              <SelectTrigger className="bg-black border-white/[0.06] text-brand-chalk rounded-none h-12 focus:border-brand-red">
+                              <SelectTrigger className="bg-black border-white/6 text-brand-chalk rounded-none h-12 focus:border-brand-red">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent className="bg-neutral-800 border-neutral-700">
@@ -544,7 +544,7 @@ export default function OnboardingPage() {
                             }
                             placeholder="Any additional notes about this shoe..."
                             rows={3}
-                            className="bg-black border-white/[0.06] text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red rounded-none"
+                            className="bg-black border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red rounded-none"
                           />
                         </div>
                       </div>
@@ -587,7 +587,7 @@ export default function OnboardingPage() {
                         <motion.div
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="bg-brand-surface border border-white/[0.06] p-6 flex flex-col items-center gap-3 hover:border-brand-red/30 transition-colors duration-500 cursor-pointer"
+                          className="bg-brand-surface border border-white/6 p-6 flex flex-col items-center gap-3 hover:border-brand-red/30 transition-colors duration-500 cursor-pointer"
                         >
                           <span className="font-ball-pill text-lg text-white">
                             {item.label}

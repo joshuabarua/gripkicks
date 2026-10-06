@@ -32,7 +32,7 @@ function TagChip({ label, value, tooltip }: TagChipProps) {
             </span>
           </button>
         </TooltipTrigger>
-        <TooltipContent side="top" sideOffset={5} className="bg-neutral-900 border border-neutral-700 max-w-md z-[9999] shadow-xl" style={{ zIndex: 9999 }}>
+        <TooltipContent side="top" sideOffset={5} className="bg-neutral-900 border border-neutral-700 max-w-md z-9999 shadow-xl" style={{ zIndex: 9999 }}>
           <p className="text-sm text-neutral-300 leading-relaxed whitespace-pre-line font-mono">{tooltip}</p>
         </TooltipContent>
       </Tooltip>

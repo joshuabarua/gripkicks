@@ -113,7 +113,7 @@ export function AddShoeDialog({
             <select
               value={selectedBrand}
               onChange={(e) => onBrandChange(e.target.value)}
-              className="flex-1 bg-neutral-900 text-white border border-neutral-800 rounded-xl px-fluid-md py-fluid-xs text-sm focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20"
+              className="flex-1 bg-neutral-900 text-white border border-neutral-800 rounded-xl px-fluid-md py-fluid-xs text-sm focus:border-brand-red/50 focus:outline-hidden focus:ring-1 focus:ring-brand-red/20"
             >
               <option value="all">All Brands</option>
               {uniqueBrands.map((brand) => (
@@ -151,7 +151,7 @@ export function AddShoeDialog({
                 className="rounded-2xl border border-neutral-800 bg-neutral-900 p-fluid-md transition-all duration-300 hover:border-brand-red/30"
               >
                 <div className="mb-3 flex items-center gap-4">
-                  <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden flex-shrink-0">
+                  <div className="w-14 h-14 bg-slate-700 rounded-xl overflow-hidden shrink-0">
                     <ShoeImage
                       brand={group.brand}
                       shoeName={group.baseName}

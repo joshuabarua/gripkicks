@@ -360,7 +360,7 @@ export default function AdminDashboard() {
                 <select
                   value={brandFilter}
                   onChange={(e) => setBrandFilter(e.target.value)}
-                  className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                  className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-hidden focus:ring-2 focus:ring-white/30"
                 >
                   <option value="all">All Brands</option>
                   {uniqueBrands.map((brand) => (
@@ -376,7 +376,7 @@ export default function AdminDashboard() {
                     placeholder="Search shoes..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+                    className="pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-hidden focus:ring-2 focus:ring-white/30"
                   />
                 </div>
                 <button
@@ -802,7 +802,7 @@ export default function AdminDashboard() {
 
                       <div className="flex gap-3 h-full">
                         <div
-                          className="rounded-lg overflow-hidden bg-white/10 cursor-pointer hover:ring-2 hover:ring-accent transition-all flex-shrink-0"
+                          className="rounded-lg overflow-hidden bg-white/10 cursor-pointer hover:ring-2 hover:ring-accent transition-all shrink-0"
                           onClick={() => {
                             setEditingImageId(shoe._id);
                             setEditingImageUrl(shoe.imageUrl || "");
@@ -1243,7 +1243,7 @@ export default function AdminDashboard() {
                   placeholder="Search users..."
                   value={userSearchTerm}
                   onChange={(e) => setUserSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+                  className="pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-hidden focus:ring-2 focus:ring-white/30"
                 />
               </div>
             </div>

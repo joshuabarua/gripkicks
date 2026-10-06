@@ -39,7 +39,7 @@ export default function AboutPage() {
           <motion.div
             {...fadeUp}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="rounded-3xl border border-white/[0.06] bg-black p-8 md:p-12"
+            className="rounded-3xl border border-white/6 bg-black p-8 md:p-12"
           >
             <div className="space-y-6 font-mono text-base md:text-lg text-brand-putty/80 leading-relaxed">
               <p>My name&apos;s Josh. I&apos;m a climber, developer and guy with weird shaped feet.</p>

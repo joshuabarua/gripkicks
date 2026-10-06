@@ -65,7 +65,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, variantL
       role="button"
       tabIndex={0}
       aria-label={`View ${brand} ${name}`}
-      className="group relative w-full cursor-pointer outline-none"
+      className="group relative w-full cursor-pointer outline-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28, delay: Math.min(index, 10) * 0.035 }}
@@ -85,7 +85,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, variantL
           <BrandLogo brand={brand} size="sm" className="max-w-[70%]" />
           <div className="flex items-center gap-1.5">
             {specialLabel && (
-              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-brand-chalk">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk">
                 {specialLabel.icon}
               </span>
             )}
@@ -97,8 +97,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, variantL
           </div>
         </div>
 
-        <div className="relative flex aspect-[4/3] items-center justify-center border-b border-white/20 bg-brand-soft-surface p-4">
-          <div className="absolute left-3 top-3 rounded-sm border border-white/[0.09] bg-black/65 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
+        <div className="relative flex aspect-4/3 items-center justify-center border-b border-white/20 bg-brand-soft-surface p-4">
+          <div className="absolute left-3 top-3 rounded-sm border border-white/9 bg-black/65 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
             {cardLabel}
           </div>
           {isInView && (
@@ -146,7 +146,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, variantL
             <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Your ratings</p>
             <div className="grid grid-cols-3 gap-2">
               {ratingItems.map(([label, value]) => (
-                <div key={label} className="rounded-md border border-white/20 bg-white/[0.025] px-2 py-2 text-center">
+                <div key={label} className="rounded-md border border-white/20 bg-white/2.5 px-2 py-2 text-center">
                   <span className="block font-mono text-[11px] tracking-[0.12em] text-brand-putty/85">{label}</span>
                   <strong className={`mt-0.5 block font-normal text-brand-chalk ${value === undefined ? 'font-mono text-[11px]' : 'font-ball-pill text-lg'}`}>{value ?? 'Not rated'}</strong>
                 </div>
@@ -164,8 +164,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, onClick, onEdit, index, variantL
             }}
             className={`flex min-h-11 w-full items-center justify-between rounded-md border px-3 py-2 text-left transition-colors ${
               isComplete
-                ? 'border-white/20 bg-white/[0.025] hover:bg-white/[0.05]'
-                : 'border-brand-red/35 bg-brand-red/[0.08] hover:bg-brand-red/[0.14]'
+                ? 'border-white/20 bg-white/2.5 hover:bg-white/5'
+                : 'border-brand-red/35 bg-brand-red/8 hover:bg-brand-red/[0.14]'
             }`}
           >
             <span className="flex min-w-0 items-center gap-2.5">

@@ -202,7 +202,7 @@ export function AdvancedFilters({
                     value={selectedBrand}
                     aria-label="Filter by brand"
                     onChange={(e) => onBrandChange(e.target.value)}
-                    className="w-full bg-neutral-900 text-white border border-white/30 rounded-lg px-3 py-2 text-sm focus:border-brand-red/50 focus:outline-none focus:ring-1 focus:ring-brand-red/20"
+                    className="w-full bg-neutral-900 text-white border border-white/30 rounded-lg px-3 py-2 text-sm focus:border-brand-red/50 focus:outline-hidden focus:ring-1 focus:ring-brand-red/20"
                   >
                     <option value="all">All Brands</option>
                     {uniqueBrands.map((brand) => (

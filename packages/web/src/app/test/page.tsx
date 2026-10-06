@@ -65,10 +65,10 @@ export default function HomeDesignsIndex() {
 
                   {/* Type / CTA */}
                   <div className="lg:col-span-2 flex flex-row lg:flex-col justify-between lg:justify-start lg:items-end gap-4 mt-8 lg:mt-0">
-                    <span className="text-xs tracking-[0.15em] uppercase font-bold py-2 border-b-[2px] border-transparent group-hover:border-[#111111] transition-colors">
+                    <span className="text-xs tracking-[0.15em] uppercase font-bold py-2 border-b-2 border-transparent group-hover:border-[#111111] transition-colors">
                       {v.type}
                     </span>
-                    <div className="w-14 h-14 rounded-full border-[2px] border-[#D4CEC4] flex items-center justify-center transition-all duration-500 group-hover:bg-[#FF3800] group-hover:border-[#FF3800] group-hover:text-[#EEEBE5]">
+                    <div className="w-14 h-14 rounded-full border-2 border-[#D4CEC4] flex items-center justify-center transition-all duration-500 group-hover:bg-[#FF3800] group-hover:border-[#FF3800] group-hover:text-[#EEEBE5]">
                       <ArrowUpRight className="w-6 h-6 transition-transform duration-500 group-hover:rotate-45" />
                     </div>
                   </div>

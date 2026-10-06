@@ -11,8 +11,8 @@ export function AuthPageLayout({ title, children }: AuthPageLayoutProps) {
   return (
     <main className="min-h-screen bg-black text-white flex flex-col">
       <div className="flex-1 flex items-center justify-center px-6 py-12 relative">
-        <div className="absolute top-6 left-6 w-16 h-16 border-l border-t border-white/[0.06]" />
-        <div className="absolute bottom-6 right-6 w-16 h-16 border-r border-b border-white/[0.06]" />
+        <div className="absolute top-6 left-6 w-16 h-16 border-l border-t border-white/6" />
+        <div className="absolute bottom-6 right-6 w-16 h-16 border-r border-b border-white/6" />
 
         <div className="w-full max-w-md">
           <motion.div

@@ -252,7 +252,7 @@ export default function FootLabPage() {
                   onClick={() => setSelectedFootShape(shape)}
                   className={`monolith-card rounded-lg p-4 text-left transition-all duration-500 border ${isSelected
                       ? 'border-brand-red/40 bg-brand-red/10 hal-glow'
-                      : 'border-white/[0.06] bg-brand-charcoal hover:border-white/10'
+                      : 'border-white/6 bg-brand-charcoal hover:border-white/10'
                     }`}
                 >
                   <div className="mb-4 pt-2">
@@ -304,7 +304,7 @@ export default function FootLabPage() {
                   onClick={() => setSelectedFootVolume(volume)}
                   className={`monolith-card rounded-lg p-6 text-left transition-all duration-500 border ${isSelected
                       ? 'border-brand-red/40 bg-brand-red/10 hal-glow'
-                      : 'border-white/[0.06] bg-brand-charcoal hover:border-white/10'
+                      : 'border-white/6 bg-brand-charcoal hover:border-white/10'
                     }`}
                 >
                   <div className="mb-5">
@@ -343,7 +343,7 @@ export default function FootLabPage() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-            className="fixed bottom-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-md border-t border-white/[0.06] px-6 py-4"
+            className="fixed bottom-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-md border-t border-white/6 px-6 py-4"
           >
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
               <div>

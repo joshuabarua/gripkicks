@@ -31,7 +31,7 @@ export function CommunityMilestone({ userCount }: { userCount?: number | undefin
   const progress = getRailProgress(count);
 
   return (
-    <section aria-labelledby="community-title" className="relative overflow-hidden border-t border-white/[0.06] bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
+    <section aria-labelledby="community-title" className="relative overflow-hidden border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div aria-hidden="true" className="absolute -right-24 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-brand-red/15 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-fluid-xl">
         <h2 id="community-title" className="font-ball-pill text-fluid-5xl leading-none">COMMUNITY BUILT</h2>
@@ -52,7 +52,7 @@ export function CommunityMilestone({ userCount }: { userCount?: number | undefin
 
         {isLoaded && (
         <div className="mt-fluid-xl overflow-x-auto">
-          <div className="relative min-w-[44rem]">
+          <div className="relative min-w-176">
             <div aria-hidden="true" className="absolute left-0 right-[12.5%] top-[19px] h-px bg-neutral-800" />
             <motion.div
               aria-hidden="true"

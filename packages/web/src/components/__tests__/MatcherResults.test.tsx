@@ -16,8 +16,9 @@ describe("Matcher results", () => {
     render(<MatcherResults {...props} />);
     expect(screen.getByText("Radar map").closest("details")).not.toHaveAttribute("open");
     expect(screen.getByText("Compare ratings").closest("details")).not.toHaveAttribute("open");
-    expect(screen.getByRole("article", { name: "Scarpa Origin Women's" })).toBeInTheDocument();
-    expect(within(screen.getByRole("article", { name: "Scarpa Origin Women's" })).getByText("86%")).toBeInTheDocument();
+    const tile = screen.getByRole("article", { name: "Scarpa Origin Women's" });
+    expect(tile).toHaveClass("lab-card", "lab-card-lift", "lab-rise");
+    expect(within(tile).getByText("86%")).toBeInTheDocument();
   });
 
   it("switches recommendation source without losing scores or variant names", () => {

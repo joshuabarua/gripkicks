@@ -28,7 +28,7 @@ export function LoginForm() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-brand-surface border border-white/[0.06] p-8 space-y-5">
+      <div className="bg-brand-surface border border-white/6 p-8 space-y-5">
         <div className="space-y-2">
           <Label
             htmlFor="email"
@@ -43,7 +43,7 @@ export function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             value={email}
             required
-            className="bg-black border-white/[0.06] text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red focus:ring-brand-red rounded-none h-12"
+            className="bg-black border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red focus:ring-brand-red rounded-none h-12"
           />
         </div>
         <div className="space-y-2">
@@ -69,7 +69,7 @@ export function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             value={password}
             required
-            className="bg-black border-white/[0.06] text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red focus:ring-brand-red rounded-none h-12"
+            className="bg-black border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red focus:ring-brand-red rounded-none h-12"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export function LoginForm() {
               },
             });
           }}
-          className="w-full border border-white/[0.06] hover:border-brand-red/30 text-brand-chalk font-mono text-sm py-3 transition-all duration-500 flex items-center justify-center gap-3"
+          className="w-full border border-white/6 hover:border-brand-red/30 text-brand-chalk font-mono text-sm py-3 transition-all duration-500 flex items-center justify-center gap-3"
         >
           <GoogleIcon />
           Sign in with Google

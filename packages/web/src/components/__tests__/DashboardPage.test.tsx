@@ -40,23 +40,22 @@ describe("DashboardPage", () => {
     expect(screen.queryByText("Matcher")).toBeNull();
   });
 
-  it("wraps the dashboard header in a Privacy-style atmospheric panel", () => {
+  it("uses the Lab header on a black canvas", () => {
     render(<DashboardPage />);
     expect(screen.getByRole("main")).toHaveClass("bg-black");
-    const heading = screen.getByRole("heading", { name: "Dashboard" });
-    const hero = heading.closest("header");
-    expect(hero).not.toBeNull();
-    expect(hero).toHaveClass("relative", "overflow-hidden", "rounded-3xl", "bg-black");
-    expect(hero!.textContent).toContain("DASH");
+    expect(screen.getByRole("heading", { name: "Dashboard", level: 1 })).toHaveClass("font-ball-pill", "uppercase");
+    expect(screen.getByText("Hey Josh")).toHaveClass("font-mono");
   });
 
-  it("styles dashboard actions like Foot Lab buttons without underlined links", () => {
+  it("styles dashboard actions with lab buttons and glows the next step", () => {
     render(<DashboardPage />);
+    const nextStep = screen.getByRole("region", { name: "Find your next shoe" });
+    expect(nextStep).toHaveClass("lab-card", "lab-card-active");
     const primary = screen.getByRole("link", { name: "Find shoes" });
-    expect(primary).toHaveClass("bg-brand-red", "font-ball-pill", "w-full", "sm:w-auto");
+    expect(primary).toHaveClass("lab-button");
     for (const name of ["Open Sanctuary", "Edit foot profile"]) {
       const link = screen.getByRole("link", { name });
-      expect(link).toHaveClass("rounded-lg", "border", "border-white/20", "min-h-11");
+      expect(link).toHaveClass("lab-button-ghost");
       expect(link.className).not.toContain("underline");
     }
   });

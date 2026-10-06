@@ -89,22 +89,22 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
 
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
               <section aria-labelledby="collection-title" style={riseDelay(4)} className="lab-card lab-rise min-w-0">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] p-5 sm:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/6 p-5 sm:p-6">
                   <h2 id="collection-title" className="font-ball-pill text-2xl">Your collection</h2>
                   <Link href="/stash" className="lab-button-ghost">
                     Open Sanctuary<ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                   </Link>
                 </div>
                 {userShoes.length ? (
-                  <ul className="divide-y divide-white/[0.06]">
+                  <ul className="divide-y divide-white/6">
                     {userShoes.slice(0, 3).map((shoe) => {
                       const details = shoe.shoe ?? shoe.shoeDetails;
                       const brand = details?.brand ?? "Unknown brand";
                       const name = details?.name ?? "Shoe details unavailable";
                       return (
                         <li key={shoe._id}>
-                          <Link href="/stash" aria-label={`View ${brand} ${name} in Sanctuary`} className="group flex min-h-24 items-center gap-3 p-5 transition-colors hover:bg-white/[0.03] focus-visible:bg-white/[0.03] sm:gap-4 sm:px-6">
-                            <div className="h-16 w-20 shrink-0 overflow-hidden rounded-lg border border-white/[0.06] bg-black/40">
+                          <Link href="/stash" aria-label={`View ${brand} ${name} in Sanctuary`} className="group flex min-h-24 items-center gap-3 p-5 transition-colors hover:bg-white/3 focus-visible:bg-white/3 sm:gap-4 sm:px-6">
+                            <div className="h-16 w-20 shrink-0 overflow-hidden rounded-lg border border-white/6 bg-black/40">
                               <ShoeImage brand={brand} shoeName={name} imageUrl={details?.imageUrl} slug={details?.slug} gender={details?.gender} context="thumbnail" className="p-2" transformation={[{ height: 64, width: 80, crop: "at_max", cropMode: "pad_resize", format: "png", quality: 80 }]} />
                             </div>
                             <div className="min-w-0 flex-1">
@@ -142,7 +142,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
                       <div>{glyphShape && <ToeProfile shape={glyphShape} active height={56} />}</div>
                       <div>{glyphVolume && <VolumeArch volume={glyphVolume} active height={56} />}</div>
                     </div>
-                    <dl className="mt-fluid-md grid grid-cols-2 gap-4 border-t border-white/[0.06] pt-fluid-md">
+                    <dl className="mt-fluid-md grid grid-cols-2 gap-4 border-t border-white/6 pt-fluid-md">
                       <div><dt className="lab-label">Shape</dt><dd className="mt-2 font-mono text-base font-semibold">{footProfile.shape}</dd></div>
                       <div><dt className="lab-label">Volume</dt><dd className="mt-2 font-mono text-base font-semibold">{footProfile.volume}</dd></div>
                     </dl>

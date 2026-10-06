@@ -43,7 +43,7 @@ describe("Matcher page navigation", () => {
   it("preserves the sign-in return destination", () => {
     mocks.session.mockReturnValue({ data: null, isPending: false });
     render(<MatcherPage />);
-    expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/auth/login?callbackUrl=%2Fmatcher");
+    expect(screen.getByRole("link", { name: "Log in" })).toHaveAttribute("href", "/auth/login?callbackUrl=%2Fmatcher");
     expect(screen.queryByText("Ranked shoe matches")).toBeNull();
   });
 });

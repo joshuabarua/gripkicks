@@ -19,7 +19,7 @@ export function EditorialLayout({ grain, paper, ink, header, hero, content, foot
     <main className="min-h-screen overflow-x-hidden relative" style={{ background: paper, color: ink }}>
       {extraBackgrounds}
       <div
-        className="pointer-events-none fixed inset-0 z-[60] mix-blend-multiply opacity-45"
+        className="pointer-events-none fixed inset-0 z-60 mix-blend-multiply opacity-45"
         style={{ backgroundImage: grain, backgroundSize: "240px 240px" }}
       />
 
