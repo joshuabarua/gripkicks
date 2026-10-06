@@ -135,7 +135,7 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
           <p className="mt-2 font-mono text-base leading-relaxed text-neutral-400">{mode === "personal" ? "Fit estimates from catalog attributes and available ratings. Not a fit guarantee." : "Shoes ranked using ratings from all climbers."}</p>
           {mode === "personal" && activeShoes.some((shoe) => shoe.signals && !shoe.signals.preferences) && <p className="mt-3 font-mono text-sm text-neutral-400">Preferences need 3 complete shoe ratings. <Link href="/stash" className="underline underline-offset-4">Rate your shoes</Link></p>}
         </div>
-        <div aria-label="Choose recommendation source" className="lab-card grid grid-cols-2 gap-2 p-2">
+        <div aria-label="Choose recommendation source" className="grid grid-cols-2 gap-2">
           {([["personal", "For you", personalShoes.length, personalLoading], ["community", "Community", communityShoes.length, communityLoading]] as const).map(([value, label, count, loading]) => (
             <button key={value} type="button" aria-pressed={mode === value} onClick={() => { setMode(value); setHoveredId(null); }} className={mode === value ? `lab-card-active flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3 py-3 font-mono text-xs uppercase tracking-wider text-white` : "lab-button-ghost justify-center"}>
               {label}<span className="text-sm tabular-nums">{loading ? "…" : count}</span>

@@ -323,7 +323,7 @@ export default function ShoeSanctuaryPage() {
     }
   };
 
-  const removeShoeFromStash = async (userShoeId: string) => {
+  const removeShoeFromStash = useCallback(async (userShoeId: string) => {
     try {
       await deleteUserShoe({ userShoeId: userShoeId as Id<"userShoes"> });
       setIsStatsModalOpen(false);
@@ -334,7 +334,31 @@ export default function ShoeSanctuaryPage() {
       toast.error("Failed to remove shoe from sanctuary");
       captureError(error, { source: "stash_remove", shoe_id: userShoeId });
     }
-  };
+  }, [deleteUserShoe, toast]);
+
+  const toggleShoeFavourite = useCallback(async (shoe: UserShoe) => {
+    try {
+      await toggleFavourite({ userShoeId: shoe._id as Id<"userShoes"> });
+      const newFavStatus = !shoe.isFavourite;
+      void fetchApi("/api/v1/profile", {
+        method: "PUT",
+        body: JSON.stringify({ favoriteShoeId: newFavStatus ? shoe.shoeId : null }),
+      });
+      setSelectedShoe((prev) => (prev && prev._id === shoe._id ? { ...prev, isFavourite: newFavStatus } : prev));
+      setUserShoes((prev) => prev.map((item) => (item._id === shoe._id ? { ...item, isFavourite: newFavStatus } : item)));
+      toast.success(newFavStatus ? "Added to favorites!" : "Removed from favorites");
+      track(analyticsEvents.stashFavouriteToggled, { shoe_id: shoe._id, is_favourite: newFavStatus });
+    } catch (error) {
+      toast.error("Failed to update favourite status");
+      captureError(error, { source: "stash_toggle_favourite", shoe_id: shoe._id });
+    }
+  }, [toggleFavourite, setUserShoes, toast]);
+
+  const confirmRemoveShoe = useCallback((shoe: UserShoe) => {
+    if (confirm("Are you sure you want to remove this shoe from your sanctuary?")) {
+      removeShoeFromStash(shoe._id);
+    }
+  }, [removeShoeFromStash]);
 
   const updateShoeStats = async () => {
     if (!editingShoe) return;
@@ -467,49 +491,49 @@ export default function ShoeSanctuaryPage() {
       <div className="fixed inset-0 bg-linear-to-b from-black/50 via-black/30 to-black/65 pointer-events-none z-0" />
 
       <div className="relative z-20">
-        <section className="px-fluid-lg md:px-fluid-xl pt-fluid-xl pb-fluid-lg">
+        <section className="px-fluid-lg md:px-fluid-xl pt-fluid-lg pb-fluid-md">
           <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="flex flex-col md:flex-row md:items-end md:justify-between gap-fluid-lg"
+              className="flex flex-wrap items-end justify-between gap-fluid-md"
             >
-              <div>
-                <h1 className="font-so-cloudy uppercase text-fluid-6xl md:text-fluid-7xl text-white leading-none">
-                  Shoe Sanctuary
-                </h1>
+              <h1 className="font-so-cloudy uppercase text-fluid-5xl md:text-fluid-6xl text-white leading-none">
+                Shoe Sanctuary
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-fluid-md">
+                {userShoes.length > 0 && (
+                  <StatsStrip
+                    totalShoes={userShoes.length}
+                    favouriteCount={
+                      Array.isArray(userShoes)
+                        ? userShoes.filter((s) => s.isFavourite).length
+                        : 0
+                    }
+                    brandCount={stashBrands.length}
+                  />
+                )}
+
+                <AddShoeDialog
+                  open={isAddDialogOpen}
+                  onOpenChange={setIsAddDialogOpen}
+                  searchQuery={dialogSearchQuery}
+                  onSearchChange={debouncedSetDialogSearchQuery}
+                  selectedBrand={dialogSelectedBrand}
+                  onBrandChange={setDialogSelectedBrand}
+                  selectedGender={dialogSelectedGender}
+                  onGenderChange={setDialogSelectedGender}
+                  uniqueBrands={uniqueBrands}
+                  searchResults={dialogSearchResults}
+                  onSelectShoe={addShoeToSanctuary}
+                  hasMore={catalogHasMore}
+                  isLoadingMore={catalogIsLoadingMore}
+                  onLoadMore={() => loadMoreCatalog(40)}
+                />
               </div>
-
-              <AddShoeDialog
-                open={isAddDialogOpen}
-                onOpenChange={setIsAddDialogOpen}
-                searchQuery={dialogSearchQuery}
-                onSearchChange={debouncedSetDialogSearchQuery}
-                selectedBrand={dialogSelectedBrand}
-                onBrandChange={setDialogSelectedBrand}
-                selectedGender={dialogSelectedGender}
-                onGenderChange={setDialogSelectedGender}
-                uniqueBrands={uniqueBrands}
-                searchResults={dialogSearchResults}
-                onSelectShoe={addShoeToSanctuary}
-                hasMore={catalogHasMore}
-                isLoadingMore={catalogIsLoadingMore}
-                onLoadMore={() => loadMoreCatalog(40)}
-              />
             </motion.div>
-
-            {userShoes.length > 0 && (
-              <StatsStrip
-                totalShoes={userShoes.length}
-                favouriteCount={
-                  Array.isArray(userShoes)
-                    ? userShoes.filter((s) => s.isFavourite).length
-                    : 0
-                }
-                brandCount={stashBrands.length}
-              />
-            )}
 
             <DataContributionNudge
               stashCount={userShoes.length}
@@ -589,8 +613,10 @@ export default function ShoeSanctuaryPage() {
               <BrandSections
                 groups={brandGroups}
                 specialLabels={specialLabels}
-                onSelect={handleSelectShoe}
+                onOpenStats={handleSelectShoe}
                 onEdit={openShoeEditor}
+                onToggleFavourite={toggleShoeFavourite}
+                onRemove={confirmRemoveShoe}
               />
             )}
           </div>
@@ -607,65 +633,9 @@ export default function ShoeSanctuaryPage() {
         }}
         userShoes={userShoes}
         rank={selectedShoe ? shoeRankings.get(selectedShoe._id) : undefined}
-        onToggleFavourite={
-          selectedShoe
-            ? async () => {
-              try {
-                await toggleFavourite({
-                  userShoeId: selectedShoe._id as Id<"userShoes">,
-                });
-                const newFavStatus = !selectedShoe.isFavourite;
-                void fetchApi("/api/v1/profile", {
-                  method: "PUT",
-                  body: JSON.stringify({
-                    favoriteShoeId: newFavStatus
-                      ? selectedShoe.shoeId
-                      : null,
-                  }),
-                });
-                setSelectedShoe((prev) =>
-                  prev ? { ...prev, isFavourite: newFavStatus } : null,
-                );
-                setUserShoes((prev) =>
-                  prev.map((shoe) =>
-                    shoe._id === selectedShoe._id
-                      ? { ...shoe, isFavourite: newFavStatus }
-                      : shoe,
-                  ),
-                );
-                toast.success(
-                  newFavStatus
-                    ? "Added to favorites!"
-                    : "Removed from favorites",
-                );
-                track(analyticsEvents.stashFavouriteToggled, {
-                  shoe_id: selectedShoe._id,
-                  is_favourite: newFavStatus,
-                });
-              } catch (error) {
-                toast.error("Failed to update favourite status");
-                captureError(error, {
-                  source: "stash_toggle_favourite",
-                  shoe_id: selectedShoe._id,
-                });
-              }
-            }
-            : undefined
-        }
+        onToggleFavourite={selectedShoe ? () => toggleShoeFavourite(selectedShoe) : undefined}
         onEditShoe={selectedShoe ? () => openShoeEditor(selectedShoe) : undefined}
-        onRemoveShoe={
-          selectedShoe
-            ? () => {
-              if (
-                confirm(
-                  "Are you sure you want to remove this shoe from your sanctuary?",
-                )
-              ) {
-                removeShoeFromStash(selectedShoe._id);
-              }
-            }
-            : undefined
-        }
+        onRemoveShoe={selectedShoe ? () => confirmRemoveShoe(selectedShoe) : undefined}
       />
 
       <EditShoeDialog

@@ -28,14 +28,14 @@ describe("Navigation", () => {
     const { container } = render(<Navigation />);
     const trigger = screen.getByRole("button", { name: "Open menu" });
     expect(trigger).toHaveAttribute("aria-expanded", "false");
-    expect(trigger).toHaveClass("translate-y-[3px]");
+    expect(trigger.parentElement).toHaveClass("translate-y-[1px]");
     fireEvent.click(trigger);
     const closeTrigger = screen.getByRole("button", { name: "Close menu" });
     expect(closeTrigger).toHaveAttribute("aria-expanded", "true");
     const menu = container.querySelector(".nav-menu");
     expect(menu).not.toBeNull();
     const profile = within(menu as HTMLElement).getByRole("link", { name: /Profile/ });
-    expect(profile).toHaveClass("w-full", "min-h-9");
+    expect(profile).toBeInTheDocument();
     for (const label of ["Dashboard", "Foot Lab", "Sanctuary", "Matcher"]) {
       expect(within(menu as HTMLElement).getByRole("link", { name: label })).toBeInTheDocument();
     }

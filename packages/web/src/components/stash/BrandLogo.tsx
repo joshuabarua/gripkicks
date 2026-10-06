@@ -44,7 +44,7 @@ export function BrandLogo({ brand, className = "", size = "md" }: BrandLogoProps
   }
 
   return (
-    <span className={`relative block shrink-0 ${size === "sm" ? "h-5 w-20" : "h-9 w-[min(42vw,11rem)]"} ${className}`}>
+    <span title={brand} className={`relative block shrink-0 ${size === "sm" ? "h-5 w-20" : "h-9 w-[min(42vw,11rem)]"} ${className}`}>
       <Image
         src={logo}
         alt={`${brand} logo`}

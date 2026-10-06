@@ -349,7 +349,17 @@
 }
 
 @layer utilities {
-  @keyframes lab-rise {
+  @keyframes cloud-drift-left {
+	from { transform: translate3d(-60vw, 0, 0); }
+	to { transform: translate3d(110vw, 0, 0); }
+}
+
+@keyframes cloud-drift-right {
+	from { transform: translate3d(110vw, 0, 0); }
+	to { transform: translate3d(-60vw, 0, 0); }
+}
+
+@keyframes lab-rise {
     from {
       opacity: 0;
       transform: translate3d(0, 20px, 0);

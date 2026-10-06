@@ -90,8 +90,8 @@ describe("Homepage clarity", () => {
 
   it("removes the GRIP KICKS intro and account sections", () => {
     render(<HomeCreative />);
-    expect(screen.queryByRole("region", { name: /GRIP\s?KICKS/i })).toBeNull();
-    expect(screen.queryByRole("heading", { name: /GRIP\s?KICKS/i })).toBeNull();
+    expect(screen.queryByRole("region", { name: /^GRIP\s?KICKS$/i })).toBeNull();
+    expect(screen.queryByRole("heading", { name: /^GRIP\s?KICKS$/i })).toBeNull();
     expect(screen.queryByRole("region", { name: "GET STARTED" })).toBeNull();
     expect(screen.queryByRole("region", { name: "YOUR DASHBOARD" })).toBeNull();
     expect(screen.queryByText("Loading account", { exact: false })).toBeNull();

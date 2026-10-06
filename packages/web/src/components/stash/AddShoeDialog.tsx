@@ -3,7 +3,9 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ShoeImage from '@/components/ShoeImage';
+import { BrandLogo } from '@/components/stash/BrandLogo';
 import { PaginatedList } from '@/components/ui/PaginatedList';
 import { Footprints, Plus, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -110,18 +112,19 @@ export function AddShoeDialog({
 
           <div className="flex items-center gap-fluid-sm">
             <Label className="text-xs text-neutral-500 font-mono">Brand:</Label>
-            <select
-              value={selectedBrand}
-              onChange={(e) => onBrandChange(e.target.value)}
-              className="flex-1 bg-neutral-900 text-white border border-neutral-800 rounded-xl px-fluid-md py-fluid-xs text-sm focus:border-brand-red/50 focus:outline-hidden focus:ring-1 focus:ring-brand-red/20"
-            >
-              <option value="all">All Brands</option>
-              {uniqueBrands.map((brand) => (
-                <option key={brand} value={brand}>
-                  {brand}
-                </option>
-              ))}
-            </select>
+            <Select value={selectedBrand} onValueChange={onBrandChange}>
+              <SelectTrigger className="flex-1 bg-neutral-900 border-neutral-800 rounded-xl h-12 px-fluid-md text-white focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/20">
+                <SelectValue placeholder="All Brands" />
+              </SelectTrigger>
+              <SelectContent className="bg-neutral-900 border-neutral-800 text-white">
+                <SelectItem value="all" className="focus:bg-neutral-800 focus:text-white">All Brands</SelectItem>
+                {uniqueBrands.map((brand) => (
+                  <SelectItem key={brand} value={brand} className="focus:bg-neutral-800 focus:text-white">
+                    <BrandLogo brand={brand} size="sm" />
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex items-center gap-fluid-sm">
@@ -168,7 +171,7 @@ export function AddShoeDialog({
                     <p className="font-mono font-medium text-white">
                       {group.baseName}
                     </p>
-                    <p className="text-xs text-neutral-500 font-mono">{group.brand}</p>
+                    <div className="mt-1"><BrandLogo brand={group.brand} size="sm" /></div>
                   </div>
                 </div>
                 <div className="space-y-2">

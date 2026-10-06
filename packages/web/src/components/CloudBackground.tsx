@@ -1,8 +1,10 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useCallback, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
+import { useReducedMotion } from 'framer-motion';
 import { useReducedEffects } from '@/hooks/useReducedEffects';
+import { useAnimationsEnabled } from '@/stores/useAppStore';
 
 const subscribe = () => () => undefined;
 const getClientSnapshot = () => true;
@@ -10,75 +12,80 @@ const getServerSnapshot = () => false;
 
 type CloudDirection = 'left' | 'right';
 
-type CloudConfig = {
+interface CloudInstance {
+  id: number;
   src: string;
-  size: number;
+  top: number;
+  width: number;
   duration: number;
-  top: string;
   direction: CloudDirection;
   opacity: number;
   delay: number;
-};
+  animated: boolean;
+}
 
-const CLOUDS: CloudConfig[] = [
-  { src: '/imgs/clouds/cloud1.png', size: 420, duration: 30, top: '8%', direction: 'left', opacity: 0.55, delay: -6 },
-  { src: '/imgs/clouds/cloud2.png', size: 360, duration: 38, top: '27%', direction: 'right', opacity: 0.42, delay: -19 },
-  { src: '/imgs/clouds/cloud3.png', size: 480, duration: 25, top: '46%', direction: 'left', opacity: 0.62, delay: -12 },
-  { src: '/imgs/clouds/cloud4.png', size: 400, duration: 34, top: '65%', direction: 'right', opacity: 0.5, delay: -27 },
-  { src: '/imgs/clouds/cloud5.png', size: 520, duration: 28, top: '82%', direction: 'left', opacity: 0.46, delay: -9 },
-];
+let nextCloudId = 0;
 
-const REDUCED_CLOUDS: CloudConfig[] = [
-  { src: '/imgs/clouds/cloud3.png', size: 380, duration: 0, top: '24%', direction: 'left', opacity: 0.3, delay: 0 },
-];
+function randomCloud(inFlight: boolean, animated = true): CloudInstance {
+  const duration = 24 + Math.random() * 26;
+  return {
+    id: nextCloudId++,
+    src: `/imgs/clouds/cloud${1 + Math.floor(Math.random() * 5)}.png`,
+    top: 2 + Math.random() * 83,
+    width: 260 + Math.random() * 300,
+    duration,
+    direction: Math.random() < 0.5 ? 'left' : 'right',
+    opacity: 0.35 + Math.random() * 0.3,
+    delay: inFlight ? -Math.random() * duration : Math.random() * 8,
+    animated,
+  };
+}
+
+function staticCloud(): CloudInstance {
+  const cloud = randomCloud(false, false);
+  return { ...cloud, delay: 0 };
+}
 
 export default function CloudBackground() {
   const mounted = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
   const isReducedEffects = useReducedEffects();
+  const prefersReducedMotion = useReducedMotion();
+  const animationsEnabled = useAnimationsEnabled();
+  const staticOnly = prefersReducedMotion === true || !animationsEnabled;
+  const count = staticOnly ? 3 : isReducedEffects ? 4 : 7;
+
+  const [clouds, setClouds] = useState<CloudInstance[]>(() =>
+    Array.from({ length: count }, () => (staticOnly ? staticCloud() : randomCloud(true))),
+  );
+
+  const respawn = useCallback((id: number) => {
+    setClouds((previous) => previous.map((cloud) => (cloud.id === id ? randomCloud(false) : cloud)));
+  }, []);
 
   if (!mounted) return null;
 
-  const clouds = isReducedEffects ? REDUCED_CLOUDS : CLOUDS;
-
   return (
-    <div
-      className="absolute inset-0 overflow-hidden pointer-events-none z-10"
-      aria-hidden="true"
-    >
+    <div className="pointer-events-none fixed inset-0 z-10 overflow-hidden" aria-hidden="true">
       {clouds.map((cloud) => (
         <div
-          key={cloud.src}
+          key={cloud.id}
           className="absolute will-change-transform"
-          style={{
-            width: cloud.size,
-            top: cloud.top,
-            opacity: cloud.opacity,
-            ...(isReducedEffects
-              ? { left: '6%' }
-              : { animation: `cloud-drift-${cloud.direction} ${cloud.duration}s linear ${cloud.delay}s infinite` }),
-          }}
+          onAnimationEnd={cloud.animated ? () => respawn(cloud.id) : undefined}
+          style={cloud.animated
+            ? { left: 0, top: `${cloud.top}%`, width: cloud.width, opacity: cloud.opacity, animation: `cloud-drift-${cloud.direction} ${cloud.duration}s linear ${cloud.delay}s` }
+            : { left: `${5 + (cloud.id * 29) % 60}%`, top: `${cloud.top}%`, width: cloud.width, opacity: cloud.opacity }}
         >
           <Image
             src={cloud.src}
             alt=""
-            width={cloud.size}
-            height={cloud.size * 0.6}
+            width={cloud.width}
+            height={cloud.width * 0.6}
             loading="lazy"
             sizes="(max-width: 1024px) 360px, 520px"
             style={{ maxHeight: '400px', width: 'auto', height: 'auto' }}
           />
         </div>
       ))}
-      <style jsx>{`
-        @keyframes cloud-drift-left {
-          from { transform: translate3d(-120vw, 0, 0); }
-          to { transform: translate3d(120vw, 0, 0); }
-        }
-        @keyframes cloud-drift-right {
-          from { transform: translate3d(120vw, 0, 0); }
-          to { transform: translate3d(-120vw, 0, 0); }
-        }
-      `}</style>
     </div>
   );
 }
