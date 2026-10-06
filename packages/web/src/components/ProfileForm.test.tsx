@@ -38,9 +38,6 @@ vi.mock("@/components/ui/card", () => ({
   CardTitle: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
 
-vi.mock("@/components/ui/UserAvatar", () => ({
-  UserAvatar: () => <div>avatar</div>,
-}));
 
 import { ProfileForm } from "@/components/ProfileForm";
 
@@ -62,8 +59,6 @@ describe("ProfileForm", () => {
     render(
       <ProfileForm
         initialProfile={{ name: "Original Climber" }}
-        email="climber@example.com"
-        userId="user_123"
         onProfileUpdated={onProfileUpdated}
         onSuccess={onSuccess}
       />,

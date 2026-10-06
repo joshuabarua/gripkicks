@@ -285,7 +285,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <h3 className="font-ball-pill text-2xl text-white">Profile Information</h3>
-                      <p className="font-mono text-sm text-neutral-500">Update your name and avatar</p>
+                      <p className="font-mono text-sm text-neutral-500">Update your name</p>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" className="hidden sm:flex border border-white/10 rounded-full px-6">
@@ -303,10 +303,8 @@ export default function ProfilePage() {
                       <div className="p-6 md:p-8">
                         <ProfileForm
                           initialProfile={{ name: displayName }}
-                          email={displayEmail}
                           onProfileUpdated={handleProfileUpdated}
                           onSuccess={handleProfileSaved}
-                          {...(displayUserId ? { userId: displayUserId } : {})}
                         />
                       </div>
                     </motion.div>

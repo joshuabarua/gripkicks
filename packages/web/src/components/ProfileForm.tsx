@@ -17,7 +17,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import { UserAvatar } from "@/components/ui/UserAvatar";
 import { useFormChange } from "@/hooks/useFormChange";
 
 const profileSchema = z.object({
@@ -31,16 +30,12 @@ type ProfileData = z.infer<typeof profileSchema>;
 
 interface ProfileFormProps {
   initialProfile?: ProfileData | null;
-  email?: string;
-  userId?: string;
   onProfileUpdated?: (profile: ProfileData) => void;
   onSuccess?: () => void;
 }
 
 export function ProfileForm({
   initialProfile,
-  email,
-  userId,
   onProfileUpdated,
   onSuccess,
 }: ProfileFormProps) {
@@ -123,22 +118,8 @@ export function ProfileForm({
   return (
     <Card className="max-w-2xl">
       <CardHeader>
-        <div className="flex items-center gap-4">
-          <UserAvatar
-            userId={userId}
-            name={formData.name}
-            email={email}
-            className="h-16 w-16 rounded-full"
-            size={96}
-          />
-          <div>
-            <CardTitle className="text-2xl">Profile Settings</CardTitle>
-            <CardDescription>
-              Update your profile information. Avatar is generated
-              automatically.
-            </CardDescription>
-          </div>
-        </div>
+        <CardTitle className="text-2xl">Profile Settings</CardTitle>
+        <CardDescription>Update your profile information.</CardDescription>
       </CardHeader>
       <CardContent>
         {profileLoader.isLoading ? (
