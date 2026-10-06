@@ -66,9 +66,10 @@ const slideIn = {
 
 interface NavLinksProps {
     footerAction?: React.ReactNode;
+    profileSlot?: React.ReactNode;
 }
 
-export default function NavLinks({ footerAction }: NavLinksProps) {
+export default function NavLinks({ footerAction, profileSlot }: NavLinksProps) {
     const { data: session } = useSession();
     const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
 
@@ -92,6 +93,19 @@ export default function NavLinks({ footerAction }: NavLinksProps) {
                         </Link>
                     </motion.div>
                 ))}
+
+                {profileSlot && (
+                    <motion.div
+                        custom={mainLinks.length}
+                        initial="initial"
+                        animate="enter"
+                        exit="exit"
+                        variants={perspective}
+                        className="pt-2"
+                    >
+                        {profileSlot}
+                    </motion.div>
+                )}
 
                 <div className="footer mt-auto border-t border-black/10 pt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
                     {[...secondaryLinks, ...(isAdmin ? [adminLink] : [])].map((link, i) => (

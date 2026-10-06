@@ -29,4 +29,15 @@ describe("NavLinks", () => {
     expect(screen.queryByText(/3d selector/i)).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /3d selector/i })).not.toBeInTheDocument();
   });
+
+  it("renders profileSlot between the main links and the footer", () => {
+    render(<NavLinks profileSlot={<div>profile-slot</div>} />);
+
+    const slot = screen.getByText("profile-slot");
+    const matcher = screen.getByRole("link", { name: /matcher/i });
+    const about = screen.getByRole("link", { name: /about/i });
+
+    expect(matcher.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(slot.compareDocumentPosition(about) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });
