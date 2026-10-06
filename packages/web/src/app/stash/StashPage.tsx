@@ -7,6 +7,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { motion } from "framer-motion";
+import { Clock, Crown, Heart, Star } from "lucide-react";
 import { useSession } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
 import type { UserShoe } from "@/types/api";
@@ -610,7 +611,26 @@ export default function ShoeSanctuaryPage() {
             )}
 
             {!isLoading && filteredShoes.length > 0 && (
-              <BrandSections
+              <>
+                <div aria-label="Badge key" className="flex flex-wrap items-center gap-x-fluid-lg gap-y-2 font-mono text-[11px] uppercase tracking-wider text-brand-putty">
+                  <span className="flex items-center gap-2" title="Marked as favourite">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-sm bg-brand-red text-black"><Star aria-hidden="true" className="h-3 w-3 fill-current" /></span>
+                    Favourite
+                  </span>
+                  <span className="flex items-center gap-2" title="Highest comfort score in your collection">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk"><Heart aria-hidden="true" className="h-3 w-3" /></span>
+                    Most comfortable
+                  </span>
+                  <span className="flex items-center gap-2" title="Most worn shoe in your collection">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk"><Crown aria-hidden="true" className="h-3 w-3" /></span>
+                    Most worn
+                  </span>
+                  <span className="flex items-center gap-2" title="Oldest shoe in your collection">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk"><Clock aria-hidden="true" className="h-3 w-3" /></span>
+                    Oldest
+                  </span>
+                </div>
+                <BrandSections
                 groups={brandGroups}
                 specialLabels={specialLabels}
                 onOpenStats={handleSelectShoe}
@@ -618,6 +638,7 @@ export default function ShoeSanctuaryPage() {
                 onToggleFavourite={toggleShoeFavourite}
                 onRemove={confirmRemoveShoe}
               />
+              </>
             )}
           </div>
         </section>

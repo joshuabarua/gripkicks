@@ -3,7 +3,7 @@
 import { useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowDown, ArrowUpRight, Volume2, VolumeX } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
@@ -43,13 +43,23 @@ export default function HomeCreative() {
 
 function VideoSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasEnded, setHasEnded] = useState(false);
 
   const toggleMute = () => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = !video.muted;
     setIsMuted(video.muted);
+  };
+
+  const togglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (hasEnded) video.currentTime = 0;
+    if (video.paused) void video.play();
+    else video.pause();
   };
 
   return (
@@ -59,18 +69,31 @@ function VideoSection() {
           <video
             ref={videoRef}
             src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT}/gripkicks/vids/20261005_GripKicks_v02.mp4`}
-            autoPlay
-            muted
-            loop
             playsInline
             preload="metadata"
-            className="block h-auto w-full"
+            onClick={togglePlay}
+            onPlay={() => { setIsPlaying(true); setHasEnded(false); }}
+            onPause={() => setIsPlaying(false)}
+            onEnded={() => { setIsPlaying(false); setHasEnded(true); }}
+            className="block h-auto w-full cursor-pointer"
           />
+          {!isPlaying && (
+            <button
+              type="button"
+              onClick={togglePlay}
+              aria-label={hasEnded ? "Play video again" : "Play video"}
+              className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 transition-colors hover:bg-black/30 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-brand-chalk"
+            >
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-red text-black shadow-lg shadow-brand-red/30">
+                {hasEnded ? <RotateCcw aria-hidden="true" className="h-7 w-7" /> : <Play aria-hidden="true" className="h-7 w-7 fill-current" />}
+              </span>
+            </button>
+          )}
           <button
             type="button"
             onClick={toggleMute}
             aria-label={isMuted ? "Unmute video" : "Mute video"}
-            className="absolute bottom-4 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-brand-base/70 text-brand-chalk transition-colors hover:bg-brand-surface focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-chalk"
+            className="absolute bottom-4 right-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-brand-base/70 text-brand-chalk transition-colors hover:bg-brand-surface focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-chalk"
           >
             {isMuted ? <VolumeX aria-hidden="true" className="h-5 w-5" /> : <Volume2 aria-hidden="true" className="h-5 w-5" />}
           </button>

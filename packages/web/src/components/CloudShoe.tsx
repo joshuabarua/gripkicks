@@ -25,6 +25,12 @@ function formatCondition(condition?: string) {
   return condition.replaceAll('-', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+const specialLabelTitles = {
+  'most-comfy': 'Highest comfort score in your collection',
+  'oldest': 'Oldest shoe in your collection',
+  'most-worn': 'Most worn shoe in your collection',
+} as const;
+
 const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabel, onOpenStats, onEdit, onToggleFavourite, onRemove }) => {
   const details = shoe.shoe ?? shoe.shoeDetails;
   const brand = details?.brand ?? 'Unknown Brand';
@@ -93,12 +99,12 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabe
           <BrandLogo brand={brand} size="sm" className="max-w-[70%]" />
           <div className="flex items-center gap-1.5">
             {specialLabel && (
-              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk">
+              <span role="img" aria-label={specialLabelTitles[specialLabel.type]} title={specialLabelTitles[specialLabel.type]} className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk">
                 {specialLabel.icon}
               </span>
             )}
             {shoe.isFavourite && (
-              <span className="flex h-6 w-6 items-center justify-center rounded-sm bg-brand-red text-black">
+              <span role="img" aria-label="Favourite" title="Marked as favourite" className="flex h-6 w-6 items-center justify-center rounded-sm bg-brand-red text-black">
                 <Star className="h-3 w-3 fill-current" />
               </span>
             )}

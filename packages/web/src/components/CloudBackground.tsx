@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { useReducedMotion } from 'framer-motion';
 import { useReducedEffects } from '@/hooks/useReducedEffects';
@@ -62,17 +62,42 @@ export default function CloudBackground() {
     setClouds((previous) => previous.map((cloud) => (cloud.id === id ? randomCloud(false) : cloud)));
   }, []);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    let raf = 0;
+    const update = () => {
+      const footer = document.querySelector('footer');
+      const overlap = footer ? Math.max(0, window.innerHeight - footer.getBoundingClientRect().top) : 0;
+      el.style.clipPath = overlap > 0 ? `inset(0 0 ${overlap}px 0)` : '';
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
   if (!mounted) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-10 overflow-hidden" aria-hidden="true">
+    <div ref={containerRef} className="pointer-events-none fixed inset-0 z-10 overflow-hidden" aria-hidden="true">
       {clouds.map((cloud) => (
         <div
           key={cloud.id}
           className="absolute will-change-transform"
           onAnimationEnd={cloud.animated ? () => respawn(cloud.id) : undefined}
           style={cloud.animated
-            ? { left: 0, top: `${cloud.top}%`, width: cloud.width, opacity: cloud.opacity, animation: `cloud-drift-${cloud.direction} ${cloud.duration}s linear ${cloud.delay}s` }
+            ? { left: 0, top: `${cloud.top}%`, width: cloud.width, opacity: cloud.opacity, animation: `cloud-drift-${cloud.direction} ${cloud.duration}s linear ${cloud.delay}s both` }
             : { left: `${5 + (cloud.id * 29) % 60}%`, top: `${cloud.top}%`, width: cloud.width, opacity: cloud.opacity }}
         >
           <Image
