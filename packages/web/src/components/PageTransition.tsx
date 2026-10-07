@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useLoading } from "@/contexts/LoadingContext";
 import { LoadingBar } from "@/components/ui/loading";
@@ -7,6 +8,13 @@ import { LoadingBar } from "@/components/ui/loading";
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const { isLoading } = useLoading();
   const pathname = usePathname();
+
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <>

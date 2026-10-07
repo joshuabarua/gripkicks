@@ -12,7 +12,7 @@ import { useReducedEffects } from "@/hooks/useReducedEffects";
 import { CommunityMilestone } from "@/components/CommunityMilestone";
 import { supportsWebGL } from "@/components/3d/webgl-utils";
 import { PageSurface } from "@/components/ui/PageSurface";
-import { CompareArrows, RatingGauge, ToeProfile } from "@/components/foot/FootGlyphs";
+import { CompareArrows, ScoreTag, ToeProfile } from "@/components/foot/FootGlyphs";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
@@ -170,7 +170,7 @@ function VideoSection() {
 function HowItWorksSection() {
   const steps = [
     { title: "Map your foot", copy: "Set your foot shape and volume.", glyph: <div className="w-20"><ToeProfile shape="egyptian" active height={48} /></div> },
-    { title: "Rate your shoes", copy: "Record size, comfort, performance and durability.", glyph: <div className="w-20"><RatingGauge active height={48} /></div> },
+    { title: "Rate your shoes", copy: "Record size, comfort, performance and durability.", glyph: <div className="w-20"><ScoreTag active height={48} /></div> },
     { title: "Compare fits", copy: "Check catalog matches and ratings from climbers with your foot profile.", glyph: <div className="w-20"><CompareArrows active height={48} /></div> },
   ];
 
