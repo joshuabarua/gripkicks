@@ -1,3 +1,18 @@
+let webglSupport: boolean | null = null;
+
+export function supportsWebGL(): boolean {
+  if (webglSupport !== null) return webglSupport;
+  try {
+    const probe = document.createElement("canvas");
+    const gl = (probe.getContext("webgl2") || probe.getContext("webgl")) as WebGLRenderingContext | null;
+    webglSupport = Boolean(gl);
+    gl?.getExtension("WEBGL_lose_context")?.loseContext();
+  } catch {
+    webglSupport = false;
+  }
+  return webglSupport;
+}
+
 export function compileShader(gl: WebGLRenderingContext | WebGL2RenderingContext, type: number, source: string, componentName: string) {
   const shader = gl.createShader(type);
   if (!shader) return null;

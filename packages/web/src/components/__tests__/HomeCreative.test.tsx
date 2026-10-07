@@ -9,6 +9,7 @@ vi.mock("@/lib/auth", () => ({ useSession: mocks.session }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("convex/react", () => ({ useQuery: mocks.count }));
 vi.mock("@/hooks/useReducedEffects", () => ({ useReducedEffects: () => true }));
+vi.mock("@/components/3d/webgl-utils", () => ({ supportsWebGL: () => true }));
 vi.mock("next/dynamic", () => ({ default: () => () => <div data-testid="hero-scene" /> }));
 
 beforeEach(() => {

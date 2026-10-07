@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { compileShader, createProgram, parseHex, setupCanvasResize, startRenderLoop, stopRenderLoop, RenderLoopState } from "./webgl-utils";
+import { compileShader, createProgram, parseHex, setupCanvasResize, startRenderLoop, stopRenderLoop, supportsWebGL, RenderLoopState } from "./webgl-utils";
 
 const VERTEX_SHADER = `#version 300 es
 void main() {
@@ -105,9 +105,19 @@ export default function EtherField({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const applyFallback = () => {
+      const p = propsRef.current;
+      canvas.style.background = `radial-gradient(90% 70% at 50% 40%, ${p.accentColor}26, transparent 60%), linear-gradient(180deg, ${p.ambientColor}, #05070a)`;
+    };
+
+    if (!supportsWebGL()) {
+      applyFallback();
+      return;
+    }
+
     const gl = canvas.getContext("webgl2", { antialias: false, alpha: true });
     if (!gl) {
-      console.warn("[EtherField] WebGL2 not supported; component disabled.");
+      applyFallback();
       return;
     }
 
@@ -149,9 +159,15 @@ export default function EtherField({
       mouseRef.current.targetStrength = 0;
     };
 
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      applyFallback();
+    };
+
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerleave", handlePointerLeave, { passive: true });
     window.addEventListener("blur", handlePointerLeave);
+    canvas.addEventListener("webglcontextlost", handleContextLost);
 
     const render = (dt: number, state: RenderLoopState) => {
       const p = propsRef.current;
@@ -182,7 +198,8 @@ export default function EtherField({
       ro.disconnect();
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerleave", handlePointerLeave);
-      window.removeEventListener("blur-sm", handlePointerLeave);
+      window.removeEventListener("blur", handlePointerLeave);
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
       gl.deleteProgram(program);
       gl.deleteShader(vertexShader);
       gl.deleteShader(fragmentShader);

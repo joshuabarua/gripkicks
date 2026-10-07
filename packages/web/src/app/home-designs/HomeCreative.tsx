@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowDown, ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
@@ -9,6 +9,7 @@ import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
 import { CommunityMilestone } from "@/components/CommunityMilestone";
+import { supportsWebGL } from "@/components/3d/webgl-utils";
 import { PageSurface } from "@/components/ui/PageSurface";
 import { CompareArrows, RatingGauge, ToeProfile } from "@/components/foot/FootGlyphs";
 
@@ -25,13 +26,22 @@ const Scene = dynamic(() => import("@/components/3d/Scene"), {
 });
 const EtherField = dynamic(() => import("@/components/3d/EtherField"), { ssr: false, loading: () => null });
 
+const subscribeWebgl = () => () => undefined;
+const getServerWebglSnapshot = () => false;
+
 function HeroSection({ isReducedEffects, onSceneReady }: { isReducedEffects: boolean; onSceneReady: () => void }) {
+  const webgl = useSyncExternalStore(subscribeWebgl, supportsWebGL, getServerWebglSnapshot);
+
+  useEffect(() => {
+    if (!webgl) onSceneReady();
+  }, [webgl, onSceneReady]);
+
   return (
     <section id="home-hero" aria-label="Interactive climbing shoe" className="relative h-[calc(100svh-3.5rem)] min-h-[360px] overflow-hidden">
       <div className="absolute inset-0">
         <EtherField className="absolute inset-0 h-full w-full" paused={isReducedEffects} speed={isReducedEffects ? 0 : 0.7} ambientColor="#171c27" accentColor="#ff5a3d" />
       </div>
-      <div className="absolute bottom-0 left-0 right-0 top-[10px] z-1"><Scene onReady={onSceneReady} /></div>
+      {webgl && <div className="absolute bottom-0 left-0 right-0 top-[10px] z-1"><Scene onReady={onSceneReady} /></div>}
       <Link href="#home-steps" aria-label="Scroll to homepage content" className="group absolute bottom-fluid-lg right-fluid-md z-10 flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-brand-base/70 text-brand-chalk transition-colors hover:bg-brand-surface focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-chalk md:right-fluid-xl"><ArrowDown aria-hidden="true" className="h-6 w-6 transition-transform duration-300 group-hover:translate-y-1 motion-reduce:transform-none" /></Link>
     </section>
   );
@@ -41,6 +51,7 @@ export default function HomeCreative() {
   const isReducedEffects = useReducedEffects();
   const countData = useQuery(api.users.getCount);
   const [sceneReady, setSceneReady] = useState(isReducedEffects);
+  const handleSceneReady = useCallback(() => setSceneReady(true), []);
 
   useEffect(() => {
     const failsafe = setTimeout(() => setSceneReady(true), 6000);
@@ -57,7 +68,7 @@ export default function HomeCreative() {
   return (
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
       <div aria-hidden="true" className="grain-overlay-animated" />
-      <HeroSection isReducedEffects={isReducedEffects} onSceneReady={() => setSceneReady(true)} />
+      <HeroSection isReducedEffects={isReducedEffects} onSceneReady={handleSceneReady} />
       {sections.map((section, i) => (
         <motion.div
           key={i}
