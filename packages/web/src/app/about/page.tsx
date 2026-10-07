@@ -53,11 +53,15 @@ export default function AboutPage() {
                 />
               </div>
               <div className="space-y-6 font-mono text-base md:text-lg text-brand-putty/80 leading-relaxed">
-              <p>My name&apos;s Josh. I&apos;m a climber, developer and guy with weird shaped feet.</p>
-              <p>Over all my years of climbing, every shoe has felt like it should fit better. Call it an obsession or cope, but I believe shoes really affect how we move on the wall. I&apos;ve had enough heel hooks rip my shoe off and enough big, puffy air gaps in my toe box.</p>
-              <p>So, I built this to find my Cinderella shoe. One day I&apos;ll find the perfect pair. Maybe, just maybe, I&apos;ll help some other climbers find theirs too.</p>
-              <p>The site is free because it depends on the climbing community. The more the merrier, and I&apos;ll keep it free. I don&apos;t sell your data, I don&apos;t keep anything I don&apos;t need, and I don&apos;t have a foot fetish.</p>
-              <p>Anyway, enjoy the site. I hope it helps. Mobile apps are coming soon.</p>
+                <p>My name&apos;s Josh. I&apos;m a climber, developer and guy with weird shaped feet.</p>
+                <p>Through my years of climbing, every shoe has felt like it could probably fit alittle better. Call it copium, but I believe shoes really affect how we move on the wall. I&apos;ve had enough heel hooks rip my shoe off and enough big, puffy air gaps in my toe box.</p>
+                <p>So, I built this to find my shoe, my Cinderella slipper, if you will. One day I&apos;ll find the perfect pair. Maybe, I&apos;ll help some other climbers find theirs too.</p>
+                <p>The site is free because it depends on the climbing community. The more the merrier, and I&apos;ll keep it free. I don&apos;t sell your data, I don&apos;t keep anything I don&apos;t need, and I don&apos;t have a foot fetish.</p>
+
+                <p>If you have any ideas you think I should include, I&apos;m open. Shoot me a message <a href="mailto:gripkicksofficial@gmail.com">here</a></p>
+                <p>Anyway, enjoy the site. I hope it helps. Mobile apps are coming soon.</p>
+
+                <p>— Josh</p>
               </div>
             </div>
           </motion.div>
