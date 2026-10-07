@@ -41,7 +41,11 @@ function HeroSection({ isReducedEffects, onSceneReady }: { isReducedEffects: boo
       <div className="absolute inset-0">
         <EtherField className="absolute inset-0 h-full w-full" paused={isReducedEffects} speed={isReducedEffects ? 0 : 0.7} ambientColor="#171c27" accentColor="#ff5a3d" />
       </div>
-      {webgl && <div className="absolute bottom-0 left-0 right-0 top-[10px] z-1"><Scene onReady={onSceneReady} /></div>}
+      {webgl && (
+        <div className="absolute bottom-0 left-0 right-0 top-[10px] z-1">
+          <Scene onReady={onSceneReady} />
+        </div>
+      )}
       <Link href="#home-steps" aria-label="Scroll to homepage content" className="group absolute bottom-fluid-lg right-fluid-md z-10 flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-brand-base/70 text-brand-chalk transition-colors hover:bg-brand-surface focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-chalk md:right-fluid-xl"><ArrowDown aria-hidden="true" className="h-6 w-6 transition-transform duration-300 group-hover:translate-y-1 motion-reduce:transform-none" /></Link>
     </section>
   );

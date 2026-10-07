@@ -8,6 +8,8 @@ import ShoeModel from "./ShoeModel";
 const Scene = ({ onReady }: { onReady?: () => void }) => {
   const [contextLost, setContextLost] = useState(false);
   const [canvasKey, setCanvasKey] = useState(0);
+  const { progress } = useProgress();
+  const loaded = progress >= 100;
 
   const canvasConfig = useMemo(
     () => ({
@@ -44,8 +46,9 @@ const Scene = ({ onReady }: { onReady?: () => void }) => {
     <div className="relative w-full h-full">
       <SceneLoaderOverlay />
       <SceneReadyWatcher onReady={onReady} />
-      <Canvas
-        key={canvasKey}
+      <div className={`h-full w-full transition-opacity duration-1000 ${loaded ? "opacity-100" : "opacity-0"}`}>
+        <Canvas
+          key={canvasKey}
         frameloop="always"
         style={{
           backgroundColor: "transparent",
@@ -74,6 +77,7 @@ const Scene = ({ onReady }: { onReady?: () => void }) => {
           <ShoeModel />
         </Suspense>
       </Canvas>
+      </div>
     </div>
   );
 };
