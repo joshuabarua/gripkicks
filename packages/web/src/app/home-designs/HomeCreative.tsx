@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowDown, ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
+import { useProgress } from "@react-three/drei";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
@@ -28,6 +29,21 @@ const EtherField = dynamic(() => import("@/components/3d/EtherField"), { ssr: fa
 
 const subscribeWebgl = () => () => undefined;
 const getServerWebglSnapshot = () => false;
+
+function HeroLoadCover({ ready }: { ready: boolean }) {
+  const { progress } = useProgress();
+  return (
+    <div
+      aria-hidden={ready}
+      className={`fixed inset-0 z-[60] flex items-center justify-center bg-black transition-opacity duration-[1800ms] delay-300 ${ready ? "pointer-events-none opacity-0" : "opacity-100"}`}
+    >
+      <div className="flex items-center gap-3">
+        <span className="h-2 w-2 animate-ping rounded-full bg-brand-red" />
+        <span className="lab-label">Loading {Math.round(progress)}%</span>
+      </div>
+    </div>
+  );
+}
 
 function HeroSection({ isReducedEffects, onSceneReady }: { isReducedEffects: boolean; onSceneReady: () => void }) {
   const webgl = useSyncExternalStore(subscribeWebgl, supportsWebGL, getServerWebglSnapshot);
@@ -72,6 +88,7 @@ export default function HomeCreative() {
   return (
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
       <div aria-hidden="true" className="grain-overlay-animated" />
+      <HeroLoadCover ready={sceneReady} />
       <HeroSection isReducedEffects={isReducedEffects} onSceneReady={handleSceneReady} />
       {sections.map((section, i) => (
         <motion.div

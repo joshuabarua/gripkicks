@@ -46,7 +46,7 @@ const Scene = ({ onReady }: { onReady?: () => void }) => {
     <div className="relative w-full h-full">
       <SceneLoaderOverlay />
       <SceneReadyWatcher onReady={onReady} />
-      <div className={`h-full w-full transition-opacity duration-1000 ${loaded ? "opacity-100" : "opacity-0"}`}>
+      <div className={`h-full w-full transition-opacity duration-[1500ms] delay-500 ${loaded ? "opacity-100" : "opacity-0"}`}>
         <Canvas
           key={canvasKey}
         frameloop="always"
