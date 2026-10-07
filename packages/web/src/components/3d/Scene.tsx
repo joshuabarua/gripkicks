@@ -1,11 +1,11 @@
 "use client";
 
-import React, { Suspense, useState, useCallback, useMemo } from "react";
+import React, { Suspense, useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment, useProgress } from "@react-three/drei";
 import ShoeModel from "./ShoeModel";
 
-const Scene = () => {
+const Scene = ({ onReady }: { onReady?: () => void }) => {
   const [contextLost, setContextLost] = useState(false);
   const [canvasKey, setCanvasKey] = useState(0);
 
@@ -43,6 +43,7 @@ const Scene = () => {
   return (
     <div className="relative w-full h-full">
       <SceneLoaderOverlay />
+      <SceneReadyWatcher onReady={onReady} />
       <Canvas
         key={canvasKey}
         frameloop="always"
@@ -77,11 +78,24 @@ const Scene = () => {
   );
 };
 
+function SceneReadyWatcher({ onReady }: { onReady?: (() => void) | undefined }) {
+  const { progress } = useProgress();
+  const fired = useRef(false);
+  useEffect(() => {
+    if (progress >= 100 && !fired.current) {
+      fired.current = true;
+      onReady?.();
+    }
+  }, [progress, onReady]);
+  return null;
+}
+
 function SceneLoaderOverlay() {
   const { active, progress } = useProgress();
   return (
     <div
-      className={`pointer-events-none absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-700 ${active ? "opacity-100" : "opacity-0"}`}
+      style={{ transitionDelay: active ? "0ms" : "400ms" }}
+      className={`pointer-events-none absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-1000 ${active ? "opacity-100" : "opacity-0"}`}
     >
       <div className="flex items-center gap-3">
         <span className="h-2 w-2 animate-ping rounded-full bg-brand-red" />
