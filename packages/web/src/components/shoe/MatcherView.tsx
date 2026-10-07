@@ -223,18 +223,18 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
           <div className="relative h-48 border-b border-white/6 bg-black/40 p-fluid-lg sm:h-56">
             <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="h-full w-full" transformation={[{ height: 280, width: 400, crop: "at_max", format: "png" }]} />
             <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 font-mono text-sm font-semibold text-brand-chalk">{idx + 1}</span>
+            <div className="absolute right-3 top-3 flex items-center rounded-lg bg-black/70 px-2.5 py-1.5 backdrop-blur-sm">
+              <BrandLogo brand={shoe.brand} size="sm" tooltip />
+            </div>
             <div className="absolute bottom-3 right-3 rounded-lg bg-black/70 px-2.5 py-1.5 text-right font-mono backdrop-blur-sm">
               <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-xs font-semibold" : "font-ball-pill text-lg"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
               <p className="lab-label mt-0.5">{mode === "personal" ? hasProfile ? "Match" : "Profile needed" : shoe.secondaryLabel}</p>
             </div>
           </div>
           <div className="space-y-4 p-fluid-lg">
-            <div className="flex min-w-0 items-center gap-3">
-              <BrandLogo brand={shoe.brand} size="lg" className="shrink-0" />
-              <div className="min-w-0">
-                <p className="font-mono text-xs uppercase tracking-wider text-brand-putty">{shoe.brand}</p>
-                <h3 className="wrap-break-word font-mono text-lg font-semibold leading-snug">{shoe.name}</h3>
-              </div>
+            <div className="min-w-0">
+              <p className="font-mono text-xs uppercase tracking-wider text-brand-putty">{shoe.brand}</p>
+              <h3 className="wrap-break-word font-mono text-lg font-semibold leading-snug">{shoe.name}</h3>
             </div>
             {shoe.breakdown && (
               <details className="border-t border-white/8 pt-2">
