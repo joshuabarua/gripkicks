@@ -29,6 +29,7 @@ interface AddShoeDialogProps {
   onSelectShoe: (shoeId: string) => void;
   hasMore: boolean;
   isLoadingMore: boolean;
+  isSearching?: boolean;
   onLoadMore: () => void;
 }
 
@@ -46,6 +47,7 @@ export function AddShoeDialog({
   onSelectShoe,
   hasMore,
   isLoadingMore,
+  isSearching = false,
   onLoadMore,
 }: AddShoeDialogProps) {
   const groupedSearchResults = useMemo(
@@ -207,7 +209,14 @@ export function AddShoeDialog({
             completedIndicator={<span className="font-mono text-xs text-neutral-500">All shoes loaded</span>}
           />
 
-          {groupedSearchResults.length === 0 && !isLoadingMore && (
+          {groupedSearchResults.length === 0 && isSearching && (
+            <div className="flex items-center justify-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-900/60 px-6 py-10 font-mono text-sm text-neutral-500">
+              <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-neutral-500"></div>
+              <span>Searching shoes...</span>
+            </div>
+          )}
+
+          {groupedSearchResults.length === 0 && !isLoadingMore && !isSearching && (
             <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 px-6 py-10 text-center">
               <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-brand-red/10 flex items-center justify-center">
                 <Footprints className="w-6 h-6 text-brand-red" />

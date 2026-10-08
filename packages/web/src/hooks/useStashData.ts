@@ -167,6 +167,7 @@ export function useStashData(options?: UseStashDataOptions) {
     userData,
     catalogHasMore: catalogStatus === "CanLoadMore",
     catalogIsLoadingMore: catalogStatus === "LoadingMore",
+    catalogIsSearching: catalogStatus === "LoadingFirstPage",
     loadMoreCatalog,
   } as const;
 }

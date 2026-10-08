@@ -93,9 +93,10 @@ export default function HomeCreative() {
       {sections.map((section, i) => (
         <motion.div
           key={i}
-          initial={isReducedEffects ? false : { opacity: 0, y: 28 }}
-          animate={sceneReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-          transition={{ duration: 0.7, delay: 0.4 + i * 0.18, ease: "easeOut" }}
+          initial={isReducedEffects ? false : { opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+          transition={{ duration: 0.7, delay: i * 0.08, ease: "easeOut" }}
         >
           {section}
         </motion.div>

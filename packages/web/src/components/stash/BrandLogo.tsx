@@ -53,7 +53,7 @@ export function BrandLogo({ brand, className = "", size = "md", tooltip = false 
         fill
         unoptimized
         sizes={size === "sm" ? "80px" : size === "lg" ? "160px" : "176px"}
-        className="object-contain object-left brightness-0 invert"
+        className="object-contain object-center brightness-0 invert"
       />
     </span>
   );

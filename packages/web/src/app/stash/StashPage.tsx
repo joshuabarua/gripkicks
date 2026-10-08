@@ -94,6 +94,7 @@ export default function ShoeSanctuaryPage() {
     userData,
     catalogHasMore,
     catalogIsLoadingMore,
+    catalogIsSearching,
     loadMoreCatalog,
   } = useStashData({
     catalog: {
@@ -531,6 +532,7 @@ export default function ShoeSanctuaryPage() {
                   onSelectShoe={addShoeToSanctuary}
                   hasMore={catalogHasMore}
                   isLoadingMore={catalogIsLoadingMore}
+                  isSearching={catalogIsSearching}
                   onLoadMore={() => loadMoreCatalog(40)}
                 />
               </div>
