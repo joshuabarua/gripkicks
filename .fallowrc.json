@@ -7,5 +7,15 @@
     "**/__tests__/**",
     "scripts/**",
     "convex/_generated/**"
+  ],
+  "ignoreExports": [
+    {
+      "file": "packages/web/src/hooks/useFootProfile.ts",
+      "exports": ["normalizeBackendFootProfile"]
+    },
+    {
+      "file": "packages/web/src/hooks/useShoeScoring.ts",
+      "exports": ["calculateShoeScore"]
+    }
   ]
 }

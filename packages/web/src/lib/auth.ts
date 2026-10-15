@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createAuthClient } from "better-auth/react";
 import { jwtClient } from "better-auth/client/plugins";
 
 const SESSION_TIMEOUT_MS = 5000;
 const authBaseUrl = process.env["NEXT_PUBLIC_API_URL"] || "";
 
-export const authClient = createAuthClient({
+const authClient = createAuthClient({
   baseURL: authBaseUrl,
   fetchOptions: {
     credentials: "include",
@@ -19,13 +19,10 @@ export const {
   signOut,
 } = authClient;
 
+const fetchAccessToken = async () => (await authClient.token()).data?.token ?? null;
+
 export function useBetterAuthForConvex() {
   const session = authClient.useSession();
-  const fetchAccessToken = useCallback(async () => {
-    const result = await authClient.token();
-    return result.data?.token ?? null;
-  }, []);
-
   return {
     isLoading: session.isPending,
     isAuthenticated: !!session.data?.user,

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createAuthClient } from 'better-auth/react';
 import { jwtClient } from 'better-auth/client/plugins';
 import { expoClient } from '@better-auth/expo/client';
@@ -8,7 +8,7 @@ const SESSION_TIMEOUT_MS = 5000;
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 
-export const authClient = createAuthClient({
+const authClient = createAuthClient({
   baseURL: API_URL,
   plugins: [
     expoClient({
@@ -22,16 +22,16 @@ export const authClient = createAuthClient({
 
 export const { signIn, signUp, signOut } = authClient;
 
-export function useBetterAuthForConvex() {
-  const session = authClient.useSession();
-  const fetchAccessToken = useCallback(async () => {
-    const result = await authClient.token();
-    return result.data?.token ?? null;
-  }, []);
+async function fetchAccessToken() {
+  const result = await authClient.token();
+  return result.data?.token ?? null;
+}
 
+export function useBetterAuthForConvex() {
+  const { isPending: isLoading, data } = authClient.useSession();
   return {
-    isLoading: session.isPending,
-    isAuthenticated: !!session.data?.user,
+    isLoading,
+    isAuthenticated: Boolean(data?.user),
     fetchAccessToken,
   };
 }

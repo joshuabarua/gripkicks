@@ -2,6 +2,19 @@ import { describe, expect, it } from "vitest";
 import { calculateEnrichmentScores } from "./enrichmentScoring";
 
 describe("calculateEnrichmentScores", () => {
+  describe.each(["climbingDiscipline", "stiffness"] as const)("%s", (trait) => {
+    it.each(["constructor", "__proto__"])("ignores inherited key %s", (value) => {
+      const shoe = {
+        aggressiveness: "moderate",
+        stiffness: "medium",
+        climbingDiscipline: "sport",
+      };
+      const expected = calculateEnrichmentScores({ ...shoe, [trait]: "unknown" });
+
+      expect(calculateEnrichmentScores({ ...shoe, [trait]: value })).toEqual(expected);
+    });
+  });
+
   it("returns balanced scores for a moderate sport shoe", () => {
     expect(
       calculateEnrichmentScores(

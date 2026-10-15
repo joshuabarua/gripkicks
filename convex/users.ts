@@ -1,19 +1,46 @@
 import { v } from "convex/values";
 import { paginationOptsValidator } from "convex/server";
-import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
+import { internalMutation, internalQuery, mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 import { footShapeValidator } from "./schema";
 import { requireAdmin, requireUserAccess } from "./authorization";
 import { findOrLinkUserByAuth, findUserByAuthSubject } from "./userHelpers";
 import { addUserShoe, removeUserShoe } from "./userShoes";
+import { filterUndefinedValues } from "./utils/helpers";
+
+async function findUserByEmail(ctx: QueryCtx, email: string) {
+  return await ctx.db
+    .query("users")
+    .withIndex("by_email", (q) => q.eq("email", email))
+    .first();
+}
+
+async function getUserWithFavoriteShoe(ctx: QueryCtx, id: Id<"users">) {
+  const user = await ctx.db.get(id);
+  if (!user) return null;
+
+  // Get favorite shoe if set
+  const favoriteShoe = user.favoriteShoeId
+    ? await ctx.db.get(user.favoriteShoeId)
+    : null;
+
+  return { ...user, favoriteShoe };
+}
+
+async function patchUserRecord(
+  ctx: MutationCtx,
+  id: Id<"users">,
+  updates: Record<string, unknown>,
+) {
+  await ctx.db.patch(id, filterUndefinedValues(updates));
+  return await ctx.db.get(id);
+}
 
 export const getByEmail = query({
   args: { email: v.string() },
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
-    return await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
-      .first();
+    return await findUserByEmail(ctx, args.email);
   },
 });
 
@@ -21,15 +48,7 @@ export const getById = query({
   args: { id: v.id("users") },
   handler: async (ctx, args) => {
     await requireUserAccess(ctx, args.id);
-    const user = await ctx.db.get(args.id);
-    if (!user) return null;
-
-    // Get favorite shoe if set
-    const favoriteShoe = user.favoriteShoeId
-      ? await ctx.db.get(user.favoriteShoeId)
-      : null;
-
-    return { ...user, favoriteShoe };
+    return await getUserWithFavoriteShoe(ctx, args.id);
   },
 });
 
@@ -65,11 +84,7 @@ export const update = mutation({
   handler: async (ctx, args) => {
     await requireUserAccess(ctx, args.id);
     const { id, ...updates } = args;
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, v]) => v !== undefined)
-    );
-    await ctx.db.patch(id, filteredUpdates);
-    return await ctx.db.get(id);
+    return await patchUserRecord(ctx, id, updates);
   },
 });
 
@@ -82,17 +97,8 @@ export const completeOnboarding = mutation({
   },
   handler: async (ctx, args) => {
     await requireUserAccess(ctx, args.userId);
-    const updates = Object.fromEntries(
-      Object.entries({
-        footShape: args.footShape,
-        footVolume: args.footVolume,
-        favoriteShoeId: args.favoriteShoeId,
-        onboardingComplete: true,
-      }).filter(([_, value]) => value !== undefined)
-    );
-
-    await ctx.db.patch(args.userId, updates);
-    return await ctx.db.get(args.userId);
+    const { userId, ...updates } = args;
+    return await patchUserRecord(ctx, userId, { ...updates, onboardingComplete: true });
   },
 });
 
@@ -299,24 +305,12 @@ export const removeIndoorOutdoorField = mutation({
 
 export const serviceGetByEmail = internalQuery({
   args: { email: v.string() },
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query("users")
-      .withIndex("by_email", (query) => query.eq("email", args.email))
-      .first();
-  },
+  handler: async (ctx, args) => findUserByEmail(ctx, args.email),
 });
 
 export const serviceGetById = internalQuery({
   args: { id: v.id("users") },
-  handler: async (ctx, args) => {
-    const user = await ctx.db.get(args.id);
-    if (!user) return null;
-    const favoriteShoe = user.favoriteShoeId
-      ? await ctx.db.get(user.favoriteShoeId)
-      : null;
-    return { ...user, favoriteShoe };
-  },
+  handler: async (ctx, args) => getUserWithFavoriteShoe(ctx, args.id),
 });
 
 export const serviceFindByBetterAuthId = internalQuery({
@@ -344,11 +338,7 @@ export const serviceUpdate = internalMutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([, value]) => value !== undefined),
-    );
-    await ctx.db.patch(id, filteredUpdates);
-    return await ctx.db.get(id);
+    return await patchUserRecord(ctx, id, updates);
   },
 });
 
@@ -360,15 +350,7 @@ export const serviceCompleteOnboarding = internalMutation({
     favoriteShoeId: v.optional(v.id("shoes")),
   },
   handler: async (ctx, args) => {
-    const updates = Object.fromEntries(
-      Object.entries({
-        footShape: args.footShape,
-        footVolume: args.footVolume,
-        favoriteShoeId: args.favoriteShoeId,
-        onboardingComplete: true,
-      }).filter(([, value]) => value !== undefined),
-    );
-    await ctx.db.patch(args.userId, updates);
-    return await ctx.db.get(args.userId);
+    const { userId, ...updates } = args;
+    return await patchUserRecord(ctx, userId, { ...updates, onboardingComplete: true });
   },
 });

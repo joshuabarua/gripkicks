@@ -2,6 +2,24 @@ import { describe, expect, it } from "vitest";
 import { calculateDefaultStats, getEffectiveShoeStats } from "@/components/ShoeStatsModal/utils";
 
 describe("getEffectiveShoeStats", () => {
+  it.each(["constructor", "__proto__"])(
+    "keeps fallback ratings finite for inherited trait key %s",
+    (value) => {
+      const stats = getEffectiveShoeStats({
+        aggressiveness: "moderate",
+        climbingDiscipline: value,
+        stiffness: value,
+      });
+
+      expect(stats).toEqual({
+        comfort: 6,
+        performance: 6,
+        durability: 5,
+        average: 5.7,
+      });
+    },
+  );
+
   it("uses calculated defaults when user stats are missing", () => {
     const defaults = calculateDefaultStats({
       aggressiveness: "Aggressive",

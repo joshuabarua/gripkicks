@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { View, ScrollView, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Pressable } from 'react-native';
+import { useMutation } from 'convex/react';
+import { api } from 'convex/_generated/api';
 import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/layout';
 import { Text, Button, Card } from '@/components/ui';
-import { useSession } from '@/lib/auth';
-import { useQuery, useMutation } from 'convex/react';
-import { api } from 'convex/_generated/api';
-import { useRouter } from 'expo-router';
+import {
+  FootProfileRows,
+  PromptScreen,
+  TabScreen,
+  useTabUser,
+} from '@/components/TabScreenLayout';
 
 const FOOT_SHAPES = ['egyptian', 'roman', 'greek', 'germanic', 'celtic'] as const;
 const FOOT_VOLUMES = ['low', 'medium', 'high'] as const;
@@ -48,16 +51,45 @@ function OptionChip({
   );
 }
 
-export default function FootLabScreen() {
-  const session = useSession();
-  const router = useRouter();
-  const betterAuthId = session.data?.user?.id;
-
-  const convexUser = useQuery(
-    api.users.findByBetterAuthId,
-    betterAuthId ? { betterAuthId } : 'skip',
+function OptionSelectionCard<T extends string>({
+  title,
+  description,
+  options,
+  selected,
+  onSelect,
+}: {
+  title: string;
+  description: string;
+  options: readonly T[];
+  selected: T | undefined;
+  onSelect: (option: T) => void;
+}) {
+  return (
+    <Card style={{ padding: spacing.lg, gap: spacing.lg }}>
+      <View style={{ gap: spacing.sm }}>
+        <Text variant="lg" weight="semibold">
+          {title}
+        </Text>
+        <Text variant="sm" color="secondary">
+          {description}
+        </Text>
+      </View>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+        {options.map((option) => (
+          <OptionChip
+            key={option}
+            label={option}
+            selected={selected === option}
+            onPress={() => onSelect(option)}
+          />
+        ))}
+      </View>
+    </Card>
   );
+}
 
+export default function FootLabScreen() {
+  const { betterAuthId, convexUser, router } = useTabUser();
   const updateUser = useMutation(api.users.update);
 
   const [footShape, setFootShape] = useState<FootShape | undefined>(
@@ -70,16 +102,10 @@ export default function FootLabScreen() {
 
   if (!betterAuthId) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-        <View style={{ flex: 1, justifyContent: 'center', padding: spacing.lg, gap: spacing.lg, alignItems: 'center' }}>
-          <Text variant="xl" weight="semibold">
-            Sign in to save your foot profile
-          </Text>
-          <Button onPress={() => router.push('/login')}>
-            Sign In
-          </Button>
-        </View>
-      </SafeAreaView>
+      <PromptScreen
+        title="Sign in to save your foot profile"
+        onAction={() => router.push('/login')}
+      />
     );
   }
 
@@ -89,7 +115,7 @@ export default function FootLabScreen() {
     try {
       await updateUser({
         id: convexUser._id,
-        footShape: footShape as 'egyptian' | 'roman' | 'greek' | 'germanic' | 'celtic',
+        footShape,
         footVolume,
       });
     } finally {
@@ -97,88 +123,49 @@ export default function FootLabScreen() {
     }
   };
 
-  const canSave = footShape && footVolume && (footShape !== convexUser?.footShape || footVolume !== convexUser?.footVolume);
+  const canSave =
+    footShape &&
+    footVolume &&
+    (footShape !== convexUser?.footShape || footVolume !== convexUser?.footVolume);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      <ScrollView contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg }}>
-        <View style={{ gap: spacing.sm }}>
-          <Text variant="3xl" weight="bold" color="accent">
-            Foot Lab
+    <TabScreen
+      title="Foot Lab"
+      subtitle="Set your foot profile for better recommendations"
+    >
+      <OptionSelectionCard
+        title="Foot Shape"
+        description="Which shape best matches your toes?"
+        options={FOOT_SHAPES}
+        selected={footShape}
+        onSelect={setFootShape}
+      />
+
+      <OptionSelectionCard
+        title="Foot Volume"
+        description="How wide is your foot in climbing shoes?"
+        options={FOOT_VOLUMES}
+        selected={footVolume}
+        onSelect={setFootVolume}
+      />
+
+      {canSave && (
+        <Button onPress={handleSave} disabled={saving}>
+          {saving ? 'Saving...' : 'Save Profile'}
+        </Button>
+      )}
+
+      {convexUser?.footShape && convexUser?.footVolume && (
+        <Card style={{ padding: spacing.lg, gap: spacing.md }}>
+          <Text variant="sm" color="secondary">
+            Saved profile
           </Text>
-          <Text variant="lg" color="secondary">
-            Set your foot profile for better recommendations
-          </Text>
-        </View>
-
-        <Card style={{ padding: spacing.lg, gap: spacing.lg }}>
-          <View style={{ gap: spacing.sm }}>
-            <Text variant="lg" weight="semibold">
-              Foot Shape
-            </Text>
-            <Text variant="sm" color="secondary">
-              Which shape best matches your toes?
-            </Text>
-          </View>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-            {FOOT_SHAPES.map((shape) => (
-              <OptionChip
-                key={shape}
-                label={shape}
-                selected={footShape === shape}
-                onPress={() => setFootShape(shape)}
-              />
-            ))}
-          </View>
+          <FootProfileRows
+            footShape={convexUser.footShape}
+            footVolume={convexUser.footVolume}
+          />
         </Card>
-
-        <Card style={{ padding: spacing.lg, gap: spacing.lg }}>
-          <View style={{ gap: spacing.sm }}>
-            <Text variant="lg" weight="semibold">
-              Foot Volume
-            </Text>
-            <Text variant="sm" color="secondary">
-              How wide is your foot in climbing shoes?
-            </Text>
-          </View>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-            {FOOT_VOLUMES.map((vol) => (
-              <OptionChip
-                key={vol}
-                label={vol}
-                selected={footVolume === vol}
-                onPress={() => setFootVolume(vol)}
-              />
-            ))}
-          </View>
-        </Card>
-
-        {canSave && (
-          <Button onPress={handleSave} disabled={saving}>
-            {saving ? 'Saving...' : 'Save Profile'}
-          </Button>
-        )}
-
-        {convexUser?.footShape && convexUser?.footVolume && (
-          <Card style={{ padding: spacing.lg, gap: spacing.md }}>
-            <Text variant="sm" color="secondary">
-              Saved profile
-            </Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text color="secondary">Shape</Text>
-              <Text weight="semibold" style={{ textTransform: 'capitalize' }}>
-                {convexUser.footShape}
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text color="secondary">Volume</Text>
-              <Text weight="semibold" style={{ textTransform: 'capitalize' }}>
-                {convexUser.footVolume}
-              </Text>
-            </View>
-          </Card>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+      )}
+    </TabScreen>
   );
 }

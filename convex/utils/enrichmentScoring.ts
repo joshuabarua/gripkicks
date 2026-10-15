@@ -7,6 +7,60 @@ function getSoleThickness(sole?: string) {
   return match?.[1] ? Number(match[1]) : undefined;
 }
 
+const DISCIPLINE_DELTAS = new Map([
+  ["competition", { comfort: -1, performance: 2, durability: 0 }],
+  ["bouldering", { comfort: 0.5, performance: 0.5, durability: 0 }],
+  ["sport", { comfort: 0, performance: 1, durability: -0.5 }],
+  ["trad", { comfort: 1, performance: -0.5, durability: 1 }],
+  ["gym", { comfort: 0.5, performance: 0, durability: -0.5 }],
+]);
+
+const STIFFNESS_DELTAS = new Map([
+  ["soft", { comfort: 1, performance: -0.5, durability: 0 }],
+  ["stiff", { comfort: -0.5, performance: 1, durability: 0.5 }],
+]);
+
+export function calculateBaseTraitScores(
+  traits: {
+    aggressiveness?: string | undefined;
+    climbingDiscipline?: string | undefined;
+    stiffness?: string | undefined;
+  },
+  fallbackComfort = 5,
+) {
+  const aggressiveness = traits.aggressiveness?.toLowerCase();
+  const discipline = traits.climbingDiscipline?.toLowerCase();
+  const stiffness = traits.stiffness?.toLowerCase();
+
+  let comfort =
+    aggressiveness === "aggressive"
+      ? 4
+      : aggressiveness === "moderate"
+        ? 6
+        : aggressiveness === "flat"
+          ? 7
+          : fallbackComfort;
+  let performance =
+    aggressiveness === "aggressive" ? 8 : aggressiveness === "moderate" ? 6 : 5;
+  let durability = 5;
+
+  const disciplineDelta = discipline ? DISCIPLINE_DELTAS.get(discipline) : undefined;
+  if (disciplineDelta) {
+    comfort += disciplineDelta.comfort;
+    performance += disciplineDelta.performance;
+    durability += disciplineDelta.durability;
+  }
+
+  const stiffnessDelta = stiffness ? STIFFNESS_DELTAS.get(stiffness) : undefined;
+  if (stiffnessDelta) {
+    comfort += stiffnessDelta.comfort;
+    performance += stiffnessDelta.performance;
+    durability += stiffnessDelta.durability;
+  }
+
+  return { comfort, performance, durability };
+}
+
 export function calculateEnrichmentScores(
   shoe: {
     aggressiveness: string;
@@ -26,38 +80,10 @@ export function calculateEnrichmentScores(
 ) {
   const aggressiveness = shoe.aggressiveness.toLowerCase();
   const stiffness = shoe.stiffness.toLowerCase();
-  const discipline = shoe.climbingDiscipline.toLowerCase();
   const thickness = getSoleThickness(specs.sole);
-  let comfort = aggressiveness === "aggressive" ? 4 : aggressiveness === "moderate" ? 6 : 7;
-  let performance = aggressiveness === "aggressive" ? 8 : aggressiveness === "moderate" ? 6 : 5;
-  let durability = 5;
-
-  if (discipline === "competition") {
-    comfort -= 1;
-    performance += 2;
-  } else if (discipline === "bouldering") {
-    comfort += 0.5;
-    performance += 0.5;
-  } else if (discipline === "sport") {
-    performance += 1;
-    durability -= 0.5;
-  } else if (discipline === "trad") {
-    comfort += 1;
-    performance -= 0.5;
-    durability += 1;
-  } else if (discipline === "gym") {
-    comfort += 0.5;
-    durability -= 0.5;
-  }
-
-  if (stiffness === "soft") {
-    comfort += 1;
-    performance -= 0.5;
-  } else if (stiffness === "stiff") {
-    comfort -= 0.5;
-    performance += 1;
-    durability += 0.5;
-  }
+  const baseScores = calculateBaseTraitScores(shoe, 7);
+  const { comfort, performance } = baseScores;
+  let { durability } = baseScores;
 
   if (thickness !== undefined) {
     if (thickness <= 3) durability -= 0.5;

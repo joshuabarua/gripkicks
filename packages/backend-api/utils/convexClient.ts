@@ -1,7 +1,7 @@
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_CONVEX_SITE_URL = 'http://localhost:3210';
 
-export class ConvexRequestError extends Error {
+class ConvexRequestError extends Error {
   readonly status?: number;
   readonly url?: string;
 

@@ -1,25 +1,56 @@
 import { v } from "convex/values";
-import { internalMutation, mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
+import { internalMutation, mutation, query, type MutationCtx } from "./_generated/server";
 import { backlogStatusValidator } from "./schema";
 import { requireAdmin } from "./authorization";
+import { filterUndefinedValues } from "./utils/helpers";
+
+const createBacklogItemArgs = {
+  title: v.string(),
+  notes: v.optional(v.string()),
+  status: backlogStatusValidator,
+};
+
+async function insertBacklogItem(
+  ctx: MutationCtx,
+  args: { title: string; notes?: string; status: "not_started" | "in_progress" | "done" },
+) {
+  const now = Date.now();
+  return await ctx.db.insert("backlogItems", {
+    title: args.title,
+    status: args.status,
+    createdAt: now,
+    updatedAt: now,
+    ...(args.notes !== undefined ? { notes: args.notes } : {}),
+  });
+}
+
+async function requireBacklogItem(ctx: MutationCtx, id: Id<"backlogItems">) {
+  const existingItem = await ctx.db.get(id);
+  if (!existingItem) {
+    throw new Error("Backlog item not found");
+  }
+  return existingItem;
+}
+
+async function patchBacklogItem(
+  ctx: MutationCtx,
+  id: Id<"backlogItems">,
+  updates: Record<string, unknown>,
+) {
+  await requireBacklogItem(ctx, id);
+  await ctx.db.patch(id, {
+    ...filterUndefinedValues(updates),
+    updatedAt: Date.now(),
+  });
+  return id;
+}
 
 export const createBacklogItem = mutation({
-  args: {
-    title: v.string(),
-    notes: v.optional(v.string()),
-    status: backlogStatusValidator,
-  },
+  args: createBacklogItemArgs,
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
-    const backlogItem = await ctx.db.insert("backlogItems", {
-      title: args.title,
-      status: args.status,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      ...(args.notes !== undefined ? { notes: args.notes } : {}),
-    });
-
-    return backlogItem;
+    return await insertBacklogItem(ctx, args);
   },
 });
 
@@ -33,22 +64,7 @@ export const updateBacklogItem = mutation({
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
     const { id, ...updateData } = args;
-
-    const existingItem = await ctx.db.get(id);
-    if (!existingItem) {
-      throw new Error("Backlog item not found");
-    }
-
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updateData).filter(([, value]) => value !== undefined),
-    );
-
-    await ctx.db.patch(id, {
-      ...filteredUpdates,
-      updatedAt: Date.now(),
-    });
-
-    return id;
+    return await patchBacklogItem(ctx, id, updateData);
   },
 });
 
@@ -58,11 +74,7 @@ export const deleteBacklogItem = mutation({
   },
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
-    const existingItem = await ctx.db.get(args.id);
-    if (!existingItem) {
-      throw new Error("Backlog item not found");
-    }
-
+    await requireBacklogItem(ctx, args.id);
     await ctx.db.delete(args.id);
     return args.id;
   },
@@ -85,22 +97,8 @@ export const listBacklogItems = query({
 });
 
 export const serviceCreateBacklogItem = internalMutation({
-  args: {
-    title: v.string(),
-    notes: v.optional(v.string()),
-    status: backlogStatusValidator,
-  },
-  handler: async (ctx, args) => {
-    const backlogItem = await ctx.db.insert("backlogItems", {
-      title: args.title,
-      status: args.status,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      ...(args.notes !== undefined ? { notes: args.notes } : {}),
-    });
-
-    return backlogItem;
-  },
+  args: createBacklogItemArgs,
+  handler: async (ctx, args) => insertBacklogItem(ctx, args),
 });
 
 export const serviceSetBacklogStatus = internalMutation({
@@ -108,17 +106,5 @@ export const serviceSetBacklogStatus = internalMutation({
     id: v.id("backlogItems"),
     status: backlogStatusValidator,
   },
-  handler: async (ctx, args) => {
-    const existingItem = await ctx.db.get(args.id);
-    if (!existingItem) {
-      throw new Error("Backlog item not found");
-    }
-
-    await ctx.db.patch(args.id, {
-      status: args.status,
-      updatedAt: Date.now(),
-    });
-
-    return args.id;
-  },
+  handler: async (ctx, args) => patchBacklogItem(ctx, args.id, { status: args.status }),
 });
