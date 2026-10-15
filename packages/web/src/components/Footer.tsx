@@ -63,24 +63,10 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="mt-16 border-t border-white/20 pt-8 text-center md:text-left">
           <p className="font-mono text-xs text-brand-putty/85">
             &copy; {new Date().getFullYear()} GripKicks
           </p>
-          <div className="flex items-center gap-6">
-            <Link
-              href="/privacy"
-              className="font-mono text-xs text-brand-putty/85 hover:text-brand-chalk transition-colors duration-500"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="/about"
-              className="font-mono text-xs text-brand-putty/85 hover:text-brand-chalk transition-colors duration-500"
-            >
-              About
-            </Link>
-          </div>
         </div>
       </div>
 

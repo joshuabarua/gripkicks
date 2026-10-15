@@ -1,11 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { useCallback, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowDown, ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
-import { useProgress } from "@react-three/drei";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
@@ -16,52 +15,49 @@ import { CompareArrows, ScoreTag, ToeProfile } from "@/components/foot/FootGlyph
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
-  loading: () => (
-    <div className="flex h-full w-full items-center justify-center">
-      <div className="flex items-center gap-3">
-        <span className="h-2 w-2 animate-ping rounded-full bg-brand-red" />
-        <span className="lab-label">Loading</span>
-      </div>
-    </div>
-  ),
+  loading: () => null,
 });
 const EtherField = dynamic(() => import("@/components/3d/EtherField"), { ssr: false, loading: () => null });
 
 const subscribeWebgl = () => () => undefined;
-const getServerWebglSnapshot = () => false;
+const getServerWebglSnapshot = () => null;
 
 function HeroLoadCover({ ready }: { ready: boolean }) {
-  const { progress } = useProgress();
   return (
     <div
+      role="status"
+      aria-label="Loading shoe"
       aria-hidden={ready}
-      className={`fixed inset-0 z-[60] flex items-center justify-center bg-black transition-opacity duration-[1800ms] delay-300 ${ready ? "pointer-events-none opacity-0" : "opacity-100"}`}
+      className={`pointer-events-none absolute inset-0 z-5 flex items-center justify-center bg-black transition-opacity duration-700 ease-out motion-reduce:transition-none ${ready ? "opacity-0" : "opacity-100"}`}
     >
       <div className="flex items-center gap-3">
-        <span className="h-2 w-2 animate-ping rounded-full bg-brand-red" />
-        <span className="lab-label">Loading {Math.round(progress)}%</span>
+        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-brand-red motion-safe:animate-pulse" />
+        <span className="lab-label">Loading</span>
       </div>
     </div>
   );
 }
 
-function HeroSection({ isReducedEffects, onSceneReady }: { isReducedEffects: boolean; onSceneReady: () => void }) {
-  const webgl = useSyncExternalStore(subscribeWebgl, supportsWebGL, getServerWebglSnapshot);
+function HeroSection({ isReducedEffects }: { isReducedEffects: boolean }) {
+  const webgl = useSyncExternalStore<boolean | null>(subscribeWebgl, supportsWebGL, getServerWebglSnapshot);
+  const [sceneReady, setSceneReady] = useState(false);
+  const handleSceneReady = useCallback(() => setSceneReady(true), []);
 
-  useEffect(() => {
-    if (!webgl) onSceneReady();
-  }, [webgl, onSceneReady]);
+  const ready = sceneReady || webgl === false;
 
   return (
-    <section id="home-hero" aria-label="Interactive climbing shoe" className="relative h-[calc(100svh-3.5rem)] min-h-[360px] overflow-hidden">
-      <div className="absolute inset-0">
-        <EtherField className="absolute inset-0 h-full w-full" paused={isReducedEffects} speed={isReducedEffects ? 0 : 0.7} ambientColor="#171c27" accentColor="#ff5a3d" />
+    <section id="home-hero" aria-label="Interactive climbing shoe" aria-busy={!ready} className="relative h-[calc(100svh-3.5rem)] min-h-[360px] overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,#171c27_0%,transparent_65%)]">
+        {!isReducedEffects && webgl && (
+          <EtherField className="absolute inset-0 h-full w-full" speed={0.7} ambientColor="#171c27" accentColor="#ff5a3d" />
+        )}
       </div>
       {webgl && (
         <div className="absolute bottom-0 left-0 right-0 top-[10px] z-1">
-          <Scene onReady={onSceneReady} />
+          <Scene onReady={handleSceneReady} />
         </div>
       )}
+      <HeroLoadCover ready={ready} />
       <Link href="#home-steps" aria-label="Scroll to homepage content" className="group absolute bottom-fluid-lg right-fluid-md z-10 flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-brand-base/70 text-brand-chalk transition-colors hover:bg-brand-surface focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-chalk md:right-fluid-xl"><ArrowDown aria-hidden="true" className="h-6 w-6 transition-transform duration-300 group-hover:translate-y-1 motion-reduce:transform-none" /></Link>
     </section>
   );
@@ -70,13 +66,6 @@ function HeroSection({ isReducedEffects, onSceneReady }: { isReducedEffects: boo
 export default function HomeCreative() {
   const isReducedEffects = useReducedEffects();
   const countData = useQuery(api.users.getCount);
-  const [sceneReady, setSceneReady] = useState(isReducedEffects);
-  const handleSceneReady = useCallback(() => setSceneReady(true), []);
-
-  useEffect(() => {
-    const failsafe = setTimeout(() => setSceneReady(true), 6000);
-    return () => clearTimeout(failsafe);
-  }, []);
 
   const sections = [
     <HowItWorksSection key="steps" />,
@@ -88,8 +77,7 @@ export default function HomeCreative() {
   return (
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
       <div aria-hidden="true" className="grain-overlay-animated" />
-      <HeroLoadCover ready={sceneReady} />
-      <HeroSection isReducedEffects={isReducedEffects} onSceneReady={handleSceneReady} />
+      <HeroSection isReducedEffects={isReducedEffects} />
       {sections.map((section, i) => (
         <motion.div
           key={i}
