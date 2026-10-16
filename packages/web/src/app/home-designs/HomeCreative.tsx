@@ -25,7 +25,9 @@ const getServerWebglSnapshot = () => null;
 
 function HeroLoadCover({ ready }: { ready: boolean }) {
   const { progress } = useProgress();
-  const fill = Math.min(100, Math.max(0, progress));
+  const [maxProgress, setMaxProgress] = useState(0);
+  if (progress > maxProgress) setMaxProgress(progress);
+  const fill = Math.min(100, Math.max(0, maxProgress));
   return (
     <div
       role="status"
