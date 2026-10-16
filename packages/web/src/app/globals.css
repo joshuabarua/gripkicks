@@ -147,6 +147,11 @@
   animation-delay: var(--rise-delay, 0ms);
 }
 
+@utility lab-fade {
+  animation: lab-fade 0.9s ease-out both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
 @layer utilities {
   /* ============================================
    ORIENTATION-BASED DESIGN SYSTEM
@@ -348,8 +353,15 @@
   }
 }
 
+@keyframes lab-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.lab-rise {
+	.lab-rise,
+	.lab-fade {
 		animation: none;
 	}
 }

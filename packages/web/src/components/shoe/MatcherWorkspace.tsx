@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Users, Footprints } from "lucide-react";
@@ -20,7 +20,7 @@ export function MatcherWorkspace({ activeTab, children }: { activeTab: "seek" | 
   );
 
   return (
-    <PageSurface>
+    <PageSurface className="lab-fade">
       <div className="mx-auto max-w-[1600px] px-6 py-14 md:px-12 lg:px-16">
         <LabHeader title="Matcher" description="Shoes ranked for your foot profile and community ratings." actions={tabs} />
         {children}
@@ -54,18 +54,18 @@ export function SoleMateContent({ matches, isLoading, hasProfile }: { matches: S
   }
   return (
     <div className="space-y-fluid-xl">
-      <header className="lab-card lab-card-active p-fluid-lg">
+      <header className="lab-card lab-card-active lab-rise p-fluid-lg" style={{ "--rise-delay": "150ms" } as CSSProperties}>
         <h2 className="font-ball-pill text-fluid-2xl">Sole Mate</h2>
         <p className="mt-2 font-mono text-base leading-relaxed text-brand-chalk">{matches.length} {matches.length === 1 ? "climber" : "climbers"} with your foot profile. Shoes they rate highly.</p>
       </header>
-      <div className="grid items-start gap-fluid-lg xl:grid-cols-2">{matches.map((match) => <SoleMateCard key={match.user._id} match={match} />)}</div>
+      <div className="grid items-start gap-fluid-lg xl:grid-cols-2">{matches.map((match, index) => <SoleMateCard key={match.user._id} match={match} index={index} />)}</div>
     </div>
   );
 }
 
-function SoleMateCard({ match }: { match: SoleMateClimberMatch }) {
+function SoleMateCard({ match, index }: { match: SoleMateClimberMatch; index: number }) {
   return (
-    <article className="lab-card min-w-0 p-fluid-lg">
+    <article className="lab-card lab-rise min-w-0 p-fluid-lg" style={{ "--rise-delay": `${400 + Math.min(index, 8) * 150}ms` } as CSSProperties}>
       <header className="mb-fluid-lg flex items-center gap-4 border-b border-white/8 pb-fluid-md">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/6 bg-black/40">
           {match.user.image ? <Image src={match.user.image} alt="" width={48} height={48} className="h-full w-full object-cover" /> : <Users aria-hidden="true" className="h-5 w-5 text-brand-chalk" />}

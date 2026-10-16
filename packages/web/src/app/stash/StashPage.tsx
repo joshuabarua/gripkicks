@@ -498,7 +498,7 @@ export default function ShoeSanctuaryPage() {
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
               className="flex flex-wrap items-end justify-between gap-fluid-md"
             >
               <h1 className="font-so-cloudy uppercase text-fluid-5xl md:text-fluid-6xl text-white leading-none">
@@ -593,6 +593,7 @@ export default function ShoeSanctuaryPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
                 className="flex flex-col items-center justify-center py-fluid-3xl text-center"
               >
                 <h3 className="font-ball-pill text-fluid-3xl text-white mb-fluid-xs">

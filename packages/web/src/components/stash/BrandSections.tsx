@@ -67,7 +67,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onOpenS
               aria-labelledby={`${regionId}-title`}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: Math.min(brandIndex, 8) * 0.15 }}
+              transition={{ duration: 1.1, delay: 1.1 + Math.min(brandIndex, 8) * 0.4, ease: "easeOut" }}
               className={compact ? "lg:col-span-1" : "lg:col-span-2"}
             >
               <div className="mb-fluid-lg flex items-center gap-fluid-md">

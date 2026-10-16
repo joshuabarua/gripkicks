@@ -11,7 +11,7 @@ export function StatsStrip({ totalShoes, favouriteCount, brandCount }: StatsStri
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ delay: 0.3 }}
+      transition={{ duration: 0.9, delay: 0.8, ease: "easeOut" }}
       className="mt-fluid-md grid w-full min-w-64 max-w-xl flex-1 grid-cols-3 overflow-hidden rounded-lg border border-white/20 bg-brand-surface"
     >
       <div className="border-r border-white/20 px-3 py-fluid-sm sm:px-fluid-md">
