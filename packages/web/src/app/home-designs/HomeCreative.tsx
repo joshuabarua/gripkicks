@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowDown, ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
+import { useProgress } from "@react-three/drei";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useReducedEffects } from "@/hooks/useReducedEffects";
@@ -23,6 +24,8 @@ const subscribeWebgl = () => () => undefined;
 const getServerWebglSnapshot = () => null;
 
 function HeroLoadCover({ ready }: { ready: boolean }) {
+  const { progress } = useProgress();
+  const fill = Math.min(100, Math.max(0, progress));
   return (
     <div
       role="status"
@@ -30,9 +33,13 @@ function HeroLoadCover({ ready }: { ready: boolean }) {
       aria-hidden={ready}
       className={`pointer-events-none absolute inset-0 z-5 flex items-center justify-center bg-black transition-opacity duration-700 ease-out motion-reduce:transition-none ${ready ? "opacity-0" : "opacity-100"}`}
     >
-      <div className="flex items-center gap-3">
-        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-brand-red motion-safe:animate-pulse" />
-        <span className="lab-label">Loading</span>
+      <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-black/40">
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 bg-brand-red transition-[height] duration-500 ease-out motion-reduce:transition-none"
+          style={{ height: `${fill}%` }}
+        />
+        <span className="lab-label relative mix-blend-difference">Loading</span>
       </div>
     </div>
   );
