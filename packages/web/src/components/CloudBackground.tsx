@@ -90,7 +90,7 @@ export default function CloudBackground() {
   if (!mounted) return null;
 
   return (
-    <div ref={containerRef} className="pointer-events-none fixed inset-0 z-10 overflow-hidden" aria-hidden="true">
+    <div ref={containerRef} className="lab-fade pointer-events-none fixed inset-0 z-10 overflow-hidden" aria-hidden="true">
       {clouds.map((cloud) => (
         <div
           key={cloud.id}

@@ -24,7 +24,7 @@ beforeEach(() => {
 
 describe("Sanctuary content", () => {
   it("stays collapsed by default and expands in place", () => {
-    render(<CloudShoe shoe={shoe} index={0} {...cardProps} />);
+    render(<CloudShoe shoe={shoe} {...cardProps} />);
     expect(screen.getByText("Drago")).toBeInTheDocument();
     expect(screen.queryByText("Soft shoe for steep bouldering.")).toBeNull();
     expect(screen.queryByText("Size")).toBeNull();
@@ -40,7 +40,7 @@ describe("Sanctuary content", () => {
   });
 
   it("exposes edit, favourite, full stats and remove actions when expanded", () => {
-    render(<CloudShoe shoe={shoe} index={0} {...cardProps} />);
+    render(<CloudShoe shoe={shoe} {...cardProps} />);
     fireEvent.click(screen.getByRole("button", { name: "Edit Scarpa Drago" }));
     expect(onEdit).toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Remove Scarpa Drago" }));
@@ -54,7 +54,7 @@ describe("Sanctuary content", () => {
   });
 
   it("does not wrap interactive buttons inside a role=button card", () => {
-    render(<CloudShoe shoe={shoe} index={0} {...cardProps} />);
+    render(<CloudShoe shoe={shoe} {...cardProps} />);
     fireEvent.click(screen.getByRole("button", { name: "Show details for Scarpa Drago" }));
     for (const el of document.querySelectorAll("[role='button']")) {
       expect(el.querySelector("button")).toBeNull();
@@ -63,14 +63,14 @@ describe("Sanctuary content", () => {
 
   it("shows a variant label exactly once without repeating the gender", () => {
     const withVariant: UserShoe = { ...shoe, shoe: { ...shoe.shoe!, gender: "men" } };
-    render(<CloudShoe shoe={withVariant} index={0} variantLabel="LV" {...cardProps} />);
+    render(<CloudShoe shoe={withVariant} variantLabel="LV" {...cardProps} />);
     expect(screen.getAllByText("LV")).toHaveLength(1);
     expect(screen.queryByText("Men")).toBeNull();
   });
 
   it("falls back to a single gender label when no variant label exists", () => {
     const noVariant: UserShoe = { ...shoe, shoe: { ...shoe.shoe!, gender: "men" } };
-    render(<CloudShoe shoe={noVariant} index={0} {...cardProps} />);
+    render(<CloudShoe shoe={noVariant} {...cardProps} />);
     expect(screen.getAllByText("Men")).toHaveLength(1);
   });
 

@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, type CSSProperties } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
-import { motion } from "framer-motion";
 import { Clock, Crown, Heart, Star } from "lucide-react";
 import { useSession } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
@@ -20,9 +19,8 @@ const CloudBackground = dynamic(() => import("@/components/CloudBackground"), {
   ssr: false,
   loading: () => null,
 });
-import { LoadingBar } from "@/components/ui/loading";
 import { useLoading } from "@/contexts/LoadingContext";
-import { ShoeCardSkeleton, StatsStripSkeleton } from "@/components/ui/skeleton";
+import { SanctuaryGridSkeleton, StatsStripSkeleton } from "@/components/ui/skeleton";
 import { buildSpecialLabels } from "@/utils/specialLabels";
 import { AddShoeDialog } from "@/components/stash/AddShoeDialog";
 import { useStashData } from "@/hooks/useStashData";
@@ -104,6 +102,8 @@ export default function ShoeSanctuaryPage() {
       gender: dialogSelectedGender,
     },
   });
+
+  const isPageLoading = sessionLoading || isLoading;
 
   const addToStash = useMutation(api.stash.addToStash);
   const deleteUserShoe = useMutation(api.stash.deleteUserShoe);
@@ -430,7 +430,7 @@ export default function ShoeSanctuaryPage() {
     return () => hideLoader("stash-session");
   }, [sessionLoading, showLoader, hideLoader]);
 
-  if (!session?.user) {
+  if (!sessionLoading && !session?.user) {
     return (
       <div className="flex min-h-svh w-full items-center justify-center p-6">
         <div className="text-center text-white">
@@ -457,14 +457,16 @@ export default function ShoeSanctuaryPage() {
             className="sanctuary-cloud-backdrop fixed inset-[-4vw] pointer-events-none z-0"
             aria-hidden="true"
           >
-            <Image
-              src="/imgs/clouds/clouds 4.png"
-              alt=""
-              fill
-              sizes="110vw"
-              quality={72}
-              className="object-cover"
-            />
+            <div className="absolute inset-0 lab-fade">
+              <Image
+                src="/imgs/clouds/clouds 4.png"
+                alt=""
+                fill
+                sizes="110vw"
+                quality={72}
+                className="object-cover"
+              />
+            </div>
           </div>
 
           <CloudBackground />
@@ -495,27 +497,28 @@ export default function ShoeSanctuaryPage() {
       <div className="relative z-20">
         <section className="px-fluid-lg md:px-fluid-xl pt-fluid-lg pb-fluid-md">
           <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              className="flex flex-wrap items-end justify-between gap-fluid-md"
+            <div
+              className="lab-rise flex flex-wrap items-end justify-between gap-fluid-md"
             >
               <h1 className="font-so-cloudy uppercase text-fluid-5xl md:text-fluid-6xl text-white leading-none">
                 Shoe Sanctuary
               </h1>
 
               <div className="flex flex-wrap items-center justify-between gap-fluid-md">
-                {userShoes.length > 0 && (
-                  <StatsStrip
-                    totalShoes={userShoes.length}
-                    favouriteCount={
-                      Array.isArray(userShoes)
-                        ? userShoes.filter((s) => s.isFavourite).length
-                        : 0
-                    }
-                    brandCount={stashBrands.length}
-                  />
+                {isPageLoading ? (
+                  <StatsStripSkeleton />
+                ) : (
+                  userShoes.length > 0 && (
+                    <StatsStrip
+                      totalShoes={userShoes.length}
+                      favouriteCount={
+                        Array.isArray(userShoes)
+                          ? userShoes.filter((s) => s.isFavourite).length
+                          : 0
+                      }
+                      brandCount={stashBrands.length}
+                    />
+                  )
                 )}
 
                 <AddShoeDialog
@@ -536,21 +539,23 @@ export default function ShoeSanctuaryPage() {
                   onLoadMore={() => loadMoreCatalog(40)}
                 />
               </div>
-            </motion.div>
+            </div>
 
-            <DataContributionNudge
-              stashCount={userShoes.length}
-              ratedCount={ratedShoeCount}
-            />
-
-            {isLoading && userShoes.length === 0 && <StatsStripSkeleton />}
+            {!isPageLoading && (
+              <div className="lab-fade" style={{ "--rise-delay": "120ms" } as CSSProperties}>
+                <DataContributionNudge
+                  stashCount={userShoes.length}
+                  ratedCount={ratedShoeCount}
+                />
+              </div>
+            )}
           </div>
         </section>
 
         <section className="px-fluid-lg md:px-fluid-xl pb-fluid-3xl">
           <div className="max-w-7xl mx-auto space-y-fluid-lg">
-            {/* Advanced Filters */}
-            <AdvancedFilters
+            <div className="lab-rise" style={{ "--rise-delay": "80ms" } as CSSProperties}>
+              <AdvancedFilters
               selectedBrand={selectedBrand}
               onBrandChange={setSelectedBrand}
               selectedGender={selectedGender}
@@ -571,30 +576,14 @@ export default function ShoeSanctuaryPage() {
               onReset={resetFilters}
               activeFiltersCount={activeFiltersCount}
             />
+            </div>
 
-            {isLoading && (
-              <div className="flex flex-col items-center justify-center py-fluid-3xl">
-                <div className="w-full max-w-4xl space-y-4">
-                  <div className="text-center mb-6">
-                    <LoadingBar size="lg" />
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-600 mt-4 block">
-                      Loading your collection
-                    </span>
-                  </div>
-                  {/* Show skeleton cards while loading */}
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <ShoeCardSkeleton key={i} />
-                  ))}
-                </div>
-              </div>
-            )}
+            {isPageLoading && <SanctuaryGridSkeleton />}
 
-            {!isLoading && userShoes.length === 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-                className="flex flex-col items-center justify-center py-fluid-3xl text-center"
+            {!isPageLoading && userShoes.length === 0 && (
+              <div
+                className="lab-rise flex flex-col items-center justify-center py-fluid-3xl text-center"
+                style={{ "--rise-delay": "150ms" } as CSSProperties}
               >
                 <h3 className="font-ball-pill text-fluid-3xl text-white mb-fluid-xs">
                   NO SHOES YET
@@ -602,20 +591,20 @@ export default function ShoeSanctuaryPage() {
                 <p className="font-mono text-brand-putty mb-fluid-md max-w-sm">
                   Add your first shoe to get started.
                 </p>
-              </motion.div>
+              </div>
             )}
 
-            {!isLoading && userShoes.length > 0 && filteredShoes.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-fluid-3xl text-center">
+            {!isPageLoading && userShoes.length > 0 && filteredShoes.length === 0 && (
+              <div className="lab-fade flex flex-col items-center justify-center py-fluid-3xl text-center">
                 <p className="font-mono text-brand-putty max-w-sm">
                   No shoes match the selected filters.
                 </p>
               </div>
             )}
 
-            {!isLoading && filteredShoes.length > 0 && (
+            {!isPageLoading && filteredShoes.length > 0 && (
               <>
-                <div aria-label="Badge key" className="flex flex-wrap items-center gap-x-fluid-lg gap-y-2 font-mono text-[11px] uppercase tracking-wider text-brand-putty">
+                <div aria-label="Badge key" className="lab-fade flex flex-wrap items-center gap-x-fluid-lg gap-y-2 font-mono text-[11px] uppercase tracking-wider text-brand-putty" style={{ "--rise-delay": "150ms" } as CSSProperties}>
                   <span className="flex items-center gap-2" title="Marked as favourite">
                     <span className="flex h-5 w-5 items-center justify-center rounded-sm bg-brand-red text-black"><Star aria-hidden="true" className="h-3 w-3 fill-current" /></span>
                     Favourite

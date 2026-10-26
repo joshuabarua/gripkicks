@@ -1,91 +1,58 @@
 "use client";
 
-import { motion } from 'framer-motion';
-
-interface SkeletonProps {
-  className?: string;
-  variant?: 'default' | 'text' | 'circular' | 'rectangular';
-  width?: string;
-  height?: string;
-  lines?: number;
-}
-
-function Skeleton({ 
-  className = '', 
-  variant = 'default', 
-  width, 
-  height,
-  lines = 1 
-}: SkeletonProps) {
-  const baseClasses = 'bg-neutral-800 rounded overflow-hidden';
-  
-  const variantClasses = {
-    default: 'rounded-md',
-    text: 'h-4 rounded',
-    circular: 'rounded-full',
-    rectangular: 'rounded-lg'
-  };
-
-  const style = {
-    width: width || (variant === 'circular' ? '40px' : undefined),
-    height: height || (variant === 'circular' ? '40px' : undefined)
-  };
-
-  if (variant === 'text' && lines > 1) {
-    return (
-      <div className={`space-y-2 ${className}`}>
-        {Array.from({ length: lines }).map((_, i) => (
-          <motion.div
-            key={i}
-            className={`${baseClasses} ${variantClasses.text}`}
-            style={{
-              width: i === lines - 1 ? '60%' : '100%',
-              height: '1rem'
-            }}
-            animate={{ opacity: [0.4, 0.8, 0.4] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
-          />
-        ))}
-      </div>
-    );
-  }
-
+export function StatsStripSkeleton() {
   return (
-    <motion.div
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-      style={style}
-      animate={{ opacity: [0.4, 0.8, 0.4] }}
-      transition={{ duration: 1.5, repeat: Infinity }}
-    />
+    <div
+      aria-hidden="true"
+      className="mt-fluid-md grid w-full min-w-64 max-w-xl flex-1 grid-cols-3 overflow-hidden rounded-lg border border-white/20 bg-brand-surface"
+    >
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div
+          key={i}
+          className={`flex items-baseline px-3 py-fluid-sm sm:px-fluid-md ${i < 2 ? "border-r border-white/20" : ""}`}
+        >
+          <div className="h-7 w-9 animate-pulse rounded bg-white/10 motion-reduce:animate-none" />
+          <div className="ml-2 h-3 w-12 animate-pulse rounded bg-white/6 motion-reduce:animate-none" />
+        </div>
+      ))}
+    </div>
   );
 }
 
-// Shoe card skeleton for the stash
-export function ShoeCardSkeleton() {
+function SanctuaryCardSkeleton() {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-lg p-3 flex flex-col gap-2">
-      <div className="flex gap-3">
-        <Skeleton variant="rectangular" width="80px" height="80px" />
-        <div className="flex-1 space-y-2">
-          <Skeleton variant="text" width="70%" />
-          <Skeleton variant="text" width="40%" />
-          <Skeleton variant="text" width="50%" />
-        </div>
+    <div className="overflow-hidden rounded-xl border border-white/30 bg-brand-surface">
+      <div className="flex min-h-11 items-center border-b border-white/20 px-4">
+        <div className="h-4 w-20 animate-pulse rounded bg-white/6 motion-reduce:animate-none" />
+      </div>
+      <div className="aspect-[16/10] border-b border-white/20 bg-brand-soft-surface" />
+      <div className="space-y-2.5 p-4">
+        <div className="h-4 w-2/3 animate-pulse rounded bg-white/6 motion-reduce:animate-none" />
+        <div className="h-3 w-1/3 animate-pulse rounded bg-white/6 motion-reduce:animate-none" />
       </div>
     </div>
   );
 }
 
-// Stats strip skeleton
-export function StatsStripSkeleton() {
+export function SanctuaryGridSkeleton() {
   return (
-    <div className="grid grid-cols-3 gap-4">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="text-center space-y-2">
-          <Skeleton variant="text" width="60px" className="mx-auto" />
-          <Skeleton variant="text" width="80px" className="mx-auto" />
-        </div>
-      ))}
+    <div role="status" aria-label="Loading your collection" aria-busy="true">
+      <span className="sr-only">Loading your collection</span>
+      <div aria-hidden="true" className="grid gap-fluid-xl lg:grid-cols-2">
+        {[0, 1].map((brand) => (
+          <div key={brand} className="lg:col-span-2">
+            <div className="mb-fluid-lg flex items-center gap-fluid-md">
+              <div className="h-8 w-28 animate-pulse rounded bg-white/6 motion-reduce:animate-none" />
+              <div className="h-px flex-1 bg-white/20" />
+            </div>
+            <div className="grid items-start gap-fluid-lg sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SanctuaryCardSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

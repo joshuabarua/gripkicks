@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { memo, useState } from "react";
+import { memo, useState, type CSSProperties } from "react";
 import { ChevronDown } from "lucide-react";
 import CloudShoe from "@/components/CloudShoe";
 import type { UserShoe } from "@/types/api";
@@ -45,7 +45,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onOpenS
   return (
     <div>
       {groups.length > 0 && (
-        <div className="mb-fluid-lg flex justify-end gap-2">
+        <div className="lab-fade mb-fluid-lg flex justify-end gap-2" style={{ "--rise-delay": "150ms" } as CSSProperties}>
           <button type="button" disabled={allCollapsed} onClick={() => setCollapsed(new Set(groups.map((group) => group.brand)))} className={toolbarButton}>
             Collapse all
           </button>
@@ -62,13 +62,11 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onOpenS
           const regionId = `brand-${brand.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
           const brandDescription = getBrandDescription(brand);
           return (
-            <motion.section
+            <section
               key={brand}
               aria-labelledby={`${regionId}-title`}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.1, delay: 1.1 + Math.min(brandIndex, 8) * 0.4, ease: "easeOut" }}
-              className={compact ? "lg:col-span-1" : "lg:col-span-2"}
+              style={{ "--rise-delay": `${200 + Math.min(brandIndex, 4) * 90}ms` } as CSSProperties}
+              className={`lab-rise ${compact ? "lg:col-span-1" : "lg:col-span-2"}`}
             >
               <div className="mb-fluid-lg flex items-center gap-fluid-md">
                 <h2 id={`${regionId}-title`} aria-label={brand}><BrandLogo brand={brand} /></h2>
@@ -103,13 +101,12 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onOpenS
                       </p>
                     )}
                     <div className={`grid items-start gap-fluid-lg ${compact ? "grid-cols-1 sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}`}>
-                      {models.map((model, modelIndex) => (
+                      {models.map((model) => (
                         <div key={model.groupKey} className="flex min-w-0 flex-col gap-fluid-md">
-                          {model.variants.map(({ item: shoe, variantLabel }, variantIndex) => (
+                          {model.variants.map(({ item: shoe, variantLabel }) => (
                             <div key={shoe._id} className="w-full min-w-0">
                               <CloudShoe
                                 shoe={shoe}
-                                index={variantIndex + modelIndex * 10 + brandIndex * 100}
                                 variantLabel={variantLabel}
                                 specialLabel={specialLabels[shoe._id]}
                                 onOpenStats={() => onOpenStats(shoe)}
@@ -125,7 +122,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onOpenS
                   </motion.div>
                 )}
               </AnimatePresence>
-            </motion.section>
+            </section>
           );
         })}
       </div>

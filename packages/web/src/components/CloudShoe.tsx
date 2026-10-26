@@ -12,7 +12,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 interface CloudShoeProps {
   shoe: UserShoe;
-  index: number;
   variantLabel?: string | null | undefined;
   specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode } | undefined;
   onOpenStats: () => void;
@@ -32,7 +31,7 @@ const specialLabelTitles = {
   'most-worn': 'Most worn shoe in your collection',
 } as const;
 
-const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabel, onOpenStats, onEdit, onToggleFavourite, onRemove }) => {
+const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOpenStats, onEdit, onToggleFavourite, onRemove }) => {
   const details = shoe.shoe ?? shoe.shoeDetails;
   const brand = details?.brand ?? 'Unknown Brand';
   const name = details?.name ?? 'Unknown Shoe';
@@ -83,9 +82,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabe
     <motion.article
       ref={cardRef}
       className="group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-colors duration-300 hover:border-white/50 focus-within:border-white/50"
-      initial={{ opacity: 0, y: 28 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.9, delay: Math.min(index, 14) * 0.12, ease: "easeOut" }}
       {...(expanded ? {} : { whileHover: { y: -3 } })}
     >
       <button
@@ -286,7 +282,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, index, variantLabel, specialLabe
 }, (prevProps, nextProps) => {
   return (
     prevProps.shoe === nextProps.shoe &&
-    prevProps.index === nextProps.index &&
     prevProps.variantLabel === nextProps.variantLabel &&
     prevProps.onOpenStats === nextProps.onOpenStats &&
     prevProps.onEdit === nextProps.onEdit &&
