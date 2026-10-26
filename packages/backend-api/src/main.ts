@@ -153,17 +153,6 @@ if (process.env.NODE_ENV !== "test") {
       console.log("Auth: Better Auth enabled");
     },
   );
-
-  // Self-ping every 49s to prevent Render free-tier spin-down
-  const PING_INTERVAL_MS = 49_000;
-  setInterval(() => {
-    const url = `http://${hostname}:${port}/api/auth/healthz`;
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) console.warn(`[self-ping] unexpected status ${res.status}`);
-      })
-      .catch((err) => console.error("[self-ping] failed:", err));
-  }, PING_INTERVAL_MS);
 }
 
 // Export app type for Hono RPC client

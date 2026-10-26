@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/wrangler@4.150.0/config-schema.json",
+  "name": "gripkicks-render-keepalive",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-26",
+  "workers_dev": false,
+  "preview_urls": false,
+  "triggers": { "crons": ["*/10 * * * *"] },
+  "vars": { "TARGET_URL": "https://api.grip-kicks.com/health" },
+  "observability": { "enabled": true }
+}

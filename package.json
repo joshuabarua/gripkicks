@@ -44,7 +44,8 @@
     "dev:all:terminals": "dotenv -e .env -- start start-dev.bat && start start-backend.bat && start start-convex.bat",
     "dev:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev\"'",
     "dev:ngrok:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"'",
-    "dev:all:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"' && osascript -e 'tell application \"Terminal\" to do script \"npx convex dev\"'"
+    "dev:all:mac": "dotenv -e .env -- osascript -e 'tell application \"Terminal\" to do script \"cd packages/web && yarn dev\"' && osascript -e 'tell application \"Terminal\" to do script \"cd packages/backend-api && yarn dev:ngrok\"' && osascript -e 'tell application \"Terminal\" to do script \"npx convex dev\"'",
+    "deploy:keepalive": "npx wrangler@4.150.0 deploy --config workers/render-keepalive/wrangler.jsonc"
   },
   "dependencies": {
     "convex": "^1.31.6",

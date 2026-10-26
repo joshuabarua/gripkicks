@@ -33,3 +33,9 @@ The UI leverages an orientation-based fluid responsive design system, avoiding r
 - Background removal uses Python 3.11 with `scripts/shoe-image-requirements.txt`. Create the virtual environment under the ignored `temp/` directory. Run `scripts/prepare-shoe-images.py` after selecting exact-model source images in `data/shoe-image-selections.json`.
 - Review the generated checkerboard contact sheets before `yarn backfill:shoe-images approve --reviewed`. Uploads preserve existing ImageKit files, verify the original PNG bytes, and use each catalog's ImageKit folder.
 - Run `yarn backfill:shoe-images plan` before `apply`. Fill missing database images only. Verify development before using `--prod`; production requires `CONVEX_PROD_URL`. Existing-image snapshots and downloads stay under `temp/shoe-images/`.
+
+## Render keep-alive
+
+- `workers/render-keepalive/` is a standalone Cloudflare Worker cron (not a Yarn workspace) that pings `https://api.grip-kicks.com/health` every 10 minutes to stop Render free-tier spin-down.
+- Deploy it with `yarn deploy:keepalive` (uses `npx wrangler@4.150.0`, no local install).
+- Render free tier includes 750 instance-hours/month, so keep only one always-on free service.
