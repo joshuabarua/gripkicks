@@ -4,8 +4,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import Navigation from "@/components/Navigation";
 
 vi.mock("next/navigation", () => ({ usePathname: () => "/dashboard" }));
+
+const sessionState = vi.hoisted(() => ({
+  loggedIn: {
+    data: { user: { id: "user-1", name: "Josh Climber", email: "josh@example.com" } },
+    isPending: false,
+  } as { data: unknown; isPending: boolean },
+  current: null as unknown as { data: unknown; isPending: boolean },
+}));
+sessionState.current = sessionState.loggedIn;
+
 vi.mock("@/lib/auth", () => ({
-  useSession: () => ({ data: { user: { id: "user-1", name: "Josh Climber", email: "josh@example.com" } }, isPending: false }),
+  useSession: () => sessionState.current,
 }));
 vi.mock("next/dynamic", () => ({ default: () => () => <span>GripKicks</span> }));
 vi.mock("@/components/signout-button", () => ({
@@ -13,6 +23,7 @@ vi.mock("@/components/signout-button", () => ({
 }));
 
 beforeEach(() => {
+  sessionState.current = sessionState.loggedIn;
   window.matchMedia = vi.fn().mockReturnValue({ matches: false, addListener: vi.fn(), removeListener: vi.fn() });
 });
 
@@ -40,5 +51,25 @@ describe("Navigation", () => {
       expect(within(menu as HTMLElement).getByRole("link", { name: label })).toBeInTheDocument();
     }
     expect(within(menu as HTMLElement).getByText("Sign out")).toBeInTheDocument();
+  });
+
+  it("renders neither Sign In nor the menu while the session is pending", () => {
+    sessionState.current = { data: null, isPending: true };
+    render(<Navigation />);
+    expect(screen.queryByRole("link", { name: "Sign In" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Open menu" })).toBeNull();
+  });
+
+  it("shows Sign In once the session resolves to logged out", () => {
+    sessionState.current = { data: null, isPending: false };
+    render(<Navigation />);
+    expect(screen.getByRole("link", { name: "Sign In" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Open menu" })).toBeNull();
+  });
+
+  it("shows the menu button once the session resolves to logged in", () => {
+    render(<Navigation />);
+    expect(screen.getByRole("button", { name: "Open menu" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Sign In" })).toBeNull();
   });
 });

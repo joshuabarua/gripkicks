@@ -70,7 +70,7 @@ const Navigation: React.FC = () => {
   }
   const { orientation, screenWidth } = useOrientationScale();
 
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const isAuthenticated = !!session?.user;
   const isPhonePortrait =
     orientation === "portrait" && screenWidth > 0 && screenWidth < 768;
@@ -157,8 +157,8 @@ const Navigation: React.FC = () => {
       </div>
 
       <div className="flex-1 flex justify-end items-center z-20">
-        {isAuthenticated ? (
-          <div className="relative flex translate-y-[0.5px] items-center">
+        {!isPending && (isAuthenticated ? (
+          <div key="menu" className="lab-fade relative flex translate-y-[0.5px] items-center">
             <AnimatePresence mode="wait">
               {isActive && (
                 <motion.div
@@ -220,8 +220,10 @@ const Navigation: React.FC = () => {
             />
           </div>
         ) : (
-          <AuthButton />
-        )}
+          <div key="signin" className="lab-fade">
+            <AuthButton />
+          </div>
+        ))}
       </div>
     </motion.nav>
   );
