@@ -26,27 +26,17 @@ interface ConvexEnvelope<T> {
   message?: string;
 }
 
+export function toConvexSiteUrl(url: string): string {
+  return url.replace(/\/$/, '').replace('.convex.cloud', '.convex.site');
+}
+
 export function getConvexSiteUrl(): string {
   return (
     process.env.CONVEX_HTTP_URL ||
     process.env.CONVEX_SITE_URL ||
-    process.env.CONVEX_URL?.replace('.convex.cloud', '.convex.site') ||
+    (process.env.CONVEX_URL ? toConvexSiteUrl(process.env.CONVEX_URL) : undefined) ||
     DEFAULT_CONVEX_SITE_URL
   );
-}
-
-export function getConvexBaseUrls(url: string = getConvexSiteUrl()): string[] {
-  const normalized = url.replace(/\/$/, '');
-
-  if (normalized.includes('.convex.cloud')) {
-    return [normalized.replace('.convex.cloud', '.convex.site'), normalized];
-  }
-
-  if (normalized.includes('.convex.site')) {
-    return [normalized, normalized.replace('.convex.site', '.convex.cloud')];
-  }
-
-  return [normalized];
 }
 
 function getConvexServiceToken(): string {

@@ -8,8 +8,12 @@
 import { createAdapterFactory } from "better-auth/adapters";
 import {
   callConvex as callConvexApi,
-  getConvexBaseUrls,
+  toConvexSiteUrl,
 } from "../utils/convexClient";
+import { createJwksCache } from "./jwks-cache";
+
+const AUTH_DB_TIMEOUT_MS = 8_000;
+const JWKS_CACHE_TTL_MS = 10 * 60_000;
 
 interface ConvexAdapterConfig {
   convexUrl: string;
@@ -164,7 +168,7 @@ const modelMap: Record<string, string> = {
 };
 
 const convexAdapter = (config: ConvexAdapterConfig) => {
-  const baseUrls = getConvexBaseUrls(config.convexUrl);
+  const baseUrls = [toConvexSiteUrl(config.convexUrl)];
 
   const callConvex = async (
     model: string,
@@ -187,7 +191,7 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
         {
           baseUrls,
           serviceToken: config.serviceToken,
-          timeoutMs: 0,
+          timeoutMs: AUTH_DB_TIMEOUT_MS,
         },
       );
 
@@ -204,6 +208,11 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
       throw error;
     }
   };
+
+  const jwksCache = createJwksCache(
+    () => callConvex("jwks", "list", {}),
+    JWKS_CACHE_TTL_MS,
+  );
 
   type WhereClause = { field: string; value: unknown; operator?: string };
 
@@ -286,6 +295,7 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
           }
 
           const result = await callConvex(model, "create", finalData);
+          if (model === "jwks") jwksCache.invalidate();
           return result;
         },
 
@@ -432,6 +442,7 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
           // Handle deletion by ID
           if (field === "id" || field === "_id") {
             await callConvex(model, "delete", { id: value });
+            if (model === "jwks") jwksCache.invalidate();
             return;
           }
 
@@ -588,8 +599,7 @@ const convexAdapter = (config: ConvexAdapterConfig) => {
 
         findMany: async ({ model, where, limit, offset }) => {
           if (model === "jwks") {
-            const keys = await callConvex(model, "list", {});
-            return Array.isArray(keys) ? keys : [];
+            return jwksCache.get();
           }
 
           // Handle verification queries by identifier
