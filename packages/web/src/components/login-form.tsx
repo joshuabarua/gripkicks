@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { signIn } from "@/lib/auth";
+import { signIn, safeCallbackPath } from "@/lib/auth";
 import { useState } from "react";
 import { motion } from 'framer-motion';
 import { GoogleIcon } from '@/components/GoogleIcon';
@@ -19,9 +19,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestedCallbackUrl = searchParams.get("callbackUrl");
-  const callbackUrl = requestedCallbackUrl?.startsWith("/")
-    ? requestedCallbackUrl
-    : "/dashboard";
+  const callbackUrl = safeCallbackPath(requestedCallbackUrl);
   const signupHref = requestedCallbackUrl
     ? `/auth/signup?callbackUrl=${encodeURIComponent(requestedCallbackUrl)}`
     : "/auth/signup";

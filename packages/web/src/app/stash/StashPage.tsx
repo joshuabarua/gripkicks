@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { useState, useMemo, useEffect, useCallback, type CSSProperties } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { Clock, Crown, Heart, Star } from "lucide-react";
-import { useSession } from "@/lib/auth";
+import { useRequireAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
 import type { UserShoe } from "@/types/api";
 import { editFormSchema, type EditFormData } from "@/schemas/shoe-schema";
@@ -35,7 +34,7 @@ import { fetchApi } from "@/lib/api-client";
 import { getEffectiveShoeStats } from "@/components/ShoeStatsModal/utils";
 
 export default function ShoeSanctuaryPage() {
-  const { data: session, isPending: sessionLoading } = useSession();
+  const { data: session, isPending: sessionLoading } = useRequireAuth();
   const toast = useToast();
   const { showLoader, hideLoader } = useLoading();
   const [selectedShoe, setSelectedShoe] = useState<UserShoe | null>(null);
@@ -103,7 +102,7 @@ export default function ShoeSanctuaryPage() {
     },
   });
 
-  const isPageLoading = sessionLoading || isLoading;
+  const isPageLoading = !session?.user || isLoading;
 
   const addToStash = useMutation(api.stash.addToStash);
   const deleteUserShoe = useMutation(api.stash.deleteUserShoe);
@@ -429,25 +428,6 @@ export default function ShoeSanctuaryPage() {
     }
     return () => hideLoader("stash-session");
   }, [sessionLoading, showLoader, hideLoader]);
-
-  if (!sessionLoading && !session?.user) {
-    return (
-      <div className="flex min-h-svh w-full items-center justify-center p-6">
-        <div className="text-center text-white">
-          <h1 className="text-title-md font-bold mb-4 font-so-cloudy uppercase">
-            Shoe Sanctuary
-          </h1>
-          <p className="mb-6">Please log in to view your shoe sanctuary</p>
-          <Link
-            href="/auth/login?callbackUrl=%2Fstash"
-            className="inline-flex items-center justify-center rounded-lg bg-brand-red px-6 py-3 font-ball-pill text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
-          >
-            LOG IN
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="relative min-h-svh w-full bg-brand-base overflow-x-hidden">

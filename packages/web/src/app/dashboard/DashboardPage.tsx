@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, type CSSProperties } from "react";
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowUpRight, ChevronRight, Footprints } from "lucide-react";
-import { useSession } from "@/lib/auth";
+import { useRequireAuth } from "@/lib/auth";
 import { useLoading } from "@/contexts/LoadingContext";
 import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo } from "@/components/stash/BrandLogo";
@@ -13,11 +12,10 @@ import { useUserData } from "@/hooks/useUserData";
 import type { UserShoe } from "@/types/api";
 import { PageSurface } from "@/components/ui/PageSurface";
 import { LabHeader } from "@/components/ui/LabHeader";
+import { riseDelay } from "@/lib/motion";
 import { ToeProfile, VolumeArch, TOE_HEIGHTS, VOLUME_ARCH, type FootShape, type FootVolume } from "@/components/foot/FootGlyphs";
 
 const isRated = (score?: number): score is number => typeof score === "number" && Number.isFinite(score) && score >= 1 && score <= 10;
-
-const riseDelay = (index: number) => ({ "--rise-delay": `${index * 50}ms` }) as CSSProperties;
 
 interface DashboardOverviewProps {
   firstName: string;
@@ -161,28 +159,21 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
 }
 
 export default function DashboardPage() {
-  const { data: session, isPending } = useSession();
-  const router = useRouter();
+  const { data: session } = useRequireAuth();
   const { profile: footProfile, isLoading: profileLoading } = useFootProfile();
   const { userData, userStashData, isLoading: userLoading } = useUserData();
   const { showLoader, hideLoader } = useLoading();
   const isLoadingData = !!session?.user && (userLoading || userData === undefined || (userData !== null && userStashData === undefined));
-  const isLoading = isPending || isLoadingData || profileLoading;
+  const isLoading = !session?.user || isLoadingData || profileLoading;
 
   // Move useMemo before early returns to satisfy Rules of Hooks
   const userShoes = useMemo(() => userStashData ?? [], [userStashData]);
-
-  useEffect(() => {
-    if (!isPending && !session?.user) router.replace("/auth/login");
-  }, [isPending, router, session?.user]);
 
   useEffect(() => {
     if (isLoading) showLoader("dashboard");
     else hideLoader("dashboard");
     return () => hideLoader("dashboard");
   }, [isLoading, showLoader, hideLoader]);
-
-  if (!isPending && !session?.user) return null;
 
   const firstName = (userData?.name || session?.user?.name || "Climber").trim().split(/\s+/)[0] || "Climber";
   return <DashboardOverview firstName={firstName} userShoes={userShoes} footProfile={footProfile} isLoading={isLoading} />;

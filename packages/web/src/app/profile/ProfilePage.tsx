@@ -8,7 +8,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { fetchApi } from "@/lib/api-client";
-import { useSession } from "@/lib/auth";
+import { useRequireAuth } from "@/lib/auth";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProfileForm } from "@/components/ProfileForm";
@@ -17,9 +17,13 @@ import { EmailChangeForm } from "@/components/EmailChangeForm";
 import { AccountDeletion } from "@/components/AccountDeletion";
 import { useLoading } from "@/contexts/LoadingContext";
 import { UserAvatar } from "@/components/ui/UserAvatar";
-import { Button } from "@/components/ui/button";
+import { FullPageLoading } from "@/components/ui/loading";
+import { PageSurface } from "@/components/ui/PageSurface";
+import { LabHeader } from "@/components/ui/LabHeader";
+import { riseDelay, expandMotion } from "@/lib/motion";
 import { useUserData } from "@/hooks/useUserData";
 import { useFootProfile } from "@/hooks/useFootProfile";
+import { cn } from "@/lib/utils";
 
 interface UserProfile {
   id: string;
@@ -45,7 +49,7 @@ const footShapeLabels: Record<string, string> = {
 };
 
 export default function ProfilePage() {
-  const { data: session, isPending: sessionLoading } = useSession();
+  const { data: session, isPending: sessionLoading } = useRequireAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
@@ -124,259 +128,171 @@ export default function ProfilePage() {
   }, [session?.user, sessionLoading, isLoading, showLoader, hideLoader]);
 
   if (!session?.user) {
-    return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-        <div className="text-center">
-          <h1 className="font-ball-pill text-4xl mb-4">NOT LOGGED IN</h1>
-          <p className="font-mono text-neutral-500 mb-6">
-            Please log in to view your profile
-          </p>
-          <Link
-            href="/auth/login?callbackUrl=%2Fprofile"
-            className="inline-flex items-center justify-center bg-brand-red px-8 py-3 font-ball-pill text-lg text-black transition-colors duration-500 hover:bg-brand-red/80"
-          >
-            LOG IN
-          </Link>
-        </div>
-      </main>
-    );
+    return <FullPageLoading text="Loading profile" />;
   }
 
+  const sections = [
+    {
+      key: "profile",
+      title: "Profile Information",
+      subtitle: "Update your name",
+      icon: Edit2,
+      actionLabel: "Edit",
+      danger: false,
+      content: (
+        <div className="p-6 md:p-8">
+          <ProfileForm
+            initialProfile={{ name: displayName }}
+            onProfileUpdated={handleProfileUpdated}
+            onSuccess={handleProfileSaved}
+          />
+        </div>
+      ),
+    },
+    {
+      key: "security",
+      title: "Security",
+      subtitle: "Change your password and email address",
+      icon: Lock,
+      actionLabel: "Edit",
+      danger: false,
+      content: (
+        <div className="p-6 md:p-8 space-y-6">
+          <PasswordChangeForm />
+          <div className="h-px w-full bg-white/6" />
+          <EmailChangeForm currentEmail={profile?.email || ""} />
+        </div>
+      ),
+    },
+    {
+      key: "danger",
+      title: "Danger Zone",
+      subtitle: "Permanently delete your account",
+      icon: AlertTriangle,
+      actionLabel: "Manage",
+      danger: true,
+      content: (
+        <div className="p-6 md:p-8">
+          <AccountDeletion />
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      <section className="px-6 md:px-12 lg:px-16 py-12">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mb-12"
-          >
-            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Your Account</p>
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                <UserAvatar
-                  userId={displayUserId}
-                  name={displayName}
-                  email={displayEmail}
-                  className="w-20 h-20 rounded-2xl border-2 border-brand-red/20"
-                  size={160}
-                />
-              </div>
-              <div>
-                <h1 className="font-ball-pill text-4xl md:text-5xl">
-                  {displayName}
-                </h1>
-                <p className="font-mono text-neutral-500 mt-1">
-                  {displayEmail}
-                </p>
-              </div>
+    <PageSurface>
+      <div className="mx-auto max-w-6xl px-6 py-14 md:px-12 lg:px-16">
+        <LabHeader title="Profile" />
+
+        <div className="space-y-6">
+          <section aria-label="Account identity" style={riseDelay(1)} className="lab-card lab-rise flex items-center gap-6 p-6">
+            <UserAvatar
+              userId={displayUserId}
+              name={displayName}
+              email={displayEmail}
+              className="h-20 w-20 rounded-lg border border-white/10"
+              size={160}
+            />
+            <div className="min-w-0">
+              <h2 className="truncate font-ball-pill text-3xl">{displayName}</h2>
+              <p className="mt-1 truncate font-mono text-sm text-brand-putty">{displayEmail}</p>
             </div>
-          </motion.div>
+          </section>
 
-          <div className="space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
-            >
-              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div style={riseDelay(2)} className="lab-card lab-rise p-6">
+              <div className="flex items-start justify-between gap-4">
+                <p className="lab-label">Foot Shape</p>
                 {!profile?.footShape && (
-                  <div className="flex justify-end mb-4">
-                    <Link href="/footlab">
-                      <motion.span
-                        whileHover={{ scale: 1.05 }}
-                        className="font-mono text-[10px] text-brand-red cursor-pointer uppercase tracking-wide"
-                      >
-                        Set up
-                      </motion.span>
-                    </Link>
-                  </div>
+                  <Link href="/footlab" className="lab-button-ghost">Set up</Link>
                 )}
-                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Foot Shape</p>
-                <p className="font-ball-pill text-2xl text-white capitalize">
-                  {profile?.footShape
-                    ? footShapeLabels[profile.footShape] || profile.footShape
-                    : "Not set"}
-                </p>
               </div>
+              <p className="mt-3 font-ball-pill text-2xl capitalize">
+                {profile?.footShape
+                  ? footShapeLabels[profile.footShape] || profile.footShape
+                  : "Not set"}
+              </p>
+            </div>
 
-              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6">
+            <div style={riseDelay(3)} className="lab-card lab-rise p-6">
+              <div className="flex items-start justify-between gap-4">
+                <p className="lab-label">Favourite Shoe</p>
                 {!favouriteShoe && (
-                  <div className="flex justify-end mb-4">
-                    <Link href="/stash">
-                      <motion.span
-                        whileHover={{ scale: 1.05 }}
-                        className="font-mono text-[10px] text-brand-red cursor-pointer uppercase tracking-wide"
-                      >
-                        Choose
-                      </motion.span>
-                    </Link>
-                  </div>
+                  <Link href="/stash" className="lab-button-ghost">Choose</Link>
                 )}
-                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-600 mb-1">Favourite Shoe</p>
-                <p className="font-ball-pill text-2xl text-white">
-                  {favouriteShoe
-                    ? `${favouriteShoe.brand} ${favouriteShoe.name}`
-                    : "Not set"}
-                </p>
               </div>
-            </motion.div>
+              <p className="mt-3 font-ball-pill text-2xl">
+                {favouriteShoe
+                  ? `${favouriteShoe.brand} ${favouriteShoe.name}`
+                  : "Not set"}
+              </p>
+            </div>
+          </div>
 
-            {!profile?.onboardingComplete &&
-              !footProfileLoading &&
-              userStashData !== undefined &&
-              !shouldSkipOnboarding && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-brand-red rounded-3xl p-8 relative overflow-hidden"
-              >
-                <div className="absolute inset-0 opacity-20">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-black/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-                  <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/30 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
-                </div>
-                <div className="relative">
-                  <h3 className="font-ball-pill text-3xl text-black mb-3">
-                    COMPLETE YOUR PROFILE
-                  </h3>
-                  <ol className="font-mono text-sm text-black/70 space-y-1 mb-4">
-                    <li>1. Set up your foot profile in Foot Lab</li>
-                    <li>2. Add your first shoe with comfort ratings</li>
-                    <li>3. Get shoe matches</li>
-                  </ol>
-                  <Link href="/footlab">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="bg-black text-brand-red font-ball-pill text-lg px-6 py-3 flex items-center gap-2"
-                    >
-                      START SETUP
-                      <ArrowUpRight className="w-5 h-5" />
-                    </motion.button>
-                  </Link>
-                </div>
-              </motion.div>
-            )}
+          {!profile?.onboardingComplete &&
+            !footProfileLoading &&
+            userStashData !== undefined &&
+            !shouldSkipOnboarding && (
+            <section aria-labelledby="onboarding-cta-title" style={riseDelay(4)} className="lab-card lab-card-active lab-rise flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+              <div>
+                <p className="lab-label mb-2">Next step</p>
+                <h2 id="onboarding-cta-title" className="font-ball-pill text-3xl leading-tight">Complete your profile</h2>
+                <p className="mt-2 max-w-lg font-mono text-sm leading-relaxed text-brand-putty">Set your foot profile, add a rated shoe, then compare matches.</p>
+              </div>
+              <Link href="/footlab" className="lab-button shrink-0">
+                Start setup<ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
+            </section>
+          )}
 
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              className="space-y-4"
-            >
-              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl overflow-hidden">
-                <div 
-                  className="p-6 flex justify-between items-center cursor-pointer hover:bg-white/5 transition-colors"
-                  onClick={() => toggleSection("profile")}
+          <div className="space-y-4">
+            {sections.map((section, index) => {
+              const isExpanded = expandedSection === section.key;
+              const Icon = section.icon;
+              return (
+                <div
+                  key={section.key}
+                  style={riseDelay(5 + index)}
+                  className={cn("lab-card lab-rise", section.danger && "border-red-500/20")}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
-                      <Edit2 className="w-5 h-5 text-brand-red" />
-                    </div>
-                    <div>
-                      <h3 className="font-ball-pill text-2xl text-white">Profile Information</h3>
-                      <p className="font-mono text-sm text-neutral-500">Update your name</p>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="sm" className="hidden sm:flex border border-white/10 rounded-full px-6">
-                    {expandedSection === "profile" ? "Close" : "Edit"}
-                  </Button>
+                  <button
+                    type="button"
+                    aria-expanded={isExpanded}
+                    aria-controls={`profile-section-${section.key}`}
+                    onClick={() => toggleSection(section.key)}
+                    className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-white/3"
+                  >
+                    <span className="flex items-center gap-4">
+                      <span className={cn("flex h-10 w-10 items-center justify-center rounded-lg", section.danger ? "bg-red-500/10" : "bg-white/5")}>
+                        <Icon aria-hidden="true" className={cn("h-5 w-5", section.danger ? "text-red-500" : "text-brand-putty")} />
+                      </span>
+                      <span>
+                        <span className="block font-ball-pill text-2xl text-brand-chalk">{section.title}</span>
+                        <span className="block font-mono text-sm text-brand-putty">{section.subtitle}</span>
+                      </span>
+                    </span>
+                    <span aria-hidden="true" className="lab-button-ghost hidden sm:inline-flex">
+                      {isExpanded ? "Close" : section.actionLabel}
+                    </span>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <motion.div
+                        key="section-body"
+                        id={`profile-section-${section.key}`}
+                        {...expandMotion}
+                        className="overflow-hidden border-t border-white/6"
+                      >
+                        {section.content}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-                <AnimatePresence>
-                  {expandedSection === "profile" && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-neutral-800 bg-black/20"
-                    >
-                      <div className="p-6 md:p-8">
-                        <ProfileForm
-                          initialProfile={{ name: displayName }}
-                          onProfileUpdated={handleProfileUpdated}
-                          onSuccess={handleProfileSaved}
-                        />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <div className="bg-neutral-900 border border-neutral-800 rounded-3xl overflow-hidden">
-                <div 
-                  className="p-6 flex justify-between items-center cursor-pointer hover:bg-white/5 transition-colors"
-                  onClick={() => toggleSection("security")}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
-                      <Lock className="w-5 h-5 text-brand-red" />
-                    </div>
-                    <div>
-                      <h3 className="font-ball-pill text-2xl text-white">Security</h3>
-                      <p className="font-mono text-sm text-neutral-500">Change your password and email address</p>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="sm" className="hidden sm:flex border border-white/10 rounded-full px-6">
-                    {expandedSection === "security" ? "Close" : "Edit"}
-                  </Button>
-                </div>
-                <AnimatePresence>
-                  {expandedSection === "security" && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-neutral-800 bg-black/20"
-                    >
-                      <div className="p-6 md:p-8 space-y-6">
-                        <PasswordChangeForm />
-                        <div className="h-px w-full bg-neutral-800" />
-                        <EmailChangeForm currentEmail={profile?.email || ""} />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <div className="bg-neutral-900 border border-red-500/20 rounded-3xl overflow-hidden">
-                <div 
-                  className="p-6 flex justify-between items-center cursor-pointer hover:bg-red-500/5 transition-colors"
-                  onClick={() => toggleSection("danger")}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
-                      <AlertTriangle className="w-5 h-5 text-red-500" />
-                    </div>
-                    <div>
-                      <h3 className="font-ball-pill text-2xl text-red-500">Danger Zone</h3>
-                      <p className="font-mono text-sm text-neutral-500">Permanently delete your account</p>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="sm" className="hidden sm:flex border border-red-500/20 text-red-500 hover:bg-red-500/10 hover:text-red-400 rounded-full px-6">
-                    {expandedSection === "danger" ? "Close" : "Manage"}
-                  </Button>
-                </div>
-                <AnimatePresence>
-                  {expandedSection === "danger" && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-red-500/20 bg-black/20"
-                    >
-                      <div className="p-6 md:p-8">
-                        <AccountDeletion />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
+              );
+            })}
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </PageSurface>
   );
 }

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Loader2, Check, Footprints } from 'lucide-react';
-import { useSession } from '@/lib/auth';
+import { Loader2, Check } from 'lucide-react';
+import { useRequireAuth } from '@/lib/auth';
 import { fetchApi } from '@/lib/api-client';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,8 +10,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { ToeProfile, VolumeArch, type FootShape, type FootVolume } from '@/components/foot/FootGlyphs';
+import { FullPageLoading } from '@/components/ui/loading';
+import { PageSurface } from '@/components/ui/PageSurface';
+import { LabHeader } from '@/components/ui/LabHeader';
+import { riseDelay, expandMotion, slideUpBarMotion } from '@/lib/motion';
+import { cn } from '@/lib/utils';
 
-// Zod schema for foot profile validation
 const footProfileSchema = z.object({
   footShape: z.enum(['egyptian', 'roman', 'greek', 'germanic', 'celtic']),
   footVolume: z.enum(['low', 'medium', 'high']),
@@ -64,7 +68,7 @@ const footVolumeInfo: Record<FootVolume, { name: string; description: string; fi
 };
 
 export default function FootLabPage() {
-  const { data: session } = useSession();
+  const { data: session } = useRequireAuth();
   const router = useRouter();
   const [selectedFootShape, setSelectedFootShape] = useState<FootShape | null>(null);
   const [selectedFootVolume, setSelectedFootVolume] = useState<FootVolume | null>(null);
@@ -165,209 +169,138 @@ export default function FootLabPage() {
   const showOnboardingPrompt = !onboardingComplete && !hasFootProfile;
 
   if (!session?.user) {
-    return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-brand-red/10 rounded-lg flex items-center justify-center mx-auto mb-6 hal-glow-animate">
-            <Footprints className="w-8 h-8 text-brand-red" />
-          </div>
-          <h1 className="font-ball-pill text-5xl mb-3">FOOT PROFILE</h1>
-          <p className="font-mono text-neutral-500 mb-6">Log in to set up your foot profile</p>
-          <Link
-            href="/auth/login?callbackUrl=%2Ffootlab"
-            className="inline-flex items-center justify-center rounded-lg bg-brand-red px-8 py-3 font-ball-pill text-lg text-black"
-          >
-            LOG IN
-          </Link>
-        </div>
-      </main>
-    );
+    return <FullPageLoading text="Loading foot lab" />;
   }
 
   return (
-    <main className="min-h-screen bg-black text-white overflow-x-hidden pb-32">
-      <section className="px-6 md:px-12 lg:px-16 py-14 max-w-6xl mx-auto">
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="mb-16"
-        >
-          <h1 className="font-ball-pill text-6xl md:text-8xl leading-none mb-4">
-            FOOT LAB
-          </h1>
-          <p className="font-mono text-neutral-400 text-lg max-w-lg">
-            Set your foot shape and volume. It helps me match you with climbing shoes.
-          </p>
-        </motion.div>
+    <PageSurface className="pb-32">
+      <div className="mx-auto max-w-6xl px-6 py-14 md:px-12 lg:px-16">
+        <LabHeader title="Foot Lab" description="Set your foot shape and volume." />
 
         {showOnboardingPrompt && (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05, duration: 0.5 }}
-            className="mb-10 rounded-lg border border-brand-red/20 bg-brand-red/5 p-5"
-          >
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <div>
-                <h2 className="font-ball-pill text-2xl text-brand-chalk mb-2">Foot Lab is ready. Finish setup whenever you want.</h2>
-                <p className="font-mono text-sm text-brand-putty/70 max-w-2xl">
-                  You can use Foot Lab now, or continue onboarding to finish setup.
-                </p>
-              </div>
-              <Link
-                href="/onboarding"
-                className="inline-flex items-center justify-center rounded-lg border border-brand-red/30 bg-brand-red px-5 py-3 font-ball-pill text-sm text-black transition-colors duration-500 hover:bg-brand-red/80"
-              >
-                CONTINUE ONBOARDING
-              </Link>
+          <section aria-labelledby="onboarding-prompt-title" style={riseDelay(1)} className="lab-card lab-card-active lab-rise mb-10 flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="lab-label mb-2">Onboarding</p>
+              <h2 id="onboarding-prompt-title" className="font-ball-pill text-2xl leading-tight">Finish setup</h2>
             </div>
-          </motion.div>
+            <Link href="/onboarding" className="lab-button shrink-0">Continue onboarding</Link>
+          </section>
         )}
 
-        {/* Step 1: Shape */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-16"
-        >
-          <div className="mb-8">
+        <section className="mb-16">
+          <div style={riseDelay(2)} className="lab-rise mb-8">
             <h2 className="font-ball-pill text-2xl">Which toe is longest?</h2>
-            <p className="font-mono text-neutral-500 text-sm mt-0.5">Look at your bare foot from above and pick the closest match</p>
+            <p className="font-mono text-sm text-brand-putty mt-0.5">Look at your bare foot from above and pick the closest match</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             {(Object.keys(footShapeInfo) as FootShape[]).map((shape, i) => {
               const isSelected = selectedFootShape === shape;
               return (
-                <motion.button
-                  key={shape}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + i * 0.05 }}
-                  whileHover={{ y: -4 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setSelectedFootShape(shape)}
-                  className={`monolith-card rounded-lg p-4 text-left transition-all duration-500 border ${isSelected
-                      ? 'border-brand-red/40 bg-brand-red/10 hal-glow'
-                      : 'border-white/6 bg-brand-charcoal hover:border-white/10'
-                    }`}
-                >
-                  <div className="mb-4 pt-2">
-                    <ToeProfile shape={shape} active={isSelected} />
-                  </div>
-                  <h3 className="font-ball-pill text-xl leading-none mb-1">{footShapeInfo[shape].name}</h3>
-                  <p className="font-mono text-[11px] text-neutral-500 leading-snug">{footShapeInfo[shape].description}</p>
-                  <AnimatePresence>
-                    {isSelected && (
-                      <motion.p
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="font-mono text-[10px] text-brand-putty/70 mt-2 overflow-hidden"
-                      >
-                        {footShapeInfo[shape].fit}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
+                <div key={shape} style={riseDelay(3 + i)} className="lab-rise h-full">
+                  <motion.button
+                    type="button"
+                    aria-pressed={isSelected}
+                    whileHover={{ y: -4 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setSelectedFootShape(shape)}
+                    className={cn("lab-card h-full w-full p-4 text-left", isSelected && "lab-card-active hal-glow")}
+                  >
+                    <div className="mb-4 pt-2">
+                      <ToeProfile shape={shape} active={isSelected} />
+                    </div>
+                    <h3 className="font-ball-pill text-xl leading-none mb-1">{footShapeInfo[shape].name}</h3>
+                    <p className="font-mono text-xs text-brand-putty leading-snug">{footShapeInfo[shape].description}</p>
+                    <AnimatePresence>
+                      {isSelected && (
+                        <motion.p
+                          {...expandMotion}
+                          className="font-mono text-xs text-brand-putty/70 mt-2 overflow-hidden"
+                        >
+                          {footShapeInfo[shape].fit}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </motion.button>
+                </div>
               );
             })}
           </div>
-        </motion.div>
+        </section>
 
-        {/* Step 2: Volume */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-16"
-        >
-          <div className="mb-8">
+        <section className="mb-16">
+          <div style={riseDelay(8)} className="lab-rise mb-8">
             <h2 className="font-ball-pill text-2xl">How full is your foot?</h2>
-            <p className="font-mono text-neutral-500 text-sm mt-0.5">Think about your foot width and instep height</p>
+            <p className="font-mono text-sm text-brand-putty mt-0.5">Think about your foot width and instep height</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(Object.keys(footVolumeInfo) as FootVolume[]).map((volume, i) => {
               const isSelected = selectedFootVolume === volume;
               return (
-                <motion.button
-                  key={volume}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + i * 0.05 }}
-                  whileHover={{ y: -4 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setSelectedFootVolume(volume)}
-                  className={`monolith-card rounded-lg p-6 text-left transition-all duration-500 border ${isSelected
-                      ? 'border-brand-red/40 bg-brand-red/10 hal-glow'
-                      : 'border-white/6 bg-brand-charcoal hover:border-white/10'
-                    }`}
-                >
-                  <div className="mb-5">
-                    <VolumeArch volume={volume} active={isSelected} />
-                  </div>
-                  <h3 className="font-ball-pill text-2xl leading-none mb-2">{footVolumeInfo[volume].name} Volume</h3>
-                  <p className="font-mono text-sm text-neutral-500 leading-snug mb-2">{footVolumeInfo[volume].description}</p>
-                  <AnimatePresence>
-                    {isSelected && (
-                      <motion.p
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="font-mono text-[10px] text-brand-putty/70 overflow-hidden"
-                      >
-                        {footVolumeInfo[volume].fit}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
+                <div key={volume} style={riseDelay(9 + i)} className="lab-rise h-full">
+                  <motion.button
+                    type="button"
+                    aria-pressed={isSelected}
+                    whileHover={{ y: -4 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setSelectedFootVolume(volume)}
+                    className={cn("lab-card h-full w-full p-6 text-left", isSelected && "lab-card-active hal-glow")}
+                  >
+                    <div className="mb-5">
+                      <VolumeArch volume={volume} active={isSelected} />
+                    </div>
+                    <h3 className="font-ball-pill text-2xl leading-none mb-2">{footVolumeInfo[volume].name} Volume</h3>
+                    <p className="font-mono text-sm text-brand-putty leading-snug mb-2">{footVolumeInfo[volume].description}</p>
+                    <AnimatePresence>
+                      {isSelected && (
+                        <motion.p
+                          {...expandMotion}
+                          className="font-mono text-xs text-brand-putty/70 overflow-hidden"
+                        >
+                          {footVolumeInfo[volume].fit}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </motion.button>
+                </div>
               );
             })}
           </div>
-        </motion.div>
+        </section>
 
         {error && (
           <div className="text-red-400 text-sm font-mono bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">{error}</div>
         )}
-
-      </section>
+      </div>
 
       <AnimatePresence>
         {selectedFootShape && selectedFootVolume && (
           <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+            {...slideUpBarMotion}
             className="fixed bottom-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-md border-t border-white/6 px-6 py-4"
           >
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
               <div>
                 <p className="font-ball-pill text-xl capitalize">
-                  {selectedFootShape} <span className="text-neutral-500">·</span> {selectedFootVolume} volume
+                  {selectedFootShape} <span className="text-brand-putty">·</span> {selectedFootVolume} volume
                 </p>
-                <p className="font-mono text-xs text-neutral-500">
+                <p className="font-mono text-xs text-brand-putty">
                   {isAlreadySaved ? 'Profile already saved' : 'Ready to save your profile'}
                 </p>
               </div>
               <motion.button
+                type="button"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={saveFootProfile}
                 disabled={saving || isAlreadySaved}
-                className={`font-ball-pill text-lg px-8 py-3 rounded-lg transition-all duration-500 flex items-center gap-2 disabled:opacity-60 ${saved || isAlreadySaved
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-brand-red hover:bg-brand-red/80 text-black'
-                  }`}
+                className={cn("flex items-center gap-2 disabled:opacity-60", saved || isAlreadySaved ? "lab-button-ghost" : "lab-button")}
               >
                 {saving ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 aria-hidden="true" className="w-5 h-5 animate-spin" />
                 ) : saved || isAlreadySaved ? (
-                  <><Check className="w-4 h-4" /> SAVED</>
+                  <><Check aria-hidden="true" className="w-4 h-4" /> SAVED</>
                 ) : (
                   'SAVE PROFILE'
                 )}
@@ -376,6 +309,6 @@ export default function FootLabPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </main>
+    </PageSurface>
   );
 }

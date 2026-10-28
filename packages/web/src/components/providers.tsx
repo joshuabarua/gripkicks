@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { ConvexProviderWithAuth, ConvexReactClient } from "convex/react";
+import { MotionConfig } from "framer-motion";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { LoadingProvider } from "@/contexts/LoadingContext";
@@ -29,7 +30,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <PostHogProvider client={posthog}>
       <LoadingProvider>
         <ConvexProviderWithAuth client={convex} useAuth={useBetterAuthForConvex}>
-          {children}
+          <MotionConfig reducedMotion="user">
+            {children}
+          </MotionConfig>
         </ConvexProviderWithAuth>
       </LoadingProvider>
     </PostHogProvider>

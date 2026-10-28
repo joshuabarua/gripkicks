@@ -3,15 +3,22 @@ import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import MatcherPage from "@/app/matcher/page";
 
-const mocks = vi.hoisted(() => ({ session: vi.fn(), params: vi.fn(), matches: vi.fn() }));
-vi.mock("@/lib/auth", () => ({ useSession: mocks.session }));
-vi.mock("next/navigation", () => ({ useSearchParams: mocks.params }));
+const mocks = vi.hoisted(() => ({ session: vi.fn(), params: vi.fn(), matches: vi.fn(), replace: vi.fn() }));
+vi.mock("better-auth/react", () => ({
+  createAuthClient: () => ({ useSession: mocks.session, token: vi.fn() }),
+}));
+vi.mock("better-auth/client/plugins", () => ({ jwtClient: () => ({}) }));
+vi.mock("next/navigation", () => ({
+  useSearchParams: mocks.params,
+  useRouter: () => ({ replace: mocks.replace, push: vi.fn() }),
+}));
 vi.mock("@/components/shoe/MatcherView", () => ({ MatcherView: () => <div>Ranked shoe matches</div> }));
 vi.mock("@/hooks/useFindMyShoe", () => ({ useFindMyShoe: mocks.matches }));
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mocks.session.mockReturnValue({ data: { user: { id: "user-1" } }, isPending: false });
+  window.history.replaceState({}, "", "/matcher");
+  mocks.session.mockReturnValue({ isPending: false, data: { user: { id: "user-1" } }, error: null });
   mocks.params.mockReturnValue(new URLSearchParams());
   mocks.matches.mockReturnValue({ soleMateMatches: [], isLoading: false, hasProfile: true });
 });
@@ -40,10 +47,18 @@ describe("Matcher page navigation", () => {
     expect(document.querySelector("a button")).toBeNull();
   });
 
-  it("preserves the sign-in return destination", () => {
-    mocks.session.mockReturnValue({ data: null, isPending: false });
+  it("keeps loading and redirects to login when confirmed signed out", () => {
+    mocks.session.mockReturnValue({ isPending: false, data: null, error: null });
     render(<MatcherPage />);
-    expect(screen.getByRole("link", { name: "Log in" })).toHaveAttribute("href", "/auth/login?callbackUrl=%2Fmatcher");
+    expect(screen.getByRole("status", { name: "Loading matcher" })).toBeInTheDocument();
+    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Fmatcher");
     expect(screen.queryByText("Ranked shoe matches")).toBeNull();
+  });
+
+  it("shows a loading state while the session is pending", () => {
+    mocks.session.mockReturnValue({ isPending: true, data: null, error: null });
+    render(<MatcherPage />);
+    expect(screen.getByRole("status", { name: "Loading matcher" })).toBeInTheDocument();
+    expect(mocks.replace).not.toHaveBeenCalled();
   });
 });

@@ -1,12 +1,19 @@
 import type { PropsWithChildren } from "react";
 import { act, renderHook } from "@testing-library/react";
 import { ConvexProviderWithAuth, useConvexAuth } from "convex/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useBetterAuthForConvex } from "@/lib/auth";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  safeCallbackPath,
+  useBetterAuthForConvex,
+  useRedirectIfAuthenticated,
+  useRequireAuth,
+} from "@/lib/auth";
 
-const { useSessionMock, tokenMock } = vi.hoisted(() => ({
+const { useSessionMock, tokenMock, replaceMock, pushMock } = vi.hoisted(() => ({
   useSessionMock: vi.fn(),
   tokenMock: vi.fn(),
+  replaceMock: vi.fn(),
+  pushMock: vi.fn(),
 }));
 
 vi.mock("better-auth/react", () => ({
@@ -20,12 +27,23 @@ vi.mock("better-auth/client/plugins", () => ({
   jwtClient: () => ({}),
 }));
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: replaceMock, push: pushMock }),
+}));
+
 beforeEach(() => {
+  replaceMock.mockClear();
+  pushMock.mockClear();
+  window.history.replaceState({}, "", "/");
   useSessionMock.mockReturnValue({
     isPending: false,
     data: { user: { id: "user-1" } },
   });
   tokenMock.mockResolvedValue({ data: { token: "access-token" } });
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 describe("useBetterAuthForConvex", () => {
@@ -80,5 +98,119 @@ describe("useBetterAuthForConvex", () => {
 
     unmount();
     expect(client.clearAuth).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("safeCallbackPath", () => {
+  it("keeps safe relative paths including search params", () => {
+    expect(safeCallbackPath("/stash")).toBe("/stash");
+    expect(safeCallbackPath("/matcher?tab=mate")).toBe("/matcher?tab=mate");
+  });
+
+  it("rejects protocol-relative and backslash-escaped URLs", () => {
+    expect(safeCallbackPath("//evil.com")).toBe("/dashboard");
+    expect(safeCallbackPath("/\\evil.com")).toBe("/dashboard");
+  });
+
+  it("rejects absolute URLs and empty values", () => {
+    expect(safeCallbackPath("https://evil.com")).toBe("/dashboard");
+    expect(safeCallbackPath(null)).toBe("/dashboard");
+    expect(safeCallbackPath(undefined, "/footlab")).toBe("/footlab");
+  });
+});
+
+describe("useRequireAuth", () => {
+  it("redirects to login with the current path when confirmed signed out", () => {
+    window.history.pushState({}, "", "/stash?foo=1");
+    useSessionMock.mockReturnValue({ isPending: false, data: null, error: null });
+
+    renderHook(() => useRequireAuth());
+
+    expect(replaceMock).toHaveBeenCalledWith(
+      `/auth/login?callbackUrl=${encodeURIComponent("/stash?foo=1")}`,
+    );
+  });
+
+  it("does not redirect while the session is pending", () => {
+    useSessionMock.mockReturnValue({ isPending: true, data: null, error: null });
+
+    renderHook(() => useRequireAuth());
+
+    expect(replaceMock).not.toHaveBeenCalled();
+  });
+
+  it("does not redirect when the session times out while pending", () => {
+    vi.useFakeTimers();
+    useSessionMock.mockReturnValue({ isPending: true, data: null, error: null });
+
+    renderHook(() => useRequireAuth());
+    act(() => {
+      vi.advanceTimersByTime(6000);
+    });
+
+    expect(replaceMock).not.toHaveBeenCalled();
+  });
+
+  it("redirects once a timed-out session later resolves as signed out", () => {
+    vi.useFakeTimers();
+    window.history.pushState({}, "", "/footlab");
+    useSessionMock.mockReturnValue({ isPending: true, data: null, error: null });
+
+    const { rerender } = renderHook(() => useRequireAuth());
+    act(() => {
+      vi.advanceTimersByTime(6000);
+    });
+    expect(replaceMock).not.toHaveBeenCalled();
+
+    useSessionMock.mockReturnValue({ isPending: false, data: null, error: null });
+    rerender();
+
+    expect(replaceMock).toHaveBeenCalledWith(
+      `/auth/login?callbackUrl=${encodeURIComponent("/footlab")}`,
+    );
+  });
+
+  it("does not redirect when the session errored", () => {
+    useSessionMock.mockReturnValue({
+      isPending: false,
+      data: null,
+      error: new Error("network"),
+    });
+
+    renderHook(() => useRequireAuth());
+
+    expect(replaceMock).not.toHaveBeenCalled();
+  });
+
+  it("does not redirect when signed in", () => {
+    renderHook(() => useRequireAuth());
+
+    expect(replaceMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("useRedirectIfAuthenticated", () => {
+  it("redirects signed-in users to a safe callbackUrl", () => {
+    window.history.pushState({}, "", "/auth/login?callbackUrl=/stash");
+
+    renderHook(() => useRedirectIfAuthenticated());
+
+    expect(replaceMock).toHaveBeenCalledWith("/stash");
+  });
+
+  it("falls back to the dashboard for unsafe callbackUrls", () => {
+    window.history.pushState({}, "", "/auth/login?callbackUrl=//evil.com");
+
+    renderHook(() => useRedirectIfAuthenticated());
+
+    expect(replaceMock).toHaveBeenCalledWith("/dashboard");
+  });
+
+  it("does not redirect when signed out", () => {
+    useSessionMock.mockReturnValue({ isPending: false, data: null, error: null });
+
+    renderHook(() => useRedirectIfAuthenticated());
+
+    expect(replaceMock).not.toHaveBeenCalled();
   });
 });

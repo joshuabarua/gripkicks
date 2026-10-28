@@ -7,19 +7,13 @@ const protectedRoutes = [
   '/profile',
   '/settings',
   '/stash',
-];
-
-// Routes that should redirect to home if already authenticated
-const authRoutes = [
-  '/auth/login',
-  '/auth/signup',
+  '/matcher',
+  '/footlab',
 ];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const callbackUrl = request.nextUrl.searchParams.get('callbackUrl');
-  const safeCallbackUrl = callbackUrl?.startsWith('/') ? callbackUrl : '/dashboard';
-  
+
   // Check for session cookie. Better Auth might use prefixes like __Secure-
   const cookies = request.cookies.getAll();
   const sessionToken = cookies.find(c => c.name.includes('better-auth.session_token'));
@@ -32,12 +26,6 @@ export async function proxy(request: NextRequest) {
     const nextPath = `${pathname}${request.nextUrl.search}`;
     loginUrl.searchParams.set('callbackUrl', nextPath);
     return NextResponse.redirect(loginUrl);
-  }
-
-  // Redirect authenticated users away from auth pages
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
-  if (isAuthRoute && isAuthenticated) {
-    return NextResponse.redirect(new URL(safeCallbackUrl, request.url));
   }
 
   return NextResponse.next();

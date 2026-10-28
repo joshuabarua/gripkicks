@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { signUp, signIn } from "@/lib/auth";
+import { signUp, signIn, safeCallbackPath } from "@/lib/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { motion } from "framer-motion";
@@ -44,9 +44,7 @@ export function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedCallbackUrl = searchParams.get("callbackUrl");
-  const callbackUrl = requestedCallbackUrl?.startsWith("/")
-    ? requestedCallbackUrl
-    : "/onboarding";
+  const callbackUrl = safeCallbackPath(requestedCallbackUrl, "/onboarding");
   const loginHref = requestedCallbackUrl
     ? `/auth/login?callbackUrl=${encodeURIComponent(requestedCallbackUrl)}`
     : "/auth/login";

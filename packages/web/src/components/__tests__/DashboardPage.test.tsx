@@ -6,10 +6,13 @@ import DashboardPage, { DashboardOverview } from "@/app/dashboard/DashboardPage"
 import type { UserShoe } from "@/types/api";
 
 const mocks = vi.hoisted(() => ({ session: vi.fn(), profile: vi.fn(), userData: vi.fn(), replace: vi.fn(), showLoader: vi.fn(), hideLoader: vi.fn() }));
-vi.mock("@/lib/auth", () => ({ useSession: mocks.session }));
+vi.mock("better-auth/react", () => ({
+  createAuthClient: () => ({ useSession: mocks.session, token: vi.fn() }),
+}));
+vi.mock("better-auth/client/plugins", () => ({ jwtClient: () => ({}) }));
 vi.mock("@/hooks/useFootProfile", () => ({ useFootProfile: mocks.profile }));
 vi.mock("@/hooks/useUserData", () => ({ useUserData: mocks.userData }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: mocks.replace }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: mocks.replace, push: vi.fn() }) }));
 vi.mock("@/contexts/LoadingContext", () => ({ useLoading: () => ({ showLoader: mocks.showLoader, hideLoader: mocks.hideLoader }) }));
 vi.mock("@/components/ShoeImage", () => ({ default: () => <div /> }));
 
@@ -18,8 +21,9 @@ const setShoes = (userStashData: UserShoe[] | undefined) => mocks.userData.mockR
 
 beforeEach(() => {
   vi.clearAllMocks();
+  window.history.replaceState({}, "", "/dashboard");
   window.matchMedia = vi.fn().mockReturnValue({ matches: false, addListener: vi.fn(), removeListener: vi.fn() });
-  mocks.session.mockReturnValue({ data: { user: { id: "user-1", name: "Josh Climber" } }, isPending: false });
+  mocks.session.mockReturnValue({ data: { user: { id: "user-1", name: "Josh Climber" } }, isPending: false, error: null });
   mocks.profile.mockReturnValue({ profile: { shape: "Egyptian", volume: "Low" }, isLoading: false });
   setShoes([shoe]);
 });
@@ -102,10 +106,18 @@ describe("DashboardPage", () => {
     expect(screen.getByRole("link", { name: "Edit foot profile" })).toHaveAttribute("href", "/footlab");
   });
 
-  it("redirects signed-out users without rendering account content", () => {
-    mocks.session.mockReturnValue({ data: null, isPending: false });
+  it("keeps loading and redirects to login when confirmed signed out", () => {
+    mocks.session.mockReturnValue({ data: null, isPending: false, error: null });
     render(<DashboardPage />);
-    expect(mocks.replace).toHaveBeenCalledWith("/auth/login");
-    expect(screen.queryByRole("main")).toBeNull();
+    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Fdashboard");
+    expect(screen.getByRole("status", { name: "Loading dashboard" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Find shoes" })).toBeNull();
+  });
+
+  it("shows a loading state while the session is pending", () => {
+    mocks.session.mockReturnValue({ data: null, isPending: true, error: null });
+    render(<DashboardPage />);
+    expect(screen.getByRole("status", { name: "Loading dashboard" })).toBeInTheDocument();
+    expect(mocks.replace).not.toHaveBeenCalled();
   });
 });

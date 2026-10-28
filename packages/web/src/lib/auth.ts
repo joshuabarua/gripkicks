@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createAuthClient } from "better-auth/react";
 import { jwtClient } from "better-auth/client/plugins";
 
@@ -42,5 +43,48 @@ export function useSession() {
     return () => window.clearTimeout(timeoutTimer);
   }, [session.isPending, timedOut]);
 
-  return timedOut ? { ...session, isPending: false } : session;
+  const stillWaiting = timedOut && session.isPending;
+  return { ...session, isPending: session.isPending && !timedOut, timedOut: stillWaiting };
+}
+
+export function safeCallbackPath(
+  value: string | null | undefined,
+  fallback = "/dashboard",
+): string {
+  if (value && value.startsWith("/") && value[1] !== "/" && value[1] !== "\\") {
+    return value;
+  }
+  return fallback;
+}
+
+export function useRequireAuth() {
+  const session = useSession();
+  const router = useRouter();
+  const isRedirecting =
+    !session.isPending &&
+    !session.timedOut &&
+    !session.error &&
+    !session.data?.user;
+
+  useEffect(() => {
+    if (!isRedirecting) return;
+    router.replace(
+      `/auth/login?callbackUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`,
+    );
+  }, [isRedirecting, router]);
+
+  return { ...session, isRedirecting };
+}
+
+export function useRedirectIfAuthenticated() {
+  const session = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!session.data?.user) return;
+    const requested = new URLSearchParams(window.location.search).get("callbackUrl");
+    router.replace(safeCallbackPath(requested));
+  }, [session.data?.user, router]);
+
+  return session;
 }

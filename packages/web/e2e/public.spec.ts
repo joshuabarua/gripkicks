@@ -42,6 +42,8 @@ const protectedRoutes = [
   "/dashboard",
   "/profile",
   "/stash",
+  "/footlab",
+  "/matcher?tab=mate",
   "/settings?tab=account",
 ];
 
@@ -77,28 +79,6 @@ test.describe("signed-out access", () => {
     await page.getByLabel("Confirm password").fill("password-two");
     await page.getByRole("button", { name: "CREATE ACCOUNT" }).click();
     await expect(page.getByText("Passwords don't match")).toBeVisible();
-  });
-
-  test("Foot Lab presents its login gate", async ({ page }) => {
-    const response = await page.goto("/footlab", { waitUntil: "domcontentloaded" });
-
-    expect(response?.status()).toBe(200);
-    await expect(page.getByRole("heading", { level: 1, name: "FOOT PROFILE" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "LOG IN" })).toHaveAttribute(
-      "href",
-      "/auth/login?callbackUrl=%2Ffootlab",
-    );
-  });
-
-  test("Matcher presents its login gate", async ({ page }) => {
-    const response = await page.goto("/matcher", { waitUntil: "domcontentloaded" });
-
-    expect(response?.status()).toBe(200);
-    await expect(page.getByRole("heading", { level: 1, name: "MATCHER" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "SIGN IN", exact: true })).toHaveAttribute(
-      "href",
-      "/auth/login?callbackUrl=%2Fmatcher",
-    );
   });
 
   for (const protectedRoute of protectedRoutes) {
