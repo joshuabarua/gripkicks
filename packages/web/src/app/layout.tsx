@@ -1,5 +1,6 @@
 import "./globals.css";
 import localFont from "next/font/local";
+import { ViewTransition } from "react";
 import AppShell from "@/components/AppShell";
 
 const dmMono = localFont({
@@ -29,7 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`min-h-screen bg-background antialiased ${dmMono.variable} ${ballPill.variable} ${soCloudy.variable}`}>
-        <AppShell>{children}</AppShell>
+        <ViewTransition name="page" default="page-wipe">
+          <AppShell>{children}</AppShell>
+        </ViewTransition>
       </body>
     </html>
   );

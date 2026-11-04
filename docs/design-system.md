@@ -112,6 +112,7 @@ Hybrid: CSS for entrances, framer-motion for interactions. Shared helpers live i
 - **Entrances**: `lab-rise` (fade + 20px rise, 0.5s, ease-out) or `lab-fade` (opacity, 0.9s). Stagger with `style={riseDelay(i)}` (50ms steps). Both are disabled under `prefers-reduced-motion`.
 - **Interactions**: `expandMotion` (height `0 ↔ auto` + fade) inside `AnimatePresence`, `slideUpBarMotion` (spring bar from bottom), `stepMotion` (multi-step page transitions), hover/tap via `whileHover` / `whileTap`.
 - `MotionConfig reducedMotion="user"` in `providers.tsx` makes framer respect OS reduce-motion.
+- **Page transitions**: whole-page red wipe via React `<ViewTransition name="page" default="page-wipe">` in `app/layout.tsx` and `::view-transition-*(.page-wipe)` rules in `globals.css`. `lab-rise`/`lab-fade` entrances are paused while a view transition is active, so they stagger in after the reveal finishes. Unsupported browsers navigate without animation.
 - Don't put `lab-rise` on an element that framer also transforms (the CSS fill overrides framer's transform). Put `lab-rise` on a wrapper.
 - Don't nest fading elements (parent `lab-rise` + child `lab-rise`). Opacity multiplies and looks muddy. Animate siblings instead.
 - Don't use framer for entrances: content renders hidden until JS loads.
