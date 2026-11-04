@@ -21,7 +21,7 @@ export function MatcherWorkspace({ activeTab, children }: { activeTab: "seek" | 
 
   return (
     <PageSurface className="lab-fade">
-      <div className="mx-auto max-w-[1600px] px-6 py-14 md:px-12 lg:px-16">
+      <div className="mx-auto w-full max-w-[1600px] px-fluid-md py-fluid-3xl md:px-fluid-xl">
         <LabHeader title="Matcher" description="Shoes ranked for your foot profile and community ratings." actions={tabs} />
         {children}
       </div>

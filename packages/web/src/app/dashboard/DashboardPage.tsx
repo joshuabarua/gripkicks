@@ -49,7 +49,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
 
   return (
     <PageSurface aria-busy={isLoading}>
-      <div className="mx-auto max-w-6xl px-6 py-14 md:px-12 lg:px-16">
+      <div className="lab-container">
         <LabHeader title="Dashboard" description={`Hey ${firstName}`} />
 
         {isLoading ? (
@@ -64,7 +64,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
               <div>
                 <p className="lab-label mb-2">Next step</p>
                 <h2 id="next-step-title" className="font-ball-pill text-3xl leading-tight">{nextAction.title}</h2>
-                <p className="mt-2 max-w-lg font-mono text-sm leading-relaxed text-neutral-400">{nextAction.description}</p>
+                <p className="mt-2 max-w-lg font-mono text-sm leading-relaxed text-brand-putty">{nextAction.description}</p>
               </div>
               <Link href={nextAction.href} className="lab-button shrink-0">
                 {nextAction.label}<ArrowUpRight aria-hidden="true" className="h-4 w-4" />

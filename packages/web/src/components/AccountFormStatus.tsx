@@ -26,14 +26,14 @@ export function AccountFormStatus({
   return (
     <>
       {validationError && (
-        <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-sm text-red-400">
           <AlertCircle className="h-4 w-4" />
           {validationError}
         </div>
       )}
 
       {isError && error && (
-        <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-sm text-red-400">
           <AlertCircle className="h-4 w-4" />
           <div>
             <p className="font-medium">Error</p>
@@ -43,7 +43,7 @@ export function AccountFormStatus({
       )}
 
       {isSuccess && (
-        <div className="flex items-center gap-2 rounded-md bg-green-50 p-3 text-sm text-green-800">
+        <div className="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 p-3 font-mono text-sm text-green-400">
           <CheckCircle2 className="h-4 w-4" />
           <div>
             <p className="font-medium">{successTitle}</p>
@@ -56,7 +56,7 @@ export function AccountFormStatus({
         <button
           type="submit"
           disabled={isLoading}
-          className="flex-1 inline-flex items-center justify-center gap-2 rounded-md bg-brand-red px-4 py-2 text-sm font-medium text-white hover:bg-brand-red/90 focus:outline-hidden focus:ring-2 focus:ring-brand-red focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="lab-button flex-1"
         >
           {isLoading ? (
             <>

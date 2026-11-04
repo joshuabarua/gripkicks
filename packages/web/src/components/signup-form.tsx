@@ -50,16 +50,16 @@ export function SignupForm() {
     : "/auth/login";
 
   const inputClasses =
-    "bg-black border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red focus:ring-brand-red rounded-none h-12";
+    "rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red";
 
   return (
     <div className="space-y-6">
-      <div className="bg-brand-surface border border-white/6 p-8 space-y-5">
+      <div className="lab-card p-fluid-xl space-y-5">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label
               htmlFor="first-name"
-              className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+              className="lab-label font-mono"
             >
               First name
             </Label>
@@ -75,7 +75,7 @@ export function SignupForm() {
           <div className="space-y-2">
             <Label
               htmlFor="last-name"
-              className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+              className="lab-label font-mono"
             >
               Last name
             </Label>
@@ -92,7 +92,7 @@ export function SignupForm() {
         <div className="space-y-2">
           <Label
             htmlFor="email"
-            className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+            className="lab-label font-mono"
           >
             Email
           </Label>
@@ -109,7 +109,7 @@ export function SignupForm() {
         <div className="space-y-2">
           <Label
             htmlFor="password"
-            className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+            className="lab-label font-mono"
           >
             Password
           </Label>
@@ -127,7 +127,7 @@ export function SignupForm() {
         <div className="space-y-2">
           <Label
             htmlFor="password_confirmation"
-            className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+            className="lab-label font-mono"
           >
             Confirm password
           </Label>
@@ -143,7 +143,7 @@ export function SignupForm() {
           />
         </div>
         {error && (
-          <div className="text-red-400 text-sm font-mono bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+          <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-sm text-red-400">
             {error}
           </div>
         )}
@@ -206,7 +206,7 @@ export function SignupForm() {
               },
             });
           }}
-          className="w-full bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-ball-pill text-lg py-3 transition-colors duration-500 flex items-center justify-center gap-2"
+          className="lab-button w-full"
         >
           {loading ? (
             <Loader2 size={20} className="animate-spin" />
@@ -248,18 +248,18 @@ export function SignupForm() {
               },
             });
           }}
-          className="w-full border border-white/6 hover:border-brand-red/30 text-brand-chalk font-mono text-sm py-3 transition-all duration-500 flex items-center justify-center gap-3"
+          className="lab-button-ghost w-full"
         >
           <GoogleIcon />
           Sign up with Google
         </motion.button>
       </div>
       <div className="text-center">
-        <span className="font-mono text-sm text-neutral-500">
+        <span className="font-mono text-sm text-brand-putty/50">
           Already have an account?{" "}
           <Link
             href={loginHref}
-            className="text-brand-red hover:text-white transition-colors duration-500"
+            className="text-brand-chalk underline decoration-brand-red underline-offset-4 transition-colors duration-500 hover:decoration-brand-chalk"
           >
             Log in
           </Link>

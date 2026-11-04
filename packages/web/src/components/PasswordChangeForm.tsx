@@ -7,7 +7,6 @@ import { z } from 'zod';
 import { AccountFormStatus } from '@/components/AccountFormStatus';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Eye, EyeOff } from 'lucide-react';
 
 const passwordSchema = z.object({
@@ -77,15 +76,13 @@ export function PasswordChangeForm() {
   };
 
   return (
-    <Card className="max-w-2xl">
-      <CardHeader>
-        <CardTitle className="text-2xl">Change Password</CardTitle>
-        <CardDescription>Update your password to keep your account secure</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="lab-card max-w-2xl p-fluid-lg">
+      <h3 className="font-ball-pill text-fluid-3xl text-brand-chalk">Change Password</h3>
+      <p className="mt-1 font-mono text-sm text-brand-putty">Update your password to keep your account secure</p>
+      <div className="mt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-2">
-            <Label htmlFor="currentPassword">Current Password</Label>
+            <Label className="lab-label font-mono" htmlFor="currentPassword">Current Password</Label>
             <div className="relative">
               <Input
                 id="currentPassword"
@@ -95,10 +92,11 @@ export function PasswordChangeForm() {
                 value={formData.currentPassword}
                 onChange={handleChange}
                 disabled={isLoading}
+                className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-putty/50 hover:text-brand-chalk"
                 onClick={() => togglePasswordVisibility('current')}
               >
                 {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -107,7 +105,7 @@ export function PasswordChangeForm() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="newPassword">New Password</Label>
+            <Label className="lab-label font-mono" htmlFor="newPassword">New Password</Label>
             <div className="relative">
               <Input
                 id="newPassword"
@@ -117,10 +115,11 @@ export function PasswordChangeForm() {
                 value={formData.newPassword}
                 onChange={handleChange}
                 disabled={isLoading}
+                className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-putty/50 hover:text-brand-chalk"
                 onClick={() => togglePasswordVisibility('new')}
               >
                 {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -129,7 +128,7 @@ export function PasswordChangeForm() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <Label className="lab-label font-mono" htmlFor="confirmPassword">Confirm New Password</Label>
             <div className="relative">
               <Input
                 id="confirmPassword"
@@ -139,10 +138,11 @@ export function PasswordChangeForm() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 disabled={isLoading}
+                className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-putty/50 hover:text-brand-chalk"
                 onClick={() => togglePasswordVisibility('confirm')}
               >
                 {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -169,13 +169,13 @@ export function PasswordChangeForm() {
                 reset();
                 setValidationError(null);
               }}
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-hidden focus:ring-2 focus:ring-brand-red focus:ring-offset-2"
+              className="lab-button-ghost"
             >
               Reset
             </button>
           )}
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -50,12 +50,13 @@ Home, Dashboard, Matcher, Foot Lab and Profile share the Foot Lab language — b
 - `lab-button-ghost` — bordered ghost, secondary action
 - `lab-label` — small uppercase mono label
 - `lab-rise` / `lab-fade` — entrance motion (see Motion)
+- `lab-container` — shared page container (max-w-6xl, fluid padding)
 - `LabHeader` — page title block (`text-fluid-8xl` title, `text-fluid-lg text-brand-putty` description); `PageSurface` — page wrapper
 
 ### Page shell
 ```tsx
 <PageSurface>
-  <div className="mx-auto max-w-6xl px-6 py-14 md:px-12 lg:px-16">
+  <div className="lab-container">
     <LabHeader title="Profile" description="…" />
     …
   </div>
@@ -68,10 +69,12 @@ Home, Dashboard, Matcher, Foot Lab and Profile share the Foot Lab language — b
 - **Selectable option** (Foot Lab): `motion.button` with `lab-card`, `lab-card-active hal-glow` when selected, `aria-pressed`, hover `y: -4`, tap `scale: 0.97`.
 - **Accordion section** (Profile): `lab-card`; header is a real `<button aria-expanded aria-controls>`, body uses `expandMotion`. Destructive sections use a red border and icon, title stays chalk.
 - **Body text**: `text-brand-putty` (with opacity modifiers if needed). Do not use `text-neutral-*`.
+- **Text link**: chalk text, red underline decoration (`decoration-brand-red underline-offset-4`), hover underline to chalk.
+- **Form input**: `rounded-lg bg-black border-white/6 h-12`, red focus border/ring.
 
 ## Editorial Pages
 
-About and Privacy keep an editorial look: `LiquidGlassBackdrop`, `WordmarkWatermark`, `rounded-3xl` cards, alternating `bg-brand-surface` sections. They still use fluid type (`text-fluid-9xl` titles, `text-fluid-5xl` section heads), fluid padding (`px-fluid-lg md:px-fluid-xl`, `py-fluid-3xl`), putty body text and `lab-rise` entrances.
+About and Privacy keep an editorial look: `LiquidGlassBackdrop`, `WordmarkWatermark`, `rounded-3xl` cards, alternating `bg-brand-surface` sections. They still use fluid type (`text-fluid-9xl` titles, `text-fluid-5xl` section heads), fluid padding (`px-fluid-lg md:px-fluid-xl`, `py-fluid-3xl`), putty body text and `lab-rise` entrances. About keeps a short personal note (constraint 3 exemption).
 
 ## Sanctuary
 
@@ -107,7 +110,7 @@ Sanctuary shows the badge key above the brand grid.
 Hybrid: CSS for entrances, framer-motion for interactions. Shared helpers live in `src/lib/motion.ts`.
 
 - **Entrances**: `lab-rise` (fade + 20px rise, 0.5s, ease-out) or `lab-fade` (opacity, 0.9s). Stagger with `style={riseDelay(i)}` (50ms steps). Both are disabled under `prefers-reduced-motion`.
-- **Interactions**: `expandMotion` (height `0 ↔ auto` + fade) inside `AnimatePresence`, `slideUpBarMotion` (spring bar from bottom), hover/tap via `whileHover` / `whileTap`.
+- **Interactions**: `expandMotion` (height `0 ↔ auto` + fade) inside `AnimatePresence`, `slideUpBarMotion` (spring bar from bottom), `stepMotion` (multi-step page transitions), hover/tap via `whileHover` / `whileTap`.
 - `MotionConfig reducedMotion="user"` in `providers.tsx` makes framer respect OS reduce-motion.
 - Don't put `lab-rise` on an element that framer also transforms (the CSS fill overrides framer's transform). Put `lab-rise` on a wrapper.
 - Don't nest fading elements (parent `lab-rise` + child `lab-rise`). Opacity multiplies and looks muddy. Animate siblings instead.

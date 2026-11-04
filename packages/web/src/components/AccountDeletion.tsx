@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useMutation } from '@/hooks/useAsync';
 import { fetchApi } from '@/lib/api-client';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertTriangle, Trash2 } from 'lucide-react';
 import { AccountFormStatus } from './AccountFormStatus';
@@ -59,7 +58,6 @@ export function AccountDeletion() {
     });
 
     if (result.isOk()) {
-      // Account deleted successfully, redirect to login or home
       setTimeout(() => {
         router.push('/auth/login');
       }, 2000);
@@ -81,21 +79,19 @@ export function AccountDeletion() {
   };
 
   return (
-    <Card className="max-w-2xl border-destructive/20">
-      <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-2 text-destructive">
-          <AlertTriangle className="h-6 w-6" />
-          Delete Account
-        </CardTitle>
-        <CardDescription>
-          Permanently delete your account and all associated data. This action cannot be undone.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="lab-card max-w-2xl border-red-500/20 p-fluid-lg">
+      <h3 className="font-ball-pill text-fluid-3xl text-brand-chalk flex items-center gap-2">
+        <AlertTriangle className="h-6 w-6 text-red-500" />
+        Delete Account
+      </h3>
+      <p className="mt-1 font-mono text-sm text-brand-putty">
+        Permanently delete your account and all associated data. This action cannot be undone.
+      </p>
+      <div className="mt-6">
         <div className="space-y-4">
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-            <h4 className="font-semibold text-red-800 mb-2">Warning:</h4>
-            <ul className="text-sm text-red-700 space-y-1 list-disc list-inside">
+          <div className="p-4 rounded-lg border border-red-500/20 bg-red-500/10">
+            <h4 className="font-semibold text-red-400 mb-2 font-mono">Warning:</h4>
+            <ul className="text-sm text-red-300/80 space-y-1 list-disc list-inside font-mono">
               <li>This will permanently delete your account</li>
               <li>All your profile data will be removed</li>
               <li>Your shoe collection and preferences will be lost</li>
@@ -105,15 +101,15 @@ export function AccountDeletion() {
 
           <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
             <DialogTrigger asChild>
-              <Button variant="destructive" className="w-full">
+              <button type="button" className="lab-button w-full bg-red-500 hover:bg-red-500/80">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete My Account
-              </Button>
+              </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2 text-destructive">
-                  <AlertTriangle className="h-5 w-5" />
+                <DialogTitle className="flex items-center gap-2 text-brand-chalk">
+                  <AlertTriangle className="h-5 w-5 text-red-500" />
                   Final Confirmation
                 </DialogTitle>
                 <DialogDescription>
@@ -123,7 +119,7 @@ export function AccountDeletion() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Enter your password</Label>
+                  <Label className="lab-label font-mono" htmlFor="password">Enter your password</Label>
                   <Input
                     id="password"
                     name="password"
@@ -132,12 +128,13 @@ export function AccountDeletion() {
                     value={formData.password}
                     onChange={handleChange}
                     disabled={isLoading}
+                className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
                   />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="confirmation">
-                    Type <span className="font-mono bg-gray-100 px-1 rounded">DELETE</span> to confirm
+                  <Label className="lab-label font-mono" htmlFor="confirmation">
+                    Type <span className="font-mono bg-white/10 px-1 rounded">DELETE</span> to confirm
                   </Label>
                   <Input
                     id="confirmation"
@@ -147,6 +144,7 @@ export function AccountDeletion() {
                     value={formData.confirmation}
                     onChange={handleChange}
                     disabled={isLoading}
+                className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
                   />
                 </div>
 
@@ -164,19 +162,19 @@ export function AccountDeletion() {
                   />
                 </div>
 
-                <Button
+                <button
                   type="button"
-                  variant="outline"
+                  className="lab-button-ghost"
                   onClick={() => handleDialogClose(false)}
                   disabled={isLoading}
                 >
                   Cancel
-                </Button>
+                </button>
               </form>
             </DialogContent>
           </Dialog>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

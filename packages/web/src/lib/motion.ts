@@ -12,6 +12,13 @@ export const expandMotion = {
   transition: { duration: 0.28, ease: EASE_OUT },
 } as const;
 
+export const stepMotion = {
+  initial: { opacity: 0, x: 20 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -20 },
+  transition: { duration: 0.3, ease: EASE_OUT },
+} as const;
+
 export const slideUpBarMotion = {
   initial: { y: 100, opacity: 0 },
   animate: { y: 0, opacity: 1 },

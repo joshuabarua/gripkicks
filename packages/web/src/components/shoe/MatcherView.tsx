@@ -132,8 +132,8 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
       <section aria-label="Recommendation source" className="lab-card lab-rise flex flex-col justify-between gap-fluid-lg p-fluid-lg lg:flex-row lg:items-center" style={{ "--rise-delay": "100ms" } as CSSProperties}>
         <div>
           <h2 className="font-ball-pill text-fluid-2xl">{mode === "personal" ? "Your shoe matches" : "Community ratings"}</h2>
-          <p className="mt-2 font-mono text-base leading-relaxed text-neutral-400">{mode === "personal" ? "Fit estimates from catalog attributes and available ratings. Not a fit guarantee." : "Shoes ranked using ratings from all climbers."}</p>
-          {mode === "personal" && activeShoes.some((shoe) => shoe.signals && !shoe.signals.preferences) && <p className="mt-3 font-mono text-sm text-neutral-400">Preferences need 3 complete shoe ratings. <Link href="/stash" className="underline underline-offset-4">Rate your shoes</Link></p>}
+          <p className="mt-2 font-mono text-base leading-relaxed text-brand-putty">{mode === "personal" ? "Fit estimates from catalog attributes and available ratings. Not a fit guarantee." : "Shoes ranked using ratings from all climbers."}</p>
+          {mode === "personal" && activeShoes.some((shoe) => shoe.signals && !shoe.signals.preferences) && <p className="mt-3 font-mono text-sm text-brand-putty">Preferences need 3 complete shoe ratings. <Link href="/stash" className="underline underline-offset-4">Rate your shoes</Link></p>}
         </div>
         <div aria-label="Choose recommendation source" className="grid grid-cols-2 gap-2">
           {([["personal", "For you", personalShoes.length, personalLoading], ["community", "Community", communityShoes.length, communityLoading]] as const).map(([value, label, count, loading]) => (

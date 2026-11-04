@@ -18,13 +18,6 @@ export default function AboutPage() {
               ABOUT
             </h1>
           </div>
-
-          <p
-            className="lab-rise font-mono text-fluid-xl text-brand-putty/70 max-w-2xl mx-auto leading-relaxed text-center"
-            style={riseDelay(1)}
-          >
-            Hi there!
-          </p>
         </div>
       </section>
 
@@ -45,13 +38,10 @@ export default function AboutPage() {
                 />
               </div>
               <div className="space-y-6 font-mono text-fluid-lg text-brand-putty/80 leading-relaxed">
-                <p>My name&apos;s Josh. I&apos;m a climber, developer and guy with weird shaped feet.</p>
-                <p>Through my years of climbing, every shoe has felt like it could probably fit alittle better. Call it copium, but I believe shoes really affect how we move on the wall. I&apos;ve had enough heel hooks rip my shoe off and enough big, puffy air gaps in my toe box.</p>
-                <p>So, I built this to find my shoe, my Cinderella slipper, if you will. One day I&apos;ll find the perfect pair. Maybe, I&apos;ll help some other climbers find theirs too.</p>
-                <p>The site is free because it depends on the climbing community. The more the merrier, and I&apos;ll keep it free. I don&apos;t sell your data, I don&apos;t keep anything I don&apos;t need, and I don&apos;t have a foot fetish.</p>
-
-                <p>If you have any ideas you think I should include, I&apos;m open. Shoot me a message <a href="mailto:gripkicksofficial@gmail.com">here</a></p>
-                <p>Anyway, enjoy the site. I hope it helps. Mobile apps are coming soon.</p>
+                <p>I&apos;m Josh, a climber and developer with awkward-shaped feet.</p>
+                <p>Every shoe I&apos;ve owned could have fit a little better: heels slipping off on hooks, air gaps in the toe box. GripKicks is my attempt to find the right pair, and to help other climbers find theirs.</p>
+                <p>It&apos;s free and stays free. I don&apos;t sell your data or keep anything I don&apos;t need.</p>
+                <p>Ideas or feedback: <a href="mailto:gripkicksofficial@gmail.com" className="text-brand-chalk underline decoration-brand-red underline-offset-4 transition-colors duration-500 hover:decoration-brand-chalk">gripkicksofficial@gmail.com</a></p>
 
                 <p>— Josh</p>
               </div>

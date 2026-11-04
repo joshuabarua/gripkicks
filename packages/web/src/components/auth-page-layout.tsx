@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { PageSurface } from "@/components/ui/PageSurface";
+import { riseDelay } from "@/lib/motion";
 
 interface AuthPageLayoutProps {
   title: string;
@@ -9,32 +10,23 @@ interface AuthPageLayoutProps {
 
 export function AuthPageLayout({ title, children }: AuthPageLayoutProps) {
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-6 py-12 relative">
+    <PageSurface>
+      <div className="flex min-h-screen flex-1 items-center justify-center px-6 py-12 relative">
         <div className="absolute top-6 left-6 w-16 h-16 border-l border-t border-white/6" />
         <div className="absolute bottom-6 right-6 w-16 h-16 border-r border-b border-white/6" />
 
         <div className="w-full max-w-md">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-8"
-          >
-            <h1 className="font-ball-pill text-5xl md:text-6xl">
+          <div className="lab-rise text-center mb-8" style={riseDelay(0)}>
+            <h1 className="font-ball-pill text-fluid-6xl uppercase">
               {title}
             </h1>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+          <div className="lab-rise" style={riseDelay(1)}>
             {children}
-          </motion.div>
+          </div>
         </div>
       </div>
-    </main>
+    </PageSurface>
   );
 }

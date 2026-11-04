@@ -26,11 +26,11 @@ export function LoginForm() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-brand-surface border border-white/6 p-8 space-y-5">
+      <div className="lab-card p-fluid-xl space-y-5">
         <div className="space-y-2">
           <Label
             htmlFor="email"
-            className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+            className="lab-label font-mono"
           >
             Email
           </Label>
@@ -41,20 +41,20 @@ export function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             value={email}
             required
-            className="bg-black border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red focus:ring-brand-red rounded-none h-12"
+            className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
           />
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label
               htmlFor="password"
-              className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400"
+              className="lab-label font-mono"
             >
               Password
             </Label>
             <Link
               href="/auth/reset-password"
-              className="font-mono text-xs text-brand-putty/40 hover:text-brand-red transition-colors duration-500"
+              className="font-mono text-xs text-brand-putty/40 hover:text-brand-putty transition-colors duration-500"
             >
               Forgot password?
             </Link>
@@ -67,7 +67,7 @@ export function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             value={password}
             required
-            className="bg-black border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red focus:ring-brand-red rounded-none h-12"
+            className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -79,13 +79,13 @@ export function LoginForm() {
           />
           <Label
             htmlFor="rememberMe"
-            className="font-mono text-sm text-neutral-400"
+            className="font-mono text-sm text-brand-putty"
           >
             Remember me
           </Label>
         </div>
         {error && (
-          <div className="text-red-400 text-sm font-mono bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+          <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-sm text-red-400">
             {error}
           </div>
         )}
@@ -116,7 +116,7 @@ export function LoginForm() {
               },
             });
           }}
-          className="w-full bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-ball-pill text-lg py-3 transition-colors duration-500 flex items-center justify-center gap-2"
+          className="lab-button w-full"
         >
           {loading ? <Loader2 size={20} className="animate-spin" /> : "LOGIN"}
         </motion.button>
@@ -149,18 +149,18 @@ export function LoginForm() {
               },
             });
           }}
-          className="w-full border border-white/6 hover:border-brand-red/30 text-brand-chalk font-mono text-sm py-3 transition-all duration-500 flex items-center justify-center gap-3"
+          className="lab-button-ghost w-full"
         >
           <GoogleIcon />
           Sign in with Google
         </motion.button>
       </div>
       <div className="text-center">
-        <span className="font-mono text-sm text-neutral-500">
+        <span className="font-mono text-sm text-brand-putty/50">
           Don&apos;t have an account?{" "}
           <Link
             href={signupHref}
-            className="text-brand-red hover:text-white transition-colors duration-500"
+            className="text-brand-chalk underline decoration-brand-red underline-offset-4 transition-colors duration-500 hover:decoration-brand-chalk"
           >
             Sign up
           </Link>

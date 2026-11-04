@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { FullPageLoading } from "@/components/ui/loading";
+import { stepMotion } from "@/lib/motion";
 import type { Shoe } from "@/types/api";
 import { RatingButton, BackButton } from "@/components/onboarding/OnboardingHelpers";
 
@@ -222,15 +223,15 @@ export default function OnboardingPage() {
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <section className="px-6 md:px-12 lg:px-16 py-12">
         <div className="max-w-3xl mx-auto">
-          {/* Progress */}
+          
           <div className="mb-12">
             <div className="flex justify-between items-center mb-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/30">
+              <p className="lab-label font-mono text-brand-putty/40">
                 Step {stepIndex + 1} of {steps.length}
               </p>
               <button
                 onClick={handleSkipOnboarding}
-                className="font-mono text-xs text-brand-putty/40 hover:text-brand-red transition-colors duration-500"
+                className="font-mono text-xs text-brand-putty/40 hover:text-brand-putty transition-colors duration-500"
               >
                 Skip for now
               </button>
@@ -244,18 +245,12 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          {/* Step Content */}
+          
           <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
+            <motion.div key={currentStep} {...stepMotion}>
               {currentStep === "welcome" && (
                 <div className="text-center">
-                  <h1 className="font-ball-pill text-5xl md:text-6xl mb-10">
+                  <h1 className="font-ball-pill text-fluid-6xl mb-10">
                     WELCOME
                   </h1>
 
@@ -263,7 +258,7 @@ export default function OnboardingPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleNext}
-                    className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
+                    className="lab-button w-full"
                   >
                     LET&apos;S GET STARTED
                   </motion.button>
@@ -271,12 +266,12 @@ export default function OnboardingPage() {
               )}
 
               {currentStep === "foot-data" && (
-                <div className="bg-brand-surface border border-white/6 p-8">
-                  <h2 className="font-ball-pill text-3xl mb-8">FOOT SHAPE</h2>
+                <div className="lab-card p-fluid-xl">
+                  <h2 className="font-ball-pill text-fluid-5xl mb-8">FOOT SHAPE</h2>
 
                   <div className="space-y-6">
                     <div>
-                      <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                      <Label className="lab-label font-mono">
                         Select shape
                       </Label>
                       <div className="grid grid-cols-2 gap-3 mt-3">
@@ -312,16 +307,16 @@ export default function OnboardingPage() {
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => setFootShape(shape.value)}
-                            className={`p-3 rounded-2xl border text-left transition-all ${
+                            className={`lab-card w-full p-3 text-left transition-all ${
                               footShape === shape.value
-                                ? "border-brand-red bg-brand-red/10"
-                                : "border-white/6 hover:border-white/10 bg-black/50"
+                                ? "lab-card-active hal-glow"
+                                : ""
                             }`}
                           >
-                            <div className="font-mono font-medium text-white text-sm">
+                            <div className="font-mono font-medium text-brand-chalk text-sm">
                               {shape.label}
                             </div>
-                            <div className="font-mono text-[10px] text-neutral-500 mt-1 leading-tight">
+                            <div className="font-mono text-xs text-brand-putty/60 mt-1 leading-tight">
                               {shape.desc}
                             </div>
                           </motion.button>
@@ -330,7 +325,7 @@ export default function OnboardingPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                      <Label className="lab-label font-mono">
                         Foot volume
                       </Label>
                       <div className="grid grid-cols-3 gap-3 mt-3">
@@ -344,16 +339,16 @@ export default function OnboardingPage() {
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => setFootVolume(volume.value)}
-                            className={`p-3 rounded-2xl border text-center transition-all ${
+                            className={`lab-card w-full p-3 text-center transition-all ${
                               footVolume === volume.value
-                                ? "border-brand-red bg-brand-red/10"
-                                : "border-white/6 hover:border-white/10 bg-black/50"
+                                ? "lab-card-active hal-glow"
+                                : ""
                             }`}
                           >
-                            <div className="font-mono font-medium text-white text-sm">
+                            <div className="font-mono font-medium text-brand-chalk text-sm">
                               {volume.label}
                             </div>
-                            <div className="font-mono text-[10px] text-neutral-500 mt-1 leading-tight">
+                            <div className="font-mono text-xs text-brand-putty/60 mt-1 leading-tight">
                               {volume.desc}
                             </div>
                           </motion.button>
@@ -368,7 +363,7 @@ export default function OnboardingPage() {
                         whileTap={{ scale: 0.98 }}
                         onClick={handleNext}
                         disabled={!footShape || !footVolume || isLoading}
-                        className="bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-ball-pill text-lg px-8 py-3 transition-colors duration-500 flex items-center gap-2"
+                        className="lab-button"
                       >
                         {isLoading ? "SAVING..." : "NEXT"}{" "}
                         <ChevronRight className="w-4 h-4" />
@@ -379,14 +374,14 @@ export default function OnboardingPage() {
               )}
 
               {currentStep === "first-shoe" && (
-                <div className="bg-brand-surface border border-white/6 p-8">
-                  <h2 className="font-ball-pill text-3xl mb-8">
+                <div className="lab-card p-fluid-xl">
+                  <h2 className="font-ball-pill text-fluid-5xl mb-8">
                     ADD YOUR FIRST SHOE
                   </h2>
 
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                      <Label className="lab-label font-mono">
                         Search shoes
                       </Label>
                       <div className="mt-2">
@@ -398,9 +393,9 @@ export default function OnboardingPage() {
                     </div>
 
                     {selectedShoe && (
-                      <div className="p-4 border border-brand-red/20 bg-brand-red/5">
+                      <div className="lab-card lab-card-active p-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-20 h-20 bg-neutral-800 rounded-xl overflow-hidden">
+                          <div className="w-20 h-20 bg-black/40 rounded-lg border border-white/6 overflow-hidden">
                             <ShoeImage
                               brand={selectedShoe.brand}
                               shoeName={selectedShoe.name}
@@ -414,10 +409,10 @@ export default function OnboardingPage() {
                             />
                           </div>
                           <div>
-                            <h3 className="font-mono font-semibold text-white">
+                            <h3 className="font-mono font-semibold text-brand-chalk">
                               {selectedShoe.name}
                             </h3>
-                            <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-500">
+                            <p className="lab-label font-mono text-brand-putty/50">
                               {selectedShoe.brand}
                             </p>
                           </div>
@@ -429,7 +424,7 @@ export default function OnboardingPage() {
                       <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                            <Label className="lab-label font-mono">
                               Size
                             </Label>
                             <Select
@@ -441,10 +436,10 @@ export default function OnboardingPage() {
                                 })
                               }
                             >
-                              <SelectTrigger className="bg-black border-white/6 text-brand-chalk rounded-none h-12 focus:border-brand-red">
+                              <SelectTrigger className="rounded-lg bg-black border border-white/6 text-brand-chalk h-12 focus:border-brand-red">
                                 <SelectValue placeholder="Select size" />
                               </SelectTrigger>
-                              <SelectContent className="bg-neutral-800 border-neutral-700">
+                              <SelectContent className="bg-brand-surface border-white/6">
                                 {shoeSizes
                                   .filter(isShoeSizeOption)
                                   .map((size) => (
@@ -459,7 +454,7 @@ export default function OnboardingPage() {
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                            <Label className="lab-label font-mono">
                               Condition
                             </Label>
                             <Select
@@ -471,10 +466,10 @@ export default function OnboardingPage() {
                                 })
                               }
                             >
-                              <SelectTrigger className="bg-black border-white/6 text-brand-chalk rounded-none h-12 focus:border-brand-red">
+                              <SelectTrigger className="rounded-lg bg-black border border-white/6 text-brand-chalk h-12 focus:border-brand-red">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="bg-neutral-800 border-neutral-700">
+                              <SelectContent className="bg-brand-surface border-white/6">
                                 <SelectItem value="new">New</SelectItem>
                                 <SelectItem value="like-new">
                                   Like New
@@ -488,7 +483,7 @@ export default function OnboardingPage() {
 
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                            <Label className="lab-label font-mono">
                               Comfort
                             </Label>
                             <div className="flex items-center gap-2 mt-2">
@@ -508,7 +503,7 @@ export default function OnboardingPage() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                            <Label className="lab-label font-mono">
                               Performance
                             </Label>
                             <div className="flex items-center gap-2 mt-2">
@@ -530,7 +525,7 @@ export default function OnboardingPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                          <Label className="lab-label font-mono">
                             Notes (optional)
                           </Label>
                           <Textarea
@@ -544,7 +539,7 @@ export default function OnboardingPage() {
                             }
                             placeholder="Any additional notes about this shoe..."
                             rows={3}
-                            className="bg-black border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red rounded-none"
+                            className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red"
                           />
                         </div>
                       </div>
@@ -559,7 +554,7 @@ export default function OnboardingPage() {
                         disabled={
                           !selectedShoe || !shoeFormData.size || isLoading
                         }
-                        className="bg-brand-red hover:bg-brand-red/80 disabled:opacity-50 text-black font-ball-pill text-lg px-8 py-3 transition-colors duration-500 flex items-center gap-2"
+                        className="lab-button"
                       >
                         {isLoading ? "COMPLETING..." : "COMPLETE SETUP"}{" "}
                       </motion.button>
@@ -570,7 +565,7 @@ export default function OnboardingPage() {
 
               {currentStep === "complete" && (
                 <div className="text-center">
-                  <h1 className="font-ball-pill text-5xl md:text-6xl mb-10">
+                  <h1 className="font-ball-pill text-fluid-6xl mb-10">
                     ALL SET
                   </h1>
 
@@ -587,9 +582,9 @@ export default function OnboardingPage() {
                         <motion.div
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="bg-brand-surface border border-white/6 p-6 flex flex-col items-center gap-3 hover:border-brand-red/30 transition-colors duration-500 cursor-pointer"
+                          className="lab-card p-6 flex flex-col items-center gap-3 cursor-pointer"
                         >
-                          <span className="font-ball-pill text-lg text-white">
+                          <span className="font-ball-pill text-lg text-brand-chalk">
                             {item.label}
                           </span>
                         </motion.div>
@@ -601,7 +596,7 @@ export default function OnboardingPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleFinish}
-                    className="w-full bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill text-xl py-4 transition-colors duration-500 flex items-center justify-center gap-2"
+                    className="lab-button w-full"
                   >
                     GO TO SHOE SANCTUARY
                   </motion.button>

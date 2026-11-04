@@ -126,7 +126,7 @@ export default function AdminDashboard() {
   if (isPending) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-putty" />
       </div>
     );
   }
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-white text-center">
-          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
+          <h1 className="font-ball-pill text-fluid-4xl mb-2 text-brand-chalk">Access Denied</h1>
           <p className="text-white/60">
             You need admin privileges to access this page.
           </p>
@@ -276,7 +276,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-background p-8 pt-24">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+          <h1 className="font-ball-pill text-fluid-5xl text-brand-chalk">Admin Dashboard</h1>
         </div>
 
         <div className="flex gap-2 mb-6">
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
                   onClick={() => setShowAddForm(false)}
                 >
                   <div
-                    className="bg-zinc-900 p-6 rounded-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto"
+                    className="lab-card p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <h2 className="text-xl font-bold text-white mb-4">
@@ -510,7 +510,7 @@ export default function AdminDashboard() {
                           }
                           className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white"
                         />
-                        <p className="text-[11px] text-white/40 mt-1 font-mono">
+                        <p className="text-xs text-white/40 mt-1 font-mono">
                           Used when no direct image URL is set.
                         </p>
                       </div>
@@ -735,7 +735,7 @@ export default function AdminDashboard() {
                           onClick={() => setEditingImageId(null)}
                         >
                           <div
-                            className="bg-zinc-900 p-6 rounded-xl w-full max-w-lg mx-2 max-h-[90vh] overflow-y-auto"
+                            className="lab-card p-6 w-full max-w-lg mx-2 max-h-[90vh] overflow-y-auto"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <h3 className="text-white font-medium mb-4">
@@ -743,7 +743,7 @@ export default function AdminDashboard() {
                             </h3>
 
                             <div className="space-y-4">
-                              {/* Image Upload Component */}
+                              
                               <ShoeImageUpload
                                 brand={shoe.brand}
                                 shoeName={shoe.name}
@@ -758,7 +758,7 @@ export default function AdminDashboard() {
                                 }}
                               />
 
-                              {/* Fallback URL input */}
+                              
                               <div className="border-t border-white/10 pt-4">
                                 <p className="text-white text-sm mb-2">
                                   Or enter image URL manually:
@@ -843,7 +843,7 @@ export default function AdminDashboard() {
 
                         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm overflow-y-auto">
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Name
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -857,7 +857,7 @@ export default function AdminDashboard() {
                                       : prev,
                                   )
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                                 autoFocus
                               />
                             ) : (
@@ -868,7 +868,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Brand
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -882,7 +882,7 @@ export default function AdminDashboard() {
                                       : prev,
                                   )
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               />
                             ) : (
                               <div className="text-white/70">{shoe.brand}</div>
@@ -890,7 +890,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Model
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -904,7 +904,7 @@ export default function AdminDashboard() {
                                       : prev,
                                   )
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               />
                             ) : (
                               <div className="text-white/70">
@@ -914,7 +914,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Variant
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -931,7 +931,7 @@ export default function AdminDashboard() {
                                       : prev,
                                   )
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               />
                             ) : (
                               <div className="text-white/70">
@@ -941,7 +941,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Slug
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -955,7 +955,7 @@ export default function AdminDashboard() {
                                       : prev,
                                   )
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               />
                             ) : (
                               <div className="text-white/70 font-mono text-xs">
@@ -965,7 +965,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Gender
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -989,7 +989,7 @@ export default function AdminDashboard() {
                                     };
                                   })
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               >
                                 <option value="">Select</option>
                                 <option value="men">Men</option>
@@ -1003,7 +1003,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Aggressiveness
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -1020,7 +1020,7 @@ export default function AdminDashboard() {
                                       : prev,
                                   )
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               />
                             ) : (
                               <div className="text-white/70">
@@ -1030,7 +1030,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Stiffness
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -1044,7 +1044,7 @@ export default function AdminDashboard() {
                                       : prev,
                                   )
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               />
                             ) : (
                               <div className="text-white/70">
@@ -1054,7 +1054,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Discipline
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -1071,7 +1071,7 @@ export default function AdminDashboard() {
                                       : prev,
                                   )
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               />
                             ) : (
                               <div className="text-white/70">
@@ -1081,7 +1081,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Volume
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -1095,7 +1095,7 @@ export default function AdminDashboard() {
                                       : prev,
                                   )
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               />
                             ) : (
                               <div className="text-white/70">{shoe.volume}</div>
@@ -1103,7 +1103,7 @@ export default function AdminDashboard() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] uppercase tracking-wide text-white/50">
+                            <label className="lab-label font-mono text-brand-putty/50">
                               Rubber
                             </label>
                             {isEditingCurrentShoe && currentEditForm ? (
@@ -1130,7 +1130,7 @@ export default function AdminDashboard() {
                                     };
                                   })
                                 }
-                                className="w-full px-2 py-0.5 bg-white/10 border border-white/20 rounded text-white text-[13px]"
+                                className="w-full px-2 py-0.5 rounded-lg bg-black border border-white/6 text-brand-chalk text-xs"
                               >
                                 <option value="">Select</option>
                                 {rubberTechnologies?.map((rubber) => (
@@ -1214,8 +1214,8 @@ export default function AdminDashboard() {
                 onEndReached={() => loadMoreShoes(50)}
                 loadingIndicator={
                   <div className="text-center py-4">
-                    <div className="inline-flex items-center gap-2 text-neutral-500 text-sm">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-neutral-500"></div>
+                    <div className="inline-flex items-center gap-2 text-brand-putty text-sm">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-putty"></div>
                       <span>Loading more shoes...</span>
                     </div>
                   </div>

@@ -181,7 +181,7 @@ export default function ProfilePage() {
 
   return (
     <PageSurface>
-      <div className="mx-auto max-w-6xl px-6 py-14 md:px-12 lg:px-16">
+      <div className="lab-container">
         <LabHeader title="Profile" />
 
         <div className="space-y-6">

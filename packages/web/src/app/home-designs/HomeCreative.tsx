@@ -183,7 +183,7 @@ function HowItWorksSection() {
                 <div className="shrink-0">{step.glyph}</div>
                 <div className="min-w-0">
                   <h3 className="wrap-break-word font-ball-pill text-fluid-3xl leading-tight text-white">{step.title}</h3>
-                  <p className="mt-fluid-md font-mono text-sm leading-relaxed text-neutral-400">{step.copy}</p>
+                  <p className="mt-fluid-md font-mono text-sm leading-relaxed text-brand-putty">{step.copy}</p>
                 </div>
               </div>
             </article>
@@ -216,7 +216,7 @@ function ToolsSection() {
                 <h3 className="wrap-break-word font-ball-pill text-fluid-4xl leading-none text-white">{tool.title}</h3>
                 <ArrowUpRight aria-hidden="true" className="h-8 w-8 shrink-0 text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
               </div>
-              <p className="max-w-sm font-mono text-sm leading-relaxed text-neutral-400">{tool.copy}</p>
+              <p className="max-w-sm font-mono text-sm leading-relaxed text-brand-putty">{tool.copy}</p>
             </Link>
           ))}
         </div>

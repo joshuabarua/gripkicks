@@ -5,7 +5,6 @@ import { useMutation } from '@/hooks/useAsync';
 import { fetchApi } from '@/lib/api-client';
 import { z } from 'zod';
 import { AccountFormStatus } from '@/components/AccountFormStatus';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail } from 'lucide-react';
@@ -65,27 +64,24 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
   };
 
   return (
-    <Card className="max-w-2xl">
-      <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-2">
-          <Mail className="h-6 w-6" />
-          Change Email
-        </CardTitle>
-        <CardDescription>
-          Update your email address. A verification link will be sent to your new email.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="lab-card max-w-2xl p-fluid-lg">
+      <h3 className="font-ball-pill text-fluid-3xl text-brand-chalk flex items-center gap-2">
+        <Mail className="h-6 w-6" />
+        Change Email
+      </h3>
+      <p className="mt-1 font-mono text-sm text-brand-putty">
+        Update your email address. A verification link will be sent to your new email.
+      </p>
+      <div className="mt-6">
         <div className="space-y-4">
-          {/* Current Email Display */}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <Label className="text-sm font-medium text-gray-600">Current Email</Label>
-            <p className="text-sm font-semibold text-gray-900 mt-1">{currentEmail}</p>
+          <div className="p-4 bg-black/40 rounded-lg border border-white/6">
+            <Label className="lab-label font-mono">Current Email</Label>
+            <p className="text-sm font-semibold text-brand-chalk mt-1">{currentEmail}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-2">
-              <Label htmlFor="newEmail">New Email Address</Label>
+              <Label className="lab-label font-mono" htmlFor="newEmail">New Email Address</Label>
               <Input
                 id="newEmail"
                 name="newEmail"
@@ -94,11 +90,12 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
                 value={formData.newEmail}
                 onChange={handleChange}
                 disabled={isLoading}
+                className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="password">Confirm Password</Label>
+              <Label className="lab-label font-mono" htmlFor="password">Confirm Password</Label>
               <Input
                 id="password"
                 name="password"
@@ -107,6 +104,7 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
                 value={formData.password}
                 onChange={handleChange}
                 disabled={isLoading}
+                className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
               />
             </div>
 
@@ -129,14 +127,14 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
                   reset();
                   setValidationError(null);
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-hidden focus:ring-2 focus:ring-brand-red focus:ring-offset-2"
+                className="lab-button-ghost"
               >
                 Reset
               </button>
             )}
           </form>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

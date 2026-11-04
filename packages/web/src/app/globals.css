@@ -139,7 +139,11 @@
 }
 
 @utility lab-label {
-  @apply font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-500;
+  @apply font-mono text-[11px] uppercase tracking-[0.18em] text-brand-putty/60;
+}
+
+@utility lab-container {
+  @apply mx-auto w-full max-w-6xl px-fluid-md py-fluid-3xl md:px-fluid-xl;
 }
 
 @utility lab-rise {
