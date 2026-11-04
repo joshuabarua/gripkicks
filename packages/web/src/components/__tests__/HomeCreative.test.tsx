@@ -136,12 +136,12 @@ describe("Homepage clarity", () => {
     }
   });
 
-  it("restyles step cards as lab tiles while retaining Ball Pill titles and mono copy", () => {
+  it("restyles step cards as lab tiles while retaining Amatic titles and mono copy", () => {
     render(<HomeCreative />);
     const stepsRegion = screen.getByRole("region", { name: "How it works" });
     expect(stepsRegion).toHaveClass("bg-black");
     const section = within(stepsRegion);
-    expect(section.getByRole("heading", { name: "How it works" })).toHaveClass("font-ball-pill");
+    expect(section.getByRole("heading", { name: "How it works" })).toHaveClass("font-amatic");
     expect(section.queryByText(/three simple steps/i)).toBeNull();
     const articles = section.getAllByRole("article");
     expect(articles).toHaveLength(3);
@@ -152,7 +152,7 @@ describe("Homepage clarity", () => {
       expect(section.queryByText(label)).toBeNull();
     }
     for (const title of ["Map your foot", "Rate your shoes", "Compare fits"]) {
-      expect(section.getByRole("heading", { name: title })).toHaveClass("font-ball-pill");
+      expect(section.getByRole("heading", { name: title })).toHaveClass("font-amatic");
     }
     expect(section.getByText("Set your foot shape and volume.")).toHaveClass("font-mono");
   });

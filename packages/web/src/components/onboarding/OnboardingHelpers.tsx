@@ -13,11 +13,10 @@ export function RatingButton({ rating, currentRating, onRatingChange }: RatingBu
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={() => onRatingChange(rating)}
-      className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-ball-pill text-sm transition-all ${
-        currentRating >= rating
+      className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center font-amatic text-sm transition-all ${currentRating >= rating
           ? "border-brand-red bg-brand-red/20 text-brand-red"
           : "border-white/10 text-brand-putty/30"
-      }`}
+        }`}
     >
       {rating}
     </motion.button>

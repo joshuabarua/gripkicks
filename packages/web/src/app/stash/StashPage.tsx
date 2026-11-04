@@ -536,26 +536,26 @@ export default function ShoeSanctuaryPage() {
           <div className="max-w-7xl mx-auto space-y-fluid-lg">
             <div className="lab-rise" style={{ "--rise-delay": "80ms" } as CSSProperties}>
               <AdvancedFilters
-              selectedBrand={selectedBrand}
-              onBrandChange={setSelectedBrand}
-              selectedGender={selectedGender}
-              onGenderChange={setSelectedGender}
-              selectedAggressiveness={selectedAggressiveness}
-              onAggressivenessChange={setSelectedAggressiveness}
-              selectedStiffness={selectedStiffness}
-              onStiffnessChange={setSelectedStiffness}
-              selectedDiscipline={selectedDiscipline}
-              onDisciplineChange={setSelectedDiscipline}
-              selectedVolume={selectedVolume}
-              onVolumeChange={setSelectedVolume}
-              selectedComfortRating={selectedComfortRating}
-              onComfortRatingChange={setSelectedComfortRating}
-              selectedPerformanceRating={selectedPerformanceRating}
-              onPerformanceRatingChange={setSelectedPerformanceRating}
-              uniqueBrands={stashBrands}
-              onReset={resetFilters}
-              activeFiltersCount={activeFiltersCount}
-            />
+                selectedBrand={selectedBrand}
+                onBrandChange={setSelectedBrand}
+                selectedGender={selectedGender}
+                onGenderChange={setSelectedGender}
+                selectedAggressiveness={selectedAggressiveness}
+                onAggressivenessChange={setSelectedAggressiveness}
+                selectedStiffness={selectedStiffness}
+                onStiffnessChange={setSelectedStiffness}
+                selectedDiscipline={selectedDiscipline}
+                onDisciplineChange={setSelectedDiscipline}
+                selectedVolume={selectedVolume}
+                onVolumeChange={setSelectedVolume}
+                selectedComfortRating={selectedComfortRating}
+                onComfortRatingChange={setSelectedComfortRating}
+                selectedPerformanceRating={selectedPerformanceRating}
+                onPerformanceRatingChange={setSelectedPerformanceRating}
+                uniqueBrands={stashBrands}
+                onReset={resetFilters}
+                activeFiltersCount={activeFiltersCount}
+              />
             </div>
 
             {isPageLoading && <SanctuaryGridSkeleton />}
@@ -565,7 +565,7 @@ export default function ShoeSanctuaryPage() {
                 className="lab-rise flex flex-col items-center justify-center py-fluid-3xl text-center"
                 style={{ "--rise-delay": "150ms" } as CSSProperties}
               >
-                <h3 className="font-ball-pill text-fluid-3xl text-white mb-fluid-xs">
+                <h3 className="font-amatic text-fluid-3xl text-white mb-fluid-xs">
                   NO SHOES YET
                 </h3>
                 <p className="font-mono text-brand-putty mb-fluid-md max-w-sm">
@@ -603,13 +603,13 @@ export default function ShoeSanctuaryPage() {
                   </span>
                 </div>
                 <BrandSections
-                groups={brandGroups}
-                specialLabels={specialLabels}
-                onOpenStats={handleSelectShoe}
-                onEdit={openShoeEditor}
-                onToggleFavourite={toggleShoeFavourite}
-                onRemove={confirmRemoveShoe}
-              />
+                  groups={brandGroups}
+                  specialLabels={specialLabels}
+                  onOpenStats={handleSelectShoe}
+                  onEdit={openShoeEditor}
+                  onToggleFavourite={toggleShoeFavourite}
+                  onRemove={confirmRemoveShoe}
+                />
               </>
             )}
           </div>

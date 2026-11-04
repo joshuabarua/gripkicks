@@ -135,7 +135,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-white text-center">
-          <h1 className="font-ball-pill text-fluid-4xl mb-2 text-brand-chalk">Access Denied</h1>
+          <h1 className="font-amatic text-fluid-4xl mb-2 text-brand-chalk">Access Denied</h1>
           <p className="text-white/60">
             You need admin privileges to access this page.
           </p>
@@ -276,39 +276,36 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-background p-8 pt-24">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="font-ball-pill text-fluid-5xl text-brand-chalk">Admin Dashboard</h1>
+          <h1 className="font-amatic text-fluid-5xl text-brand-chalk">Admin Dashboard</h1>
         </div>
 
         <div className="flex gap-2 mb-6">
           <button
             onClick={() => setActiveTab("shoes")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "shoes"
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === "shoes"
                 ? "bg-accent text-white"
                 : "bg-white/10 text-white/70 hover:bg-white/20"
-            }`}
+              }`}
           >
             <Footprints className="w-4 h-4" />
             Shoes ({shoes.length})
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "users"
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === "users"
                 ? "bg-accent text-white"
                 : "bg-white/10 text-white/70 hover:bg-white/20"
-            }`}
+              }`}
           >
             <Users className="w-4 h-4" />
             Users ({users?.length || 0})
           </button>
           <button
             onClick={() => setActiveTab("backlog")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "backlog"
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${activeTab === "backlog"
                 ? "bg-accent text-white"
                 : "bg-white/10 text-white/70 hover:bg-white/20"
-            }`}
+              }`}
           >
             <ListTodo className="w-4 h-4" />
             Backlog
@@ -743,7 +740,7 @@ export default function AdminDashboard() {
                             </h3>
 
                             <div className="space-y-4">
-                              
+
                               <ShoeImageUpload
                                 brand={shoe.brand}
                                 shoeName={shoe.name}
@@ -758,7 +755,7 @@ export default function AdminDashboard() {
                                 }}
                               />
 
-                              
+
                               <div className="border-t border-white/10 pt-4">
                                 <p className="text-white text-sm mb-2">
                                   Or enter image URL manually:
@@ -831,12 +828,12 @@ export default function AdminDashboard() {
                               (shoe.gender ?? "").toLowerCase(),
                             )
                               ? {
-                                  gender: shoe.gender?.toLowerCase() as
-                                    | "men"
-                                    | "women"
-                                    | "kids"
-                                    | "unisex",
-                                }
+                                gender: shoe.gender?.toLowerCase() as
+                                  | "men"
+                                  | "women"
+                                  | "kids"
+                                  | "unisex",
+                              }
                               : {})}
                           />
                         </div>
@@ -925,9 +922,9 @@ export default function AdminDashboard() {
                                   setEditForm((prev) =>
                                     prev
                                       ? {
-                                          ...prev,
-                                          variantLabel: e.target.value,
-                                        }
+                                        ...prev,
+                                        variantLabel: e.target.value,
+                                      }
                                       : prev,
                                   )
                                 }
@@ -977,8 +974,8 @@ export default function AdminDashboard() {
 
                                     const nextGender = e.target.value
                                       ? (e.target.value as NonNullable<
-                                          Shoe["gender"]
-                                        >)
+                                        Shoe["gender"]
+                                      >)
                                       : undefined;
 
                                     return {
@@ -1014,9 +1011,9 @@ export default function AdminDashboard() {
                                   setEditForm((prev) =>
                                     prev
                                       ? {
-                                          ...prev,
-                                          aggressiveness: e.target.value,
-                                        }
+                                        ...prev,
+                                        aggressiveness: e.target.value,
+                                      }
                                       : prev,
                                   )
                                 }
@@ -1065,9 +1062,9 @@ export default function AdminDashboard() {
                                   setEditForm((prev) =>
                                     prev
                                       ? {
-                                          ...prev,
-                                          climbingDiscipline: e.target.value,
-                                        }
+                                        ...prev,
+                                        climbingDiscipline: e.target.value,
+                                      }
                                       : prev,
                                   )
                                 }
@@ -1116,16 +1113,16 @@ export default function AdminDashboard() {
                                     const nextRubberTechnologyId = e.target
                                       .value
                                       ? (e.target
-                                          .value as Id<"rubberTechnologies">)
+                                        .value as Id<"rubberTechnologies">)
                                       : undefined;
 
                                     return {
                                       ...prev,
                                       ...(nextRubberTechnologyId
                                         ? {
-                                            rubberTechnologyId:
-                                              nextRubberTechnologyId,
-                                          }
+                                          rubberTechnologyId:
+                                            nextRubberTechnologyId,
+                                        }
                                         : {}),
                                     };
                                   })
@@ -1324,18 +1321,18 @@ export default function AdminDashboard() {
 
             {(usersStatus === "CanLoadMore" ||
               usersStatus === "LoadingMore") && (
-              <div className="flex justify-center py-4">
-                <button
-                  onClick={() => loadMoreUsers(50)}
-                  disabled={usersStatus === "LoadingMore"}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
-                >
-                  {usersStatus === "LoadingMore"
-                    ? "Loading..."
-                    : "Load more users"}
-                </button>
-              </div>
-            )}
+                <div className="flex justify-center py-4">
+                  <button
+                    onClick={() => loadMoreUsers(50)}
+                    disabled={usersStatus === "LoadingMore"}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                  >
+                    {usersStatus === "LoadingMore"
+                      ? "Loading..."
+                      : "Load more users"}
+                  </button>
+                </div>
+              )}
           </>
         )}
 

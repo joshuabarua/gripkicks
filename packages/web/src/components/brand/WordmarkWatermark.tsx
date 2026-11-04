@@ -28,7 +28,7 @@ export default function WordmarkWatermark({
       {lines.map((line) => (
         <span
           key={line}
-          className="font-ball-pill text-brand-chalk/[0.035] leading-[0.8] text-[26vw] md:text-[22vw] tracking-tighter select-none whitespace-nowrap"
+          className="font-amatic text-brand-chalk/[0.035] leading-[0.8] text-[26vw] md:text-[22vw] tracking-tighter select-none whitespace-nowrap"
         >
           {line}
         </span>

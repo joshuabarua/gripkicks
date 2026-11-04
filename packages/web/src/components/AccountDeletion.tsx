@@ -80,7 +80,7 @@ export function AccountDeletion() {
 
   return (
     <div className="lab-card max-w-2xl border-red-500/20 p-fluid-lg">
-      <h3 className="font-ball-pill text-fluid-3xl text-brand-chalk flex items-center gap-2">
+      <h3 className="font-amatic text-fluid-3xl text-brand-chalk flex items-center gap-2">
         <AlertTriangle className="h-6 w-6 text-red-500" />
         Delete Account
       </h3>
@@ -128,7 +128,7 @@ export function AccountDeletion() {
                     value={formData.password}
                     onChange={handleChange}
                     disabled={isLoading}
-                className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
+                    className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
                   />
                 </div>
 
@@ -144,7 +144,7 @@ export function AccountDeletion() {
                     value={formData.confirmation}
                     onChange={handleChange}
                     disabled={isLoading}
-                className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
+                    className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 h-12 focus:border-brand-red focus:ring-brand-red"
                   />
                 </div>
 

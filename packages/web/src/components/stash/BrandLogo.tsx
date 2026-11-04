@@ -39,7 +39,7 @@ export function BrandLogo({ brand, className = "", size = "md", tooltip = false 
 
   if (!logo) {
     return (
-      <span className={`uppercase leading-none text-brand-chalk ${size === "sm" ? "truncate font-mono text-[10px] font-semibold tracking-[0.16em]" : size === "lg" ? "font-ball-pill text-xl" : "font-ball-pill text-fluid-3xl"} ${className}`}>
+      <span className={`uppercase leading-none text-brand-chalk ${size === "sm" ? "truncate font-mono text-[10px] font-semibold tracking-[0.16em]" : size === "lg" ? "font-amatic text-xl" : "font-amatic text-fluid-3xl"} ${className}`}>
         {brand}
       </span>
     );

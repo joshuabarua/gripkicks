@@ -17,15 +17,15 @@ export default function HomeDesignsIndex() {
   return (
     <main className="min-h-screen bg-[#EEEBE5] text-[#111111] font-mono selection:bg-[#111111] selection:text-[#EEEBE5]">
       <div className="max-w-[1800px] mx-auto px-6 md:px-12 py-12 md:py-24">
-        
+
         {/* Header Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-end mb-32">
           <div className="lg:col-span-8">
             <p className="text-sm tracking-[0.2em] uppercase font-bold text-[#FF3800] mb-8">
               Internal Directory
             </p>
-            <h1 className="font-ball-pill text-[15vw] sm:text-[12vw] lg:text-[10vw] leading-[0.85] uppercase tracking-tight mix-blend-multiply text-[#111111]">
-              Frontend <br/>
+            <h1 className="font-amatic text-[15vw] sm:text-[12vw] lg:text-[10vw] leading-[0.85] uppercase tracking-tight mix-blend-multiply text-[#111111]">
+              Frontend <br />
               <span className="text-[#8C877E] italic">Archived.</span>
             </h1>
           </div>
@@ -39,7 +39,7 @@ export default function HomeDesignsIndex() {
         {/* List Section */}
         <div className="relative">
           <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[2px] bg-[#D4CEC4]" />
-          
+
           <div className="flex flex-col gap-12 lg:gap-24 lg:pl-24">
             {VARIATIONS.map((v) => (
               <Link
@@ -49,13 +49,13 @@ export default function HomeDesignsIndex() {
               >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-baseline relative z-10">
                   {/* ID */}
-                  <div className="lg:col-span-2 font-ball-pill text-3xl md:text-4xl text-[#8C877E] transition-colors duration-300 group-hover:text-[#FF3800]">
+                  <div className="lg:col-span-2 font-amatic text-3xl md:text-4xl text-[#8C877E] transition-colors duration-300 group-hover:text-[#FF3800]">
                     [{v.id}]
                   </div>
-                  
+
                   {/* Title & Desc */}
                   <div className="lg:col-span-8 relative">
-                    <h2 className="font-ball-pill text-5xl md:text-7xl lg:text-[7rem] uppercase leading-none mb-6 lg:-ml-4 transition-transform duration-500 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:translate-x-6">
+                    <h2 className="font-amatic text-5xl md:text-7xl lg:text-[7rem] uppercase leading-none mb-6 lg:-ml-4 transition-transform duration-500 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:translate-x-6">
                       {v.label}
                     </h2>
                     <p className="font-mono text-lg md:text-xl text-[#8C877E] max-w-xl transition-all duration-500 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:translate-x-6 group-hover:text-[#111111]">
@@ -73,7 +73,7 @@ export default function HomeDesignsIndex() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Decorative Line that draws across on hover */}
                 <div className="absolute -bottom-6 lg:-bottom-12 left-0 right-0 h-[2px] bg-[#111111] origin-left scale-x-0 transition-transform duration-700 ease-\[cubic-bezier\(0\.16,1,0\.3,1\)\] group-hover:scale-x-100 z-0" />
               </Link>

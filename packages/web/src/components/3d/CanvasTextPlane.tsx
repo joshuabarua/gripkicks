@@ -15,7 +15,7 @@ function loadBrandFont(): Promise<void> {
 
   brandFontLoadPromise = (async () => {
     try {
-      const font = new FontFace("GripKicksBallPill", "url(/fonts/BallPill-regular.otf)");
+      const font = new FontFace("GripKicksPicnic", "url(/fonts/Picnic-Regular.otf)");
       await font.load();
       document.fonts.add(font);
     } catch {
@@ -72,7 +72,7 @@ export default function CanvasTextPlane({
   useEffect(() => {
     let cancelled = false;
     loadBrandFont().then(() => {
-      if (!cancelled) setFontFamily("GripKicksBallPill");
+      if (!cancelled) setFontFamily("GripKickspicnic");
     });
     return () => {
       cancelled = true;

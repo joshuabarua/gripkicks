@@ -77,7 +77,7 @@ export function PasswordChangeForm() {
 
   return (
     <div className="lab-card max-w-2xl p-fluid-lg">
-      <h3 className="font-ball-pill text-fluid-3xl text-brand-chalk">Change Password</h3>
+      <h3 className="font-amatic text-fluid-3xl text-brand-chalk">Change Password</h3>
       <p className="mt-1 font-mono text-sm text-brand-putty">Update your password to keep your account secure</p>
       <div className="mt-6">
         <form onSubmit={handleSubmit} className="space-y-4">

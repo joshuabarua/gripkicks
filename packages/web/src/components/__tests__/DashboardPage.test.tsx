@@ -47,7 +47,7 @@ describe("DashboardPage", () => {
   it("uses the Lab header on a black canvas", () => {
     render(<DashboardPage />);
     expect(screen.getByRole("main")).toHaveClass("bg-black");
-    expect(screen.getByRole("heading", { name: "Dashboard", level: 1 })).toHaveClass("font-ball-pill", "uppercase");
+    expect(screen.getByRole("heading", { name: "Dashboard", level: 1 })).toHaveClass("font-amatic", "uppercase");
     expect(screen.getByText("Hey Josh")).toHaveClass("font-mono");
   });
 

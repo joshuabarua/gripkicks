@@ -131,7 +131,7 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
     <div className="space-y-fluid-xl">
       <section aria-label="Recommendation source" className="lab-card lab-rise flex flex-col justify-between gap-fluid-lg p-fluid-lg lg:flex-row lg:items-center" style={{ "--rise-delay": "100ms" } as CSSProperties}>
         <div>
-          <h2 className="font-ball-pill text-fluid-2xl">{mode === "personal" ? "Your shoe matches" : "Community ratings"}</h2>
+          <h2 className="font-amatic text-fluid-2xl">{mode === "personal" ? "Your shoe matches" : "Community ratings"}</h2>
           <p className="mt-2 font-mono text-base leading-relaxed text-brand-putty">{mode === "personal" ? "Fit estimates from catalog attributes and available ratings. Not a fit guarantee." : "Shoes ranked using ratings from all climbers."}</p>
           {mode === "personal" && activeShoes.some((shoe) => shoe.signals && !shoe.signals.preferences) && <p className="mt-3 font-mono text-sm text-brand-putty">Preferences need 3 complete shoe ratings. <Link href="/stash" className="underline underline-offset-4">Rate your shoes</Link></p>}
         </div>
@@ -227,7 +227,7 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
               <BrandLogo brand={shoe.brand} size="sm" tooltip />
             </div>
             <div className="absolute bottom-3 right-3 rounded-lg bg-black/70 px-2.5 py-1.5 text-right font-mono backdrop-blur-sm">
-              <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-xs font-semibold" : "font-ball-pill text-lg"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
+              <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-xs font-semibold" : "font-amatic text-lg"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
               <p className="lab-label mt-0.5">{mode === "personal" ? hasProfile ? "Match" : "Profile needed" : shoe.secondaryLabel}</p>
             </div>
           </div>
@@ -305,7 +305,7 @@ function EmptyState({ mode, hasFootProfile }: { mode: Mode; hasFootProfile: bool
   const needsProfile = mode === "personal" && !hasFootProfile;
   return (
     <section className="lab-card lab-rise p-fluid-xl" style={{ "--rise-delay": "300ms" } as CSSProperties}>
-      <h3 className="font-ball-pill text-xl">{needsProfile ? "Set up your foot profile" : "No shoe matches yet"}</h3>
+      <h3 className="font-amatic text-xl">{needsProfile ? "Set up your foot profile" : "No shoe matches yet"}</h3>
       <p className="mt-3 max-w-lg font-mono text-base leading-relaxed text-brand-putty">{needsProfile ? "Personal matches need your foot shape and volume." : mode === "personal" ? "Add shoes to your Sanctuary to record what fits." : "Not enough community ratings yet."}</p>
       {mode === "personal" && <Link href={needsProfile ? "/footlab" : "/stash"} className="lab-button mt-fluid-lg">{needsProfile ? "Set up foot profile" : "Open Sanctuary"}</Link>}
     </section>

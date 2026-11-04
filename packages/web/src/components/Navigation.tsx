@@ -17,7 +17,7 @@ import dynamic from "next/dynamic";
 const NavLogo = dynamic(() => import("@/components/3d/NavLogo"), {
   ssr: false,
   loading: () => (
-    <span className="font-ball-pill text-fluid-2xl whitespace-nowrap">GripKicks</span>
+    <span className="font-amatic text-fluid-2xl whitespace-nowrap">GripKicks</span>
   ),
 });
 
@@ -133,7 +133,7 @@ const Navigation: React.FC = () => {
   return (
     <motion.nav
       ref={navRef}
-      className="site-nav fixed top-0 left-0 right-0 z-50 px-6 py-2 border-b border-white/20 bg-brand-base/55 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_30px_rgba(0,0,0,0.18)] h-12 flex items-center justify-between"
+      className="fixed top-0 left-0 right-0 z-50 px-6 py-2 border-b border-white/20 bg-brand-base/55 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_30px_rgba(0,0,0,0.18)] h-12 flex items-center justify-between"
       initial={{ y: 0 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.15, ease: "easeOut" }}

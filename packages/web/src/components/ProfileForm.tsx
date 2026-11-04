@@ -109,7 +109,7 @@ export function ProfileForm({
 
   return (
     <div className="lab-card max-w-2xl p-fluid-lg">
-      <h3 className="font-ball-pill text-fluid-3xl text-brand-chalk">Profile Settings</h3>
+      <h3 className="font-amatic text-fluid-3xl text-brand-chalk">Profile Settings</h3>
       <p className="mt-1 font-mono text-sm text-brand-putty">Update your profile information.</p>
       <div className="mt-6">
         {profileLoader.isLoading ? (
@@ -142,10 +142,10 @@ export function ProfileForm({
             {isError && error && (
               <div
                 className={`flex items-center gap-2 rounded-lg border p-3 font-mono text-sm ${getErrorSeverity(error) === "error"
-                    ? "border-red-500/20 bg-red-500/10 text-red-400"
-                    : getErrorSeverity(error) === "warning"
-                      ? "border-yellow-500/20 bg-yellow-500/10 text-yellow-300"
-                      : "border-blue-500/20 bg-blue-500/10 text-blue-300"
+                  ? "border-red-500/20 bg-red-500/10 text-red-400"
+                  : getErrorSeverity(error) === "warning"
+                    ? "border-yellow-500/20 bg-yellow-500/10 text-yellow-300"
+                    : "border-blue-500/20 bg-blue-500/10 text-blue-300"
                   }`}
               >
                 <AlertCircle className="h-4 w-4" />

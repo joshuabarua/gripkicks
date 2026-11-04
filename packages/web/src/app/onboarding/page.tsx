@@ -223,7 +223,7 @@ export default function OnboardingPage() {
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <section className="px-6 md:px-12 lg:px-16 py-12">
         <div className="max-w-3xl mx-auto">
-          
+
           <div className="mb-12">
             <div className="flex justify-between items-center mb-4">
               <p className="lab-label font-mono text-brand-putty/40">
@@ -245,12 +245,12 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          
+
           <AnimatePresence mode="wait">
             <motion.div key={currentStep} {...stepMotion}>
               {currentStep === "welcome" && (
                 <div className="text-center">
-                  <h1 className="font-ball-pill text-fluid-6xl mb-10">
+                  <h1 className="font-amatic text-fluid-6xl mb-10">
                     WELCOME
                   </h1>
 
@@ -267,7 +267,7 @@ export default function OnboardingPage() {
 
               {currentStep === "foot-data" && (
                 <div className="lab-card p-fluid-xl">
-                  <h2 className="font-ball-pill text-fluid-5xl mb-8">FOOT SHAPE</h2>
+                  <h2 className="font-amatic text-fluid-5xl mb-8">FOOT SHAPE</h2>
 
                   <div className="space-y-6">
                     <div>
@@ -307,11 +307,10 @@ export default function OnboardingPage() {
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => setFootShape(shape.value)}
-                            className={`lab-card w-full p-3 text-left transition-all ${
-                              footShape === shape.value
+                            className={`lab-card w-full p-3 text-left transition-all ${footShape === shape.value
                                 ? "lab-card-active hal-glow"
                                 : ""
-                            }`}
+                              }`}
                           >
                             <div className="font-mono font-medium text-brand-chalk text-sm">
                               {shape.label}
@@ -339,11 +338,10 @@ export default function OnboardingPage() {
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => setFootVolume(volume.value)}
-                            className={`lab-card w-full p-3 text-center transition-all ${
-                              footVolume === volume.value
+                            className={`lab-card w-full p-3 text-center transition-all ${footVolume === volume.value
                                 ? "lab-card-active hal-glow"
                                 : ""
-                            }`}
+                              }`}
                           >
                             <div className="font-mono font-medium text-brand-chalk text-sm">
                               {volume.label}
@@ -375,7 +373,7 @@ export default function OnboardingPage() {
 
               {currentStep === "first-shoe" && (
                 <div className="lab-card p-fluid-xl">
-                  <h2 className="font-ball-pill text-fluid-5xl mb-8">
+                  <h2 className="font-amatic text-fluid-5xl mb-8">
                     ADD YOUR FIRST SHOE
                   </h2>
 
@@ -565,7 +563,7 @@ export default function OnboardingPage() {
 
               {currentStep === "complete" && (
                 <div className="text-center">
-                  <h1 className="font-ball-pill text-fluid-6xl mb-10">
+                  <h1 className="font-amatic text-fluid-6xl mb-10">
                     ALL SET
                   </h1>
 
@@ -584,7 +582,7 @@ export default function OnboardingPage() {
                           whileTap={{ scale: 0.98 }}
                           className="lab-card p-6 flex flex-col items-center gap-3 cursor-pointer"
                         >
-                          <span className="font-ball-pill text-lg text-brand-chalk">
+                          <span className="font-amatic text-lg text-brand-chalk">
                             {item.label}
                           </span>
                         </motion.div>

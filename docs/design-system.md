@@ -2,99 +2,134 @@
 
 ## Aesthetic Direction
 
-**Technical/precise with fluidity/organic elements.** Dark canvas, warm chalk type, bold red accent reserved for shapes and controls. Orientation-based fluid scaling — layouts adapt smoothly, no breakpoint snapping.
+**Technical/precise with fluidity/organic elements.** Dark canvas, warm chalk
+type, bold red accent reserved for shapes and controls. Orientation-based fluid
+scaling — layouts adapt smoothly, no breakpoint snapping.
 
-Tailwind v4, CSS-first: all tokens live in `@theme` inside `packages/web/src/app/globals.css`. No JS config file.
+Tailwind v4, CSS-first: all tokens live in `@theme` inside
+`packages/web/src/app/globals.css`. No JS config file.
 
 ---
 
 ## Tokens
 
 ### Colors
-| Token | Value | Use |
-|---|---|---|
-| `brand-base` | `#0a0a0a` | Page background |
-| `brand-surface` | `#1a1a1a` | Panels (footer) |
-| `brand-charcoal` | `#2d2d2d` | `lab-card` surface |
-| `brand-red` | `#f45b5b` | CTAs, borders, active states — never text |
-| `brand-chalk` | `#f0ede5` | Primary text, warm white |
-| `brand-putty` | `#c8bfb3` | Secondary text |
-| `brand-border` | white @ 16% | Card borders |
-| shadcn tokens | `hsl(var(--*))` | `background`, `foreground`, `card`, `muted`, `accent`, etc. |
+
+| Token            | Value           | Use                                                         |
+| ---------------- | --------------- | ----------------------------------------------------------- |
+| `brand-base`     | `#0a0a0a`       | Page background                                             |
+| `brand-surface`  | `#1a1a1a`       | Panels (footer)                                             |
+| `brand-charcoal` | `#2d2d2d`       | `lab-card` surface                                          |
+| `brand-red`      | `#f45b5b`       | CTAs, borders, active states — never text                   |
+| `brand-chalk`    | `#f0ede5`       | Primary text, warm white                                    |
+| `brand-putty`    | `#c8bfb3`       | Secondary text                                              |
+| `brand-border`   | white @ 16%     | Card borders                                                |
+| shadcn tokens    | `hsl(var(--*))` | `background`, `foreground`, `card`, `muted`, `accent`, etc. |
 
 ### Typography
-| Role | Font | Class |
-|---|---|---|
-| Display / headings / buttons | Ball Pill | `font-ball-pill` (auto-uppercase) |
-| Body, labels, data, controls | DM Mono | `font-mono` — the default UI face |
+
+| Role                                | Font      | Class                                                             |
+| ----------------------------------- | --------- | ----------------------------------------------------------------- |
+| Display / headings / buttons        | Amatic    | `font-amatic` (auto-uppercase)                                    |
+| Body, labels, data, controls        | DM Mono   | `font-mono` — the default UI face                                 |
 | Sanctuary page title + dialogs only | So Cloudy | `font-so-cloudy` — enforced by `src/__tests__/typography.test.ts` |
 
 **Banned**: Sora, Basteleur, Tanker — removed; test fails if they appear.
 
 ### Fluid scale
+
 All sizes derive from `--scale` (JS-set per orientation):
+
 - Spacing: `fluid-xs` → `fluid-3xl` (`--space-*`)
-- Text: `fluid-xs` → `fluid-9xl` (`--text-*`), titles `--title-sm` → `--title-4xl` via `text-title-*`
+- Text: `fluid-xs` → `fluid-9xl` (`--text-*`), titles `--title-sm` →
+  `--title-4xl` via `text-title-*`
 - Containers: `max-w-(--fluid-container-sm|md|lg|xl)`
 
 ---
 
 ## Lab Visual System
 
-Home, Dashboard, Matcher, Foot Lab and Profile share the Foot Lab language — black canvas, charcoal cards:
+Home, Dashboard, Matcher, Foot Lab and Profile share the Foot Lab language —
+black canvas, charcoal cards:
 
 - `lab-card` — charcoal card, red monolith bar animates in on hover
 - `lab-card-lift` — hover translate lift
 - `lab-card-active` — red border + glow, for selected/primary panels
-- `lab-button` — red pill (Ball Pill, uppercase), primary action
+- `lab-button` — red pill (Amatic, uppercase), primary action
 - `lab-button-ghost` — bordered ghost, secondary action
 - `lab-label` — small uppercase mono label
 - `lab-rise` / `lab-fade` — entrance motion (see Motion)
 - `lab-container` — shared page container (max-w-6xl, fluid padding)
-- `LabHeader` — page title block (`text-fluid-8xl` title, `text-fluid-lg text-brand-putty` description); `PageSurface` — page wrapper
+- `LabHeader` — page title block (`text-fluid-8xl` title,
+  `text-fluid-lg text-brand-putty` description); `PageSurface` — page wrapper
 
 ### Page shell
+
 ```tsx
 <PageSurface>
-  <div className="lab-container">
-    <LabHeader title="Profile" description="…" />
-    …
-  </div>
+	<div className="lab-container">
+		<LabHeader title="Profile" description="…" />…
+	</div>
 </PageSurface>
 ```
 
 ### Patterns
-- **Next step panel** (Dashboard, Profile, Foot Lab onboarding): `lab-card lab-card-active` with a `lab-label`, Ball Pill `h2`, one line of putty text, `lab-button` on the right.
-- **Summary card**: `lab-card p-6`, `lab-label` + Ball Pill value; missing data gets a `lab-button-ghost` action, never red text.
-- **Selectable option** (Foot Lab): `motion.button` with `lab-card`, `lab-card-active hal-glow` when selected, `aria-pressed`, hover `y: -4`, tap `scale: 0.97`.
-- **Accordion section** (Profile): `lab-card`; header is a real `<button aria-expanded aria-controls>`, body uses `expandMotion`. Destructive sections use a red border and icon, title stays chalk.
-- **Body text**: `text-brand-putty` (with opacity modifiers if needed). Do not use `text-neutral-*`.
-- **Text link**: chalk text, red underline decoration (`decoration-brand-red underline-offset-4`), hover underline to chalk.
-- **Form input**: `rounded-lg bg-black border-white/6 h-12`, red focus border/ring.
+
+- **Next step panel** (Dashboard, Profile, Foot Lab onboarding):
+  `lab-card lab-card-active` with a `lab-label`, Amatic `h2`, one line of putty
+  text, `lab-button` on the right.
+- **Summary card**: `lab-card p-6`, `lab-label` + Amatic value; missing data
+  gets a `lab-button-ghost` action, never red text.
+- **Selectable option** (Foot Lab): `motion.button` with `lab-card`,
+  `lab-card-active hal-glow` when selected, `aria-pressed`, hover `y: -4`, tap
+  `scale: 0.97`.
+- **Accordion section** (Profile): `lab-card`; header is a real
+  `<button aria-expanded aria-controls>`, body uses `expandMotion`. Destructive
+  sections use a red border and icon, title stays chalk.
+- **Body text**: `text-brand-putty` (with opacity modifiers if needed). Do not
+  use `text-neutral-*`.
+- **Text link**: chalk text, red underline decoration
+  (`decoration-brand-red underline-offset-4`), hover underline to chalk.
+- **Form input**: `rounded-lg bg-black border-white/6 h-12`, red focus
+  border/ring.
 
 ## Editorial Pages
 
-About and Privacy keep an editorial look: `LiquidGlassBackdrop`, `WordmarkWatermark`, `rounded-3xl` cards, alternating `bg-brand-surface` sections. They still use fluid type (`text-fluid-9xl` titles, `text-fluid-5xl` section heads), fluid padding (`px-fluid-lg md:px-fluid-xl`, `py-fluid-3xl`), putty body text and `lab-rise` entrances. About keeps a short personal note (constraint 3 exemption).
+About and Privacy keep an editorial look: `LiquidGlassBackdrop`,
+`WordmarkWatermark`, `rounded-3xl` cards, alternating `bg-brand-surface`
+sections. They still use fluid type (`text-fluid-9xl` titles, `text-fluid-5xl`
+section heads), fluid padding (`px-fluid-lg md:px-fluid-xl`, `py-fluid-3xl`),
+putty body text and `lab-rise` entrances. About keeps a short personal note
+(constraint 3 exemption).
 
 ## Sanctuary
 
-Sanctuary has its own theme: So Cloudy title, cloud backdrop + drifting clouds, `CloudShoe` cards (`rounded-xl border-white/30 bg-brand-surface`). On load it shows skeletons shaped like the final layout (`StatsStripSkeleton` in the header slot, `SanctuaryGridSkeleton` for brand sections), then reveals in order: header → filters → nudge → badge key/toolbar → brand sections.
+Sanctuary has its own theme: So Cloudy title, cloud backdrop + drifting clouds,
+`CloudShoe` cards (`rounded-xl border-white/30 bg-brand-surface`). On load it
+shows skeletons shaped like the final layout (`StatsStripSkeleton` in the header
+slot, `SanctuaryGridSkeleton` for brand sections), then reveals in order: header
+→ filters → nudge → badge key/toolbar → brand sections.
 
 ---
 
 ## Brand Marks
 
-`BrandLogo` (`src/components/stash/BrandLogo.tsx`) renders approved brand SVG/PNG logos:
-- `size="sm"` h-5 w-20 — card rows, selects · `size="md"` — brand section headers · `size="lg"` h-10 w-40 — matcher tiles/leaderboard
-- `tooltip` prop — Radix tooltip with company name (Sanctuary cards); otherwise `title` fallback
+`BrandLogo` (`src/components/stash/BrandLogo.tsx`) renders approved brand
+SVG/PNG logos:
+
+- `size="sm"` h-5 w-20 — card rows, selects · `size="md"` — brand section
+  headers · `size="lg"` h-10 w-40 — matcher tiles/leaderboard
+- `tooltip` prop — Radix tooltip with company name (Sanctuary cards); otherwise
+  `title` fallback
 - Unmapped brands → uppercase mono text fallback
 
 ## Badges
 
 Card badges (CloudShoe header) carry Radix tooltips:
+
 - Star — favourite (manual toggle)
-- Heart — highest comfort score · Crown — most worn · Clock — oldest
-Sanctuary shows the badge key above the brand grid.
+- Heart — highest comfort score · Crown — most worn · Clock — oldest Sanctuary
+  shows the badge key above the brand grid.
 
 ---
 
@@ -107,34 +142,76 @@ Sanctuary shows the badge key above the brand grid.
 
 ## Motion
 
-Hybrid: CSS for entrances, framer-motion for interactions. Shared helpers live in `src/lib/motion.ts`.
+Hybrid: CSS for entrances, framer-motion for interactions. Shared helpers live
+in `src/lib/motion.ts`.
 
-- **Entrances**: `lab-rise` (fade + 20px rise, 0.5s, ease-out) or `lab-fade` (opacity, 0.9s). Stagger with `style={riseDelay(i)}` (50ms steps). Both are disabled under `prefers-reduced-motion`.
-- **Interactions**: `expandMotion` (height `0 ↔ auto` + fade) inside `AnimatePresence`, `slideUpBarMotion` (spring bar from bottom), `stepMotion` (multi-step page transitions), hover/tap via `whileHover` / `whileTap`.
-- `MotionConfig reducedMotion="user"` in `providers.tsx` makes framer respect OS reduce-motion.
-- **Page transitions**: whole-page wipe on navigations typed `page-nav` — React `<ViewTransition name="page" default="none" update={{ ... }}>` in `app/layout.tsx`, `::view-transition-*(.page-wipe)` rules in `globals.css`. The wipe is a vertical monolith sweep: brand red drops down over the old page (top→bottom clip), then the new page reveals top→bottom underneath it — same direction as the `lab-card` monolith bar (`transform-origin: top`). ~800ms total (450ms cover, 450ms reveal after a 350ms delay). Internal links route through `NavLink` (`src/components/ui/NavLink.tsx`), which picks the transition type from the current pathname and target (`to-sanctuary`/`from-sanctuary` for `/stash`, else `page-nav`); programmatic navigations pass `transitionTypes` to `router.push`/`replace`. Untyped updates (Suspense reveals, data refreshes) don't animate — only typed navigations trigger a transition. The fixed nav gets its own `view-transition-name: site-nav` with the same wipe keyframes so it sweeps in sync (fixed elements escape the ancestor snapshot). Sanctuary navigations use `.sanctuary-wipe`: same vertical clip sweep, but the group backdrop is dark drifting cloud layers (`public/imgs/clouds/`) instead of red, and the site-nav group goes transparent via `:active-view-transition-type()` so no red strip shows through the translucent nav. `lab-rise`/`lab-fade` entrances are paused while a view transition is active, so they stagger in after the reveal finishes. Unsupported browsers navigate without animation.
-- Don't put `lab-rise` on an element that framer also transforms (the CSS fill overrides framer's transform). Put `lab-rise` on a wrapper.
-- Don't nest fading elements (parent `lab-rise` + child `lab-rise`). Opacity multiplies and looks muddy. Animate siblings instead.
+- **Entrances**: `lab-rise` (fade + 20px rise, 0.5s, ease-out) or `lab-fade`
+  (opacity, 0.9s). Stagger with `style={riseDelay(i)}` (50ms steps). Both are
+  disabled under `prefers-reduced-motion`.
+- **Interactions**: `expandMotion` (height `0 ↔ auto` + fade) inside
+  `AnimatePresence`, `slideUpBarMotion` (spring bar from bottom), `stepMotion`
+  (multi-step page transitions), hover/tap via `whileHover` / `whileTap`.
+- `MotionConfig reducedMotion="user"` in `providers.tsx` makes framer respect OS
+  reduce-motion.
+- **Page transitions**: whole-page wipe on navigations typed `page-nav`,
+  animated on the root snapshot (`::view-transition-*(root)` in `globals.css`)
+  so the fixed nav, overlays, and page sweep as one image — no named snapshot,
+  nothing gets carved out. React only calls `startViewTransition` when some
+  `<ViewTransition>` boundary resolves a non-`none` update class, and any
+  boundary that does so gets a `view-transition-name` (auto-generated when
+  unnamed), which would split the page back out of the root snapshot. So
+  `app/layout.tsx` keeps two boundaries: a hidden trigger `<span>` wrapped in
+  `<ViewTransition update={{ "page-nav": "page-wipe", default: "none" }}>` that
+  starts the typed transition, and an inert `<ViewTransition default="none">`
+  around `AppShell` that never names its subtree. The wipe is a vertical
+  monolith sweep: brand red drops down over the old page (top→bottom clip), then
+  the new page reveals top→bottom underneath it — same direction as the
+  `lab-card` monolith bar (`transform-origin: top`). ~800ms total (450ms cover,
+  450ms reveal after a 350ms delay). Internal links route through `NavLink`
+  (`src/components/ui/NavLink.tsx`), which always returns `["page-nav"]`;
+  programmatic navigations pass `transitionTypes` to `router.push`/`replace`.
+  Untyped updates (Suspense reveals, data refreshes, browser back/forward) don't
+  animate — the trigger boundary resolves `default: "none"`, so no view
+  transition starts at all and no root crossfade needs suppressing.
+  `lab-rise`/`lab-fade` entrances are paused while a view transition is active,
+  so they stagger in after the reveal finishes. Unsupported browsers navigate
+  without animation.
+- Don't put `lab-rise` on an element that framer also transforms (the CSS fill
+  overrides framer's transform). Put `lab-rise` on a wrapper.
+- Don't nest fading elements (parent `lab-rise` + child `lab-rise`). Opacity
+  multiplies and looks muddy. Animate siblings instead.
 - Don't use framer for entrances: content renders hidden until JS loads.
-- Clouds: `cloud-drift-left/right`, `fill-mode: both`, clipped above footer via `clip-path`
+- Clouds: `cloud-drift-left/right`, `fill-mode: both`, clipped above footer via
+  `clip-path`
 - Modals: `DialogContent` rounded-3xl; hover `scale: 1.02`, tap `0.98`
 
 ---
 
 ## Loading & Auth States
 
-- **Skeletons match the final layout**: same container sizes and positions, `animate-pulse motion-reduce:animate-none`. Never swap a list skeleton for a grid.
-- **Full-page loading**: `FullPageLoading` (`src/components/ui/loading.tsx`) while the session or page data resolves.
-- **Protected pages** (Dashboard, Profile, Sanctuary, Matcher, Foot Lab) redirect to `/auth/login?callbackUrl=<path>`. Two layers: `src/proxy.ts` (no session cookie) and `useRequireAuth()` (cookie but dead session). Pages render their loading state until `session.user` exists. Never redirect on the 5s session timeout.
-- **Login/signup** redirect signed-in users to the callback via `useRedirectIfAuthenticated()`. Always sanitize callbacks with `safeCallbackPath()`.
-- **Nav**: hides Sign In / Menu until the session resolves, then fades the right control in.
+- **Skeletons match the final layout**: same container sizes and positions,
+  `animate-pulse motion-reduce:animate-none`. Never swap a list skeleton for a
+  grid.
+- **Full-page loading**: `FullPageLoading` (`src/components/ui/loading.tsx`)
+  while the session or page data resolves.
+- **Protected pages** (Dashboard, Profile, Sanctuary, Matcher, Foot Lab)
+  redirect to `/auth/login?callbackUrl=<path>`. Two layers: `src/proxy.ts` (no
+  session cookie) and `useRequireAuth()` (cookie but dead session). Pages render
+  their loading state until `session.user` exists. Never redirect on the 5s
+  session timeout.
+- **Login/signup** redirect signed-in users to the callback via
+  `useRedirectIfAuthenticated()`. Always sanitize callbacks with
+  `safeCallbackPath()`.
+- **Nav**: hides Sign In / Menu until the session resolves, then fades the right
+  control in.
 
 ---
 
 ## Rules
 
 - **No accent-colored text** — `brand-red` is for shapes, borders, buttons only
-- **Fluid type** — headings use a single `text-fluid-*` / `text-title-*` size, not breakpoint steps like `text-4xl md:text-6xl`
+- **Fluid type** — headings use a single `text-fluid-*` / `text-title-*` size,
+  not breakpoint steps like `text-4xl md:text-6xl`
 - **No numbered feature lists** in UI copy
 - **No marketing fluff** — functional labels only
 - **No comments in code**; Tailwind first; don't rewrite existing utilities

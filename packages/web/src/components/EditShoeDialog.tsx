@@ -52,7 +52,7 @@ export default function EditShoeDialog({
                 )}
                 <Button
                   aria-label="Save shoe changes"
-                  className="min-h-11 shrink-0 bg-brand-red hover:bg-brand-red/80 text-black font-ball-pill rounded-lg px-4"
+                  className="min-h-11 shrink-0 bg-brand-red hover:bg-brand-red/80 text-black font-amatic rounded-lg px-4"
                   onClick={updateShoeStats}
                 >
                   <Save className="w-4 h-4 mr-2" />

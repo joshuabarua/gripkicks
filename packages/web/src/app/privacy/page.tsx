@@ -7,7 +7,7 @@ import { riseDelay } from '@/lib/motion';
 function SectionHeader({ heading, riseIndex }: { heading: string; riseIndex: number }) {
   return (
     <div className="lab-rise" style={riseDelay(riseIndex)}>
-      <h2 className="font-ball-pill text-fluid-5xl mb-12 text-brand-chalk">
+      <h2 className="font-amatic text-fluid-5xl mb-12 text-brand-chalk">
         {heading}
       </h2>
     </div>
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="lab-rise" style={riseDelay(0)}>
-            <h1 className="font-ball-pill text-fluid-9xl leading-[0.9] mb-8 text-brand-chalk">
+            <h1 className="font-amatic text-fluid-9xl leading-[0.9] mb-8 text-brand-chalk">
               PRIVACY
             </h1>
           </div>
@@ -69,7 +69,7 @@ export default function PrivacyPage() {
       <section className="px-fluid-lg md:px-fluid-xl py-fluid-3xl bg-brand-surface">
         <div className="max-w-4xl mx-auto">
           <div className="lab-rise" style={riseDelay(2)}>
-            <h2 className="font-ball-pill text-fluid-5xl mb-8">
+            <h2 className="font-amatic text-fluid-5xl mb-8">
               TL;DR
             </h2>
           </div>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
                 { value: 'ZERO', label: 'Hidden tracking or profiling' },
               ].map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className="font-ball-pill text-fluid-5xl text-brand-chalk mb-2">{stat.value}</div>
+                  <div className="font-amatic text-fluid-5xl text-brand-chalk mb-2">{stat.value}</div>
                   <p className="font-mono text-fluid-sm text-brand-putty/50">{stat.label}</p>
                 </div>
               ))}
@@ -105,7 +105,7 @@ export default function PrivacyPage() {
                 style={riseDelay(5 + i)}
                 className="lab-rise bg-brand-surface border border-white/6 rounded-3xl p-8 group hover:border-brand-red/20 transition-colors"
               >
-                <h3 className="font-ball-pill text-xl mb-3 text-brand-chalk">{promise.title}</h3>
+                <h3 className="font-amatic text-xl mb-3 text-brand-chalk">{promise.title}</h3>
                 <p className="font-mono text-fluid-sm text-brand-putty/60 leading-relaxed">{promise.body}</p>
               </div>
             ))}

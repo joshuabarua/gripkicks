@@ -14,7 +14,7 @@ export default function AboutPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto w-full">
           <div className="lab-rise" style={riseDelay(0)}>
-            <h1 className="font-ball-pill text-fluid-9xl leading-[0.85] mb-8 text-brand-chalk text-center">
+            <h1 className="font-amatic text-fluid-9xl leading-[0.85] mb-8 text-brand-chalk text-center">
               ABOUT
             </h1>
           </div>

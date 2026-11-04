@@ -1,6 +1,7 @@
 # Brand Direction Guide
 
-This doc turns the retro-futurist climbing concept into a practical visual system for GripKicks.
+This doc turns the retro-futurist climbing concept into a practical visual
+system for GripKicks.
 
 ## Shared Direction
 
@@ -33,7 +34,7 @@ Use this as the visual source of truth for the product.
 
 | Role    | Recommendation               | Use                                   |
 | ------- | ---------------------------- | ------------------------------------- |
-| Display | Ball Pill or Tanker          | Homepage headings and hero statements |
+| Display | Amatic                       | Homepage headings and hero statements |
 | Body    | Sora                         | Reading copy, specs, controls         |
 | Utility | Sora uppercase with tracking | Labels and captions                   |
 
@@ -74,7 +75,8 @@ This is the homepage's visual and emotional blueprint.
 
 ### Goal
 
-Make the user feel like they are entering a precision climbing lab built for discovery.
+Make the user feel like they are entering a precision climbing lab built for
+discovery.
 
 ### Layout
 

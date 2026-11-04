@@ -12,9 +12,9 @@ const dmMono = localFont({
   variable: "--font-dm-mono",
 });
 
-const ballPill = localFont({
-  src: "../../public/fonts/BallPill-regular.otf",
-  variable: "--font-ball-pill",
+const amatic = localFont({
+  src: "../../public/fonts/Amatic-Bold.ttf",
+  variable: "--font-amatic",
 });
 
 const soCloudy = localFont({
@@ -29,17 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`min-h-screen bg-background antialiased ${dmMono.variable} ${ballPill.variable} ${soCloudy.variable}`}>
-        <ViewTransition
-          name="page"
-          default="none"
-          update={{
-            "page-nav": "page-wipe",
-            "to-sanctuary": "sanctuary-wipe",
-            "from-sanctuary": "sanctuary-wipe",
-            default: "none",
-          }}
-        >
+      <body className={`min-h-screen bg-background antialiased ${dmMono.variable} ${amatic.variable} ${soCloudy.variable}`}>
+        <ViewTransition name="vt-trigger" update={{ "page-nav": "page-wipe", default: "none" }}>
+          <span aria-hidden="true" className="absolute size-0 overflow-hidden" />
+        </ViewTransition>
+        <ViewTransition default="none">
           <AppShell>{children}</AppShell>
         </ViewTransition>
       </body>

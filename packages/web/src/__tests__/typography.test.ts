@@ -33,6 +33,8 @@ describe("site typography", () => {
       expect(content, file).not.toContain("--font-sora");
       expect(content, file).not.toContain("font-basteleur");
       expect(content, file).not.toContain("font-tanker");
+      expect(content, file).not.toContain("font-ball-pill");
+      expect(content, file).not.toContain("--font-ball-pill");
     }
   });
 
