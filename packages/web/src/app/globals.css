@@ -813,11 +813,60 @@ video {
 }
 
 ::view-transition-old(.page-wipe) {
-	animation: page-wipe-out 300ms cubic-bezier(0.76, 0, 0.24, 1) both;
+	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) both;
 }
 
 ::view-transition-new(.page-wipe) {
-	animation: page-wipe-in 300ms cubic-bezier(0.76, 0, 0.24, 1) 250ms both;
+	animation: page-wipe-in 450ms cubic-bezier(0.76, 0, 0.24, 1) 350ms both;
+}
+
+.site-nav {
+	view-transition-name: site-nav;
+}
+
+::view-transition-group(site-nav) {
+	background: var(--color-brand-red);
+}
+
+::view-transition-old(site-nav) {
+	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+::view-transition-new(site-nav) {
+	animation: page-wipe-in 450ms cubic-bezier(0.76, 0, 0.24, 1) 350ms both;
+}
+
+:root:active-view-transition-type(to-sanctuary) ::view-transition-group(site-nav),
+:root:active-view-transition-type(from-sanctuary) ::view-transition-group(site-nav) {
+	background: transparent;
+}
+
+::view-transition-group(.sanctuary-wipe) {
+	background-color: #050608;
+	background-image:
+		url("/imgs/clouds/cloud2.png"),
+		url("/imgs/clouds/cloud5.png"),
+		url("/imgs/clouds/cloud3.png");
+	background-repeat: repeat-x;
+	background-size: 120vmin auto, 160vmin auto, 90vmin auto;
+	animation: sanctuary-cloud-sweep 800ms linear both;
+}
+
+::view-transition-old(.sanctuary-wipe) {
+	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+::view-transition-new(.sanctuary-wipe) {
+	animation: page-wipe-in 450ms cubic-bezier(0.76, 0, 0.24, 1) 350ms both;
+}
+
+@keyframes sanctuary-cloud-sweep {
+	from {
+		background-position: 20% -45%, 80% -25%, 50% -10%;
+	}
+	to {
+		background-position: 20% 145%, 80% 120%, 50% 95%;
+	}
 }
 
 @keyframes page-wipe-out {
@@ -825,13 +874,13 @@ video {
 		clip-path: inset(0 0 0 0);
 	}
 	to {
-		clip-path: inset(0 0 0 100%);
+		clip-path: inset(100% 0 0 0);
 	}
 }
 
 @keyframes page-wipe-in {
 	from {
-		clip-path: inset(0 100% 0 0);
+		clip-path: inset(0 0 100% 0);
 	}
 	to {
 		clip-path: inset(0 0 0 0);

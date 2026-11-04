@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronRight,
 } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import ShoeImage from "@/components/ShoeImage";
 import { ShoeSearch } from "@/components/ShoeSearch";
 import { shoeSizes } from "@/constants/shoe-data";
@@ -82,7 +82,7 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (!userLoading && !session?.user) {
-      router.push("/auth");
+      router.push("/auth", { transitionTypes: ["page-nav"] });
     }
   }, [session?.user, userLoading, router]);
 
@@ -100,7 +100,7 @@ export default function OnboardingPage() {
       if (savedFootVolume) setFootVolume(savedFootVolume);
 
       if (onboardingComplete) {
-        router.push("/stash");
+        router.push("/stash", { transitionTypes: ["page-nav"] });
         return;
       }
 
@@ -206,11 +206,11 @@ export default function OnboardingPage() {
   };
 
   const handleSkipOnboarding = () => {
-    router.push("/stash");
+    router.push("/stash", { transitionTypes: ["page-nav"] });
   };
 
   const handleFinish = () => {
-    router.push("/stash");
+    router.push("/stash", { transitionTypes: ["page-nav"] });
   };
 
   if (userLoading) {

@@ -128,6 +128,7 @@ describe("useRequireAuth", () => {
 
     expect(replaceMock).toHaveBeenCalledWith(
       `/auth/login?callbackUrl=${encodeURIComponent("/stash?foo=1")}`,
+      { transitionTypes: ["page-nav"] },
     );
   });
 
@@ -167,6 +168,7 @@ describe("useRequireAuth", () => {
 
     expect(replaceMock).toHaveBeenCalledWith(
       `/auth/login?callbackUrl=${encodeURIComponent("/footlab")}`,
+      { transitionTypes: ["page-nav"] },
     );
   });
 
@@ -195,7 +197,7 @@ describe("useRedirectIfAuthenticated", () => {
 
     renderHook(() => useRedirectIfAuthenticated());
 
-    expect(replaceMock).toHaveBeenCalledWith("/stash");
+    expect(replaceMock).toHaveBeenCalledWith("/stash", { transitionTypes: ["page-nav"] });
   });
 
   it("falls back to the dashboard for unsafe callbackUrls", () => {
@@ -203,7 +205,7 @@ describe("useRedirectIfAuthenticated", () => {
 
     renderHook(() => useRedirectIfAuthenticated());
 
-    expect(replaceMock).toHaveBeenCalledWith("/dashboard");
+    expect(replaceMock).toHaveBeenCalledWith("/dashboard", { transitionTypes: ["page-nav"] });
   });
 
   it("does not redirect when signed out", () => {

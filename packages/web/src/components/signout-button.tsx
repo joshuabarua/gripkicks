@@ -38,7 +38,7 @@ export function SignOutButton({
           },
           onSuccess: () => {
             onClick?.()
-            router.push("/auth/login")
+            router.push("/auth/login", { transitionTypes: ["page-nav"] })
           },
           onError: (ctx) => {
             console.error("SignOutButton: Error signing out:", ctx.error);

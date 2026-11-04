@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import { useMemo } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 

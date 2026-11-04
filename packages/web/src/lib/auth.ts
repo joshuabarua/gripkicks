@@ -70,6 +70,7 @@ export function useRequireAuth() {
     if (!isRedirecting) return;
     router.replace(
       `/auth/login?callbackUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`,
+      { transitionTypes: ["page-nav"] },
     );
   }, [isRedirecting, router]);
 
@@ -83,7 +84,7 @@ export function useRedirectIfAuthenticated() {
   useEffect(() => {
     if (!session.data?.user) return;
     const requested = new URLSearchParams(window.location.search).get("callbackUrl");
-    router.replace(safeCallbackPath(requested));
+    router.replace(safeCallbackPath(requested), { transitionTypes: ["page-nav"] });
   }, [session.data?.user, router]);
 
   return session;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import dynamic from "next/dynamic";
 import { ArrowDown, ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";

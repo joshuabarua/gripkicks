@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import { ArrowUpRight, ChevronRight, Footprints } from "lucide-react";
 import { useRequireAuth } from "@/lib/auth";
 import { useLoading } from "@/contexts/LoadingContext";

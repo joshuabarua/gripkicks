@@ -119,7 +119,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!isPending && (!session?.user || !isAdmin)) {
-      router.push("/");
+      router.push("/", { transitionTypes: ["page-nav"] });
     }
   }, [session, isPending, router, isAdmin]);
 

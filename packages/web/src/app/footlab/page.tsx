@@ -7,7 +7,7 @@ import { fetchApi } from '@/lib/api-client';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from '@/components/ui/NavLink';
 
 import { ToeProfile, VolumeArch, type FootShape, type FootVolume } from '@/components/foot/FootGlyphs';
 import { FullPageLoading } from '@/components/ui/loading';
@@ -139,7 +139,7 @@ export default function FootLabPage() {
         console.error('Save foot profile error:', error);
         if (error.category === 'authentication') {
           setError('Your session expired. Please log in again.');
-          setTimeout(() => router.push('/auth/login?callbackUrl=%2Ffootlab'), 2000);
+          setTimeout(() => router.push('/auth/login?callbackUrl=%2Ffootlab', { transitionTypes: ['page-nav'] }), 2000);
         } else {
           setError(msg);
         }
@@ -151,7 +151,7 @@ export default function FootLabPage() {
       setSaved(true);
       setTimeout(() => {
         setSaved(false);
-        router.push('/dashboard');
+        router.push('/dashboard', { transitionTypes: ['page-nav'] });
       }, 1200);
     } catch (err) {
       console.error('Failed to save foot profile:', err);

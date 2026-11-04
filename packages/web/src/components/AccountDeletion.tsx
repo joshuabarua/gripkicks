@@ -59,7 +59,7 @@ export function AccountDeletion() {
 
     if (result.isOk()) {
       setTimeout(() => {
-        router.push('/auth/login');
+        router.push('/auth/login', { transitionTypes: ['page-nav'] });
       }, 2000);
     }
   };

@@ -9,6 +9,7 @@ vi.mock("better-auth/react", () => ({
 }));
 vi.mock("better-auth/client/plugins", () => ({ jwtClient: () => ({}) }));
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/matcher",
   useSearchParams: mocks.params,
   useRouter: () => ({ replace: mocks.replace, push: vi.fn() }),
 }));
@@ -51,7 +52,7 @@ describe("Matcher page navigation", () => {
     mocks.session.mockReturnValue({ isPending: false, data: null, error: null });
     render(<MatcherPage />);
     expect(screen.getByRole("status", { name: "Loading matcher" })).toBeInTheDocument();
-    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Fmatcher");
+    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Fmatcher", { transitionTypes: ["page-nav"] });
     expect(screen.queryByText("Ranked shoe matches")).toBeNull();
   });
 

@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -111,7 +111,7 @@ export function LoginForm() {
                   setError(ctx.error.message);
                 },
                 onSuccess: () => {
-                  router.replace(callbackUrl);
+                  router.replace(callbackUrl, { transitionTypes: ["page-nav"] });
                 },
               },
             });

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import { ArrowLeft } from "lucide-react";
 import dynamic from "next/dynamic";
 

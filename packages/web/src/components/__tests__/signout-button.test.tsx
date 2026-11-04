@@ -60,7 +60,7 @@ describe("SignOutButton", () => {
       expect(mockSignOut).toHaveBeenCalled();
     });
 
-    expect(mockPush).toHaveBeenCalledWith("/auth/login");
+    expect(mockPush).toHaveBeenCalledWith("/auth/login", { transitionTypes: ["page-nav"] });
   });
 
   it("shows loading state during sign out", async () => {

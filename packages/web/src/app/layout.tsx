@@ -30,7 +30,16 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`min-h-screen bg-background antialiased ${dmMono.variable} ${ballPill.variable} ${soCloudy.variable}`}>
-        <ViewTransition name="page" default="page-wipe">
+        <ViewTransition
+          name="page"
+          default="none"
+          update={{
+            "page-nav": "page-wipe",
+            "to-sanctuary": "sanctuary-wipe",
+            "from-sanctuary": "sanctuary-wipe",
+            default: "none",
+          }}
+        >
           <AppShell>{children}</AppShell>
         </ViewTransition>
       </body>

@@ -12,7 +12,7 @@ vi.mock("better-auth/react", () => ({
 vi.mock("better-auth/client/plugins", () => ({ jwtClient: () => ({}) }));
 vi.mock("@/hooks/useFootProfile", () => ({ useFootProfile: mocks.profile }));
 vi.mock("@/hooks/useUserData", () => ({ useUserData: mocks.userData }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: mocks.replace, push: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ usePathname: () => "/", useRouter: () => ({ replace: mocks.replace, push: vi.fn() }) }));
 vi.mock("@/contexts/LoadingContext", () => ({ useLoading: () => ({ showLoader: mocks.showLoader, hideLoader: mocks.hideLoader }) }));
 vi.mock("@/components/ShoeImage", () => ({ default: () => <div /> }));
 
@@ -109,7 +109,7 @@ describe("DashboardPage", () => {
   it("keeps loading and redirects to login when confirmed signed out", () => {
     mocks.session.mockReturnValue({ data: null, isPending: false, error: null });
     render(<DashboardPage />);
-    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Fdashboard");
+    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Fdashboard", { transitionTypes: ["page-nav"] });
     expect(screen.getByRole("status", { name: "Loading dashboard" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Find shoes" })).toBeNull();
   });

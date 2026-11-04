@@ -14,6 +14,7 @@ vi.mock("better-auth/react", () => ({
 }));
 vi.mock("better-auth/client/plugins", () => ({ jwtClient: () => ({}) }));
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/profile",
   useRouter: () => ({ replace: mocks.replace, push: mocks.push }),
 }));
 vi.mock("@/lib/api-client", () => ({
@@ -52,7 +53,7 @@ describe("ProfilePage auth gate", () => {
     mocks.session.mockReturnValue({ isPending: false, data: null, error: null });
     render(<ProfilePage />);
     expect(screen.getByRole("status", { name: "Loading profile" })).toBeInTheDocument();
-    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Fprofile");
+    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Fprofile", { transitionTypes: ["page-nav"] });
   });
 
   it("toggles aria-expanded on the Profile information section", async () => {

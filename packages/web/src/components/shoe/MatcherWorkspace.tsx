@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import Image from "next/image";
 import { Users, Footprints } from "lucide-react";
 import { PageSurface } from "@/components/ui/PageSurface";

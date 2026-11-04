@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";

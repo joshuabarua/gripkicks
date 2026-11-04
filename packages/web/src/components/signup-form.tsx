@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { signUp, signIn, safeCallbackPath } from "@/lib/auth";
@@ -201,7 +201,7 @@ export function SignupForm() {
                     email,
                     signup_method: "email",
                   });
-                  router.replace(callbackUrl);
+                  router.replace(callbackUrl, { transitionTypes: ["page-nav"] });
                 },
               },
             });

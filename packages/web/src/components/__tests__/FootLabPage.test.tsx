@@ -14,6 +14,7 @@ vi.mock("better-auth/react", () => ({
 }));
 vi.mock("better-auth/client/plugins", () => ({ jwtClient: () => ({}) }));
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/footlab",
   useRouter: () => ({ replace: mocks.replace, push: mocks.push }),
 }));
 vi.mock("@/lib/api-client", () => ({
@@ -41,7 +42,7 @@ describe("FootLabPage auth gate", () => {
     mocks.session.mockReturnValue({ isPending: false, data: null, error: null });
     render(<FootLabPage />);
     expect(screen.getByRole("status", { name: "Loading foot lab" })).toBeInTheDocument();
-    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Ffootlab");
+    expect(mocks.replace).toHaveBeenCalledWith("/auth/login?callbackUrl=%2Ffootlab", { transitionTypes: ["page-nav"] });
   });
 
   it("does not redirect when signed in", () => {

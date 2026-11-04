@@ -12,7 +12,7 @@ const mocks = vi.hoisted(() => ({
   sceneModulePending: false,
 }));
 vi.mock("@/lib/auth", () => ({ useSession: mocks.session }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ usePathname: () => "/", useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("convex/react", () => ({ useQuery: mocks.count }));
 vi.mock("@/hooks/useReducedEffects", () => ({ useReducedEffects: mocks.reducedEffects }));
 vi.mock("@/components/3d/webgl-utils", () => ({ supportsWebGL: mocks.webgl }));

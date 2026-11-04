@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { fetchApi } from "@/lib/api-client";
 import { useRequireAuth } from "@/lib/auth";
-import Link from "next/link";
+import Link from "@/components/ui/NavLink";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProfileForm } from "@/components/ProfileForm";
 import { PasswordChangeForm } from "@/components/PasswordChangeForm";
