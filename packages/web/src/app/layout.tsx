@@ -2,6 +2,7 @@ import "./globals.css";
 import localFont from "next/font/local";
 import { ViewTransition } from "react";
 import AppShell from "@/components/AppShell";
+import WipeTrigger from "@/components/ui/WipeTrigger";
 
 const dmMono = localFont({
   src: [
@@ -30,9 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`min-h-screen bg-background antialiased ${dmMono.variable} ${amatic.variable} ${soCloudy.variable}`}>
-        <ViewTransition name="vt-trigger" update={{ "page-nav": "page-wipe", default: "none" }}>
-          <span aria-hidden="true" className="absolute size-0 overflow-hidden" />
-        </ViewTransition>
+        <WipeTrigger />
         <ViewTransition default="none">
           <AppShell>{children}</AppShell>
         </ViewTransition>

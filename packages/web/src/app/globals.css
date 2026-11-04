@@ -870,16 +870,13 @@ video {
 	pointer-events: none;
 }
 
-:root:active-view-transition-type(page-nav)::view-transition-group(root) {
+:root:active-view-transition-type(page-nav)::view-transition {
 	background: var(--color-brand-red);
+	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) 350ms both;
 }
 
 :root:active-view-transition-type(page-nav)::view-transition-old(root) {
 	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) both;
-}
-
-:root:active-view-transition-type(page-nav)::view-transition-new(root) {
-	animation: page-wipe-in 450ms cubic-bezier(0.76, 0, 0.24, 1) 350ms both;
 }
 
 @keyframes page-wipe-out {
@@ -888,15 +885,6 @@ video {
 	}
 	to {
 		clip-path: inset(100% 0 0 0);
-	}
-}
-
-@keyframes page-wipe-in {
-	from {
-		clip-path: inset(0 0 100% 0);
-	}
-	to {
-		clip-path: inset(0 0 0 0);
 	}
 }
 

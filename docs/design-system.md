@@ -153,21 +153,25 @@ in `src/lib/motion.ts`.
   (multi-step page transitions), hover/tap via `whileHover` / `whileTap`.
 - `MotionConfig reducedMotion="user"` in `providers.tsx` makes framer respect OS
   reduce-motion.
-- **Page transitions**: whole-page wipe on navigations typed `page-nav`,
-  animated on the root snapshot (`::view-transition-*(root)` in `globals.css`)
-  so the fixed nav, overlays, and page sweep as one image — no named snapshot,
-  nothing gets carved out. React only calls `startViewTransition` when some
-  `<ViewTransition>` boundary resolves a non-`none` update class, and any
-  boundary that does so gets a `view-transition-name` (auto-generated when
-  unnamed), which would split the page back out of the root snapshot. So
-  `app/layout.tsx` keeps two boundaries: a hidden trigger `<span>` wrapped in
-  `<ViewTransition update={{ "page-nav": "page-wipe", default: "none" }}>` that
-  starts the typed transition, and an inert `<ViewTransition default="none">`
-  around `AppShell` that never names its subtree. The wipe is a vertical
-  monolith sweep: brand red drops down over the old page (top→bottom clip), then
-  the new page reveals top→bottom underneath it — same direction as the
-  `lab-card` monolith bar (`transform-origin: top`). ~800ms total (450ms cover,
-  450ms reveal after a 350ms delay). Internal links route through `NavLink`
+- **Page transitions**: whole-page wipe on navigations typed `page-nav`.
+  React only calls `startViewTransition` when some `<ViewTransition>` boundary
+  resolves a non-`none` update class, and the boundary must actually render a
+  change during the transition for the class to resolve — a static element
+  never fires. So `WipeTrigger` (`src/components/ui/WipeTrigger.tsx`, mounted in
+  `app/layout.tsx`) renders `usePathname()` inside a hidden `<span>` wrapped in
+  `<ViewTransition update={{ "page-nav": "page-wipe", default: "none" }}>`; the
+  pathname swap on each navigation activates the boundary and starts the typed
+  transition. An inert `<ViewTransition default="none">` wraps `AppShell` so
+  nothing in the subtree gets named and carved out of the root snapshot. The
+  wipe itself animates two things in `globals.css`
+  (`:root:active-view-transition-type(page-nav)`): `::view-transition-old(root)`
+  clips top→bottom off screen (450ms) revealing the `::view-transition` overlay
+  painted brand-red, which then clips top→bottom (450ms, 350ms delay) revealing
+  the live new page underneath — a vertical monolith sweep in the same
+  direction as the `lab-card` monolith bar. ~800ms total. The reveal runs on
+  the overlay rather than `::view-transition-new(root)` because React-started
+  transitions never produce a `new(root)` pseudo. Internal links route through
+  `NavLink`
   (`src/components/ui/NavLink.tsx`), which always returns `["page-nav"]`;
   programmatic navigations pass `transitionTypes` to `router.push`/`replace`.
   Untyped updates (Suspense reveals, data refreshes, browser back/forward) don't

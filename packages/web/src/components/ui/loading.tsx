@@ -43,7 +43,6 @@ export function FullPageLoading({ text = "Loading" }: { text?: string }) {
   return (
     <section className="mx-auto min-h-[65svh] w-full max-w-7xl px-fluid-lg py-fluid-2xl" role="status" aria-label={text} aria-busy="true">
       <div className="flex items-center gap-fluid-md border-b border-white/10 pb-fluid-lg">
-        <span aria-hidden="true" className="h-2 w-2 rounded-sm bg-brand-red" />
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-brand-chalk">{text}</span>
         <div aria-hidden="true" className="ml-auto"><LoadingBar size="lg" /></div>
       </div>
