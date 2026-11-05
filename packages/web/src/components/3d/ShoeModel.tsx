@@ -11,8 +11,8 @@ useGLTF.preload("/glb/HeroShoe.glb");
 function ShoeLabels() {
   return (
     <>
-      <CanvasTextPlane text="GRIP" position={[0.01, 0.45, 0]} height={0.7} />
-      <CanvasTextPlane text="KICKS" position={[0, -0.2, 0]} height={0.7} />
+      <CanvasTextPlane text="GRIP" position={[0.01, 0.4, 0]} height={0.9} />
+      <CanvasTextPlane text="KICKS" position={[0, -0.35, 0]} height={0.9} />
     </>
   );
 }
@@ -73,22 +73,22 @@ export default function ShoeModel() {
 
   return (
     <group dispose={null} scale={responsiveScale}>
-        <ShoeLabels />
+      <ShoeLabels />
 
-        <group
-          ref={mesh}
-        >
-          {!shoeNode ? null : (
-            <mesh
-              {...shoeNode}
-              position={[0, -0.4, 0]}
-              scale={1.45}
-              geometry={shoeNode.geometry}
-            >
-              <MeshTransmissionMaterial {...materialSettings} />
-            </mesh>
-          )}
-        </group>
+      <group
+        ref={mesh}
+      >
+        {!shoeNode ? null : (
+          <mesh
+            {...shoeNode}
+            position={[0, -0.4, 0]}
+            scale={1.45}
+            geometry={shoeNode.geometry}
+          >
+            <MeshTransmissionMaterial {...materialSettings} />
+          </mesh>
+        )}
       </group>
+    </group>
   );
 }
