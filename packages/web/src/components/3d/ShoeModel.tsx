@@ -11,8 +11,8 @@ useGLTF.preload("/glb/HeroShoe.glb");
 function ShoeLabels() {
   return (
     <>
-      <CanvasTextPlane text="GRIP" position={[0.01, 0.4, 0]} height={0.9} />
-      <CanvasTextPlane text="KICKS" position={[0, -0.35, 0]} height={0.9} />
+      <CanvasTextPlane text="GRIP" position={[0.01, 0.3, 0]} height={0.9} />
+      <CanvasTextPlane text="KICKS" position={[0, -0.25, 0]} height={0.9} />
     </>
   );
 }
