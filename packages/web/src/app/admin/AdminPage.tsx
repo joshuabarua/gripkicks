@@ -8,6 +8,7 @@ import { useSession } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import ShoeImage from "@/components/ShoeImage";
 import { PaginatedList } from "@/components/ui/PaginatedList";
+import { LoadingBar } from "@/components/ui/loading";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { BacklogManager } from "@/components/admin/BacklogManager";
 import ShoeImageUpload from "@/components/ShoeImageUpload";
@@ -126,7 +127,7 @@ export default function AdminDashboard() {
   if (isPending) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-putty" />
+        <LoadingBar size="lg" />
       </div>
     );
   }
@@ -1212,7 +1213,7 @@ export default function AdminDashboard() {
                 loadingIndicator={
                   <div className="text-center py-4">
                     <div className="inline-flex items-center gap-2 text-brand-putty text-sm">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-putty"></div>
+                      <LoadingBar size="sm" />
                       <span>Loading more shoes...</span>
                     </div>
                   </div>

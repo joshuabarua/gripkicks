@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import ShoeImage from '@/components/ShoeImage';
 import { BrandLogo } from '@/components/stash/BrandLogo';
 import { PaginatedList } from '@/components/ui/PaginatedList';
+import { LoadingBar } from '@/components/ui/loading';
 import { Footprints, Plus, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
@@ -65,7 +66,7 @@ export function AddShoeDialog({
 
   const loadingIndicator = (
     <div className="inline-flex items-center gap-2 text-neutral-500 text-sm">
-      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-neutral-500"></div>
+      <LoadingBar size="sm" />
       <span>Loading more shoes...</span>
     </div>
   );
@@ -211,7 +212,7 @@ export function AddShoeDialog({
 
           {groupedSearchResults.length === 0 && isSearching && (
             <div className="flex items-center justify-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-900/60 px-6 py-10 font-mono text-sm text-neutral-500">
-              <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-neutral-500"></div>
+              <LoadingBar size="sm" />
               <span>Searching shoes...</span>
             </div>
           )}

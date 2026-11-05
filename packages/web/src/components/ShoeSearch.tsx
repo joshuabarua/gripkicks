@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Search } from 'lucide-react'
 import ShoeImage from '@/components/ShoeImage'
+import { LoadingBar } from '@/components/ui/loading'
 import { usePaginatedQuery } from "convex/react"
 import { api } from "convex/_generated/api"
 import type { Shoe } from '@/types/api'
@@ -42,7 +43,7 @@ export function ShoeSearch({ onShoeSelect, selectedShoe }: ShoeSearchProps) {
 
       {isLoading ? (
         <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-red mx-auto"></div>
+          <LoadingBar size="lg" />
         </div>
       ) : (
         <div className="max-h-60 overflow-y-auto space-y-2 pr-2">

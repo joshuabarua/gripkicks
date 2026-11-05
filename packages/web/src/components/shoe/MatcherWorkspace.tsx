@@ -1,6 +1,7 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
+import { riseDelay } from "@/lib/motion";
 import Link from "@/components/ui/NavLink";
 import Image from "next/image";
 import { Users, Footprints } from "lucide-react";
@@ -54,7 +55,7 @@ export function SoleMateContent({ matches, isLoading, hasProfile }: { matches: S
   }
   return (
     <div className="space-y-fluid-xl">
-      <header className="lab-card lab-card-active lab-rise p-fluid-lg" style={{ "--rise-delay": "150ms" } as CSSProperties}>
+      <header className="lab-card lab-card-active lab-rise p-fluid-lg" style={riseDelay(1)}>
         <h2 className="font-amatic text-fluid-2xl">Sole Mate</h2>
         <p className="mt-2 font-mono text-base leading-relaxed text-brand-chalk">{matches.length} {matches.length === 1 ? "climber" : "climbers"} with your foot profile. Shoes they rate highly.</p>
       </header>
@@ -65,7 +66,7 @@ export function SoleMateContent({ matches, isLoading, hasProfile }: { matches: S
 
 function SoleMateCard({ match, index }: { match: SoleMateClimberMatch; index: number }) {
   return (
-    <article className="lab-card lab-rise min-w-0 p-fluid-lg" style={{ "--rise-delay": `${400 + Math.min(index, 8) * 150}ms` } as CSSProperties}>
+    <article className="lab-card lab-rise min-w-0 p-fluid-lg" style={riseDelay(2 + Math.min(index, 8))}>
       <header className="mb-fluid-lg flex items-center gap-4 border-b border-white/8 pb-fluid-md">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/6 bg-black/40">
           {match.user.image ? <Image src={match.user.image} alt="" width={48} height={48} className="h-full w-full object-cover" /> : <Users aria-hidden="true" className="h-5 w-5 text-brand-chalk" />}

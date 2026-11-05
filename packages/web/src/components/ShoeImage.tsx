@@ -1,6 +1,7 @@
 import { IKImage } from "imagekitio-react";
 import { useState, useEffect } from "react";
 import type { Transformation } from "imagekit-javascript/dist/src/interfaces/Transformation";
+import { LoadingBar } from "@/components/ui/loading";
 
 type ImageContext = 'thumbnail' | 'preview' | 'modal';
 
@@ -173,7 +174,7 @@ const ShoeImage: React.FC<ShoeImageProps> = ({
       {loadingTimeout && <div className="absolute inset-0">{fallback}</div>}
       {imageLoading && !loadingTimeout && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-full">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
+          <LoadingBar size="sm" />
         </div>
       )}
       <IKImage

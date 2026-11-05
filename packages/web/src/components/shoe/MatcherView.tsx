@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "@/components/ui/NavLink";
-import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import ShoeImage from "@/components/ShoeImage";
@@ -15,6 +15,8 @@ import { RadarGrid, type RadarShoe, type RadarUserPosition } from "./RadarGrid";
 import type { CommunitySignal, MatchSignals } from "@/types/shoe";
 import { describeMatchSignal } from "@/utils/matchSignals";
 import { toFivePointScale, toHundredPointScale } from "convex/utils/scoring";
+import { MatcherGridSkeleton } from "@/components/ui/skeleton";
+import { riseDelay } from "@/lib/motion";
 
 type Mode = "personal" | "community";
 
@@ -129,7 +131,7 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
 
   return (
     <div className="space-y-fluid-xl">
-      <section aria-label="Recommendation source" className="lab-card lab-rise flex flex-col justify-between gap-fluid-lg p-fluid-lg lg:flex-row lg:items-center" style={{ "--rise-delay": "100ms" } as CSSProperties}>
+      <section aria-label="Recommendation source" className="lab-card lab-rise flex flex-col justify-between gap-fluid-lg p-fluid-lg lg:flex-row lg:items-center" style={riseDelay(0)}>
         <div>
           <h2 className="font-amatic text-fluid-2xl">{mode === "personal" ? "Your shoe matches" : "Community ratings"}</h2>
           <p className="mt-2 font-mono text-base leading-relaxed text-brand-putty">{mode === "personal" ? "Fit estimates from catalog attributes and available ratings. Not a fit guarantee." : "Shoes ranked using ratings from all climbers."}</p>
@@ -145,22 +147,22 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
       </section>
 
       {isLoading ? (
-        <div role="status" aria-label="Loading matcher" className="lab-card lab-rise p-fluid-xl font-mono text-base text-brand-putty" style={{ "--rise-delay": "300ms" } as CSSProperties}>Loading shoe matches…</div>
+        <div style={riseDelay(1)}><MatcherGridSkeleton /></div>
       ) : !activeShoes.length ? (
         <EmptyState mode={mode} hasFootProfile={hasProfile} />
       ) : (
         <>
-          <section aria-labelledby="matches-title" className="lab-rise space-y-fluid-lg" style={{ "--rise-delay": "350ms" } as CSSProperties}>
+          <section aria-labelledby="matches-title" className="lab-rise space-y-fluid-lg" style={riseDelay(1)}>
             <h2 id="matches-title" className="font-mono text-xl font-semibold">{activeShoes.length} {mode === "personal" ? "shoe matches" : "top-rated shoes"}</h2>
             <TileGrid shoes={activeShoes} mode={mode} hasProfile={hasProfile} />
           </section>
-          <details className="lab-card lab-rise" style={{ "--rise-delay": "650ms" } as CSSProperties}>
+          <details className="lab-card lab-rise" style={riseDelay(10)}>
             <summary className="cursor-pointer rounded-lg p-fluid-lg font-mono text-lg font-semibold hover:bg-white/3">Radar map</summary>
             <div className="border-t border-white/8 p-fluid-md sm:p-fluid-lg">
               <RadarGrid shoes={toRadarShoes(activeShoes, mode)} hoveredId={hoveredId} onHoverChange={setHoveredId} confidenceLabel={mode === "personal" ? "Match strength" : "Sample size"} {...(mode === "personal" && userPosition ? { userPosition } : {})} />
             </div>
           </details>
-          <details className="lab-card lab-rise" style={{ "--rise-delay": "800ms" } as CSSProperties}>
+          <details className="lab-card lab-rise" style={riseDelay(11)}>
             <summary className="cursor-pointer rounded-lg p-fluid-lg font-mono text-lg font-semibold hover:bg-white/3">Compare ratings</summary>
             <div className="border-t border-white/8">
               <Leaderboard shoes={activeShoes} mode={mode} hoveredId={hoveredId} onHoverChange={setHoveredId} />
@@ -170,7 +172,7 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
       )}
 
       {!contribution && !hasProfile && !isLoading && activeShoes.length > 0 && mode === "personal" && (
-        <section className="lab-card lab-rise flex flex-col justify-between gap-4 p-fluid-lg sm:flex-row sm:items-center" style={{ "--rise-delay": "950ms" } as CSSProperties}>
+        <section className="lab-card lab-rise flex flex-col justify-between gap-4 p-fluid-lg sm:flex-row sm:items-center" style={riseDelay(12)}>
           <p className="font-mono text-base text-brand-putty">Add your foot shape and volume to personalise these matches.</p>
           <Link href="/footlab" className="lab-button shrink-0">Set up foot profile</Link>
         </section>
@@ -219,7 +221,7 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
   return (
     <div className="grid items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {shoes.map((shoe, idx) => (
-        <article key={shoe.id} aria-label={`${shoe.brand} ${shoe.name}`} style={{ "--rise-delay": `${450 + Math.min(idx, 9) * 120}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise min-w-0">
+        <article key={shoe.id} aria-label={`${shoe.brand} ${shoe.name}`} style={riseDelay(2 + Math.min(idx, 8))} className="lab-card lab-card-lift lab-rise min-w-0">
           <div className="relative h-48 border-b border-white/6 bg-black/40 p-fluid-lg sm:h-56">
             <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="h-full w-full" transformation={[{ height: 280, width: 400, crop: "at_max", format: "png" }]} />
             <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 font-mono text-sm font-semibold text-brand-chalk">{idx + 1}</span>
@@ -304,7 +306,7 @@ function SignalCell({ signals }: { signals: CommunitySignal[] }) {
 function EmptyState({ mode, hasFootProfile }: { mode: Mode; hasFootProfile: boolean }) {
   const needsProfile = mode === "personal" && !hasFootProfile;
   return (
-    <section className="lab-card lab-rise p-fluid-xl" style={{ "--rise-delay": "300ms" } as CSSProperties}>
+    <section className="lab-card lab-rise p-fluid-xl" style={riseDelay(1)}>
       <h3 className="font-amatic text-xl">{needsProfile ? "Set up your foot profile" : "No shoe matches yet"}</h3>
       <p className="mt-3 max-w-lg font-mono text-base leading-relaxed text-brand-putty">{needsProfile ? "Personal matches need your foot shape and volume." : mode === "personal" ? "Add shoes to your Sanctuary to record what fits." : "Not enough community ratings yet."}</p>
       {mode === "personal" && <Link href={needsProfile ? "/footlab" : "/stash"} className="lab-button mt-fluid-lg">{needsProfile ? "Set up foot profile" : "Open Sanctuary"}</Link>}

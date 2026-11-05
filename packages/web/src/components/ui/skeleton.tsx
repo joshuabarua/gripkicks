@@ -34,6 +34,19 @@ function SanctuaryCardSkeleton() {
   );
 }
 
+export function MatcherGridSkeleton() {
+  return (
+    <div role="status" aria-label="Loading matcher" aria-busy="true">
+      <span className="sr-only">Loading matcher</span>
+      <div aria-hidden="true" className="grid items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <SanctuaryCardSkeleton key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function SanctuaryGridSkeleton() {
   return (
     <div role="status" aria-label="Loading your collection" aria-busy="true">

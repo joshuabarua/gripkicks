@@ -8,6 +8,7 @@ import { ResultAsync } from "neverthrow";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingBar } from "@/components/ui/loading";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { useFormChange } from "@/hooks/useFormChange";
 
@@ -114,7 +115,7 @@ export function ProfileForm({
       <div className="mt-6">
         {profileLoader.isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <LoadingBar size="lg" />
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useMemo, useEffect, useCallback, type CSSProperties } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
@@ -29,6 +29,7 @@ import { useBrandGroups } from "@/hooks/useBrandGroups";
 import { AdvancedFilters } from "@/components/stash/AdvancedFilters";
 import { DataContributionNudge } from "@/components/DataContributionNudge";
 import { debounce } from "@/lib/debounce";
+import { riseDelay } from "@/lib/motion";
 import { analyticsEvents, captureError, track } from "@/lib/analytics";
 import { fetchApi } from "@/lib/api-client";
 import { getEffectiveShoeStats } from "@/components/ShoeStatsModal/utils";
@@ -522,7 +523,7 @@ export default function ShoeSanctuaryPage() {
             </div>
 
             {!isPageLoading && (
-              <div className="lab-fade" style={{ "--rise-delay": "120ms" } as CSSProperties}>
+              <div className="lab-rise" style={riseDelay(1)}>
                 <DataContributionNudge
                   stashCount={userShoes.length}
                   ratedCount={ratedShoeCount}
@@ -534,7 +535,7 @@ export default function ShoeSanctuaryPage() {
 
         <section className="px-fluid-lg md:px-fluid-xl pb-fluid-3xl">
           <div className="max-w-7xl mx-auto space-y-fluid-lg">
-            <div className="lab-rise" style={{ "--rise-delay": "80ms" } as CSSProperties}>
+            <div className="lab-rise" style={riseDelay(2)}>
               <AdvancedFilters
                 selectedBrand={selectedBrand}
                 onBrandChange={setSelectedBrand}
@@ -563,7 +564,7 @@ export default function ShoeSanctuaryPage() {
             {!isPageLoading && userShoes.length === 0 && (
               <div
                 className="lab-rise flex flex-col items-center justify-center py-fluid-3xl text-center"
-                style={{ "--rise-delay": "150ms" } as CSSProperties}
+                style={riseDelay(3)}
               >
                 <h3 className="font-amatic text-fluid-3xl text-white mb-fluid-xs">
                   NO SHOES YET
@@ -575,7 +576,7 @@ export default function ShoeSanctuaryPage() {
             )}
 
             {!isPageLoading && userShoes.length > 0 && filteredShoes.length === 0 && (
-              <div className="lab-fade flex flex-col items-center justify-center py-fluid-3xl text-center">
+              <div className="lab-rise flex flex-col items-center justify-center py-fluid-3xl text-center" style={riseDelay(3)}>
                 <p className="font-mono text-brand-putty max-w-sm">
                   No shoes match the selected filters.
                 </p>
@@ -584,7 +585,7 @@ export default function ShoeSanctuaryPage() {
 
             {!isPageLoading && filteredShoes.length > 0 && (
               <>
-                <div aria-label="Badge key" className="lab-fade flex flex-wrap items-center gap-x-fluid-lg gap-y-2 font-mono text-[11px] uppercase tracking-wider text-brand-putty" style={{ "--rise-delay": "150ms" } as CSSProperties}>
+                <div aria-label="Badge key" className="lab-rise flex flex-wrap items-center gap-x-fluid-lg gap-y-2 font-mono text-[11px] uppercase tracking-wider text-brand-putty" style={riseDelay(3)}>
                   <span className="flex items-center gap-2" title="Marked as favourite">
                     <span className="flex h-5 w-5 items-center justify-center rounded-sm bg-brand-red text-black"><Star aria-hidden="true" className="h-3 w-3 fill-current" /></span>
                     Favourite
