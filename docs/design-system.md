@@ -162,8 +162,11 @@ in `src/lib/motion.ts`.
   `<ViewTransition update={{ "page-nav": "page-wipe", default: "none" }}>`; the
   pathname swap on each navigation activates the boundary and starts the typed
   transition. An inert `<ViewTransition default="none">` wraps `AppShell` so
-  nothing in the subtree gets named and carved out of the root snapshot. The
-  wipe itself animates two things in `globals.css`
+  nothing in the subtree gets a separate named snapshot. React's view-transition
+  cleanup sets the overlay to `0 × 0` and hides the root snapshot, so the
+  `page-nav` rules explicitly restore the overlay's viewport size and the
+  root group's opacity. Without those overrides the animations run but nothing
+  red paints. The wipe animates two things in `globals.css`
   (`:root:active-view-transition-type(page-nav)`): `::view-transition-old(root)`
   clips top→bottom off screen (450ms) revealing the `::view-transition` overlay
   painted brand-red, which then clips top→bottom (450ms, 350ms delay) revealing
@@ -178,8 +181,8 @@ in `src/lib/motion.ts`.
   animate — the trigger boundary resolves `default: "none"`, so no view
   transition starts at all and no root crossfade needs suppressing.
   `lab-rise`/`lab-fade` entrances are paused while a view transition is active,
-  so they stagger in after the reveal finishes. Unsupported browsers navigate
-  without animation.
+  so they stagger in after the reveal finishes. Reduced motion disables the
+  overlay and its animations. Unsupported browsers navigate without animation.
 - Don't put `lab-rise` on an element that framer also transforms (the CSS fill
   overrides framer's transform). Put `lab-rise` on a wrapper.
 - Don't nest fading elements (parent `lab-rise` + child `lab-rise`). Opacity

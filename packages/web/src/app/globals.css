@@ -872,7 +872,14 @@ video {
 
 :root:active-view-transition-type(page-nav)::view-transition {
 	background: var(--color-brand-red);
+	inset: 0 !important;
+	width: 100vw !important;
+	height: 100vh !important;
 	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) 350ms both;
+}
+
+:root:active-view-transition-type(page-nav)::view-transition-group(root) {
+	opacity: 1 !important;
 }
 
 :root:active-view-transition-type(page-nav)::view-transition-old(root) {
@@ -894,6 +901,11 @@ video {
 }
 
 @media (prefers-reduced-motion: reduce) {
+	:root:active-view-transition-type(page-nav)::view-transition {
+		background: transparent;
+	}
+
+	::view-transition,
 	::view-transition-group(*),
 	::view-transition-old(*),
 	::view-transition-new(*) {
