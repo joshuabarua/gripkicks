@@ -170,13 +170,13 @@ in `src/lib/motion.ts`.
   (`:root:active-view-transition-type(page-nav)`): the
   `::view-transition-group(vt-trigger)` group carries the brand-red curtain —
   viewport-sized, `transform: none`, `z-index: 0`, clipping out with
-  `page-wipe-out` (500ms, 1120ms delay) — while `::view-transition-old(root)`
-  clips top→bottom off screen (500ms, 120ms delay) ahead of it and the root
+  `page-wipe-out` (600ms, 1220ms delay) — while `::view-transition-old(root)`
+  clips top→bottom off screen (600ms, 120ms delay) ahead of it and the root
   group keeps `opacity: 1` at `z-index: 1`. The `::view-transition` overlay
   itself stays viewport-sized and transparent with no animation so it can clip
   the whole stage without cutting off the rain. The gap between the old root
-  finishing at 620ms and the curtain reveal starting at 1120ms holds a 500ms
-  full-red plateau; the curtain finishes at ~1620ms. All four timings come
+  finishing at 720ms and the curtain reveal starting at 1220ms holds a 500ms
+  full-red plateau; the curtain finishes at ~1820ms. All four timings come
   from `PAGE_TRANSITION_TIMING` in `src/lib/transition-rain.ts`, exported as
   scoped custom properties by the generated CSS — no duplicated literals.
   Painted above everything (`z-index: 2`) are thirty-six `page-rain-*` groups
@@ -188,7 +188,7 @@ in `src/lib/motion.ts`.
   the shared `page-rain-fall` keyframe with modest rotation and no bounce.
   Lead pieces are already falling during the first 120ms before the old root
   covers, the tail burst keeps raining ~0.4s after the curtain ends, and the
-  last piece lands at ~1990ms. Twenty-one pieces show on portrait phones;
+  last piece lands at ~2190ms. Twenty-one pieces show on portrait phones;
   reduced motion hides all rain and the curtain. The reveal runs on
   the curtain group rather than `::view-transition-new(root)` because
   React-started transitions never produce a `new(root)` pseudo. Internal links route through

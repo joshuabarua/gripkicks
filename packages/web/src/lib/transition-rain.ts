@@ -28,11 +28,11 @@ const BASE_RAIN_PIECES = [
   { asset: "green", x: 62, size: 74, delayMs: -180, durationMs: 1030, rotateFrom: -15, rotateTo: 40, drift: 3, mobile: true },
   { asset: "blue", x: 78, size: 88, delayMs: -20, durationMs: 1010, rotateFrom: 30, rotateTo: -45, drift: -4, mobile: false },
   { asset: "plastic", x: 90, size: 66, delayMs: -80, durationMs: 1020, rotateFrom: -20, rotateTo: 35, drift: -2, mobile: true },
-  { asset: "yellow", x: 12, size: 60, delayMs: 700, durationMs: 880, rotateFrom: 35, rotateTo: -20, drift: 4, mobile: false },
-  { asset: "rock", x: 29, size: 48, delayMs: 760, durationMs: 890, rotateFrom: -20, rotateTo: 45, drift: -3, mobile: true },
-  { asset: "plastic", x: 45, size: 84, delayMs: 820, durationMs: 920, rotateFrom: -30, rotateTo: 35, drift: 3, mobile: true },
-  { asset: "blue", x: 66, size: 62, delayMs: 880, durationMs: 880, rotateFrom: 24, rotateTo: -48, drift: -2, mobile: false },
-  { asset: "green", x: 86, size: 72, delayMs: 940, durationMs: 890, rotateFrom: -22, rotateTo: 60, drift: -4, mobile: true },
+  { asset: "yellow", x: 12, size: 60, delayMs: 900, durationMs: 880, rotateFrom: 35, rotateTo: -20, drift: 4, mobile: false },
+  { asset: "rock", x: 29, size: 48, delayMs: 960, durationMs: 890, rotateFrom: -20, rotateTo: 45, drift: -3, mobile: true },
+  { asset: "plastic", x: 45, size: 84, delayMs: 1020, durationMs: 920, rotateFrom: -30, rotateTo: 35, drift: 3, mobile: true },
+  { asset: "blue", x: 66, size: 62, delayMs: 1080, durationMs: 880, rotateFrom: 24, rotateTo: -48, drift: -2, mobile: false },
+  { asset: "green", x: 86, size: 72, delayMs: 1140, durationMs: 890, rotateFrom: -22, rotateTo: 60, drift: -4, mobile: true },
 ] as const satisfies readonly RainPiece[];
 
 export const RAIN_PIECES = [0, 1, 2].flatMap((copy) =>
@@ -51,9 +51,9 @@ export const RAIN_PIECES = [0, 1, 2].flatMap((copy) =>
 
 export const PAGE_TRANSITION_TIMING = {
   coverDelayMs: 120,
-  coverDurationMs: 500,
-  revealDelayMs: 1120,
-  revealDurationMs: 500,
+  coverDurationMs: 600,
+  revealDelayMs: 1220,
+  revealDurationMs: 600,
 } as const;
 
 const SCOPE = ":root:active-view-transition-type(page-nav)";

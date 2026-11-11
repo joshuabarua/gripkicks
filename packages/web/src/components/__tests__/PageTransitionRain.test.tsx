@@ -94,15 +94,15 @@ describe("PageTransitionRain", () => {
         expect(piece.drift).toBe(copy % 2 === 1 ? -base.drift : base.drift);
       }
     }
-    expect(Math.max(...RAIN_PIECES.map((piece) => piece.delayMs + piece.durationMs))).toBeLessThanOrEqual(2100);
+    expect(Math.max(...RAIN_PIECES.map((piece) => piece.delayMs + piece.durationMs))).toBeLessThanOrEqual(2300);
     for (const piece of RAIN_PIECES) {
       expect(piece.durationMs).toBeGreaterThanOrEqual(850);
     }
     expect(PAGE_TRANSITION_TIMING).toEqual({
       coverDelayMs: 120,
-      coverDurationMs: 500,
-      revealDelayMs: 1120,
-      revealDurationMs: 500,
+      coverDurationMs: 600,
+      revealDelayMs: 1220,
+      revealDurationMs: 600,
     });
     expect(
       PAGE_TRANSITION_TIMING.revealDelayMs -
