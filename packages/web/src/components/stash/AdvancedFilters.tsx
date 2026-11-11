@@ -1,11 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Filter, X, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 type GenderFilter = 'all' | 'men' | 'women' | 'kids' | 'unisex';
 type RatingFilter = 'all' | '8+' | '6+' | '4+' | '2+';
@@ -80,8 +77,8 @@ const genderOptions = [
 
 function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-3">
-      <h4 className="text-sm font-medium text-white">{title}</h4>
+    <div className="space-y-1.5">
+      <h4 className="font-mono text-[10px] uppercase tracking-[0.16em] text-brand-putty/70">{title}</h4>
       {children}
     </div>
   );
@@ -91,19 +88,18 @@ interface FilterButtonGroupProps {
   options: { label: string; value: string }[];
   selectedValue: string;
   onChange: (value: string) => void;
-  layout?: 'grid' | 'flex';
 }
 
-function FilterButtonGroup({ options, selectedValue, onChange, layout = 'grid' }: FilterButtonGroupProps) {
+function FilterButtonGroup({ options, selectedValue, onChange }: FilterButtonGroupProps) {
   return (
-    <div className={layout === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-2' : 'flex flex-wrap gap-2'}>
+    <div className="flex flex-wrap gap-1.5">
       {options.map((option) => (
         <button
           key={option.value}
           type="button"
           onClick={() => onChange(option.value)}
           aria-pressed={selectedValue === option.value}
-          className={`min-h-11 px-3 py-1.5 rounded-full text-xs font-mono transition-all border ${selectedValue === option.value
+          className={`min-h-8 px-2.5 py-1 rounded-full text-[11px] font-mono transition-all border ${selectedValue === option.value
             ? 'bg-brand-red text-black border-brand-red'
             : 'bg-neutral-900/60 text-brand-putty border-white/30 hover:border-brand-red/40 hover:text-white'
             }`}
@@ -137,159 +133,125 @@ export function AdvancedFilters({
   activeFiltersCount,
 }: AdvancedFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   return (
-    <Card className="bg-brand-surface border-white/20">
-      <CardHeader className="pb-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-brand-red" />
-            <CardTitle className="text-lg text-white">Advanced Filters</CardTitle>
-            {activeFiltersCount > 0 && (
-              <Badge variant="secondary" className="bg-brand-red text-black">
-                {activeFiltersCount}
-              </Badge>
-            )}
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-            {activeFiltersCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onReset}
-                className="text-brand-putty hover:text-white"
-              >
-                <X className="w-4 h-4 mr-1" />
-                Reset
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
-              aria-label={isExpanded ? 'Collapse filters' : 'Expand filters'}
-              aria-expanded={isExpanded}
-              aria-controls={isExpanded ? 'sanctuary-filters' : undefined}
-              className="min-h-11 min-w-11 text-brand-putty hover:text-white"
-            >
-              {isExpanded ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-            </Button>
-          </div>
-        </div>
-        <CardDescription className="text-brand-putty">
-          Filter shoes by brand, gender, performance characteristics, and ratings
-        </CardDescription>
-      </CardHeader>
+    <div className="rounded-lg border border-white/15 bg-brand-surface">
+      <div className="flex items-center gap-1.5 pr-1.5">
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}
+          aria-controls="sanctuary-filters"
+          className="flex min-h-10 flex-1 items-center gap-2 px-3 py-1 text-left font-mono text-xs uppercase tracking-wider text-brand-putty transition-colors hover:text-white"
+        >
+          <Filter className="h-3.5 w-3.5 text-brand-red" />
+          Filters
+          {activeFiltersCount > 0 && (
+            <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 font-mono text-[10px] font-semibold text-black">
+              {activeFiltersCount}
+            </span>
+          )}
+          <ChevronDown aria-hidden="true" className={`ml-auto h-3.5 w-3.5 transition-transform duration-300 motion-reduce:transform-none ${isExpanded ? 'rotate-180' : ''}`} />
+        </button>
+        {activeFiltersCount > 0 && (
+          <button
+            type="button"
+            onClick={onReset}
+            className="flex min-h-8 shrink-0 items-center gap-1 rounded-md px-2 font-mono text-[11px] text-brand-putty transition-colors hover:text-white"
+          >
+            <X className="h-3 w-3" />
+            Reset
+          </button>
+        )}
+      </div>
 
       <AnimatePresence>
         {isExpanded && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
+            id="sanctuary-filters"
+            initial={reduceMotion ? { height: 'auto' } : { height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            exit={reduceMotion ? { height: 'auto', opacity: 1, transition: { duration: 0 } } : { height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <CardContent id="sanctuary-filters" className="space-y-6 pt-0">
-              {/* Basic Filters */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FilterSection title="Brand">
-                  <select
-                    value={selectedBrand}
-                    aria-label="Filter by brand"
-                    onChange={(e) => onBrandChange(e.target.value)}
-                    className="w-full bg-neutral-900 text-white border border-white/30 rounded-lg px-3 py-2 text-sm focus:border-brand-red/50 focus:outline-hidden focus:ring-1 focus:ring-brand-red/20"
-                  >
-                    <option value="all">All Brands</option>
-                    {uniqueBrands.map((brand) => (
-                      <option key={brand} value={brand}>
-                        {brand}
-                      </option>
-                    ))}
-                  </select>
-                </FilterSection>
+            <div className="grid grid-cols-1 gap-4 border-t border-white/10 p-3 sm:grid-cols-2 lg:grid-cols-4">
+              <FilterSection title="Brand">
+                <select
+                  value={selectedBrand}
+                  aria-label="Filter by brand"
+                  onChange={(e) => onBrandChange(e.target.value)}
+                  className="h-9 w-full rounded-lg bg-neutral-900 px-2.5 text-xs text-white border border-white/30 focus:border-brand-red/50 focus:outline-hidden focus:ring-1 focus:ring-brand-red/20"
+                >
+                  <option value="all">All Brands</option>
+                  {uniqueBrands.map((brand) => (
+                    <option key={brand} value={brand}>
+                      {brand}
+                    </option>
+                  ))}
+                </select>
+              </FilterSection>
 
-                <FilterSection title="Gender">
-                  <FilterButtonGroup
-                    options={genderOptions}
-                    selectedValue={selectedGender}
-                    onChange={(value) => onGenderChange(value as GenderFilter)}
-                    layout="flex"
-                  />
-                </FilterSection>
-              </div>
+              <FilterSection title="Gender">
+                <FilterButtonGroup
+                  options={genderOptions}
+                  selectedValue={selectedGender}
+                  onChange={(value) => onGenderChange(value as GenderFilter)}
+                />
+              </FilterSection>
 
-              {/* Performance Characteristics */}
-              <div className="space-y-4">
-                <h3 className="text-white font-medium border-b border-white/30 pb-2">
-                  Performance Characteristics
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <FilterSection title="Aggressiveness">
-                    <FilterButtonGroup
-                      options={aggressivenessOptions}
-                      selectedValue={selectedAggressiveness}
-                      onChange={onAggressivenessChange}
-                    />
-                  </FilterSection>
+              <FilterSection title="Aggressiveness">
+                <FilterButtonGroup
+                  options={aggressivenessOptions}
+                  selectedValue={selectedAggressiveness}
+                  onChange={onAggressivenessChange}
+                />
+              </FilterSection>
 
-                  <FilterSection title="Stiffness">
-                    <FilterButtonGroup
-                      options={stiffnessOptions}
-                      selectedValue={selectedStiffness}
-                      onChange={onStiffnessChange}
-                    />
-                  </FilterSection>
+              <FilterSection title="Stiffness">
+                <FilterButtonGroup
+                  options={stiffnessOptions}
+                  selectedValue={selectedStiffness}
+                  onChange={onStiffnessChange}
+                />
+              </FilterSection>
 
-                  <FilterSection title="Volume">
-                    <FilterButtonGroup
-                      options={volumeOptions}
-                      selectedValue={selectedVolume}
-                      onChange={onVolumeChange}
-                    />
-                  </FilterSection>
+              <FilterSection title="Volume">
+                <FilterButtonGroup
+                  options={volumeOptions}
+                  selectedValue={selectedVolume}
+                  onChange={onVolumeChange}
+                />
+              </FilterSection>
 
-                  <FilterSection title="Climbing Discipline">
-                    <FilterButtonGroup
-                      options={disciplineOptions}
-                      selectedValue={selectedDiscipline}
-                      onChange={onDisciplineChange}
-                    />
-                  </FilterSection>
-                </div>
-              </div>
+              <FilterSection title="Climbing Discipline">
+                <FilterButtonGroup
+                  options={disciplineOptions}
+                  selectedValue={selectedDiscipline}
+                  onChange={onDisciplineChange}
+                />
+              </FilterSection>
 
-              {/* Rating Filters */}
-              <div className="space-y-4">
-                <h3 className="text-white font-medium border-b border-white/30 pb-2">
-                  User Ratings
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FilterSection title="Comfort Rating">
-                    <FilterButtonGroup
-                      options={ratingOptions}
-                      selectedValue={selectedComfortRating}
-                      onChange={(value) => onComfortRatingChange(value as RatingFilter)}
-                    />
-                  </FilterSection>
+              <FilterSection title="Comfort Rating">
+                <FilterButtonGroup
+                  options={ratingOptions}
+                  selectedValue={selectedComfortRating}
+                  onChange={(value) => onComfortRatingChange(value as RatingFilter)}
+                />
+              </FilterSection>
 
-                  <FilterSection title="Performance Rating">
-                    <FilterButtonGroup
-                      options={ratingOptions}
-                      selectedValue={selectedPerformanceRating}
-                      onChange={(value) => onPerformanceRatingChange(value as RatingFilter)}
-                    />
-                  </FilterSection>
-                </div>
-              </div>
-            </CardContent>
+              <FilterSection title="Performance Rating">
+                <FilterButtonGroup
+                  options={ratingOptions}
+                  selectedValue={selectedPerformanceRating}
+                  onChange={(value) => onPerformanceRatingChange(value as RatingFilter)}
+                />
+              </FilterSection>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </Card>
+    </div>
   );
 }

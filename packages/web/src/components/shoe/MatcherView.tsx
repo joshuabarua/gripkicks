@@ -6,6 +6,7 @@ import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo } from "@/components/stash/BrandLogo";
+import { RatingIcons } from "@/components/RatingIcons";
 import { useShoeScoring } from "@/hooks/useShoeScoring";
 import { useUserPreferenceLearning } from "@/hooks/useUserPreferenceLearning";
 import { useFootProfile } from "@/hooks/useFootProfile";
@@ -222,22 +223,22 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
     <div className="grid items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {shoes.map((shoe, idx) => (
         <article key={shoe.id} aria-label={`${shoe.brand} ${shoe.name}`} style={riseDelay(2 + Math.min(idx, 8))} className="lab-card lab-card-lift lab-rise min-w-0">
-          <div className="relative h-48 border-b border-white/6 bg-black/40 p-fluid-lg sm:h-56">
-            <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="h-full w-full" transformation={[{ height: 280, width: 400, crop: "at_max", format: "png" }]} />
-            <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 font-mono text-sm font-semibold text-brand-chalk">{idx + 1}</span>
-            <div className="absolute right-3 top-3 flex items-center rounded-lg bg-black/70 px-2.5 py-1.5 backdrop-blur-sm">
-              <BrandLogo brand={shoe.brand} size="sm" tooltip />
-            </div>
-            <div className="absolute bottom-3 right-3 rounded-lg bg-black/70 px-2.5 py-1.5 text-right font-mono backdrop-blur-sm">
-              <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-xs font-semibold" : "font-mono text-lg"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
+          <div className="flex items-center justify-between gap-3 border-b border-white/6 px-fluid-lg py-2.5">
+            <h3 className="truncate font-amatic text-2xl tracking-wide text-brand-chalk">{shoe.name}</h3>
+            <div className="shrink-0 text-right font-mono">
+              <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-xs font-semibold" : "text-lg"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
               <p className="lab-label mt-0.5">{mode === "personal" ? hasProfile ? "Match" : "Profile needed" : shoe.secondaryLabel}</p>
             </div>
           </div>
-          <div className="space-y-4 p-fluid-lg">
-            <div className="min-w-0">
-              <p className="font-mono text-xs uppercase tracking-wider text-brand-putty">{shoe.brand}</p>
-              <h3 className="wrap-break-word font-mono text-lg font-semibold leading-snug">{shoe.name}</h3>
+          <div className="relative h-48 border-b border-white/6 bg-black/40 p-fluid-lg sm:h-56">
+            <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="h-full w-full" transformation={[{ height: 280, width: 400, crop: "at_max", format: "png" }]} />
+            <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 font-mono text-sm font-semibold text-brand-chalk">{idx + 1}</span>
+            <div className="absolute bottom-3 left-3 flex h-7 w-24 items-center justify-start px-1">
+              <BrandLogo brand={shoe.brand} size="sm" tooltip />
             </div>
+          </div>
+          <div className="space-y-4 p-fluid-lg">
+            <RatingIcons comfort={shoe.metrics.comfort} performance={shoe.metrics.performance} durability={shoe.metrics.durability} max={5} />
             {shoe.breakdown && (
               <details className="border-t border-white/8 pt-2">
                 <summary className="min-h-11 cursor-pointer py-3 font-mono text-sm font-medium">Match details</summary>

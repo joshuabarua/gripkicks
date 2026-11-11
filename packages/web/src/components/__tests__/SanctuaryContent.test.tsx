@@ -1,9 +1,8 @@
 import React from "react";
-import { fireEvent, render, screen, waitForElementToBeRemoved, within } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import CloudShoe from "@/components/CloudShoe";
-import { BrandSections } from "@/components/stash/BrandSections";
 import { getBrandDescription } from "@/utils/sanctuaryDescriptions";
 import type { UserShoe } from "@/types/api";
 
@@ -16,7 +15,6 @@ const onEdit = vi.fn();
 const onToggleFavourite = vi.fn();
 const onRemove = vi.fn();
 const cardProps = { onOpenStats, onEdit, onToggleFavourite, onRemove };
-const groups = (item: UserShoe) => [{ brand: "Scarpa", models: [{ brand: "Scarpa", groupKey: "scarpa/drago", baseName: "Drago", variants: [{ item, variantLabel: "" }] }] }];
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -83,76 +81,32 @@ describe("Sanctuary content", () => {
     expect(screen.queryByText("Unisex", { exact: true })).toBeNull();
   });
 
-  it("lets each card own its grouped variant label instead of repeating it above the card", () => {
-    const lvShoe: UserShoe = { ...shoe, shoe: { ...shoe.shoe!, name: "Drago LV", modelName: "Drago", gender: "men" } };
-    const womensShoe: UserShoe = { ...shoe, _id: "stash-2", shoe: { ...shoe.shoe!, name: "Drago Women's", modelName: "Drago", gender: "women" } };
-    const group = [{
-      brand: "Scarpa",
-      models: [{
-        brand: "Scarpa",
-        groupKey: "scarpa/drago",
-        baseName: "Drago",
-        variants: [
-          { item: lvShoe, variantLabel: "LV" },
-          { item: womensShoe, variantLabel: "Women" },
-        ],
-      }],
-    }];
-    render(<BrandSections groups={group} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
-    expect(screen.queryByText("Standard")).toBeNull();
-    expect(screen.getAllByText("LV")).toHaveLength(1);
-    expect(screen.queryByText("Men", { exact: true })).toBeNull();
-    expect(screen.getAllByText("Women")).toHaveLength(1);
+  it("suppresses gender words used as variant labels", () => {
+    const womensShoe: UserShoe = { ...shoe, shoe: { ...shoe.shoe!, name: "Drago Women's", gender: "women" } };
+    render(<CloudShoe shoe={womensShoe} variantLabel="Women" {...cardProps} />);
+    expect(screen.queryByText("Women", { exact: true })).toBeNull();
   });
 
-  it("shows brand descriptions in the card logo tooltip instead of the section", async () => {
+  it("keeps non-gender variant labels on the card", () => {
+    const lvShoe: UserShoe = { ...shoe, shoe: { ...shoe.shoe!, name: "Drago LV", gender: "men" } };
+    render(<CloudShoe shoe={lvShoe} variantLabel="LV" {...cardProps} />);
+    expect(screen.getAllByText("LV")).toHaveLength(1);
+    expect(screen.queryByText("Men", { exact: true })).toBeNull();
+  });
+
+  it("shows the brand description in the card logo tooltip", async () => {
     const user = userEvent.setup();
-    render(<BrandSections groups={groups(shoe)} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
-    expect(screen.queryByText(getBrandDescription("Scarpa")!)).toBeNull();
+    render(<CloudShoe shoe={shoe} {...cardProps} />);
     await user.hover(screen.getByRole("img", { name: "Scarpa brand" }));
     expect(await screen.findAllByText(getBrandDescription("Scarpa")!)).not.toHaveLength(0);
   });
 
-  it("does not render brand content when the collection is empty", () => {
-    render(<BrandSections groups={[]} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
-    expect(screen.queryByRole("heading")).toBeNull();
-    expect(screen.queryByRole("img")).toBeNull();
-  });
-
-  it("collapses and expands a brand section from its header", async () => {
-    render(<BrandSections groups={groups(shoe)} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
-    const toggle = screen.getByRole("button", { name: /Scarpa brand section/ });
-    expect(toggle).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByText("Drago")).toBeInTheDocument();
-    fireEvent.click(toggle);
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-    await waitForElementToBeRemoved(() => screen.queryByText("Drago"));
-  });
-
-  it("places compact brands side by side at desktop widths", () => {
-    const many: UserShoe[] = ["Drago", "Instinct VS", "Vapor V", "Origin", "Maestro"].map((name, index) => ({ ...shoe, _id: `stash-${index}`, shoe: { ...shoe.shoe!, name } }));
-    const multi = [
-      { brand: "Boreal", models: [{ brand: "Boreal", groupKey: "boreal/dharma", baseName: "Dharma", variants: [{ item: { ...shoe, _id: "stash-b", shoe: { ...shoe.shoe!, name: "Dharma", brand: "Boreal" } }, variantLabel: "" }] }] },
-      { brand: "Scarpa", models: many.map((item, index) => ({ brand: "Scarpa", groupKey: `scarpa/${index}`, baseName: item.shoe!.name, variants: [{ item, variantLabel: "" }] })) },
-    ];
-    render(<BrandSections groups={multi} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
-    expect(screen.getByRole("region", { name: "Boreal" })).toHaveClass("lg:col-span-1");
-    expect(screen.getByRole("region", { name: "Scarpa" })).toHaveClass("lg:col-span-2");
-  });
-
-  it("names brand sections without a description paragraph", () => {
-    render(<BrandSections groups={groups(shoe)} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
-    expect(screen.getByRole("heading", { name: "Scarpa" })).toBeInTheDocument();
-    expect(screen.queryByText(getBrandDescription("Scarpa")!)).toBeNull();
-  });
-
   it("updates descriptions and ratings when a stashed shoe changes", () => {
-    const { rerender } = render(<BrandSections groups={groups(shoe)} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
-    const toggle = screen.getByRole("button", { name: "Show details for Scarpa Drago" });
-    fireEvent.click(toggle);
+    const { rerender } = render(<CloudShoe shoe={shoe} {...cardProps} />);
+    fireEvent.click(screen.getByRole("button", { name: "Show details for Scarpa Drago" }));
     const updated = { ...shoe, comfortScore: 8, shoe: { ...shoe.shoe!, description: "Updated product description." } };
-    rerender(<BrandSections groups={groups(updated)} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
+    rerender(<CloudShoe shoe={updated} {...cardProps} />);
     expect(screen.getByText("Updated product description.")).toBeInTheDocument();
-    expect(within(screen.getByRole("region", { name: "Scarpa" })).getAllByText("8").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("8").length).toBeGreaterThan(0);
   });
 });

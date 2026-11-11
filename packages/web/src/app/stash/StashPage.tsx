@@ -23,7 +23,7 @@ import { buildSpecialLabels } from "@/utils/specialLabels";
 import { AddShoeDialog } from "@/components/stash/AddShoeDialog";
 import { useStashData } from "@/hooks/useStashData";
 import { StatsStrip } from "@/components/stash/StatsStrip";
-import { BrandSections } from "@/components/stash/BrandSections";
+import CloudShoe from "@/components/CloudShoe";
 import { useBrandGroups } from "@/hooks/useBrandGroups";
 import { AdvancedFilters } from "@/components/stash/AdvancedFilters";
 import { DataContributionNudge } from "@/components/DataContributionNudge";
@@ -228,6 +228,11 @@ export default function ShoeSanctuaryPage() {
   ]);
 
   const brandGroups = useBrandGroups(filteredShoes);
+
+  const flatShoes = useMemo(
+    () => brandGroups.flatMap((group) => group.models.flatMap((model) => model.variants)),
+    [brandGroups],
+  );
 
   // Catalog is filtered server-side; only exclude shoes already in the stash
   const dialogSearchResults = useMemo(() => {
@@ -523,7 +528,7 @@ export default function ShoeSanctuaryPage() {
               </div>
             </div>
 
-            {!isPageLoading && (
+            {!isPageLoading && userShoes.length > 0 && (
               <div className="lab-rise" style={riseDelay(1)}>
                 <DataContributionNudge
                   stashCount={userShoes.length}
@@ -585,16 +590,20 @@ export default function ShoeSanctuaryPage() {
             )}
 
             {!isPageLoading && filteredShoes.length > 0 && (
-              <>
-                <BrandSections
-                  groups={brandGroups}
-                  specialLabels={specialLabels}
-                  onOpenStats={handleSelectShoe}
-                  onEdit={openShoeEditor}
-                  onToggleFavourite={toggleShoeFavourite}
-                  onRemove={confirmRemoveShoe}
-                />
-              </>
+              <div className="lab-rise grid gap-fluid-lg sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={riseDelay(3)}>
+                {flatShoes.map(({ item: shoe, variantLabel }) => (
+                  <CloudShoe
+                    key={shoe._id}
+                    shoe={shoe}
+                    variantLabel={variantLabel}
+                    specialLabel={specialLabels[shoe._id]}
+                    onOpenStats={() => handleSelectShoe(shoe)}
+                    onEdit={() => openShoeEditor(shoe)}
+                    onToggleFavourite={() => toggleShoeFavourite(shoe)}
+                    onRemove={() => confirmRemoveShoe(shoe)}
+                  />
+                ))}
+              </div>
             )}
           </div>
         </section>

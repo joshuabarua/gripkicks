@@ -10,6 +10,7 @@ import { getShoeProfileCompletion } from "@/utils/shoeProfile";
 import { getBrandDescription, getShoeDescription } from "@/utils/sanctuaryDescriptions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { RatingIcons } from "@/components/RatingIcons";
 
 interface CloudShoeProps {
   shoe: UserShoe;
@@ -26,6 +27,8 @@ function formatCondition(condition?: string) {
   return condition.replaceAll('-', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+const GENDER_WORDS = new Set(["men", "women", "unisex", "kids", "men's", "women's"]);
+
 const specialLabelTitles = {
   'most-comfy': 'Highest comfort score in your collection',
   'oldest': 'Oldest shoe in your collection',
@@ -39,7 +42,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
   const imageUrl = details?.imageUrl;
   const slug = details?.slug;
   const gender = details?.gender;
-  const cardLabel = variantLabel?.trim() || details?.variantLabel?.trim() || null;
+  const rawLabel = variantLabel?.trim() || details?.variantLabel?.trim() || null;
+  const cardLabel = rawLabel && !GENDER_WORDS.has(rawLabel.toLowerCase()) ? rawLabel : null;
   const [isInView, setIsInView] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const cardRef = useRef<HTMLElement>(null);
@@ -86,7 +90,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
       {...(expanded ? {} : { whileHover: { y: -3 } })}
     >
       <div className="flex min-h-11 items-center justify-between gap-3 border-b border-white/20 px-4 py-2.5">
-        <h3 className="truncate font-mono text-base font-semibold text-brand-chalk transition-colors group-hover:text-white">
+        <h3 className="truncate font-amatic text-2xl tracking-wide text-brand-chalk transition-colors group-hover:text-white">
           {name}
         </h3>
         <div className="flex items-center gap-1.5">
@@ -175,7 +179,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
                     aria-label={`${brand} brand`}
                     onClick={(e) => e.stopPropagation()}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); }}
-                    className="absolute bottom-3 left-3 flex h-9 w-24 cursor-default items-center justify-center rounded-sm border border-white/10 bg-black/65 px-2"
+                    className="absolute bottom-3 left-3 flex h-7 w-24 cursor-default items-center justify-start px-1"
                   >
                     <BrandLogo brand={brand} size="sm" suppressTitle className="h-5 w-20" />
                   </span>
@@ -192,9 +196,11 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
         </div>
 
         <div className="flex items-center justify-between gap-3 p-4">
-          <p className="min-w-0 truncate font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/85">
-            {ratedItems.length ? ratedItems.map(([label, value]) => `${label} ${value}`).join(' · ') : 'Add ratings'}
-          </p>
+          {ratedItems.length ? (
+            <RatingIcons comfort={shoe.comfortScore} performance={shoe.performanceRating} durability={shoe.durabilityRating} className="min-w-0" />
+          ) : (
+            <p className="min-w-0 truncate font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/85">Add ratings</p>
+          )}
           <ChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 text-brand-putty transition-transform duration-300 motion-reduce:transform-none ${expanded ? 'rotate-180' : ''}`} />
         </div>
       </button>
