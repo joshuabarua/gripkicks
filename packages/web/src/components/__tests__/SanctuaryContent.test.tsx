@@ -14,7 +14,8 @@ const onOpenStats = vi.fn();
 const onEdit = vi.fn();
 const onToggleFavourite = vi.fn();
 const onRemove = vi.fn();
-const cardProps = { onOpenStats, onEdit, onToggleFavourite, onRemove };
+const onRate = vi.fn();
+const cardProps = { onOpenStats, onEdit, onToggleFavourite, onRemove, onRate };
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -34,7 +35,8 @@ describe("Sanctuary content", () => {
     expect(screen.getByText("Soft shoe for steep bouldering.")).toBeInTheDocument();
     expect(screen.getByText("Size")).toBeInTheDocument();
     expect(screen.getByText("Condition")).toBeInTheDocument();
-    expect(screen.getByText("Your ratings")).toBeInTheDocument();
+    expect(screen.getByText("About this shoe")).toBeInTheDocument();
+    expect(screen.getByText("Stats")).toBeInTheDocument();
     expect(screen.getByText("bouldering")).toBeInTheDocument();
   });
 
@@ -49,15 +51,25 @@ describe("Sanctuary content", () => {
     expect(onRemove).toHaveBeenCalled();
   });
 
-  it("exposes full stats when expanded and favourite from the options menu", async () => {
-    const user = userEvent.setup();
+  it("exposes favourite and full stats actions when expanded", () => {
     render(<CloudShoe shoe={shoe} {...cardProps} />);
     fireEvent.click(screen.getByRole("button", { name: "Show details for Scarpa Drago" }));
     fireEvent.click(screen.getByRole("button", { name: "Full stats" }));
     expect(onOpenStats).toHaveBeenCalled();
-    await user.click(screen.getByRole("button", { name: "Options for Scarpa Drago" }));
-    await user.click(screen.getByRole("menuitem", { name: "Favourite" }));
+    fireEvent.click(screen.getByRole("button", { name: /Favourite/ }));
     expect(onToggleFavourite).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: /Remove/ }));
+    expect(onRemove).toHaveBeenCalled();
+  });
+
+  it("reveals a slider on click and saves on click out", () => {
+    render(<CloudShoe shoe={shoe} {...cardProps} />);
+    fireEvent.click(screen.getByRole("button", { name: "Show details for Scarpa Drago" }));
+    fireEvent.click(screen.getByRole("button", { name: "Edit Comfort rating" }));
+    const slider = screen.getByRole("slider", { name: "Comfort rating" });
+    fireEvent.change(slider, { target: { value: "8" } });
+    fireEvent.blur(slider);
+    expect(onRate).toHaveBeenCalledWith("comfortScore", 8);
   });
 
   it("does not wrap interactive buttons inside a role=button card", () => {
@@ -108,6 +120,6 @@ describe("Sanctuary content", () => {
     const updated = { ...shoe, comfortScore: 8, shoe: { ...shoe.shoe!, description: "Updated product description." } };
     rerender(<CloudShoe shoe={updated} {...cardProps} />);
     expect(screen.getByText("Updated product description.")).toBeInTheDocument();
-    expect(screen.getAllByText("8").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("8/10").length).toBeGreaterThan(0);
   });
 });

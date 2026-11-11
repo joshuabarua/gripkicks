@@ -307,6 +307,18 @@ export default function ShoeSanctuaryPage() {
     setIsStatsModalOpen(false);
   }, []);
 
+  const rateShoe = useCallback(
+    (shoe: UserShoe, field: 'comfortScore' | 'performanceRating' | 'durabilityRating', value: number) => {
+      void updateUserShoeStats({
+        userShoeId: shoe._id as Id<"userShoes">,
+        ...(field === 'comfortScore' ? { comfortScore: value } : {}),
+        ...(field === 'performanceRating' ? { performanceRating: value } : {}),
+        ...(field === 'durabilityRating' ? { durabilityRating: value } : {}),
+      }).catch(() => toast.error("Failed to save rating"));
+    },
+    [updateUserShoeStats, toast],
+  );
+
   const addShoeToSanctuary = async (shoeId: string) => {
     if (!userData) {
       toast.error("Failed to add shoe to sanctuary");
@@ -601,6 +613,7 @@ export default function ShoeSanctuaryPage() {
                     onEdit={() => openShoeEditor(shoe)}
                     onToggleFavourite={() => toggleShoeFavourite(shoe)}
                     onRemove={() => confirmRemoveShoe(shoe)}
+                    onRate={(field, value) => rateShoe(shoe, field, value)}
                   />
                 ))}
               </div>
