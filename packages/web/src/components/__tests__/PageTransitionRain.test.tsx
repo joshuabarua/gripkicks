@@ -101,8 +101,12 @@ describe("PageTransitionRain", () => {
     expect(PAGE_TRANSITION_TIMING).toEqual({
       coverDelayMs: 120,
       coverDurationMs: 500,
-      revealDelayMs: 800,
+      revealDelayMs: 1120,
       revealDurationMs: 500,
     });
+    expect(
+      PAGE_TRANSITION_TIMING.revealDelayMs -
+        (PAGE_TRANSITION_TIMING.coverDelayMs + PAGE_TRANSITION_TIMING.coverDurationMs),
+    ).toBe(500);
   });
 });

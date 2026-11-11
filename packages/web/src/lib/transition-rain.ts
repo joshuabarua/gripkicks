@@ -52,7 +52,7 @@ export const RAIN_PIECES = [0, 1, 2].flatMap((copy) =>
 export const PAGE_TRANSITION_TIMING = {
   coverDelayMs: 120,
   coverDurationMs: 500,
-  revealDelayMs: 800,
+  revealDelayMs: 1120,
   revealDurationMs: 500,
 } as const;
 

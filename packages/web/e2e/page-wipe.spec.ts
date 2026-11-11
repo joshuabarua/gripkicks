@@ -318,7 +318,7 @@ test("wipe holds full red between the old root exit and the overlay reveal", asy
       contentType: "image/png",
     });
 
-    expect(snapshot.holdMs).toBeGreaterThanOrEqual(150);
+    expect(snapshot.holdMs).toBeGreaterThanOrEqual(500);
     const oldParts = insetParts(snapshot.snap?.oldClip ?? "");
     expect(oldParts[0]).toBe(100);
     expect(oldParts.slice(1).every((part) => part === 0)).toBe(true);
@@ -441,7 +441,7 @@ test.describe("transition rain", () => {
 
       try {
         await page.locator("footer").getByRole("link", { name: "Privacy" }).click();
-        for (const t of [60, 300, 1550]) {
+        for (const t of [60, 300, 1700]) {
           if (t !== 60) {
             await page.evaluate((phase) =>
               (window as Window & { freezePhase?: (t: number) => void }).freezePhase!(phase), t,
@@ -476,7 +476,7 @@ test.describe("transition rain", () => {
             piece.x >= 0 && piece.x <= viewport.size.width && piece.y >= 0 && piece.y <= viewport.size.height,
           );
 
-        for (const t of [60, 300, 1550]) {
+        for (const t of [60, 300, 1700]) {
           const active = activeAt(t);
           expect(active).toHaveLength(viewport.expected);
           for (const piece of active) {
@@ -500,16 +500,16 @@ test.describe("transition rain", () => {
 
         const leadsAt60 = activeAt(60).filter((piece) => indexOf(piece) <= 6);
         const tailsAt60 = activeAt(60).filter((piece) => indexOf(piece) >= 7);
-        const leadsAt1550 = activeAt(1550).filter((piece) => indexOf(piece) <= 6);
-        const tailsAt1550 = activeAt(1550).filter((piece) => indexOf(piece) >= 7);
+        const leadsAt1700 = activeAt(1700).filter((piece) => indexOf(piece) <= 6);
+        const tailsAt1700 = activeAt(1700).filter((piece) => indexOf(piece) >= 7);
         expect(inside(leadsAt60).length).toBeGreaterThanOrEqual(2);
         expect(tailsAt60.every((piece) => piece.y < 0)).toBe(true);
         expect(insetParts(probe.clips[60]?.oldClip ?? "inset(100%)").every((part) => part === 0)).toBe(true);
-        expect(inside(tailsAt1550).length).toBeGreaterThanOrEqual(1);
-        expect(leadsAt1550.every((piece) => piece.y > viewport.size.height)).toBe(true);
-        expect((probe.clips[1550]?.curtainClip ?? "").startsWith("inset(100%")).toBe(true);
-        expect((probe.labStates[1550] ?? []).length).toBeGreaterThan(0);
-        expect((probe.labStates[1550] ?? []).every((state) => state !== "paused")).toBe(true);
+        expect(inside(tailsAt1700).length).toBeGreaterThanOrEqual(1);
+        expect(leadsAt1700.every((piece) => piece.y > viewport.size.height)).toBe(true);
+        expect((probe.clips[1700]?.curtainClip ?? "").startsWith("inset(100%")).toBe(true);
+        expect((probe.labStates[1700] ?? []).length).toBeGreaterThan(0);
+        expect((probe.labStates[1700] ?? []).every((state) => state !== "paused")).toBe(true);
         for (const lead of activeAt(60).filter((piece) => indexOf(piece) <= 6)) {
           const later = (probe.frames[300] ?? []).find((piece) => piece.name === lead.name);
           if (later) {

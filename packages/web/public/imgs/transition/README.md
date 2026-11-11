@@ -20,8 +20,8 @@ side, WebP q80. The rain effect loads only these, preloaded with
 Three staggered copies of a twelve-piece hold/rock set fall during `page-nav`
 view transitions (36 pieces desktop, 21 on portrait phones ≤767px), each
 falling for ~0.9–1.1s. The leading pieces are already in flight before the red
-curtain covers (~120ms), and the tail keeps falling ~0.7s after the curtain
-reveal finishes (~1300ms; last piece lands ~1990ms). No bouncing; every piece
+curtain covers (~120ms), and the tail keeps falling ~0.4s after the curtain
+reveal finishes (~1620ms; last piece lands ~1990ms). No bouncing; every piece
 starts above and exits below the viewport. Reduced-motion users get no rain
 and a transparent curtain. If a WebP fails to load its group simply paints
 nothing; the wipe still works.
