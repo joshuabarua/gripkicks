@@ -884,7 +884,7 @@ video {
 	height: 100vh !important;
 	transform: none !important;
 	z-index: 0;
-	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) 600ms both;
+	animation: page-wipe-out var(--reveal-duration) cubic-bezier(0.76, 0, 0.24, 1) var(--reveal-delay) both;
 }
 
 :root:active-view-transition-type(page-nav)::view-transition-group(root) {
@@ -893,7 +893,7 @@ video {
 }
 
 :root:active-view-transition-type(page-nav)::view-transition-old(root) {
-	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) both;
+	animation: page-wipe-out var(--cover-duration) cubic-bezier(0.76, 0, 0.24, 1) var(--cover-delay) both;
 }
 
 @keyframes page-wipe-out {
@@ -914,10 +914,6 @@ video {
 	}
 }
 
-:root:active-view-transition .lab-rise,
-:root:active-view-transition .lab-fade {
-	animation-play-state: paused;
-}
 
 @media (prefers-reduced-motion: reduce) {
 	:root:active-view-transition-type(page-nav)::view-transition-group(vt-trigger) {
