@@ -11,6 +11,7 @@ import { getBrandDescription, getShoeDescription } from "@/utils/sanctuaryDescri
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { RatingIcons } from "@/components/RatingIcons";
+import { conditions, shoeSizes } from "@/constants/shoe-data";
 
 interface CloudShoeProps {
   shoe: UserShoe;
@@ -21,14 +22,10 @@ interface CloudShoeProps {
   onToggleFavourite: () => void;
   onRemove: () => void;
   onRate?: (field: 'comfortScore' | 'performanceRating' | 'durabilityRating', value: number) => void;
+  onUpdateDetails?: (fields: { size?: string; condition?: string }) => void;
 }
 
 const GENDER_WORDS = new Set(["men", "women", "unisex", "kids", "men's", "women's"]);
-
-function formatCondition(condition?: string) {
-  if (!condition) return 'Not set';
-  return condition.replaceAll('-', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
 
 const specialLabelTitles = {
   'most-comfy': 'Highest comfort score in your collection',
@@ -92,7 +89,7 @@ function StatSlider({ label, icon, value, onCommit }: { label: string; icon: Rea
   );
 }
 
-const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOpenStats, onEdit, onToggleFavourite, onRemove, onRate }) => {
+const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOpenStats, onEdit, onToggleFavourite, onRemove, onRate, onUpdateDetails }) => {
   const details = shoe.shoe ?? shoe.shoeDetails;
   const brand = details?.brand ?? 'Unknown Brand';
   const name = details?.name ?? 'Unknown Shoe';
@@ -202,6 +199,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
   return (
     <motion.article
       ref={cardRef}
+      layout
       className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-colors duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''}`}
       {...(expanded ? {} : { whileHover: { y: -3 } })}
     >
@@ -281,7 +279,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
             onClick={() => setExpanded(true)}
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.12 } }}
+            exit={{ opacity: 0, transition: { duration: 0 } }}
             className="block w-full text-left outline-hidden focus-visible:border-brand-red"
           >
             <div className="relative flex aspect-[16/10] items-center justify-center border-b border-white/20 bg-brand-soft-surface p-4">
@@ -302,7 +300,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
             id={detailsId}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, transition: { duration: 0.12 } }}
+            exit={{ opacity: 0, transition: { duration: 0 } }}
             transition={{ duration: 0.22 }}
           >
             <div className="grid md:grid-cols-2">
@@ -312,18 +310,38 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
                 </div>
                 <div className="grid grid-cols-2 gap-3 p-4">
                   <div>
-                    <span className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Size</span>
-                    <button type="button" onClick={onEdit} className="mt-1.5 flex w-full items-center justify-between rounded-md border border-white/20 bg-white/2.5 px-3 py-2.5 font-mono text-xs text-brand-chalk transition-colors hover:bg-white/5">
-                      {shoe.size || 'Select'}
-                      <ChevronDown className="h-3.5 w-3.5 text-brand-putty" />
-                    </button>
+                    <label htmlFor={`${detailsId}-size`} className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Size</label>
+                    <div className="relative mt-1.5">
+                      <select
+                        id={`${detailsId}-size`}
+                        value={shoe.size || ''}
+                        onChange={(e) => onUpdateDetails?.({ size: e.target.value })}
+                        className="w-full appearance-none truncate rounded-md border border-white/20 bg-white/2.5 px-3 py-2.5 font-mono text-xs text-brand-chalk transition-colors hover:bg-white/5"
+                      >
+                        <option value="">Select</option>
+                        {shoeSizes.map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-brand-putty" />
+                    </div>
                   </div>
                   <div>
-                    <span className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Condition</span>
-                    <button type="button" onClick={onEdit} className="mt-1.5 flex w-full items-center justify-between rounded-md border border-white/20 bg-white/2.5 px-3 py-2.5 font-mono text-xs text-brand-chalk transition-colors hover:bg-white/5">
-                      {shoe.condition ? formatCondition(shoe.condition) : 'Select condition'}
-                      <ChevronDown className="h-3.5 w-3.5 text-brand-putty" />
-                    </button>
+                    <label htmlFor={`${detailsId}-condition`} className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Condition</label>
+                    <div className="relative mt-1.5">
+                      <select
+                        id={`${detailsId}-condition`}
+                        value={shoe.condition || ''}
+                        onChange={(e) => onUpdateDetails?.({ condition: e.target.value })}
+                        className="w-full appearance-none truncate rounded-md border border-white/20 bg-white/2.5 px-3 py-2.5 font-mono text-xs text-brand-chalk transition-colors hover:bg-white/5"
+                      >
+                        <option value="">Select condition</option>
+                        {conditions.map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-brand-putty" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -388,6 +406,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
     prevProps.onToggleFavourite === nextProps.onToggleFavourite &&
     prevProps.onRemove === nextProps.onRemove &&
     prevProps.onRate === nextProps.onRate &&
+    prevProps.onUpdateDetails === nextProps.onUpdateDetails &&
     prevProps.specialLabel?.type === nextProps.specialLabel?.type
   );
 });
