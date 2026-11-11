@@ -8,6 +8,7 @@ type WipeSnapshot = {
   height: number;
   opacity: number;
   color: string;
+  overlayColor: string;
 };
 
 type MenuProbe = {
@@ -122,13 +123,15 @@ test("page navigation paints a full-viewport wipe", async ({ page }) => {
       const transition = startViewTransition(options);
       transition.ready.then(() => {
         const overlay = getComputedStyle(document.documentElement, "::view-transition");
+        const curtain = getComputedStyle(document.documentElement, "::view-transition-group(vt-trigger)");
         const root = getComputedStyle(document.documentElement, "::view-transition-group(root)");
         state.wipeSnapshot = {
           types: typeof options === "object" && options ? options.types ?? [] : [],
-          width: parseFloat(overlay.width),
-          height: parseFloat(overlay.height),
+          width: parseFloat(curtain.width),
+          height: parseFloat(curtain.height),
           opacity: parseFloat(root.opacity),
-          color: overlay.backgroundColor,
+          color: curtain.backgroundColor,
+          overlayColor: overlay.backgroundColor,
         };
       });
       return transition;
@@ -147,6 +150,7 @@ test("page navigation paints a full-viewport wipe", async ({ page }) => {
   expect(snapshot?.height).toBeGreaterThan(0.9 * page.viewportSize()!.height);
   expect(snapshot?.opacity).toBeGreaterThan(0.9);
   expect(snapshot?.color).toBe("rgb(244, 91, 91)");
+  expect(snapshot?.overlayColor).toBe("rgba(0, 0, 0, 0)");
 });
 
 test.describe("menu dismissal on in-menu navigation", () => {
@@ -252,7 +256,7 @@ test("wipe holds full red between the old root exit and the overlay reveal", asy
     document.startViewTransition = (options) => {
       const transition = startViewTransition(options);
       transition.ready.then(() => {
-        const overlayStyle = getComputedStyle(document.documentElement, "::view-transition");
+        const overlayStyle = getComputedStyle(document.documentElement, "::view-transition-group(vt-trigger)");
         const groupStyle = getComputedStyle(document.documentElement, "::view-transition-group(root)");
         const oldStyle = getComputedStyle(document.documentElement, "::view-transition-old(root)");
         const oldDuration = Number.parseFloat(oldStyle.animationDuration) * 1000;
@@ -268,7 +272,7 @@ test("wipe holds full red between the old root exit and the overlay reveal", asy
           anim.pause();
         }
         state.holdSnapshot = {
-          overlayClip: getComputedStyle(document.documentElement, "::view-transition").clipPath,
+          overlayClip: getComputedStyle(document.documentElement, "::view-transition-group(vt-trigger)").clipPath,
           oldClip: getComputedStyle(document.documentElement, "::view-transition-old(root)").clipPath,
           overlayColor: overlayStyle.backgroundColor,
           overlayWidth: Number.parseFloat(overlayStyle.width),
@@ -328,4 +332,224 @@ test("wipe holds full red between the old root exit and the overlay reveal", asy
       }
     });
   }
+});
+
+type RainFrame = {
+  name: string;
+  display: string;
+  animationName: string;
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+  a: number;
+  d: number;
+  z: string;
+  bg: string;
+};
+
+type RainProbe = {
+  count: number;
+  paused: number[];
+  frames: Record<number, RainFrame[]>;
+};
+
+test.describe("transition rain", () => {
+  for (const viewport of [
+    { name: "desktop", size: { width: 1440, height: 900 }, expected: 12, maxPiece: 100 },
+    { name: "mobile", size: { width: 390, height: 844 }, expected: 7, maxPiece: 46 },
+  ]) {
+    test(`paints ${viewport.expected} falling holds over the curtain (${viewport.name})`, async ({ page }, testInfo) => {
+      await page.emulateMedia({ reducedMotion: "no-preference" });
+      await page.setViewportSize(viewport.size);
+      await page.goto("/about");
+      await page.waitForTimeout(1500);
+      await page.evaluate(() => {
+        const collect = () =>
+          Array.from({ length: 12 }, (_, i) => {
+            const style = getComputedStyle(
+              document.documentElement,
+              `::view-transition-group(page-rain-${i})`,
+            );
+            const matrix = new DOMMatrixReadOnly(
+              style.transform === "none" ? undefined : style.transform,
+            );
+            return {
+              name: `page-rain-${i}`,
+              display: style.display,
+              animationName: style.animationName,
+              width: Number.parseFloat(style.width),
+              height: Number.parseFloat(style.height),
+              x: matrix.e,
+              y: matrix.f,
+              a: matrix.a,
+              d: matrix.d,
+              z: style.zIndex,
+              bg: style.backgroundImage,
+            };
+          });
+        const state = window as Window & {
+          rainProbe?: RainProbe;
+          freezePhase?: (t: number) => void;
+          resumeWipeAnimations?: () => void;
+        };
+        state.rainProbe = { count: 0, paused: [], frames: {} };
+        state.freezePhase = (t: number) => {
+          for (const anim of document.getAnimations()) {
+            const name = (anim as CSSAnimation).animationName;
+            if (name === "page-rain-fall" || name === "page-wipe-out") {
+              anim.currentTime = t;
+              anim.pause();
+            }
+          }
+          state.rainProbe!.frames[t] = collect();
+          state.rainProbe!.paused.push(t);
+        };
+        state.resumeWipeAnimations = () => {
+          for (const anim of document.getAnimations()) {
+            const name = (anim as CSSAnimation).animationName;
+            if (name === "page-rain-fall" || name === "page-wipe-out") {
+              anim.play();
+            }
+          }
+        };
+        const startViewTransition = document.startViewTransition.bind(document);
+        document.startViewTransition = (options) => {
+          const transition = startViewTransition(options);
+          transition.ready.then(() => {
+            state.rainProbe!.count = document
+              .getAnimations()
+              .filter((anim) => (anim as CSSAnimation).animationName === "page-rain-fall").length;
+            state.freezePhase!(200);
+          });
+          return transition;
+        };
+      });
+
+      try {
+        await page.locator("footer").getByRole("link", { name: "Privacy" }).click();
+        await expect.poll(() => page.evaluate(() =>
+          (window as Window & { rainProbe?: RainProbe }).rainProbe?.paused.includes(200) ?? false,
+        )).toBe(true);
+        await page.screenshot({ path: testInfo.outputPath(`rain-200-${viewport.name}.png`) });
+        await testInfo.attach(`rain-200-${viewport.name}`, {
+          path: testInfo.outputPath(`rain-200-${viewport.name}.png`),
+          contentType: "image/png",
+        });
+
+        await page.evaluate(() =>
+          (window as Window & { freezePhase?: (t: number) => void }).freezePhase!(820),
+        );
+        await page.screenshot({ path: testInfo.outputPath(`rain-820-${viewport.name}.png`) });
+        await testInfo.attach(`rain-820-${viewport.name}`, {
+          path: testInfo.outputPath(`rain-820-${viewport.name}.png`),
+          contentType: "image/png",
+        });
+        await expect(page).toHaveURL(/\/privacy$/);
+
+        const probe = await page.evaluate(() =>
+          (window as Window & { rainProbe?: RainProbe }).rainProbe!,
+        );
+        await testInfo.attach("rain-trace", {
+          body: JSON.stringify(probe),
+          contentType: "application/json",
+        });
+
+        expect(probe.count).toBe(viewport.expected);
+        const inside = (frames: RainFrame[]) =>
+          frames.filter((piece) =>
+            piece.x >= 0 && piece.x <= viewport.size.width && piece.y >= 0 && piece.y <= viewport.size.height,
+          );
+        for (const t of [200, 820]) {
+          const frames = probe.frames[t] ?? [];
+          const active = frames.filter((piece) => piece.display !== "none");
+          expect(active).toHaveLength(viewport.expected);
+          for (const piece of active) {
+            expect(piece.bg).toContain("/imgs/transition/rain-");
+            expect(piece.bg).toContain(".webp");
+            expect(piece.bg).not.toContain(".png");
+            expect(piece.z).toBe("2");
+            expect(piece.width).toBeGreaterThanOrEqual(32);
+            expect(piece.width).toBeLessThanOrEqual(viewport.maxPiece);
+            expect(piece.height).toBeGreaterThanOrEqual(32);
+            expect(piece.height).toBeLessThanOrEqual(viewport.maxPiece);
+            expect(piece.width).toBeLessThan(viewport.size.width * 0.5);
+            expect(piece.height).toBeLessThan(viewport.size.height * 0.5);
+            expect(piece.animationName).toBe("page-rain-fall");
+            expect(!(piece.x === 0 && piece.y === 0)).toBe(true);
+          }
+          const xs = new Set(active.map((piece) => Math.round(piece.x)));
+          const ys = new Set(active.map((piece) => Math.round(piece.y)));
+          expect(xs.size).toBeGreaterThan(3);
+          expect(ys.size).toBeGreaterThan(3);
+        }
+
+        const at200 = probe.frames[200] ?? [];
+        const at820 = probe.frames[820] ?? [];
+        const activeAt = (frames: RainFrame[]) => frames.filter((piece) => piece.display !== "none");
+        const indexOf = (piece: RainFrame) => Number.parseInt(piece.name.split("-").pop() ?? "-1", 10);
+        const leads200 = activeAt(at200).filter((piece) => indexOf(piece) <= 6);
+        const tails200 = activeAt(at200).filter((piece) => indexOf(piece) >= 7);
+        const leads820 = activeAt(at820).filter((piece) => indexOf(piece) <= 6);
+        const tails820 = activeAt(at820).filter((piece) => indexOf(piece) >= 7);
+        expect(inside(leads200).length).toBeGreaterThan(0);
+        expect(inside(tails820).length).toBeGreaterThan(0);
+        expect(tails200.every((piece) => piece.y < 0)).toBe(true);
+        expect(leads820.every((piece) => piece.y > viewport.size.height)).toBe(true);
+        for (const lead of leads200) {
+          const later = at820.find((piece) => piece.name === lead.name);
+          if (later) {
+            expect(later.y - lead.y).toBeGreaterThan(100);
+          }
+        }
+      } finally {
+        await page.evaluate(() =>
+          (window as Window & { resumeWipeAnimations?: () => void }).resumeWipeAnimations!(),
+        );
+      }
+    });
+
+    test(`leaves no rain under reduced motion (${viewport.name})`, async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.setViewportSize(viewport.size);
+      await page.goto("/about");
+      await page.waitForTimeout(1500);
+      await page.evaluate(() => {
+        const state = window as Window & { rainCount?: number; readySeen?: boolean };
+        const startViewTransition = document.startViewTransition.bind(document);
+        document.startViewTransition = (options) => {
+          const transition = startViewTransition(options);
+          transition.ready.then(() => {
+            state.readySeen = true;
+            state.rainCount = document
+              .getAnimations()
+              .filter((anim) => (anim as CSSAnimation).animationName === "page-rain-fall").length;
+          });
+          return transition;
+        };
+      });
+      await page.locator("footer").getByRole("link", { name: "Privacy" }).click();
+      await expect(page).toHaveURL(/\/privacy$/);
+      await expect.poll(() => page.evaluate(() =>
+        (window as Window & { readySeen?: boolean }).readySeen ?? false,
+      )).toBe(true);
+      const count = await page.evaluate(() => (window as Window & { rainCount?: number }).rainCount);
+      expect(count).toBe(0);
+    });
+  }
+
+  test("keeps twelve stable boundaries across repeated navigations", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/about");
+    await page.waitForTimeout(1500);
+    const spans = () => page.locator("span.size-0.overflow-hidden").count();
+    await page.locator("footer").getByRole("link", { name: "Privacy" }).click();
+    await expect(page).toHaveURL(/\/privacy$/);
+    await page.locator("footer").getByRole("link", { name: "About" }).click();
+    await expect(page).toHaveURL(/\/about$/);
+    await expect(page.locator(".nav-menu")).toHaveCount(0);
+    expect(await spans()).toBe(13);
+    expect(await page.locator("footer").getByRole("link", { name: "Privacy" }).count()).toBe(1);
+  });
 });

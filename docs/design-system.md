@@ -166,16 +166,28 @@ in `src/lib/motion.ts`.
   cleanup sets the overlay to `0 × 0` and hides the root snapshot, so the
   `page-nav` rules explicitly restore the overlay's viewport size and the
   root group's opacity. Without those overrides the animations run but nothing
-  red paints. The wipe animates two things in `globals.css`
-  (`:root:active-view-transition-type(page-nav)`): `::view-transition-old(root)`
-  clips top→bottom off screen (450ms) revealing the `::view-transition` overlay
-  painted brand-red, which then clips top→bottom (450ms, 600ms delay) revealing
-  the live new page underneath — a vertical monolith sweep in the same
-  direction as the `lab-card` monolith bar. The 150ms gap between the old root
-  finishing and the overlay reveal starting holds a full-red plateau; ~1050ms
-  total. The reveal runs on
-  the overlay rather than `::view-transition-new(root)` because React-started
-  transitions never produce a `new(root)` pseudo. Internal links route through
+  red paints. The wipe animates in `globals.css`
+  (`:root:active-view-transition-type(page-nav)`): the
+  `::view-transition-group(vt-trigger)` group carries the brand-red curtain —
+  viewport-sized, `transform: none`, `z-index: 0`, clipping out with
+  `page-wipe-out` (450ms, 600ms delay) — while `::view-transition-old(root)`
+  clips top→bottom off screen (450ms) ahead of it and the root group keeps
+  `opacity: 1` at `z-index: 1`. The `::view-transition` overlay itself stays
+  viewport-sized and transparent with no animation so it can clip the whole
+  stage without cutting off the rain. The 150ms gap between the old root
+  finishing and the curtain reveal starting holds a full-red plateau; ~1050ms
+  total. Painted above everything (`z-index: 2`) are twelve `page-rain-*`
+  groups from `PageTransitionRain`
+  (`src/components/ui/PageTransitionRain.tsx`, same hidden-pathname boundary
+  pattern as `WipeTrigger`): two bursts of climbing-hold and rock WebPs
+  (`public/imgs/transition/rain-*.webp`, descriptors and generated CSS in
+  `src/lib/transition-rain.ts`) fall through the shared `page-rain-fall`
+  keyframe with modest rotation and no bounce — a lead burst in flight before
+  the wipe visibly moves and a tail burst finishing by ~1030ms. Seven pieces
+  show on portrait phones; reduced motion hides all rain and the curtain. The
+  reveal runs on
+  the curtain group rather than `::view-transition-new(root)` because
+  React-started transitions never produce a `new(root)` pseudo. Internal links route through
   `NavLink`
   (`src/components/ui/NavLink.tsx`), which always returns `["page-nav"]`;
   programmatic navigations pass `transitionTypes` to `router.push`/`replace`.

@@ -1,34 +1,24 @@
 # Page Transition Images
 
-This folder contains images used for the page transition effect.
+Sources and optimized assets for the page-wipe rain effect.
 
-## Required Images
+## Originals (do not edit)
 
-The transition effect cycles through 8 images rapidly (60ms each):
+- `blue_hold.png`, `green_hold.png`, `yellow_hold.png`, `plastic_hold1.png` —
+  climbing holds with alpha.
+- `rock1.png` — rock source (cyan background removed via local u2net model at
+  asset-prep time).
 
-1. `hold1.jpg` - Climbing hold image
-2. `hold2.jpg` - Climbing hold image
-3. `rock1.jpg` - Rock texture/surface
-4. `hold3.jpg` - Climbing hold image
-5. `rock2.jpg` - Rock texture/surface
-6. `hold4.jpg` - Climbing hold image
-7. `rock3.jpg` - Rock texture/surface
-8. `hold5.jpg` - Climbing hold image
+## Optimized assets used at runtime
 
-## Image Specifications
+`rain-{blue,green,yellow,plastic,rock}.webp` — alpha-trimmed, ≤256px longest
+side, WebP q80. The rain effect loads only these, preloaded with
+`media="(prefers-reduced-motion: no-preference)"`.
 
-- **Format**: JPG (for smaller file size and faster loading)
-- **Recommended size**: 1920x1080px or similar (will be scaled to fit)
-- **Content**: Close-up shots of climbing holds and rock textures
-- **Style**: High contrast images work best with the dark overlay effect
+## Behavior
 
-## Sourcing Images
-
-You can use:
-- Your own climbing photos
-- Stock photos from sites like Unsplash, Pexels (search "climbing holds", "rock climbing texture")
-- AI-generated images
-
-## Fallback Behavior
-
-If images fail to load, they will be hidden automatically. The transition will still work with a dark fade effect.
+Two bursts of hold/rock pieces fall during `page-nav` view transitions (12
+pieces desktop, 7 on portrait phones ≤767px). No bouncing; each piece starts
+above and exits below the viewport. Reduced-motion users get no rain and a
+transparent curtain. If a WebP fails to load its group simply paints nothing;
+the wipe still works.

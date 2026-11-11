@@ -871,15 +871,25 @@ video {
 }
 
 :root:active-view-transition-type(page-nav)::view-transition {
+	inset: 0 !important;
+	width: 100vw !important;
+	height: 100vh !important;
+	overflow: hidden;
+}
+
+:root:active-view-transition-type(page-nav)::view-transition-group(vt-trigger) {
 	background: var(--color-brand-red);
 	inset: 0 !important;
 	width: 100vw !important;
 	height: 100vh !important;
+	transform: none !important;
+	z-index: 0;
 	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) 600ms both;
 }
 
 :root:active-view-transition-type(page-nav)::view-transition-group(root) {
 	opacity: 1 !important;
+	z-index: 1;
 }
 
 :root:active-view-transition-type(page-nav)::view-transition-old(root) {
@@ -895,13 +905,22 @@ video {
 	}
 }
 
+@keyframes page-rain-fall {
+	from {
+		transform: translate3d(var(--rain-x), -12vh, 0) rotate(var(--rain-from));
+	}
+	to {
+		transform: translate3d(var(--rain-to-x), 112vh, 0) rotate(var(--rain-to));
+	}
+}
+
 :root:active-view-transition .lab-rise,
 :root:active-view-transition .lab-fade {
 	animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	:root:active-view-transition-type(page-nav)::view-transition {
+	:root:active-view-transition-type(page-nav)::view-transition-group(vt-trigger) {
 		background: transparent;
 	}
 

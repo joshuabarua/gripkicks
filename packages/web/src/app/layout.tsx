@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { ViewTransition } from "react";
 import AppShell from "@/components/AppShell";
 import WipeTrigger from "@/components/ui/WipeTrigger";
+import PageTransitionRain from "@/components/ui/PageTransitionRain";
 
 const dmMono = localFont({
   src: [
@@ -32,6 +33,7 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`min-h-screen bg-background antialiased ${dmMono.variable} ${amatic.variable} ${soCloudy.variable}`}>
         <WipeTrigger />
+        <PageTransitionRain />
         <ViewTransition default="none">
           <AppShell>{children}</AppShell>
         </ViewTransition>
