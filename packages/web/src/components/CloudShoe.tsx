@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { memo, useEffect, useId, useRef, useState } from 'react';
-import { ChevronDown, Ellipsis, Feather, Pencil, Shield, Star, Trash2, Zap } from 'lucide-react';
+import { ChevronDown, Ellipsis, Feather, Pencil, Shield, Star, Trash2, X, Zap } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo, hasBrandLogo } from "@/components/stash/BrandLogo";
 import type { UserShoe } from "@/types/api";
@@ -147,10 +147,62 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
     setExpanded(false);
   }
 
+  const shoeVisual = (
+    <>
+      {cardLabel && (
+        <div className="absolute left-3 top-3 rounded-sm border border-white/9 bg-black/65 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
+          {cardLabel}
+        </div>
+      )}
+      {isInView && (
+        <ShoeImage
+          brand={brand}
+          shoeName={name}
+          imageUrl={imageUrl}
+          slug={slug}
+          className="object-contain transition-transform duration-500 group-hover:scale-[1.035]"
+          transformation={[{
+            height: 220,
+            width: 320,
+            crop: "at_max",
+            cropMode: "pad_resize",
+            format: "png",
+            quality: 82,
+          }]}
+          gender={gender}
+        />
+      )}
+      {hasBrandLogo(brand) && (
+        <TooltipProvider>
+          <Tooltip delayDuration={150}>
+            <TooltipTrigger asChild>
+              <span
+                role="img"
+                tabIndex={0}
+                aria-label={`${brand} brand`}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); }}
+                className="absolute bottom-3 left-3 flex h-7 w-24 cursor-default items-center justify-start px-1"
+              >
+                <BrandLogo brand={brand} size="sm" suppressTitle className="h-5 w-20" />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-64 px-4 py-3">
+              <p className="lab-title text-xs text-white">{brand}</p>
+              {getBrandDescription(brand) && (
+                <p className="mt-1 font-mono text-xs leading-relaxed">{getBrandDescription(brand)}</p>
+              )}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+    </>
+  );
+
   return (
     <motion.article
       ref={cardRef}
-      className="group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-colors duration-300 hover:border-white/50 focus-within:border-white/50"
+      className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-colors duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''}`}
       {...(expanded ? {} : { whileHover: { y: -3 } })}
     >
       <div className="flex min-h-11 items-center justify-between gap-3 border-b border-white/20 px-4 py-2.5">
@@ -180,7 +232,18 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
               </Tooltip>
             )}
           </TooltipProvider>
-          {!expanded && (
+          {expanded ? (
+            <button
+              type="button"
+              aria-expanded="true"
+              aria-controls={detailsId}
+              aria-label={`Hide details for ${brand} ${name}`}
+              onClick={() => setExpanded(false)}
+              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm border border-white/10 bg-white/6 text-brand-chalk transition-colors hover:bg-white/15 focus-visible:outline-brand-chalk"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          ) : (
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger
                 aria-label={`Options for ${brand} ${name}`}
@@ -207,139 +270,108 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
         </div>
       </div>
 
-      <button
-        type="button"
-        aria-expanded={expanded}
-        aria-controls={detailsId}
-        aria-label={expanded ? `Hide details for ${brand} ${name}` : `Show details for ${brand} ${name}`}
-        onClick={() => setExpanded((value) => !value)}
-        className="block w-full text-left outline-hidden focus-visible:border-brand-red"
-      >
-        <div className="relative flex aspect-[16/10] items-center justify-center border-b border-white/20 bg-brand-soft-surface p-4">
-          {cardLabel && (
-            <div className="absolute left-3 top-3 rounded-sm border border-white/9 bg-black/65 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
-              {cardLabel}
-            </div>
-          )}
-          {isInView && (
-            <ShoeImage
-              brand={brand}
-              shoeName={name}
-              imageUrl={imageUrl}
-              slug={slug}
-              className="object-contain transition-transform duration-500 group-hover:scale-[1.035]"
-              transformation={[{
-                height: 220,
-                width: 320,
-                crop: "at_max",
-                cropMode: "pad_resize",
-                format: "png",
-                quality: 82,
-              }]}
-              gender={gender}
-            />
-          )}
-          {hasBrandLogo(brand) && (
-            <TooltipProvider>
-              <Tooltip delayDuration={150}>
-                <TooltipTrigger asChild>
-                  <span
-                    role="img"
-                    tabIndex={0}
-                    aria-label={`${brand} brand`}
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); }}
-                    className="absolute bottom-3 left-3 flex h-7 w-24 cursor-default items-center justify-start px-1"
-                  >
-                    <BrandLogo brand={brand} size="sm" suppressTitle className="h-5 w-20" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-64 px-4 py-3">
-                  <p className="lab-title text-xs text-white">{brand}</p>
-                  {getBrandDescription(brand) && (
-                    <p className="mt-1 font-mono text-xs leading-relaxed">{getBrandDescription(brand)}</p>
-                  )}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between gap-3 p-4">
-          {hasRatings ? (
-            <RatingIcons comfort={shoe.comfortScore} performance={shoe.performanceRating} durability={shoe.durabilityRating} className="min-w-0" />
-          ) : (
-            <p className="min-w-0 truncate font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/85">Add ratings</p>
-          )}
-          <ChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 text-brand-putty transition-transform duration-300 motion-reduce:transform-none ${expanded ? 'rotate-180' : ''}`} />
-        </div>
-      </button>
-
       <AnimatePresence initial={false}>
-        {expanded && (
+        {!expanded ? (
+          <motion.button
+            key="collapsed"
+            type="button"
+            aria-expanded="false"
+            aria-controls={detailsId}
+            aria-label={`Show details for ${brand} ${name}`}
+            onClick={() => setExpanded(true)}
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.12 } }}
+            className="block w-full text-left outline-hidden focus-visible:border-brand-red"
+          >
+            <div className="relative flex aspect-[16/10] items-center justify-center border-b border-white/20 bg-brand-soft-surface p-4">
+              {shoeVisual}
+            </div>
+            <div className="flex items-center justify-between gap-3 p-4">
+              {hasRatings ? (
+                <RatingIcons comfort={shoe.comfortScore} performance={shoe.performanceRating} durability={shoe.durabilityRating} className="min-w-0" />
+              ) : (
+                <p className="min-w-0 truncate font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/85">Add ratings</p>
+              )}
+              <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-brand-putty" />
+            </div>
+          </motion.button>
+        ) : (
           <motion.div
             key="details"
             id={detailsId}
-            initial={reduceMotion ? { height: 'auto' } : { height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={reduceMotion ? { height: 'auto', opacity: 1, transition: { duration: 0 } } : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.28 }}
-            className="overflow-hidden border-t border-white/20"
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, transition: { duration: 0.12 } }}
+            transition={{ duration: 0.22 }}
           >
-            <div className="space-y-4 p-4">
-              <div>
-                <p className="mb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">About this shoe</p>
-                <p className="font-mono text-xs leading-relaxed text-brand-putty">
-                  {getShoeDescription(details)}
-                </p>
-              </div>
-
-              <div>
-                <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Stats</p>
-                <div className="space-y-3.5">
-                  {statSliders.map(({ label, field, icon, value }) => (
-                    <StatSlider key={label} label={label} icon={icon} value={value} onCommit={onRate ? (v) => onRate(field, v) : undefined} />
-                  ))}
+            <div className="grid md:grid-cols-2">
+              <div className="border-b border-white/20 md:border-b-0 md:border-r">
+                <div className="relative flex aspect-[16/10] items-center justify-center bg-brand-soft-surface p-6">
+                  {shoeVisual}
+                </div>
+                <div className="grid grid-cols-2 gap-3 p-4">
+                  <div>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Size</span>
+                    <button type="button" onClick={onEdit} className="mt-1.5 flex w-full items-center justify-between rounded-md border border-white/20 bg-white/2.5 px-3 py-2.5 font-mono text-xs text-brand-chalk transition-colors hover:bg-white/5">
+                      {shoe.size || 'Select'}
+                      <ChevronDown className="h-3.5 w-3.5 text-brand-putty" />
+                    </button>
+                  </div>
+                  <div>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Condition</span>
+                    <button type="button" onClick={onEdit} className="mt-1.5 flex w-full items-center justify-between rounded-md border border-white/20 bg-white/2.5 px-3 py-2.5 font-mono text-xs text-brand-chalk transition-colors hover:bg-white/5">
+                      {shoe.condition ? formatCondition(shoe.condition) : 'Select condition'}
+                      <ChevronDown className="h-3.5 w-3.5 text-brand-putty" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-white/20 bg-white/20">
-                <div className="bg-brand-base px-3 py-2.5">
-                  <dt className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Size</dt>
-                  <dd className="mt-1 truncate font-mono text-xs font-medium text-brand-chalk">{shoe.size || 'Not set'}</dd>
-                </div>
-                <div className="bg-brand-base px-3 py-2.5">
-                  <dt className="font-mono text-[11px] uppercase tracking-[0.13em] text-brand-putty/85">Condition</dt>
-                  <dd className="mt-1 truncate font-mono text-xs font-medium text-brand-chalk">{formatCondition(shoe.condition)}</dd>
-                </div>
-              </dl>
-
-              {specTags.length > 0 && (
+              <div className="space-y-5 p-4 md:p-6">
                 <div>
-                  <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Tags</p>
-                  <ul aria-label="Shoe specs" className="flex flex-wrap gap-1.5">
-                    {specTags.map((tag) => (
-                      <li key={tag} className="rounded-full border border-white/15 bg-black/30 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-brand-putty">
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="mb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">About this shoe</p>
+                  <p className="font-mono text-xs leading-relaxed text-brand-putty">
+                    {getShoeDescription(details)}
+                  </p>
                 </div>
-              )}
 
-              <div className="flex flex-wrap gap-2 border-t border-white/20 pt-3">
-                <button type="button" onClick={onEdit} className="flex min-h-9 items-center gap-1.5 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
-                  <Pencil className="h-3 w-3" /> Edit
-                </button>
-                <button type="button" aria-pressed={shoe.isFavourite === true} onClick={onToggleFavourite} className="flex min-h-9 items-center gap-1.5 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
-                  <Star className={`h-3 w-3 ${shoe.isFavourite ? 'fill-current' : ''}`} /> {shoe.isFavourite ? 'Unfavourite' : 'Favourite'}
-                </button>
-                <button type="button" onClick={onOpenStats} className="min-h-9 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
-                  Full stats
-                </button>
-                <button type="button" onClick={onRemove} className="flex min-h-9 items-center gap-1.5 rounded-md border border-brand-red/35 bg-brand-red/8 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-red transition-colors hover:bg-brand-red/[0.14]">
-                  <Trash2 className="h-3 w-3" /> Remove
-                </button>
+                <div>
+                  <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Stats</p>
+                  <div className="space-y-3.5">
+                    {statSliders.map(({ label, field, icon, value }) => (
+                      <StatSlider key={label} label={label} icon={icon} value={value} onCommit={onRate ? (v) => onRate(field, v) : undefined} />
+                    ))}
+                  </div>
+                </div>
+
+                {specTags.length > 0 && (
+                  <div>
+                    <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Tags</p>
+                    <ul aria-label="Shoe specs" className="flex flex-wrap gap-1.5">
+                      {specTags.map((tag) => (
+                        <li key={tag} className="rounded-full border border-white/15 bg-black/30 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-brand-putty">
+                          {tag}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap gap-2 border-t border-white/20 pt-3">
+                  <button type="button" onClick={onEdit} className="flex min-h-9 items-center gap-1.5 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
+                    <Pencil className="h-3 w-3" /> Edit
+                  </button>
+                  <button type="button" aria-pressed={shoe.isFavourite === true} onClick={onToggleFavourite} className="flex min-h-9 items-center gap-1.5 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
+                    <Star className={`h-3 w-3 ${shoe.isFavourite ? 'fill-current' : ''}`} /> {shoe.isFavourite ? 'Unfavourite' : 'Favourite'}
+                  </button>
+                  <button type="button" onClick={onOpenStats} className="min-h-9 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
+                    Full stats
+                  </button>
+                  <button type="button" onClick={onRemove} className="flex min-h-9 items-center gap-1.5 rounded-md border border-brand-red/35 bg-brand-red/8 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-red transition-colors hover:bg-brand-red/[0.14]">
+                    <Trash2 className="h-3 w-3" /> Remove
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
