@@ -98,7 +98,7 @@ experience.
 Technical/precise with fluidity/organic elements. The UI leverages an
 orientation-based fluid responsive design system, avoiding rigid breakpoints for
 a seamless scaling experience. The visual language includes a bold orange accent
-(`hsl(17, 83%, 54%)`), distinct custom typography (`amatic`, `dm-mono`,
+(`hsl(17, 83%, 54%)`), distinct custom typography (`dm-mono`,
 `so-cloudy`), and engaging interactive states like 3D perspective hovers and
 slow-spinning gradients. It balances high-precision data display with organic,
 flowing interactions.
@@ -118,7 +118,7 @@ flowing interactions.
    primary orange accent pops and draws attention to key interactions, while
    letting the 3D models and shoe imagery take center stage.
 5. **Distinctive Typography**: Thoughtfully apply the custom font stack
-   (`dm-mono` for body, `amatic` for headings, `so-cloudy` in Sanctuary) to
+   (`dm-mono` for body and headings, `so-cloudy` in Sanctuary) to
    maintain the brand's unique personality.
 
 ### Constraints

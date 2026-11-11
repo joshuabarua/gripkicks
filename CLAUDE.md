@@ -19,7 +19,7 @@ experience.
 Technical/precise with fluidity/organic elements. The UI leverages an
 orientation-based fluid responsive design system, avoiding rigid breakpoints for
 a seamless scaling experience. The visual language includes a bold orange accent
-(`hsl(17, 83%, 54%)`), distinct custom typography (amatic headings, DM Mono
+(`hsl(17, 83%, 54%)`), distinct custom typography (uppercase DM Mono headings via `lab-title`, DM Mono
 body; so-cloudy only in Sanctuary), and engaging interactive states like 3D
 perspective hovers and slow-spinning gradients. It balances high-precision data
 display with organic, flowing interactions.
@@ -38,10 +38,10 @@ display with organic, flowing interactions.
 4. **Bold Contrast**: Leverage the dark/light mode foundations, ensuring the
    primary orange accent pops and draws attention to key interactions, while
    letting the 3D models and shoe imagery take center stage.
-5. **Two-Font Typography**: Use Amatic for headings and DM Mono (`font-mono`)
-   for all body copy, labels, data and controls. So Cloudy is reserved for
-   Sanctuary only (its page title and Sanctuary dialogs). Do not load or use
-   Sora, Basteleur or Tanker.
+5. **Two-Font Typography**: Headings use the `lab-title` utility (uppercase
+   DM Mono); use DM Mono (`font-mono`) for all body copy, labels, data and
+   controls. So Cloudy is reserved for Sanctuary only (its page title and
+   Sanctuary dialogs). Do not load or use Sora, Basteleur or Tanker.
 
 ### Constraints
 

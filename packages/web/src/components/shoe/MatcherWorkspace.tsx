@@ -38,7 +38,7 @@ export function SoleMateContent({ matches, isLoading, hasProfile }: { matches: S
     return (
       <section className="lab-card p-fluid-xl">
         <Footprints aria-hidden="true" className="mb-fluid-md h-8 w-8 text-brand-putty" />
-        <h2 className="font-amatic text-fluid-2xl">Set up your foot profile</h2>
+        <h2 className="lab-title text-fluid-lg">Set up your foot profile</h2>
         <p className="mt-3 max-w-lg font-mono text-base leading-relaxed text-brand-putty">Your foot shape and volume are needed to find climbers with the same fit.</p>
         <Link href="/footlab" className="lab-button mt-fluid-lg">Set up foot profile</Link>
       </section>
@@ -48,7 +48,7 @@ export function SoleMateContent({ matches, isLoading, hasProfile }: { matches: S
     return (
       <section className="lab-card p-fluid-xl">
         <Users aria-hidden="true" className="mb-fluid-md h-8 w-8 text-brand-putty" />
-        <h2 className="font-amatic text-fluid-2xl">No sole mates yet</h2>
+        <h2 className="lab-title text-fluid-lg">No sole mates yet</h2>
         <p className="mt-3 max-w-lg font-mono text-base leading-relaxed text-brand-putty">No climbers with your exact foot profile have rated shoes above 8.5 yet.</p>
       </section>
     );
@@ -56,7 +56,7 @@ export function SoleMateContent({ matches, isLoading, hasProfile }: { matches: S
   return (
     <div className="space-y-fluid-xl">
       <header className="lab-card lab-card-active lab-rise p-fluid-lg" style={riseDelay(1)}>
-        <h2 className="font-amatic text-fluid-2xl">Sole Mate</h2>
+        <h2 className="lab-title text-fluid-lg">Sole Mate</h2>
         <p className="mt-2 font-mono text-base leading-relaxed text-brand-chalk">{matches.length} {matches.length === 1 ? "climber" : "climbers"} with your foot profile. Shoes they rate highly.</p>
       </header>
       <div className="grid items-start gap-fluid-lg xl:grid-cols-2">{matches.map((match, index) => <SoleMateCard key={match.user._id} match={match} index={index} />)}</div>
@@ -87,7 +87,7 @@ function SoleMateCard({ match, index }: { match: SoleMateClimberMatch; index: nu
               <h4 className="mt-1 wrap-break-word font-mono text-base font-semibold">{rating.shoe.name}</h4>
             </div>
             <div className="col-start-2 flex items-baseline gap-2 font-mono sm:col-auto sm:block sm:text-right">
-              <p className="font-amatic text-2xl tabular-nums">{rating.matchScore}%</p>
+              <p className="font-mono text-2xl tabular-nums">{rating.matchScore}%</p>
               <p className="lab-label mt-1">Match</p>
             </div>
           </li>

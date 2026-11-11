@@ -38,6 +38,22 @@ describe("site typography", () => {
     }
   });
 
+  it("never uses the removed Amatic font", () => {
+    for (const file of files) {
+      const content = readFileSync(path.join(SRC_ROOT, file), "utf8");
+      expect(content, file).not.toContain("font-amatic");
+      expect(content, file).not.toContain("--font-amatic");
+      expect(content, file).not.toContain("Amatic-Bold.ttf");
+    }
+  });
+
+  it("defines lab-title as uppercase DM Mono", () => {
+    const content = readFileSync(path.join(SRC_ROOT, "app/globals.css"), "utf8");
+    const block = content.match(/@utility lab-title \{([^}]*)\}/)?.[1] ?? "";
+    expect(block).toContain("font-mono");
+    expect(block).toContain("uppercase");
+  });
+
   it("keeps So Cloudy inside Sanctuary files only", () => {
     for (const file of files) {
       const content = readFileSync(path.join(SRC_ROOT, file), "utf8");

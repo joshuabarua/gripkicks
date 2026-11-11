@@ -95,7 +95,7 @@ export default function NavLinks({ footerAction, profileSlot }: NavLinksProps) {
                         exit="exit"
                         variants={perspectiveVariants}
                     >
-                        <Link href={link.href} className="font-amatic text-xl uppercase tracking-wider nav-link-item group">
+                        <Link href={link.href} className="lab-title text-base tracking-wider nav-link-item group">
                             {link.title}
                         </Link>
                     </motion.div>

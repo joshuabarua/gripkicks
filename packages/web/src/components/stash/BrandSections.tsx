@@ -7,8 +7,6 @@ import CloudShoe from "@/components/CloudShoe";
 import type { UserShoe } from "@/types/api";
 import type { SpecialLabelType } from "@/utils/specialLabels";
 import type { ShoeVariantGroup } from "@/utils/shoeVariants";
-import { BrandLogo } from "@/components/stash/BrandLogo";
-import { getBrandDescription } from "@/utils/sanctuaryDescriptions";
 
 interface BrandGroup {
   brand: string;
@@ -37,30 +35,13 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onOpenS
     });
   };
 
-  const allCollapsed = groups.length > 0 && groups.every((group) => collapsed.has(group.brand));
-  const allExpanded = groups.every((group) => !collapsed.has(group.brand));
-
-  const toolbarButton = "inline-flex min-h-9 items-center rounded-md border border-white/15 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5 disabled:pointer-events-none disabled:opacity-40";
-
   return (
     <div>
-      {groups.length > 0 && (
-        <div className="lab-fade mb-fluid-lg flex justify-end gap-2" style={{ "--rise-delay": "150ms" } as CSSProperties}>
-          <button type="button" disabled={allCollapsed} onClick={() => setCollapsed(new Set(groups.map((group) => group.brand)))} className={toolbarButton}>
-            Collapse all
-          </button>
-          <button type="button" disabled={allExpanded} onClick={() => setCollapsed(new Set())} className={toolbarButton}>
-            Expand all
-          </button>
-        </div>
-      )}
-
       <div className="grid gap-fluid-xl lg:grid-cols-2">
         {groups.map(({ brand, models }, brandIndex) => {
           const isCollapsed = collapsed.has(brand);
           const compact = models.length <= 2;
           const regionId = `brand-${brand.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
-          const brandDescription = getBrandDescription(brand);
           return (
             <section
               key={brand}
@@ -69,7 +50,7 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onOpenS
               className={`lab-rise ${compact ? "lg:col-span-1" : "lg:col-span-2"}`}
             >
               <div className="mb-fluid-lg flex items-center gap-fluid-md">
-                <h2 id={`${regionId}-title`} aria-label={brand}><BrandLogo brand={brand} /></h2>
+                <h2 id={`${regionId}-title`} className="lab-title shrink-0 text-fluid-2xl text-white">{brand}</h2>
                 <button
                   type="button"
                   aria-expanded={!isCollapsed}
@@ -95,11 +76,6 @@ const BrandSections = memo<BrandSectionsProps>(({ groups, specialLabels, onOpenS
                     transition={{ duration: 0.35 }}
                     className="overflow-hidden"
                   >
-                    {brandDescription && (
-                      <p className="mb-fluid-md max-w-2xl font-mono text-sm leading-relaxed text-brand-putty">
-                        {brandDescription}
-                      </p>
-                    )}
                     <div className={`grid items-start gap-fluid-lg ${compact ? "grid-cols-1 sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}`}>
                       {models.map((model) => (
                         <div key={model.groupKey} className="flex min-w-0 flex-col gap-fluid-md">

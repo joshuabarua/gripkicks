@@ -110,7 +110,7 @@ export function ProfileForm({
 
   return (
     <div className="lab-card max-w-2xl p-fluid-lg">
-      <h3 className="font-amatic text-fluid-3xl text-brand-chalk">Profile Settings</h3>
+      <h3 className="lab-title text-fluid-xl text-brand-chalk">Profile Settings</h3>
       <p className="mt-1 font-mono text-sm text-brand-putty">Update your profile information.</p>
       <div className="mt-6">
         {profileLoader.isLoading ? (

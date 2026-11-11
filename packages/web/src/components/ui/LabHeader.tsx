@@ -4,7 +4,7 @@ export function LabHeader({ title, description, actions }: { title: string; desc
   return (
     <div className="lab-rise mb-fluid-2xl flex flex-col gap-fluid-lg md:flex-row md:items-end md:justify-between">
       <div>
-        <h1 className="font-amatic text-fluid-8xl leading-none uppercase">{title}</h1>
+        <h1 className="lab-title text-fluid-4xl">{title}</h1>
         {description && (
           <p className="mt-4 max-w-lg font-mono text-fluid-lg text-brand-putty">{description}</p>
         )}

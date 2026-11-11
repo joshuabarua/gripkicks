@@ -65,7 +65,7 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
 
   return (
     <div className="lab-card max-w-2xl p-fluid-lg">
-      <h3 className="font-amatic text-fluid-3xl text-brand-chalk flex items-center gap-2">
+      <h3 className="lab-title text-fluid-xl text-brand-chalk flex items-center gap-2">
         <Mail className="h-6 w-6" />
         Change Email
       </h3>

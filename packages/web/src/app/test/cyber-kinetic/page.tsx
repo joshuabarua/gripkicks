@@ -35,7 +35,7 @@ export default function CyberKinetic() {
 
         <div className="flex flex-col md:flex-row justify-between items-end relative z-10">
           <div className="flex flex-col gap-0 max-w-4xl mix-blend-difference">
-            <h1 className="text-[12vw] leading-[0.75] font-amatic text-[#00FF41] uppercase mix-blend-plus-lighter tracking-tighter">
+            <h1 className="text-[12vw] leading-[0.75] font-mono text-[#00FF41] uppercase mix-blend-plus-lighter tracking-tighter">
               Dimensional
               <br />
               <span className="text-white">Analysis.</span>
@@ -52,7 +52,7 @@ export default function CyberKinetic() {
 
       <section className="relative px-8 py-32 z-10 w-full border-t border-[#333] bg-[#050505]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 max-w-[1800px] mx-auto">
-          <div className="col-span-1 lg:col-span-3 text-[#00FF41] text-xl font-amatic uppercase flex lg:items-start lg:justify-end">
+          <div className="col-span-1 lg:col-span-3 text-[#00FF41] text-xl font-mono uppercase flex lg:items-start lg:justify-end">
             {"// SYSTEM_MODULES"}
           </div>
 
@@ -65,7 +65,7 @@ export default function CyberKinetic() {
               <div key={item.num} className="group flex justify-between items-end border-b border-[#333] hover:border-[#00FF41] hover:bg-[#00FF41]/10 px-4 py-8 transition-colors cursor-crosshair">
                 <div>
                   <span className="text-xs text-[#555] mb-2 block tracking-widest">{item.num} /</span>
-                  <h2 className="font-amatic text-5xl md:text-7xl uppercase text-white group-hover:text-[#00FF41] transition-colors">{item.name}</h2>
+                  <h2 className="font-mono text-5xl md:text-7xl uppercase text-white group-hover:text-[#00FF41] transition-colors">{item.name}</h2>
                 </div>
                 <span className="text-[10px] tracking-widest text-[#888] group-hover:text-[#00FF41]">{item.stat}</span>
               </div>

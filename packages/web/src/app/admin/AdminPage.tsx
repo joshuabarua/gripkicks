@@ -136,7 +136,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-white text-center">
-          <h1 className="font-amatic text-fluid-4xl mb-2 text-brand-chalk">Access Denied</h1>
+          <h1 className="lab-title text-fluid-2xl mb-2 text-brand-chalk">Access Denied</h1>
           <p className="text-white/60">
             You need admin privileges to access this page.
           </p>
@@ -277,7 +277,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-background p-8 pt-24">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="font-amatic text-fluid-5xl text-brand-chalk">Admin Dashboard</h1>
+          <h1 className="lab-title text-fluid-2xl text-brand-chalk">Admin Dashboard</h1>
         </div>
 
         <div className="flex gap-2 mb-6">

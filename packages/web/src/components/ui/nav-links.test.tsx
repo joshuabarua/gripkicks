@@ -31,6 +31,14 @@ describe("NavLinks", () => {
     expect(screen.queryByRole("link", { name: /3d selector/i })).not.toBeInTheDocument();
   });
 
+  it("renders main link titles with lab-title", () => {
+    render(<NavLinks />);
+
+    const dashboard = screen.getByRole("link", { name: /dashboard/i });
+    expect(dashboard).toHaveClass("lab-title");
+    expect(dashboard).not.toHaveClass("font-mono");
+  });
+
   it("renders profileSlot between the main links and the footer", () => {
     render(<NavLinks profileSlot={<div>profile-slot</div>} />);
 

@@ -2,13 +2,14 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { memo, useEffect, useId, useRef, useState } from 'react';
-import { Check, ChevronDown, Pencil, Star, Trash2 } from 'lucide-react';
+import { Check, ChevronDown, Ellipsis, Pencil, Star, Trash2 } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
-import { BrandLogo } from "@/components/stash/BrandLogo";
+import { BrandLogo, hasBrandLogo } from "@/components/stash/BrandLogo";
 import type { UserShoe } from "@/types/api";
 import { getShoeProfileCompletion } from "@/utils/shoeProfile";
-import { getShoeDescription } from "@/utils/sanctuaryDescriptions";
+import { getBrandDescription, getShoeDescription } from "@/utils/sanctuaryDescriptions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface CloudShoeProps {
   shoe: UserShoe;
@@ -38,7 +39,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
   const imageUrl = details?.imageUrl;
   const slug = details?.slug;
   const gender = details?.gender;
-  const cardLabel = variantLabel?.trim() || details?.variantLabel?.trim() || (gender ? gender[0]!.toUpperCase() + gender.slice(1) : "Unisex");
+  const cardLabel = variantLabel?.trim() || details?.variantLabel?.trim() || null;
   const [isInView, setIsInView] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const cardRef = useRef<HTMLElement>(null);
@@ -84,6 +85,54 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
       className="group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-colors duration-300 hover:border-white/50 focus-within:border-white/50"
       {...(expanded ? {} : { whileHover: { y: -3 } })}
     >
+      <div className="flex min-h-11 items-center justify-between gap-3 border-b border-white/20 px-4 py-2.5">
+        <h3 className="truncate font-mono text-base font-semibold text-brand-chalk transition-colors group-hover:text-white">
+          {name}
+        </h3>
+        <div className="flex items-center gap-1.5">
+          <TooltipProvider>
+            {specialLabel && (
+              <Tooltip delayDuration={150}>
+                <TooltipTrigger asChild>
+                  <span role="img" aria-label={specialLabelTitles[specialLabel.type]} className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk">
+                    {specialLabel.icon}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>{specialLabelTitles[specialLabel.type]}</TooltipContent>
+              </Tooltip>
+            )}
+            {shoe.isFavourite && (
+              <Tooltip delayDuration={150}>
+                <TooltipTrigger asChild>
+                  <span role="img" aria-label="Favourite" className="flex h-6 w-6 items-center justify-center rounded-sm bg-brand-red text-black">
+                    <Star className="h-3 w-3 fill-current" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>Marked as favourite</TooltipContent>
+              </Tooltip>
+            )}
+          </TooltipProvider>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              aria-label={`Options for ${brand} ${name}`}
+              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm border border-white/10 bg-white/6 text-brand-chalk transition-colors hover:bg-white/15 focus-visible:outline-brand-chalk"
+            >
+              <Ellipsis className="h-3.5 w-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={onEdit}>
+                <Pencil className="h-3.5 w-3.5" />
+                Edit shoe
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={onRemove} className="text-brand-red focus:bg-brand-red/15 focus:text-brand-red">
+                <Trash2 className="h-3.5 w-3.5" />
+                Remove from sanctuary
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
       <button
         type="button"
         aria-expanded={expanded}
@@ -92,68 +141,12 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
         onClick={() => setExpanded((value) => !value)}
         className="block w-full text-left outline-hidden focus-visible:border-brand-red"
       >
-        <div className="flex min-h-11 items-center justify-between border-b border-white/20 px-4 py-2.5">
-          <BrandLogo brand={brand} size="sm" tooltip className="max-w-[70%]" />
-          <div className="flex items-center gap-1.5">
-            <TooltipProvider>
-              {specialLabel && (
-                <Tooltip delayDuration={150}>
-                  <TooltipTrigger asChild>
-                    <span role="img" aria-label={specialLabelTitles[specialLabel.type]} className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk">
-                      {specialLabel.icon}
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>{specialLabelTitles[specialLabel.type]}</TooltipContent>
-                </Tooltip>
-              )}
-              {shoe.isFavourite && (
-                <Tooltip delayDuration={150}>
-                  <TooltipTrigger asChild>
-                    <span role="img" aria-label="Favourite" className="flex h-6 w-6 items-center justify-center rounded-sm bg-brand-red text-black">
-                      <Star className="h-3 w-3 fill-current" />
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>Marked as favourite</TooltipContent>
-                </Tooltip>
-              )}
-              <Tooltip delayDuration={150}>
-                <TooltipTrigger asChild>
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Edit ${brand} ${name}`}
-                    onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); onEdit(); } }}
-                    className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm border border-white/10 bg-white/6 text-brand-chalk transition-colors hover:bg-white/15"
-                  >
-                    <Pencil className="h-3 w-3" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>Edit shoe</TooltipContent>
-              </Tooltip>
-              <Tooltip delayDuration={150}>
-                <TooltipTrigger asChild>
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Remove ${brand} ${name}`}
-                    onClick={(e) => { e.stopPropagation(); onRemove(); }}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); onRemove(); } }}
-                    className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm border border-brand-red/30 bg-white/6 text-brand-red transition-colors hover:bg-brand-red/15"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>Remove from sanctuary</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-
         <div className="relative flex aspect-[16/10] items-center justify-center border-b border-white/20 bg-brand-soft-surface p-4">
-          <div className="absolute left-3 top-3 rounded-sm border border-white/9 bg-black/65 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
-            {cardLabel}
-          </div>
+          {cardLabel && (
+            <div className="absolute left-3 top-3 rounded-sm border border-white/9 bg-black/65 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/90">
+              {cardLabel}
+            </div>
+          )}
           {isInView && (
             <ShoeImage
               brand={brand}
@@ -172,17 +165,36 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
               gender={gender}
             />
           )}
+          {hasBrandLogo(brand) && (
+            <TooltipProvider>
+              <Tooltip delayDuration={150}>
+                <TooltipTrigger asChild>
+                  <span
+                    role="img"
+                    tabIndex={0}
+                    aria-label={`${brand} brand`}
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); }}
+                    className="absolute bottom-3 left-3 flex h-9 w-24 cursor-default items-center justify-center rounded-sm border border-white/10 bg-black/65 px-2"
+                  >
+                    <BrandLogo brand={brand} size="sm" suppressTitle className="h-5 w-20" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-64 px-4 py-3">
+                  <p className="lab-title text-xs text-white">{brand}</p>
+                  {getBrandDescription(brand) && (
+                    <p className="mt-1 font-mono text-xs leading-relaxed">{getBrandDescription(brand)}</p>
+                  )}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
 
         <div className="flex items-center justify-between gap-3 p-4">
-          <div className="min-w-0">
-            <h3 className="truncate font-mono text-base font-semibold text-brand-chalk transition-colors group-hover:text-white">
-              {name}
-            </h3>
-            <p className="mt-1.5 truncate font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/85">
-              {ratedItems.length ? ratedItems.map(([label, value]) => `${label} ${value}`).join(' · ') : 'Add ratings'}
-            </p>
-          </div>
+          <p className="min-w-0 truncate font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/85">
+            {ratedItems.length ? ratedItems.map(([label, value]) => `${label} ${value}`).join(' · ') : 'Add ratings'}
+          </p>
           <ChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 text-brand-putty transition-transform duration-300 motion-reduce:transform-none ${expanded ? 'rotate-180' : ''}`} />
         </div>
       </button>
@@ -220,7 +232,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
                   {ratingItems.map(([label, value]) => (
                     <div key={label} className="rounded-md border border-white/20 bg-white/2.5 px-2 py-2 text-center">
                       <span className="block font-mono text-[11px] tracking-[0.12em] text-brand-putty/85">{label}</span>
-                      <strong className={`mt-0.5 block font-normal text-brand-chalk ${value === undefined ? 'font-mono text-[11px]' : 'font-amatic text-lg'}`}>{value ?? 'Not rated'}</strong>
+                      <strong className={`mt-0.5 block font-normal text-brand-chalk ${value === undefined ? 'font-mono text-[11px]' : 'font-mono text-lg'}`}>{value ?? 'Not rated'}</strong>
                     </div>
                   ))}
                 </div>

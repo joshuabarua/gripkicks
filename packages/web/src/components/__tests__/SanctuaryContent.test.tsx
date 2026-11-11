@@ -1,5 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen, waitForElementToBeRemoved, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import CloudShoe from "@/components/CloudShoe";
 import { BrandSections } from "@/components/stash/BrandSections";
@@ -39,12 +40,19 @@ describe("Sanctuary content", () => {
     expect(screen.getByText("bouldering")).toBeInTheDocument();
   });
 
-  it("exposes edit, favourite, full stats and remove actions when expanded", () => {
+  it("exposes edit and remove actions from the options menu", async () => {
+    const user = userEvent.setup();
     render(<CloudShoe shoe={shoe} {...cardProps} />);
-    fireEvent.click(screen.getByRole("button", { name: "Edit Scarpa Drago" }));
+    await user.click(screen.getByRole("button", { name: "Options for Scarpa Drago" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit shoe" }));
     expect(onEdit).toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "Remove Scarpa Drago" }));
+    await user.click(screen.getByRole("button", { name: "Options for Scarpa Drago" }));
+    await user.click(screen.getByRole("menuitem", { name: "Remove from sanctuary" }));
     expect(onRemove).toHaveBeenCalled();
+  });
+
+  it("exposes favourite and full stats actions when expanded", () => {
+    render(<CloudShoe shoe={shoe} {...cardProps} />);
     fireEvent.click(screen.getByRole("button", { name: "Show details for Scarpa Drago" }));
     fireEvent.click(screen.getByRole("button", { name: "Favourite" }));
     expect(screen.getByRole("button", { name: "Favourite" })).toHaveAttribute("aria-pressed", "false");
@@ -68,10 +76,11 @@ describe("Sanctuary content", () => {
     expect(screen.queryByText("Men")).toBeNull();
   });
 
-  it("falls back to a single gender label when no variant label exists", () => {
+  it("shows no gender label when no variant label exists", () => {
     const noVariant: UserShoe = { ...shoe, shoe: { ...shoe.shoe!, gender: "men" } };
     render(<CloudShoe shoe={noVariant} {...cardProps} />);
-    expect(screen.getAllByText("Men")).toHaveLength(1);
+    expect(screen.queryByText("Men", { exact: true })).toBeNull();
+    expect(screen.queryByText("Unisex", { exact: true })).toBeNull();
   });
 
   it("lets each card own its grouped variant label instead of repeating it above the card", () => {
@@ -96,6 +105,14 @@ describe("Sanctuary content", () => {
     expect(screen.getAllByText("Women")).toHaveLength(1);
   });
 
+  it("shows brand descriptions in the card logo tooltip instead of the section", async () => {
+    const user = userEvent.setup();
+    render(<BrandSections groups={groups(shoe)} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
+    expect(screen.queryByText(getBrandDescription("Scarpa")!)).toBeNull();
+    await user.hover(screen.getByRole("img", { name: "Scarpa brand" }));
+    expect(await screen.findAllByText(getBrandDescription("Scarpa")!)).not.toHaveLength(0);
+  });
+
   it("does not render brand content when the collection is empty", () => {
     render(<BrandSections groups={[]} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
     expect(screen.queryByRole("heading")).toBeNull();
@@ -110,20 +127,6 @@ describe("Sanctuary content", () => {
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     await waitForElementToBeRemoved(() => screen.queryByText("Drago"));
-    expect(screen.queryByText(getBrandDescription("Scarpa")!)).toBeNull();
-  });
-
-  it("collapses and expands every brand from the toolbar", async () => {
-    const twoBrands = [...groups(shoe), { brand: "Tenaya", models: [{ brand: "Tenaya", groupKey: "tenaya/ra", baseName: "Ra", variants: [{ item: { ...shoe, _id: "stash-9", shoe: { ...shoe.shoe!, name: "Ra" } }, variantLabel: "" }] }] }];
-    render(<BrandSections groups={twoBrands} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
-    const expandAll = screen.getByRole("button", { name: "Expand all" });
-    expect(expandAll).toBeDisabled();
-    fireEvent.click(screen.getByRole("button", { name: "Collapse all" }));
-    await waitForElementToBeRemoved(() => screen.queryByText("Drago"));
-    expect(screen.queryByText("Ra")).toBeNull();
-    expect(screen.getByRole("button", { name: "Collapse all" })).toBeDisabled();
-    fireEvent.click(expandAll);
-    expect(screen.getByText("Drago")).toBeInTheDocument();
   });
 
   it("places compact brands side by side at desktop widths", () => {
@@ -137,11 +140,10 @@ describe("Sanctuary content", () => {
     expect(screen.getByRole("region", { name: "Scarpa" })).toHaveClass("lg:col-span-2");
   });
 
-  it("only describes brands present in the collection", () => {
+  it("names brand sections without a description paragraph", () => {
     render(<BrandSections groups={groups(shoe)} specialLabels={{}} onOpenStats={onOpenStats} onEdit={onEdit} onToggleFavourite={onToggleFavourite} onRemove={onRemove} />);
     expect(screen.getByRole("heading", { name: "Scarpa" })).toBeInTheDocument();
-    expect(screen.getByText(getBrandDescription("Scarpa")!)).toBeInTheDocument();
-    expect(screen.queryByText(getBrandDescription("Tenaya")!)).toBeNull();
+    expect(screen.queryByText(getBrandDescription("Scarpa")!)).toBeNull();
   });
 
   it("updates descriptions and ratings when a stashed shoe changes", () => {

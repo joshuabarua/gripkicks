@@ -34,10 +34,10 @@ export function CommunityMilestone({ userCount }: { userCount?: number | undefin
     <section aria-labelledby="community-title" className="relative overflow-hidden border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div aria-hidden="true" className="absolute -right-24 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-brand-red/15 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-(--fluid-container-xl)">
-        <h2 id="community-title" className="font-amatic text-fluid-5xl leading-none">COMMUNITY BUILT</h2>
+        <h2 id="community-title" className="lab-title text-fluid-2xl">COMMUNITY BUILT</h2>
         {isLoaded ? (
           <div className="mt-fluid-md">
-            <p className="font-amatic text-fluid-6xl leading-none tabular-nums">{count}</p>
+            <p className="font-mono text-fluid-6xl leading-none tabular-nums">{count}</p>
             <p className="mt-2 font-mono text-sm text-brand-putty">
               {count === 1 ? "climber" : "climbers"} building the database
             </p>
@@ -79,7 +79,7 @@ export function CommunityMilestone({ userCount }: { userCount?: number | undefin
                         {reached ? <Unlock aria-hidden="true" className="h-4 w-4" /> : <Lock aria-hidden="true" className="h-4 w-4" />}
                       </div>
                       <div className="mt-5 space-y-1">
-                        <span className="block font-amatic text-2xl text-brand-chalk">{milestone.threshold}</span>
+                        <span className="block font-mono text-2xl text-brand-chalk">{milestone.threshold}</span>
                         <p className="font-mono text-sm text-white">{milestone.label}</p>
                         <p className="mx-auto max-w-[160px] font-mono text-xs text-brand-putty/70">{milestone.description}</p>
                         <p className="font-mono text-[11px] uppercase tracking-wider text-brand-putty/60">

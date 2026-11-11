@@ -60,7 +60,7 @@ export default function NavLogo() {
 
   if (highPerformanceMode) {
     return (
-      <span className="font-amatic text-fluid-2xl whitespace-nowrap">
+      <span className="font-mono text-fluid-2xl whitespace-nowrap">
         GripKicks
       </span>
     );

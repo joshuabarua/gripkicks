@@ -17,7 +17,7 @@ export function AuthPageLayout({ title, children }: AuthPageLayoutProps) {
 
         <div className="w-full max-w-md">
           <div className="lab-rise text-center mb-8" style={riseDelay(0)}>
-            <h1 className="font-amatic text-fluid-6xl uppercase">
+            <h1 className="lab-title text-fluid-4xl">
               {title}
             </h1>
           </div>

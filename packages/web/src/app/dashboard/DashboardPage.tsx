@@ -63,7 +63,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
             <section aria-labelledby="next-step-title" className="lab-card lab-card-active lab-rise flex flex-col justify-between gap-6 p-6 sm:flex-row sm:items-center sm:p-8">
               <div>
                 <p className="lab-label mb-2">Next step</p>
-                <h2 id="next-step-title" className="font-amatic text-3xl leading-tight">{nextAction.title}</h2>
+                <h2 id="next-step-title" className="lab-title text-xl">{nextAction.title}</h2>
                 <p className="mt-2 max-w-lg font-mono text-sm leading-relaxed text-brand-putty">{nextAction.description}</p>
               </div>
               <Link href={nextAction.href} className="lab-button shrink-0">
@@ -76,7 +76,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
                 <div key={metric.label} style={riseDelay(index + 1)} className="lab-card lab-rise min-w-0 p-4 sm:p-6">
                   <dt className="lab-label">{metric.label}</dt>
                   <dd className="mt-2">
-                    <span className={metric.value === "Not rated" ? "font-mono text-sm font-medium text-brand-chalk" : "font-amatic text-fluid-3xl leading-none tabular-nums"}>
+                    <span className={metric.value === "Not rated" ? "font-mono text-sm font-medium text-brand-chalk" : "font-mono text-fluid-3xl leading-none tabular-nums"}>
                       {metric.value}
                       {metric.label === "Avg comfort" && summary.rated > 0 && <span className="ml-1 font-mono text-sm text-brand-putty">/10</span>}
                     </span>
@@ -89,7 +89,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
               <section aria-labelledby="collection-title" style={riseDelay(4)} className="lab-card lab-rise min-w-0">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/6 p-5 sm:p-6">
-                  <h2 id="collection-title" className="font-amatic text-2xl">Your collection</h2>
+                  <h2 id="collection-title" className="lab-title text-lg">Your collection</h2>
                   <Link href="/stash" className="lab-button-ghost">
                     Open Sanctuary<ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                   </Link>
@@ -132,7 +132,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
 
               <section aria-labelledby="profile-title" style={riseDelay(5)} className="lab-card lab-rise p-5 sm:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 id="profile-title" className="font-amatic text-2xl">Foot profile</h2>
+                  <h2 id="profile-title" className="lab-title text-lg">Foot profile</h2>
                   {footProfile && <Link href="/footlab" aria-label="Edit foot profile" className="lab-button-ghost">Edit<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link>}
                 </div>
                 {footProfile ? (

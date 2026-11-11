@@ -181,7 +181,7 @@ export default function FootLabPage() {
           <section aria-labelledby="onboarding-prompt-title" style={riseDelay(1)} className="lab-card lab-card-active lab-rise mb-10 flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="lab-label mb-2">Onboarding</p>
-              <h2 id="onboarding-prompt-title" className="font-amatic text-2xl leading-tight">Finish setup</h2>
+              <h2 id="onboarding-prompt-title" className="lab-title text-lg">Finish setup</h2>
             </div>
             <Link href="/onboarding" className="lab-button shrink-0">Continue onboarding</Link>
           </section>
@@ -189,7 +189,7 @@ export default function FootLabPage() {
 
         <section className="mb-16">
           <div style={riseDelay(2)} className="lab-rise mb-8">
-            <h2 className="font-amatic text-2xl">Which toe is longest?</h2>
+            <h2 className="lab-title text-lg">Which toe is longest?</h2>
             <p className="font-mono text-sm text-brand-putty mt-0.5">Look at your bare foot from above and pick the closest match</p>
           </div>
 
@@ -209,7 +209,7 @@ export default function FootLabPage() {
                     <div className="mb-4 pt-2">
                       <ToeProfile shape={shape} active={isSelected} />
                     </div>
-                    <h3 className="font-amatic text-xl leading-none mb-1">{footShapeInfo[shape].name}</h3>
+                    <h3 className="lab-title text-base mb-1">{footShapeInfo[shape].name}</h3>
                     <p className="font-mono text-xs text-brand-putty leading-snug">{footShapeInfo[shape].description}</p>
                     <AnimatePresence>
                       {isSelected && (
@@ -230,7 +230,7 @@ export default function FootLabPage() {
 
         <section className="mb-16">
           <div style={riseDelay(8)} className="lab-rise mb-8">
-            <h2 className="font-amatic text-2xl">How full is your foot?</h2>
+            <h2 className="lab-title text-lg">How full is your foot?</h2>
             <p className="font-mono text-sm text-brand-putty mt-0.5">Think about your foot width and instep height</p>
           </div>
 
@@ -250,7 +250,7 @@ export default function FootLabPage() {
                     <div className="mb-5">
                       <VolumeArch volume={volume} active={isSelected} />
                     </div>
-                    <h3 className="font-amatic text-2xl leading-none mb-2">{footVolumeInfo[volume].name} Volume</h3>
+                    <h3 className="lab-title text-lg mb-2">{footVolumeInfo[volume].name} Volume</h3>
                     <p className="font-mono text-sm text-brand-putty leading-snug mb-2">{footVolumeInfo[volume].description}</p>
                     <AnimatePresence>
                       {isSelected && (
@@ -282,7 +282,7 @@ export default function FootLabPage() {
           >
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
               <div>
-                <p className="font-amatic text-xl capitalize">
+                <p className="font-mono text-xl capitalize">
                   {selectedFootShape} <span className="text-brand-putty">·</span> {selectedFootVolume} volume
                 </p>
                 <p className="font-mono text-xs text-brand-putty">

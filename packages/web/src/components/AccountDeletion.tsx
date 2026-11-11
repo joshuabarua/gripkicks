@@ -80,7 +80,7 @@ export function AccountDeletion() {
 
   return (
     <div className="lab-card max-w-2xl border-red-500/20 p-fluid-lg">
-      <h3 className="font-amatic text-fluid-3xl text-brand-chalk flex items-center gap-2">
+      <h3 className="lab-title text-fluid-xl text-brand-chalk flex items-center gap-2">
         <AlertTriangle className="h-6 w-6 text-red-500" />
         Delete Account
       </h3>

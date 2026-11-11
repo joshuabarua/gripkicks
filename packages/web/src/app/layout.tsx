@@ -14,11 +14,6 @@ const dmMono = localFont({
   variable: "--font-dm-mono",
 });
 
-const amatic = localFont({
-  src: "../../public/fonts/Amatic-Bold.ttf",
-  variable: "--font-amatic",
-});
-
 const soCloudy = localFont({
   src: "../../public/fonts/SoCloudy.otf",
   variable: "--font-so-cloudy",
@@ -31,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`min-h-screen bg-background antialiased ${dmMono.variable} ${amatic.variable} ${soCloudy.variable}`}>
+      <body className={`min-h-screen bg-background antialiased ${dmMono.variable} ${soCloudy.variable}`}>
         <WipeTrigger />
         <PageTransitionRain />
         <ViewTransition default="none">

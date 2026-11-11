@@ -18,7 +18,7 @@ import dynamic from "next/dynamic";
 const NavLogo = dynamic(() => import("@/components/3d/NavLogo"), {
   ssr: false,
   loading: () => (
-    <span className="font-amatic text-fluid-2xl whitespace-nowrap">GripKicks</span>
+    <span className="font-mono text-fluid-2xl whitespace-nowrap">GripKicks</span>
   ),
 });
 

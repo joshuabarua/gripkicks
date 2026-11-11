@@ -132,15 +132,28 @@ describe("Homepage clarity", () => {
       const svgs = link.querySelectorAll("svg");
       expect(svgs).toHaveLength(1);
       expect(svgs[0]).toHaveClass("lucide-arrow-up-right");
+      expect(svgs[0]).toHaveClass("h-5", "w-5");
     }
   });
 
-  it("restyles step cards as lab tiles while retaining Amatic titles and mono copy", () => {
+  it("keeps tool anchor cards compact with lab-title titles", () => {
+    render(<HomeCreative />);
+    const links = within(screen.getByRole("region", { name: "Tools" })).getAllByRole("link");
+    for (const link of links) {
+      expect(link).toHaveClass("min-h-28", "gap-fluid-md", "p-fluid-lg");
+      expect(link).not.toHaveClass("min-h-56");
+      const title = link.querySelector("h3");
+      expect(title).toHaveClass("lab-title");
+      expect(title).not.toHaveClass("font-mono");
+    }
+  });
+
+  it("restyles step cards as lab tiles while retaining lab-title headings and mono copy", () => {
     render(<HomeCreative />);
     const stepsRegion = screen.getByRole("region", { name: "How it works" });
     expect(stepsRegion).toHaveClass("bg-black");
     const section = within(stepsRegion);
-    expect(section.getByRole("heading", { name: "How it works" })).toHaveClass("font-amatic");
+    expect(section.getByRole("heading", { name: "How it works" })).toHaveClass("lab-title");
     expect(section.queryByText(/three simple steps/i)).toBeNull();
     const articles = section.getAllByRole("article");
     expect(articles).toHaveLength(3);
@@ -151,7 +164,7 @@ describe("Homepage clarity", () => {
       expect(section.queryByText(label)).toBeNull();
     }
     for (const title of ["Map your foot", "Rate your shoes", "Compare fits"]) {
-      expect(section.getByRole("heading", { name: title })).toHaveClass("font-amatic");
+      expect(section.getByRole("heading", { name: title })).toHaveClass("lab-title");
     }
     expect(section.getByText("Set your foot shape and volume.")).toHaveClass("font-mono");
   });

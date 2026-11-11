@@ -34,7 +34,7 @@ Use this as the visual source of truth for the product.
 
 | Role    | Recommendation               | Use                                   |
 | ------- | ---------------------------- | ------------------------------------- |
-| Display | Amatic                       | Homepage headings and hero statements |
+| Display | DM Mono uppercase            | Homepage headings and hero statements |
 | Body    | Sora                         | Reading copy, specs, controls         |
 | Utility | Sora uppercase with tracking | Labels and captions                   |
 

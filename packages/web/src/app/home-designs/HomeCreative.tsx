@@ -13,6 +13,9 @@ import { CommunityMilestone } from "@/components/CommunityMilestone";
 import { supportsWebGL } from "@/components/3d/webgl-utils";
 import { PageSurface } from "@/components/ui/PageSurface";
 import { CompareArrows, ScoreTag, ToeProfile } from "@/components/foot/FootGlyphs";
+import { BrandLogo, brandLogoNames } from "@/components/stash/BrandLogo";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { getBrandDescription } from "@/utils/sanctuaryDescriptions";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
@@ -80,6 +83,7 @@ export default function HomeCreative() {
     <ToolsSection key="tools" />,
     <VideoSection key="video" />,
     <CommunityMilestone key="milestones" userCount={countData?.count} />,
+    <BrandsSection key="brands" />,
   ];
 
   return (
@@ -164,6 +168,38 @@ function VideoSection() {
   );
 }
 
+function BrandsSection() {
+  return (
+    <section id="home-brands" aria-labelledby="brands-title" className="border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
+      <div className="mx-auto max-w-(--fluid-container-xl)">
+        <div className="mb-fluid-xl flex items-center gap-fluid-lg">
+          <h2 id="brands-title" className="lab-title text-fluid-2xl">Brands</h2>
+          <span aria-hidden="true" className="h-px flex-1 bg-white/10" />
+        </div>
+        <TooltipProvider>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {brandLogoNames.map((name, index) => (
+              <Tooltip key={name} delayDuration={150}>
+                <TooltipTrigger asChild>
+                  <div style={{ "--rise-delay": `${index * 40}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise flex h-28 cursor-default items-center justify-center p-fluid-md">
+                    <BrandLogo brand={name} size="lg" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-64 border border-white/10 bg-brand-surface px-4 py-3">
+                  <p className="lab-title text-sm text-white">{name}</p>
+                  {getBrandDescription(name) && (
+                    <p className="mt-1 font-mono text-xs leading-relaxed text-brand-putty">{getBrandDescription(name)}</p>
+                  )}
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </div>
+        </TooltipProvider>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorksSection() {
   const steps = [
     { title: "Map your foot", copy: "Set your foot shape and volume.", glyph: <div className="w-20"><ToeProfile shape="egyptian" active height={48} /></div> },
@@ -174,14 +210,14 @@ function HowItWorksSection() {
   return (
     <section id="home-steps" aria-labelledby="steps-title" className="scroll-mt-14 border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div className="mx-auto max-w-(--fluid-container-xl)">
-        <h2 id="steps-title" className="mb-fluid-2xl font-amatic text-fluid-5xl uppercase leading-none">How it works</h2>
+        <h2 id="steps-title" className="mb-fluid-2xl lab-title text-fluid-2xl">How it works</h2>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-4">
           {steps.map((step, index) => (
             <article key={step.title} style={{ "--rise-delay": `${index * 50}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise flex min-h-60 flex-col justify-center gap-fluid-xl p-fluid-xl">
               <div className="flex items-center gap-fluid-lg">
                 <div className="shrink-0">{step.glyph}</div>
                 <div className="min-w-0">
-                  <h3 className="wrap-break-word font-amatic text-fluid-3xl leading-tight text-white">{step.title}</h3>
+                  <h3 className="wrap-break-word lab-title text-fluid-lg text-white">{step.title}</h3>
                   <p className="mt-fluid-md font-mono text-sm leading-relaxed text-brand-putty">{step.copy}</p>
                 </div>
               </div>
@@ -205,15 +241,15 @@ function ToolsSection() {
     <section id="home-tools" aria-labelledby="tools-title" className="scroll-mt-14 border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div className="mx-auto max-w-(--fluid-container-xl)">
         <div className="mb-fluid-xl flex items-center gap-fluid-lg">
-          <h2 id="tools-title" className="font-amatic text-fluid-5xl uppercase leading-none">Tools</h2>
+          <h2 id="tools-title" className="lab-title text-fluid-2xl">Tools</h2>
           <span aria-hidden="true" className="h-px flex-1 bg-white/10" />
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           {tools.map((tool, index) => (
-            <Link key={tool.href} href={tool.href} style={{ "--rise-delay": `${index * 50}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise group flex min-h-56 min-w-0 flex-col justify-between gap-fluid-xl p-fluid-xl focus-visible:outline-brand-chalk">
+            <Link key={tool.href} href={tool.href} style={{ "--rise-delay": `${index * 50}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise group flex min-h-28 min-w-0 flex-col justify-between gap-fluid-md p-fluid-lg focus-visible:outline-brand-chalk">
               <div className="flex items-center justify-between gap-4">
-                <h3 className="wrap-break-word font-amatic text-fluid-4xl leading-none text-white">{tool.title}</h3>
-                <ArrowUpRight aria-hidden="true" className="h-8 w-8 shrink-0 text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
+                <h3 className="wrap-break-word lab-title text-fluid-lg text-white">{tool.title}</h3>
+                <ArrowUpRight aria-hidden="true" className="h-5 w-5 shrink-0 text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
               </div>
               <p className="max-w-sm font-mono text-sm leading-relaxed text-brand-putty">{tool.copy}</p>
             </Link>

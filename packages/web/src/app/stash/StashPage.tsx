@@ -5,7 +5,6 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
-import { Clock, Crown, Heart, Star } from "lucide-react";
 import { useRequireAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
 import type { UserShoe } from "@/types/api";
@@ -309,10 +308,12 @@ export default function ShoeSanctuaryPage() {
       return;
     }
     try {
-      await addToStash({
+      const userShoeId = await addToStash({
         userId: userData._id,
         shoeId: shoeId as Id<"shoes">,
       });
+      const catalogShoe = allShoes.find((shoe) => shoe._id === shoeId);
+      openShoeEditor({ _id: String(userShoeId), shoeId, ...(catalogShoe ? { shoe: catalogShoe } : {}) });
       setIsAddDialogOpen(false);
       setDialogSearchQuery("");
       setDialogSelectedBrand("all");
@@ -485,7 +486,7 @@ export default function ShoeSanctuaryPage() {
                 Shoe Sanctuary
               </h1>
 
-              <div className="flex flex-wrap items-center justify-between gap-fluid-md">
+              <div className="flex flex-wrap items-center justify-end gap-fluid-md">
                 {isPageLoading ? (
                   <StatsStripSkeleton />
                 ) : (
@@ -566,7 +567,7 @@ export default function ShoeSanctuaryPage() {
                 className="lab-rise flex flex-col items-center justify-center py-fluid-3xl text-center"
                 style={riseDelay(3)}
               >
-                <h3 className="font-amatic text-fluid-3xl text-white mb-fluid-xs">
+                <h3 className="lab-title text-fluid-xl text-white mb-fluid-xs">
                   NO SHOES YET
                 </h3>
                 <p className="font-mono text-brand-putty mb-fluid-md max-w-sm">
@@ -585,24 +586,6 @@ export default function ShoeSanctuaryPage() {
 
             {!isPageLoading && filteredShoes.length > 0 && (
               <>
-                <div aria-label="Badge key" className="lab-rise flex flex-wrap items-center gap-x-fluid-lg gap-y-2 font-mono text-[11px] uppercase tracking-wider text-brand-putty" style={riseDelay(3)}>
-                  <span className="flex items-center gap-2" title="Marked as favourite">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-sm bg-brand-red text-black"><Star aria-hidden="true" className="h-3 w-3 fill-current" /></span>
-                    Favourite
-                  </span>
-                  <span className="flex items-center gap-2" title="Highest comfort score in your collection">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk"><Heart aria-hidden="true" className="h-3 w-3" /></span>
-                    Most comfortable
-                  </span>
-                  <span className="flex items-center gap-2" title="Most worn shoe in your collection">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk"><Crown aria-hidden="true" className="h-3 w-3" /></span>
-                    Most worn
-                  </span>
-                  <span className="flex items-center gap-2" title="Oldest shoe in your collection">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-white/6 text-brand-chalk"><Clock aria-hidden="true" className="h-3 w-3" /></span>
-                    Oldest
-                  </span>
-                </div>
                 <BrandSections
                   groups={brandGroups}
                   specialLabels={specialLabels}

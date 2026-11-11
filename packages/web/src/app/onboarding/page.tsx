@@ -250,7 +250,7 @@ export default function OnboardingPage() {
             <motion.div key={currentStep} {...stepMotion}>
               {currentStep === "welcome" && (
                 <div className="text-center">
-                  <h1 className="font-amatic text-fluid-6xl mb-10">
+                  <h1 className="lab-title text-fluid-4xl mb-10">
                     WELCOME
                   </h1>
 
@@ -267,7 +267,7 @@ export default function OnboardingPage() {
 
               {currentStep === "foot-data" && (
                 <div className="lab-card p-fluid-xl">
-                  <h2 className="font-amatic text-fluid-5xl mb-8">FOOT SHAPE</h2>
+                  <h2 className="lab-title text-fluid-2xl mb-8">FOOT SHAPE</h2>
 
                   <div className="space-y-6">
                     <div>
@@ -373,7 +373,7 @@ export default function OnboardingPage() {
 
               {currentStep === "first-shoe" && (
                 <div className="lab-card p-fluid-xl">
-                  <h2 className="font-amatic text-fluid-5xl mb-8">
+                  <h2 className="lab-title text-fluid-2xl mb-8">
                     ADD YOUR FIRST SHOE
                   </h2>
 
@@ -563,7 +563,7 @@ export default function OnboardingPage() {
 
               {currentStep === "complete" && (
                 <div className="text-center">
-                  <h1 className="font-amatic text-fluid-6xl mb-10">
+                  <h1 className="lab-title text-fluid-4xl mb-10">
                     ALL SET
                   </h1>
 
@@ -582,7 +582,7 @@ export default function OnboardingPage() {
                           whileTap={{ scale: 0.98 }}
                           className="lab-card p-6 flex flex-col items-center gap-3 cursor-pointer"
                         >
-                          <span className="font-amatic text-lg text-brand-chalk">
+                          <span className="font-mono text-lg text-brand-chalk">
                             {item.label}
                           </span>
                         </motion.div>

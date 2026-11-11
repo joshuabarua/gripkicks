@@ -194,7 +194,7 @@ export default function ProfilePage() {
               size={160}
             />
             <div className="min-w-0">
-              <h2 className="truncate font-amatic text-3xl">{displayName}</h2>
+              <h2 className="truncate lab-title text-xl">{displayName}</h2>
               <p className="mt-1 truncate font-mono text-sm text-brand-putty">{displayEmail}</p>
             </div>
           </section>
@@ -207,7 +207,7 @@ export default function ProfilePage() {
                   <Link href="/footlab" className="lab-button-ghost">Set up</Link>
                 )}
               </div>
-              <p className="mt-3 font-amatic text-2xl capitalize">
+              <p className="mt-3 font-mono text-2xl capitalize">
                 {profile?.footShape
                   ? footShapeLabels[profile.footShape] || profile.footShape
                   : "Not set"}
@@ -221,7 +221,7 @@ export default function ProfilePage() {
                   <Link href="/stash" className="lab-button-ghost">Choose</Link>
                 )}
               </div>
-              <p className="mt-3 font-amatic text-2xl">
+              <p className="mt-3 font-mono text-2xl">
                 {favouriteShoe
                   ? `${favouriteShoe.brand} ${favouriteShoe.name}`
                   : "Not set"}
@@ -236,7 +236,7 @@ export default function ProfilePage() {
               <section aria-labelledby="onboarding-cta-title" style={riseDelay(4)} className="lab-card lab-card-active lab-rise flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
                 <div>
                   <p className="lab-label mb-2">Next step</p>
-                  <h2 id="onboarding-cta-title" className="font-amatic text-3xl leading-tight">Complete your profile</h2>
+                  <h2 id="onboarding-cta-title" className="lab-title text-xl">Complete your profile</h2>
                   <p className="mt-2 max-w-lg font-mono text-sm leading-relaxed text-brand-putty">Set your foot profile, add a rated shoe, then compare matches.</p>
                 </div>
                 <Link href="/footlab" className="lab-button shrink-0">
@@ -267,7 +267,7 @@ export default function ProfilePage() {
                         <Icon aria-hidden="true" className={cn("h-5 w-5", section.danger ? "text-red-500" : "text-brand-putty")} />
                       </span>
                       <span>
-                        <span className="block font-amatic text-2xl text-brand-chalk">{section.title}</span>
+                        <span className="block lab-title text-lg text-brand-chalk">{section.title}</span>
                         <span className="block font-mono text-sm text-brand-putty">{section.subtitle}</span>
                       </span>
                     </span>

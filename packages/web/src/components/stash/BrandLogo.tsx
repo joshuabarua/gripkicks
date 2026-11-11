@@ -7,6 +7,7 @@ interface BrandLogoProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   tooltip?: boolean;
+  suppressTitle?: boolean;
 }
 
 const approvedBrandLogos: Record<string, keyof typeof brandLogos> = {
@@ -34,19 +35,25 @@ const normalizedBrandLogos = Object.fromEntries(
   Object.entries(approvedBrandLogos).map(([brand, logo]) => [brand.toLowerCase(), brandLogos[logo]]),
 );
 
-export function BrandLogo({ brand, className = "", size = "md", tooltip = false }: BrandLogoProps) {
+export const brandLogoNames = Object.keys(approvedBrandLogos);
+
+export function hasBrandLogo(brand: string): boolean {
+  return Boolean(normalizedBrandLogos[brand.trim().toLowerCase()]);
+}
+
+export function BrandLogo({ brand, className = "", size = "md", tooltip = false, suppressTitle = false }: BrandLogoProps) {
   const logo = normalizedBrandLogos[brand.trim().toLowerCase()];
 
   if (!logo) {
     return (
-      <span className={`uppercase leading-none text-brand-chalk ${size === "sm" ? "truncate font-mono text-[10px] font-semibold tracking-[0.16em]" : size === "lg" ? "font-amatic text-xl" : "font-amatic text-fluid-3xl"} ${className}`}>
+      <span className={`uppercase leading-none text-brand-chalk ${size === "sm" ? "truncate font-mono text-[10px] font-semibold tracking-[0.16em]" : size === "lg" ? "font-mono text-xl" : "font-mono text-fluid-3xl"} ${className}`}>
         {brand}
       </span>
     );
   }
 
   const image = (
-    <span title={tooltip ? undefined : brand} className={`relative block shrink-0 ${size === "sm" ? "h-5 w-20" : size === "lg" ? "h-10 w-40" : "h-9 w-[min(42vw,11rem)]"} ${className}`}>
+    <span title={tooltip || suppressTitle ? undefined : brand} className={`relative block shrink-0 ${size === "sm" ? "h-5 w-20" : size === "lg" ? "h-10 w-40" : "h-9 w-[min(42vw,11rem)]"} ${className}`}>
       <Image
         src={logo}
         alt={`${brand} logo`}

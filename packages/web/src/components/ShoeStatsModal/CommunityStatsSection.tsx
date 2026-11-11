@@ -24,7 +24,7 @@ export default function CommunityStatsSection({
 }: CommunityStatsSectionProps) {
   return (
     <div className="mb-6">
-      <h3 className="font-amatic text-lg text-white mb-3">Community Rank</h3>
+      <h3 className="lab-title text-sm text-white mb-3">Community Rank</h3>
       {showCommunityAverages ? (
         <>
           <p className="text-xs text-neutral-500 font-mono tracking-wider mb-3">Based on {totalRatings} user ratings</p>
@@ -33,7 +33,7 @@ export default function CommunityStatsSection({
               <div className="flex items-center justify-between">
                 <span className="text-sm text-neutral-400 font-mono">Popularity</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-white font-amatic">
+                  <span className="text-sm font-bold text-white font-mono">
                     {popularityCount} climbers
                   </span>
                   <span className="text-xs text-neutral-500 font-mono">
@@ -51,7 +51,7 @@ export default function CommunityStatsSection({
             >
               <div className="flex justify-between items-center mb-1.5">
                 <span className="text-sm text-neutral-400 font-mono">Comfort</span>
-                <span className="text-sm font-bold text-white font-amatic">{comfortScore.toFixed(1)}/10</span>
+                <span className="text-sm font-bold text-white font-mono">{comfortScore.toFixed(1)}/10</span>
               </div>
               <div className="w-full bg-neutral-800 rounded-full h-2.5 overflow-hidden">
                 <motion.div
@@ -70,7 +70,7 @@ export default function CommunityStatsSection({
             >
               <div className="flex justify-between items-center mb-1.5">
                 <span className="text-sm text-neutral-400 font-mono">Performance</span>
-                <span className="text-sm font-bold text-white font-amatic">{performanceRating.toFixed(1)}/10</span>
+                <span className="text-sm font-bold text-white font-mono">{performanceRating.toFixed(1)}/10</span>
               </div>
               <div className="w-full bg-neutral-800 rounded-full h-2.5 overflow-hidden">
                 <motion.div
@@ -89,7 +89,7 @@ export default function CommunityStatsSection({
             >
               <div className="flex justify-between items-center mb-1.5">
                 <span className="text-sm text-neutral-400 font-mono">Durability</span>
-                <span className="text-sm font-bold text-white font-amatic">{durabilityRating.toFixed(1)}/10</span>
+                <span className="text-sm font-bold text-white font-mono">{durabilityRating.toFixed(1)}/10</span>
               </div>
               <div className="w-full bg-neutral-800 rounded-full h-2.5 overflow-hidden">
                 <motion.div

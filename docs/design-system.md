@@ -30,7 +30,7 @@ Tailwind v4, CSS-first: all tokens live in `@theme` inside
 
 | Role                                | Font      | Class                                                             |
 | ----------------------------------- | --------- | ----------------------------------------------------------------- |
-| Display / headings / buttons        | Amatic    | `font-amatic` (auto-uppercase)                                    |
+| Headings                            | DM Mono   | `lab-title` (uppercase) — enforced by `src/__tests__/typography.test.ts` |
 | Body, labels, data, controls        | DM Mono   | `font-mono` — the default UI face                                 |
 | Sanctuary page title + dialogs only | So Cloudy | `font-so-cloudy` — enforced by `src/__tests__/typography.test.ts` |
 
@@ -55,12 +55,12 @@ black canvas, charcoal cards:
 - `lab-card` — charcoal card, red monolith bar animates in on hover
 - `lab-card-lift` — hover translate lift
 - `lab-card-active` — red border + glow, for selected/primary panels
-- `lab-button` — red pill (Amatic, uppercase), primary action
+- `lab-button` — red pill (mono, uppercase), primary action
 - `lab-button-ghost` — bordered ghost, secondary action
 - `lab-label` — small uppercase mono label
 - `lab-rise` / `lab-fade` — entrance motion (see Motion)
 - `lab-container` — shared page container (max-w-6xl, fluid padding)
-- `LabHeader` — page title block (`text-fluid-8xl` title,
+- `LabHeader` — page title block (`lab-title text-fluid-4xl` title,
   `text-fluid-lg text-brand-putty` description); `PageSurface` — page wrapper
 
 ### Page shell
@@ -76,9 +76,9 @@ black canvas, charcoal cards:
 ### Patterns
 
 - **Next step panel** (Dashboard, Profile, Foot Lab onboarding):
-  `lab-card lab-card-active` with a `lab-label`, Amatic `h2`, one line of putty
+  `lab-card lab-card-active` with a `lab-label`, `lab-title` `h2`, one line of putty
   text, `lab-button` on the right.
-- **Summary card**: `lab-card p-6`, `lab-label` + Amatic value; missing data
+- **Summary card**: `lab-card p-6`, `lab-label` + mono value; missing data
   gets a `lab-button-ghost` action, never red text.
 - **Selectable option** (Foot Lab): `motion.button` with `lab-card`,
   `lab-card-active hal-glow` when selected, `aria-pressed`, hover `y: -4`, tap
@@ -235,7 +235,7 @@ in `src/lib/motion.ts`.
 ## Rules
 
 - **No accent-colored text** — `brand-red` is for shapes, borders, buttons only
-- **Fluid type** — headings use a single `text-fluid-*` / `text-title-*` size,
+- **Fluid type** — headings use `lab-title` plus a single `text-fluid-*` size,
   not breakpoint steps like `text-4xl md:text-6xl`
 - **No numbered feature lists** in UI copy
 - **No marketing fluff** — functional labels only
