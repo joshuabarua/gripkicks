@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { menuCloseTransition } from '@/lib/motion';
 
 interface NavButtonProps {
     isActive: boolean;
@@ -23,7 +24,7 @@ export default function NavButton({ isActive, toggleMenu }: NavButtonProps) {
                 className={"nav-slider"}
                 initial={false}
                 animate={{ top: isActive ? "-100%" : "0%" }}
-                transition={{ duration: reduceMotion ? 0 : isActive ? 0.5 : 0.24, type: "tween", ease: [0.76, 0, 0.24, 1] }}
+                transition={reduceMotion ? { duration: 0, type: "tween", ease: [0.76, 0, 0.24, 1] } : isActive ? { duration: 0.5, type: "tween", ease: [0.76, 0, 0.24, 1] } : menuCloseTransition}
             >
                 <div aria-hidden="true" className={"nav-el"}>
                     <PerspectiveText label="Menu" />

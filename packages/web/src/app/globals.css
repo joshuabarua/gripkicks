@@ -875,7 +875,7 @@ video {
 	inset: 0 !important;
 	width: 100vw !important;
 	height: 100vh !important;
-	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) 350ms both;
+	animation: page-wipe-out 450ms cubic-bezier(0.76, 0, 0.24, 1) 600ms both;
 }
 
 :root:active-view-transition-type(page-nav)::view-transition-group(root) {

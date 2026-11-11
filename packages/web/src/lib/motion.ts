@@ -25,3 +25,10 @@ export const slideUpBarMotion = {
   exit: { y: 100, opacity: 0 },
   transition: { type: "spring", stiffness: 400, damping: 35 },
 } as const;
+
+export const menuCloseTransition = {
+  duration: 0.4,
+  delay: 0,
+  type: "tween",
+  ease: [0.76, 0, 0.24, 1],
+} as const;

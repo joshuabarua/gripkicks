@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { flushSync } from "react-dom";
 import Link, { PAGE_NAVIGATION_EVENT, type PageNavigationRequest } from "@/components/ui/NavLink";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth";
@@ -9,6 +8,7 @@ import AuthButton from "@/components/auth-button";
 import NavButton from "@/components/ui/nav-button";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import NavLinks from "@/components/ui/nav-links";
+import { menuCloseTransition } from "@/lib/motion";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { SignOutButton } from "@/components/signout-button";
 import { User } from "lucide-react";
@@ -35,24 +35,14 @@ const menu = {
     height: "28px",
     top: "0px",
     right: "-0px",
-    transition: {
-      duration: 0.24,
-      delay: 0.06,
-      type: "tween",
-      ease: [0.76, 0, 0.24, 1],
-    },
+    transition: menuCloseTransition,
   },
   closedText: {
     width: "72px",
     height: "28px",
     top: "-0px",
     right: "-0px",
-    transition: {
-      duration: 0.24,
-      delay: 0.06,
-      type: "tween",
-      ease: [0.76, 0, 0.24, 1],
-    },
+    transition: menuCloseTransition,
   },
 };
 
@@ -61,12 +51,15 @@ const Navigation: React.FC = () => {
   const router = useRouter();
   const isHomePage = pathname === "/";
   const [isActive, setIsActive] = useState(false);
-  const [menuResetKey, setMenuResetKey] = useState(0);
   const [showLogo, setShowLogo] = useState(!isHomePage);
   const [previousPathname, setPreviousPathname] = useState(pathname);
   const navRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const pendingNavigation = useRef<{ request: PageNavigationRequest; sourceUrl: string } | null>(null);
+  const pendingNavigation = useRef<{
+    request: PageNavigationRequest;
+    sourceUrl: string;
+    startWidth: number;
+  } | null>(null);
 
   if (pathname !== previousPathname) {
     setPreviousPathname(pathname);
@@ -95,10 +88,10 @@ const Navigation: React.FC = () => {
       }
       : menu.open,
     closed: reduceMotion
-      ? { ...menu.closed, transition: { ...menu.closed.transition, duration: 0, delay: 0 } }
+      ? { ...menu.closed, transition: { ...menuCloseTransition, duration: 0, delay: 0 } }
       : menu.closed,
     closedText: reduceMotion
-      ? { ...menu.closedText, transition: { ...menu.closedText.transition, duration: 0, delay: 0 } }
+      ? { ...menu.closedText, transition: { ...menuCloseTransition, duration: 0, delay: 0 } }
       : menu.closedText,
   };
 
@@ -126,7 +119,8 @@ const Navigation: React.FC = () => {
 
   useEffect(() => {
     const holdNavigationForMenuClose = (event: Event) => {
-      if (!menuRef.current) {
+      const menu = menuRef.current;
+      if (!menu) {
         pendingNavigation.current = null;
         return;
       }
@@ -134,6 +128,7 @@ const Navigation: React.FC = () => {
       pendingNavigation.current = {
         request: (event as CustomEvent<PageNavigationRequest>).detail,
         sourceUrl: window.location.href,
+        startWidth: menu.getBoundingClientRect().width,
       };
       setIsActive(false);
     };
@@ -141,22 +136,30 @@ const Navigation: React.FC = () => {
     return () => window.removeEventListener(PAGE_NAVIGATION_EVENT, holdNavigationForMenuClose);
   }, []);
 
-  const finishPendingNavigation = () => {
-    queueMicrotask(() => {
-      const pending = pendingNavigation.current;
-      if (!pending) return;
-      flushSync(() => setMenuResetKey((key) => key + 1));
-      if (pendingNavigation.current !== pending) return;
-      pendingNavigation.current = null;
-      if (pending.sourceUrl !== window.location.href) return;
-      const { request } = pending;
-      const options = { scroll: request.scroll, transitionTypes: request.transitionTypes };
-      if (request.replace) {
-        router.replace(request.href, options);
-      } else {
-        router.push(request.href, options);
-      }
-    });
+  const resumePendingNavigation = () => {
+    const pending = pendingNavigation.current;
+    if (!pending) return;
+    pendingNavigation.current = null;
+    if (pending.sourceUrl !== window.location.href) return;
+    const { request } = pending;
+    const options = { scroll: request.scroll, transitionTypes: request.transitionTypes };
+    if (request.replace) {
+      router.replace(request.href, options);
+    } else {
+      router.push(request.href, options);
+    }
+  };
+
+  const handleMenuUpdate = (latest: { width?: unknown }) => {
+    const pending = pendingNavigation.current;
+    if (!pending) return;
+    const width = Number.parseFloat(String(latest.width));
+    if (!Number.isFinite(width)) return;
+    const closedWidth = Number.parseFloat(String(menu.closed.width));
+    const handoffWidth = closedWidth + Math.max(0, pending.startWidth - closedWidth) * 0.25;
+    if (width <= handoffWidth) {
+      resumePendingNavigation();
+    }
   };
 
   useEffect(() => {
@@ -214,7 +217,10 @@ const Navigation: React.FC = () => {
       <div className="flex-1 flex justify-end items-center z-20">
         {!isPending && (isAuthenticated ? (
           <div key="menu" className="lab-fade relative flex translate-y-[0.5px] items-center">
-            <AnimatePresence mode="wait" key={`menu-${menuResetKey}`} onExitComplete={finishPendingNavigation}>
+            <AnimatePresence
+              mode="wait"
+              onExitComplete={() => queueMicrotask(resumePendingNavigation)}
+            >
               {isActive && (
                 <motion.div
                   ref={menuRef}
@@ -223,6 +229,7 @@ const Navigation: React.FC = () => {
                   animate={isActive ? "open" : "closed"}
                   initial="closed"
                   exit="closed"
+                  onUpdate={handleMenuUpdate}
                 >
                   <div className="flex h-full flex-col p-4 pt-12">
                     <div className="min-h-0 flex-1">

@@ -40,7 +40,7 @@ const perspective = {
     }),
     exit: {
         opacity: 0,
-        transition: { duration: 0.12, type: "linear", ease: [0.76, 0, 0.24, 1] }
+        transition: { duration: 0.16, type: "linear", ease: [0.76, 0, 0.24, 1] }
     }
 }
 
@@ -60,7 +60,7 @@ const slideIn = {
     }),
     exit: {
         opacity: 0,
-        transition: { duration: 0.12, type: "tween", ease: "easeInOut" }
+        transition: { duration: 0.16, type: "tween", ease: "easeInOut" }
     }
 }
 

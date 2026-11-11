@@ -169,9 +169,11 @@ in `src/lib/motion.ts`.
   red paints. The wipe animates two things in `globals.css`
   (`:root:active-view-transition-type(page-nav)`): `::view-transition-old(root)`
   clips top→bottom off screen (450ms) revealing the `::view-transition` overlay
-  painted brand-red, which then clips top→bottom (450ms, 350ms delay) revealing
+  painted brand-red, which then clips top→bottom (450ms, 600ms delay) revealing
   the live new page underneath — a vertical monolith sweep in the same
-  direction as the `lab-card` monolith bar. ~800ms total. The reveal runs on
+  direction as the `lab-card` monolith bar. The 150ms gap between the old root
+  finishing and the overlay reveal starting holds a full-red plateau; ~1050ms
+  total. The reveal runs on
   the overlay rather than `::view-transition-new(root)` because React-started
   transitions never produce a `new(root)` pseudo. Internal links route through
   `NavLink`
@@ -224,7 +226,8 @@ in `src/lib/motion.ts`.
 - **No comments in code**; Tailwind first; don't rewrite existing utilities
 - Tools grid max 2 columns, no decorative icons; hero has no scroll navigation
   overlay
-- The shared `NavLink` dispatches a pre-navigation event; the nav menu plays its
-  .30s close animation and routing only continues after the exit completes —
-  open stays .75s, reduced motion skips the close animation, manual close
-  remains animated
+- The shared `NavLink` dispatches a pre-navigation event; the nav menu plays a
+  .40s close animation and routing resumes once the panel has collapsed 75% of
+  its width — the wipe then follows once the destination is ready, so it can
+  overlap the final quarter of the shrink — open stays .75s, reduced motion
+  skips the close animation, manual close remains animated

@@ -431,6 +431,39 @@ describe("menu navigation", () => {
     window.history.pushState({}, "", "/dashboard");
   });
 
+  it("hands off the route once the menu is 75% closed", async () => {
+    render(<Navigation />);
+    openMenu();
+    const menu = document.querySelector(".nav-menu") as HTMLElement;
+    await waitFor(() => expect(Number.parseFloat(menu.style.width)).toBeGreaterThan(350), { timeout: 2000 });
+    const rect = menu.getBoundingClientRect();
+    menu.getBoundingClientRect = () => ({
+      ...rect,
+      width: Number.parseFloat(menu.style.width) || 0,
+      toJSON: () => ({}),
+    });
+    const startWidth = Number.parseFloat(menu.style.width);
+    const handoffWidth = 72 + Math.max(0, startWidth - 72) * 0.25;
+    let mountedAtRoute = false;
+    let paintedWidth = 0;
+    routerMock.push.mockImplementation(() => {
+      const el = document.querySelector(".nav-menu") as HTMLElement | null;
+      mountedAtRoute = el !== null;
+      requestAnimationFrame(() => {
+        const rendered = document.querySelector(".nav-menu") as HTMLElement | null;
+        paintedWidth = rendered ? Number.parseFloat(rendered.style.width) || 0 : 0;
+      });
+    });
+    fireEvent.click(screen.getByRole("link", { name: "Privacy" }));
+    await waitFor(() => expect(routerMock.push).toHaveBeenCalledTimes(1), { timeout: 2000 });
+    await waitFor(() => expect(paintedWidth).toBeGreaterThan(0), { timeout: 2000 });
+    expect(mountedAtRoute).toBe(true);
+    expect(paintedWidth).toBeGreaterThanOrEqual(70);
+    expect(paintedWidth).toBeLessThanOrEqual(handoffWidth + 2);
+    await expectMenuGone();
+    expect(routerMock.push).toHaveBeenCalledTimes(1);
+  });
+
   it("lets the menu reopen after navigation completes", async () => {
     render(<Navigation />);
     openMenu();
