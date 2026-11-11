@@ -64,8 +64,8 @@ display with organic, flowing interactions.
    primary actions, `lab-button-ghost` for secondary actions, `lab-label` for
    small labels, `lab-rise` staggered entrance motion, and `LabHeader` for page
    titles. Avoid pale chalk panels and tagline copy. Keep the Tools grid at a
-   maximum of two columns without decorative icons, and keep the hero navigation
-   arrow-only with an accessible label.
+   maximum of two columns without decorative icons, and keep the hero free of
+   scroll navigation overlays.
 6. **Motion**: Entrances use the CSS `lab-rise`/`lab-fade` utilities with
    `riseDelay` from `src/lib/motion.ts`. Interactions (expand/collapse, sliding
    bars, hover/tap, exits) use framer-motion presets from `src/lib/motion.ts`.

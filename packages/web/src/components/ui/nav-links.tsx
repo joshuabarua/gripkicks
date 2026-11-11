@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import Link from '@/components/ui/NavLink';
 import { useSession } from '@/lib/auth';
 interface NavItem {
@@ -40,7 +40,7 @@ const perspective = {
     }),
     exit: {
         opacity: 0,
-        transition: { duration: 0.6, type: "linear", ease: [0.76, 0, 0.24, 1] }
+        transition: { duration: 0.12, type: "linear", ease: [0.76, 0, 0.24, 1] }
     }
 }
 
@@ -60,7 +60,7 @@ const slideIn = {
     }),
     exit: {
         opacity: 0,
-        transition: { duration: 0.6, type: "tween", ease: "easeInOut" }
+        transition: { duration: 0.12, type: "tween", ease: "easeInOut" }
     }
 }
 
@@ -71,7 +71,14 @@ interface NavLinksProps {
 
 export default function NavLinks({ footerAction, profileSlot }: NavLinksProps) {
     const { data: session } = useSession();
+    const reduceMotion = useReducedMotion();
     const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin;
+    const perspectiveVariants = useMemo(() => reduceMotion
+        ? { ...perspective, exit: { ...perspective.exit, transition: { ...perspective.exit.transition, duration: 0 } } }
+        : perspective, [reduceMotion]);
+    const slideInVariants = useMemo(() => reduceMotion
+        ? { ...slideIn, exit: { ...slideIn.exit, transition: { ...slideIn.exit.transition, duration: 0 } } }
+        : slideIn, [reduceMotion]);
 
     const adminLink: NavItem = { title: "Admin", href: "/admin" };
 
@@ -86,7 +93,7 @@ export default function NavLinks({ footerAction, profileSlot }: NavLinksProps) {
                         initial="initial"
                         animate="enter"
                         exit="exit"
-                        variants={perspective}
+                        variants={perspectiveVariants}
                     >
                         <Link href={link.href} className="font-amatic text-xl uppercase tracking-wider nav-link-item group">
                             {link.title}
@@ -100,7 +107,7 @@ export default function NavLinks({ footerAction, profileSlot }: NavLinksProps) {
                         initial="initial"
                         animate="enter"
                         exit="exit"
-                        variants={perspective}
+                        variants={perspectiveVariants}
                         className="pt-2"
                     >
                         {profileSlot}
@@ -111,7 +118,7 @@ export default function NavLinks({ footerAction, profileSlot }: NavLinksProps) {
                     {[...secondaryLinks, ...(isAdmin ? [adminLink] : [])].map((link, i) => (
                         <motion.div
                             key={`s_${i}`}
-                            variants={slideIn}
+                            variants={slideInVariants}
                             custom={i}
                             initial="initial"
                             animate="enter"
@@ -124,7 +131,7 @@ export default function NavLinks({ footerAction, profileSlot }: NavLinksProps) {
                     ))}
                     {footerAction && (
                         <motion.div
-                            variants={slideIn}
+                            variants={slideInVariants}
                             custom={secondaryLinks.length + (isAdmin ? 1 : 0)}
                             initial="initial"
                             animate="enter"

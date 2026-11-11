@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface NavButtonProps {
     isActive: boolean;
@@ -10,6 +10,7 @@ interface PerspectiveTextProps {
 }
 
 export default function NavButton({ isActive, toggleMenu }: NavButtonProps) {
+    const reduceMotion = useReducedMotion();
     return (
         <button
             type="button"
@@ -20,8 +21,9 @@ export default function NavButton({ isActive, toggleMenu }: NavButtonProps) {
         >
             <motion.div
                 className={"nav-slider"}
+                initial={false}
                 animate={{ top: isActive ? "-100%" : "0%" }}
-                transition={{ duration: 0.5, type: "tween", ease: [0.76, 0, 0.24, 1] }}
+                transition={{ duration: reduceMotion ? 0 : isActive ? 0.5 : 0.24, type: "tween", ease: [0.76, 0, 0.24, 1] }}
             >
                 <div aria-hidden="true" className={"nav-el"}>
                     <PerspectiveText label="Menu" />

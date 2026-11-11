@@ -52,7 +52,7 @@ describe("Hero loading", () => {
     expect(loader).toHaveClass("absolute", "pointer-events-none", "z-5");
     expect(loader).not.toHaveClass("fixed");
     expect(hero).toHaveAttribute("aria-busy", "true");
-    expect(within(hero).getByRole("link", { name: "Scroll to homepage content" })).toHaveClass("z-10");
+    expect(within(hero).queryByRole("link", { name: "Scroll to homepage content" })).toBeNull();
   });
 
   it("waits for the rendered shoe instead of dismissing loading after a timeout", () => {
@@ -83,7 +83,7 @@ describe("Hero loading", () => {
 
     expect(screen.queryByTestId("hero-scene")).toBeNull();
     expect(screen.queryByRole("status", { name: "Loading shoe" })).toBeNull();
-    expect(screen.getByRole("link", { name: "Scroll to homepage content" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Scroll to homepage content" })).toBeNull();
   });
 });
 
@@ -95,13 +95,12 @@ describe("Homepage clarity", () => {
     expect(screen.queryByRole("link", { name: "Open dashboard" })).toBeNull();
   });
 
-  it("keeps only an accessible scroll arrow over the shoe hero", () => {
-    render(<HomeCreative />);
+  it("keeps the shoe hero free of scroll navigation links", () => {
+    const { container } = render(<HomeCreative />);
     const hero = within(screen.getByRole("region", { name: "Interactive climbing shoe" }));
-    const arrow = hero.getByRole("link", { name: "Scroll to homepage content" });
-    expect(arrow).toHaveAttribute("href", "#home-steps");
-    expect(arrow.textContent).toBe("");
-    expect(arrow.querySelector("svg")).toHaveClass("lucide-arrow-down");
+    expect(hero.queryByRole("link", { name: "Scroll to homepage content" })).toBeNull();
+    expect(hero.queryByRole("link")).toBeNull();
+    expect(container.querySelector('a[href="#home-steps"]')).toBeNull();
     expect(hero.queryByText("Climbing shoe catalog")).toBeNull();
     expect(hero.queryByText("Explore tools")).toBeNull();
   });

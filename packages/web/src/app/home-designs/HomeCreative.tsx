@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import Link from "@/components/ui/NavLink";
 import dynamic from "next/dynamic";
-import { ArrowDown, ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
+import { ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
 import { useProgress } from "@react-three/drei";
 import { useQuery } from "convex/react";
@@ -67,7 +67,6 @@ function HeroSection({ isReducedEffects }: { isReducedEffects: boolean }) {
         </div>
       )}
       <HeroLoadCover ready={ready} />
-      <Link href="#home-steps" aria-label="Scroll to homepage content" className="group absolute bottom-fluid-lg right-fluid-md z-10 flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-brand-base/70 text-brand-chalk transition-colors hover:bg-brand-surface focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-chalk md:right-fluid-xl"><ArrowDown aria-hidden="true" className="h-6 w-6 transition-transform duration-300 group-hover:translate-y-1 motion-reduce:transform-none" /></Link>
     </section>
   );
 }

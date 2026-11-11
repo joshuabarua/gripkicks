@@ -222,4 +222,9 @@ in `src/lib/motion.ts`.
 - **No numbered feature lists** in UI copy
 - **No marketing fluff** — functional labels only
 - **No comments in code**; Tailwind first; don't rewrite existing utilities
-- Tools grid max 2 columns, no decorative icons; hero nav arrow-only
+- Tools grid max 2 columns, no decorative icons; hero has no scroll navigation
+  overlay
+- The shared `NavLink` dispatches a pre-navigation event; the nav menu plays its
+  .30s close animation and routing only continues after the exit completes —
+  open stays .75s, reduced motion skips the close animation, manual close
+  remains animated
