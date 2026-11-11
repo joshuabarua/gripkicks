@@ -22,12 +22,12 @@ interface CloudShoeProps {
   onRemove: () => void;
 }
 
+const GENDER_WORDS = new Set(["men", "women", "unisex", "kids", "men's", "women's"]);
+
 function formatCondition(condition?: string) {
   if (!condition) return 'Not set';
   return condition.replaceAll('-', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
-
-const GENDER_WORDS = new Set(["men", "women", "unisex", "kids", "men's", "women's"]);
 
 const specialLabelTitles = {
   'most-comfy': 'Highest comfort score in your collection',
@@ -56,12 +56,12 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
     ['PER', shoe.performanceRating],
     ['DUR', shoe.durabilityRating],
   ] as const;
-  const ratedItems = ratingItems.filter(([, value]) => value !== undefined);
+  const hasRatings = ratingItems.some(([, value]) => value !== undefined);
   const specTags = [
     shoe.shoe?.aggressiveness,
     shoe.shoe?.climbingDiscipline,
-    shoe.shoe?.stiffness,
-    shoe.shoe?.volume,
+    shoe.shoe?.stiffness ? `Stiffness: ${shoe.shoe.stiffness}` : undefined,
+    shoe.shoe?.volume ? `Volume: ${shoe.shoe.volume}` : undefined,
     shoe.shoe?.rubberTechnology?.compound,
   ].filter((tag): tag is string => Boolean(tag?.trim()));
 
@@ -124,6 +124,10 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
               <Ellipsis className="h-3.5 w-3.5" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={onToggleFavourite}>
+                <Star className={`h-3.5 w-3.5 ${shoe.isFavourite ? 'fill-current' : ''}`} />
+                {shoe.isFavourite ? 'Unfavourite' : 'Favourite'}
+              </DropdownMenuItem>
               <DropdownMenuItem onSelect={onEdit}>
                 <Pencil className="h-3.5 w-3.5" />
                 Edit shoe
@@ -196,7 +200,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
         </div>
 
         <div className="flex items-center justify-between gap-3 p-4">
-          {ratedItems.length ? (
+          {hasRatings ? (
             <RatingIcons comfort={shoe.comfortScore} performance={shoe.performanceRating} durability={shoe.durabilityRating} className="min-w-0" />
           ) : (
             <p className="min-w-0 truncate font-mono text-[11px] uppercase tracking-[0.14em] text-brand-putty/85">Add ratings</p>
@@ -282,9 +286,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
                 </button>
 
                 <div className="flex flex-wrap gap-2 border-t border-white/20 pt-3">
-                  <button type="button" aria-pressed={shoe.isFavourite === true} onClick={onToggleFavourite} className="min-h-9 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
-                    {shoe.isFavourite ? 'Unfavourite' : 'Favourite'}
-                  </button>
                   <button type="button" onClick={onOpenStats} className="min-h-9 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
                     Full stats
                   </button>

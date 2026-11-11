@@ -590,7 +590,7 @@ export default function ShoeSanctuaryPage() {
             )}
 
             {!isPageLoading && filteredShoes.length > 0 && (
-              <div className="lab-rise grid gap-fluid-lg sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={riseDelay(3)}>
+              <div className="lab-rise grid items-start gap-fluid-lg sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={riseDelay(3)}>
                 {flatShoes.map(({ item: shoe, variantLabel }) => (
                   <CloudShoe
                     key={shoe._id}

@@ -49,14 +49,15 @@ describe("Sanctuary content", () => {
     expect(onRemove).toHaveBeenCalled();
   });
 
-  it("exposes favourite and full stats actions when expanded", () => {
+  it("exposes full stats when expanded and favourite from the options menu", async () => {
+    const user = userEvent.setup();
     render(<CloudShoe shoe={shoe} {...cardProps} />);
     fireEvent.click(screen.getByRole("button", { name: "Show details for Scarpa Drago" }));
-    fireEvent.click(screen.getByRole("button", { name: "Favourite" }));
-    expect(screen.getByRole("button", { name: "Favourite" })).toHaveAttribute("aria-pressed", "false");
-    expect(onToggleFavourite).toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Full stats" }));
     expect(onOpenStats).toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Options for Scarpa Drago" }));
+    await user.click(screen.getByRole("menuitem", { name: "Favourite" }));
+    expect(onToggleFavourite).toHaveBeenCalled();
   });
 
   it("does not wrap interactive buttons inside a role=button card", () => {
