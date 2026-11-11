@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 import { memo, useEffect, useId, useRef, useState } from 'react';
 import { ChevronDown, Ellipsis, Feather, Pencil, Shield, Star, Trash2, Zap } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
@@ -102,6 +103,9 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
   const cardLabel = rawLabel && !GENDER_WORDS.has(rawLabel.toLowerCase()) ? rawLabel : null;
   const [isInView, setIsInView] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const [lastPathname, setLastPathname] = useState(pathname);
   const cardRef = useRef<HTMLElement>(null);
   const detailsId = useId();
   const reduceMotion = useReducedMotion() ?? false;
@@ -137,6 +141,12 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
     return () => observer.disconnect();
   }, [isInView]);
 
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
+    setMenuOpen(false);
+    setExpanded(false);
+  }
+
   return (
     <motion.article
       ref={cardRef}
@@ -171,7 +181,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
             )}
           </TooltipProvider>
           {!expanded && (
-            <DropdownMenu>
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger
                 aria-label={`Options for ${brand} ${name}`}
                 className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm border border-white/10 bg-white/6 text-brand-chalk transition-colors hover:bg-white/15 focus-visible:outline-brand-chalk"
