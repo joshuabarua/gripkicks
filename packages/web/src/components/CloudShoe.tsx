@@ -1,15 +1,13 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { usePathname } from 'next/navigation';
 import { memo, useEffect, useId, useRef, useState } from 'react';
-import { ChevronDown, Ellipsis, Feather, Pencil, Shield, Star, Trash2, X, Zap } from 'lucide-react';
+import { ChevronDown, Feather, Shield, Star, Trash2, X, Zap } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo, hasBrandLogo } from "@/components/stash/BrandLogo";
 import type { UserShoe } from "@/types/api";
 import { getBrandDescription, getShoeDescription } from "@/utils/sanctuaryDescriptions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { RatingIcons } from "@/components/RatingIcons";
 import { conditions, shoeSizes } from "@/constants/shoe-data";
 
@@ -17,8 +15,9 @@ interface CloudShoeProps {
   shoe: UserShoe;
   variantLabel?: string | null | undefined;
   specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode } | undefined;
-  onOpenStats: () => void;
-  onEdit: () => void;
+  expanded: boolean;
+  dimmed?: boolean;
+  onToggleExpand: () => void;
   onToggleFavourite: () => void;
   onRemove: () => void;
   onRate?: (field: 'comfortScore' | 'performanceRating' | 'durabilityRating', value: number) => void;
@@ -89,7 +88,7 @@ function StatSlider({ label, icon, value, onCommit }: { label: string; icon: Rea
   );
 }
 
-const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOpenStats, onEdit, onToggleFavourite, onRemove, onRate, onUpdateDetails }) => {
+const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expanded, dimmed, onToggleExpand, onToggleFavourite, onRemove, onRate, onUpdateDetails }) => {
   const details = shoe.shoe ?? shoe.shoeDetails;
   const brand = details?.brand ?? 'Unknown Brand';
   const name = details?.name ?? 'Unknown Shoe';
@@ -99,10 +98,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
   const rawLabel = variantLabel?.trim() || details?.variantLabel?.trim() || null;
   const cardLabel = rawLabel && !GENDER_WORDS.has(rawLabel.toLowerCase()) ? rawLabel : null;
   const [isInView, setIsInView] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const pathname = usePathname();
-  const [lastPathname, setLastPathname] = useState(pathname);
   const cardRef = useRef<HTMLElement>(null);
   const detailsId = useId();
   const reduceMotion = useReducedMotion() ?? false;
@@ -137,12 +132,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
     if (cardRef.current) observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, [isInView]);
-
-  if (pathname !== lastPathname) {
-    setLastPathname(pathname);
-    setMenuOpen(false);
-    setExpanded(false);
-  }
 
   const shoeVisual = (
     <>
@@ -200,7 +189,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
     <motion.article
       ref={cardRef}
       layout
-      className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-colors duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''}`}
+      className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-all duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''} ${dimmed ? 'opacity-40 saturate-50' : ''}`}
       {...(expanded ? {} : { whileHover: { y: -3 } })}
     >
       <div className="flex min-h-11 items-center justify-between gap-3 border-b border-white/20 px-4 py-2.5">
@@ -230,53 +219,30 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
               </Tooltip>
             )}
           </TooltipProvider>
-          {expanded ? (
+          {expanded && (
             <button
               type="button"
               aria-expanded="true"
               aria-controls={detailsId}
               aria-label={`Hide details for ${brand} ${name}`}
-              onClick={() => setExpanded(false)}
+              onClick={onToggleExpand}
               className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm border border-white/10 bg-white/6 text-brand-chalk transition-colors hover:bg-white/15 focus-visible:outline-brand-chalk"
             >
               <X className="h-3.5 w-3.5" />
             </button>
-          ) : (
-            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-              <DropdownMenuTrigger
-                aria-label={`Options for ${brand} ${name}`}
-                className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm border border-white/10 bg-white/6 text-brand-chalk transition-colors hover:bg-white/15 focus-visible:outline-brand-chalk"
-              >
-                <Ellipsis className="h-3.5 w-3.5" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onSelect={onToggleFavourite}>
-                  <Star className={`h-3.5 w-3.5 ${shoe.isFavourite ? 'fill-current' : ''}`} />
-                  {shoe.isFavourite ? 'Unfavourite' : 'Favourite'}
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={onEdit}>
-                  <Pencil className="h-3.5 w-3.5" />
-                  Edit shoe
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={onRemove} className="text-brand-red focus:bg-brand-red/15 focus:text-brand-red">
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Remove from sanctuary
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           )}
         </div>
       </div>
 
       <AnimatePresence initial={false}>
-        {!expanded ? (
+        {!expanded && (
           <motion.button
             key="collapsed"
             type="button"
             aria-expanded="false"
             aria-controls={detailsId}
             aria-label={`Show details for ${brand} ${name}`}
-            onClick={() => setExpanded(true)}
+            onClick={onToggleExpand}
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0 } }}
@@ -294,7 +260,11 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
               <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-brand-putty" />
             </div>
           </motion.button>
-        ) : (
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence initial={false}>
+        {expanded && (
           <motion.div
             key="details"
             id={detailsId}
@@ -347,49 +317,43 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
               </div>
 
               <div className="space-y-5 p-4 md:p-6">
-                <div>
-                  <p className="mb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">About this shoe</p>
-                  <p className="font-mono text-xs leading-relaxed text-brand-putty">
-                    {getShoeDescription(details)}
-                  </p>
-                </div>
+              <div>
+                <p className="mb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">About this shoe</p>
+                <p className="font-mono text-xs leading-relaxed text-brand-putty">
+                  {getShoeDescription(details)}
+                </p>
+              </div>
 
+              <div>
+                <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Stats</p>
+                <div className="space-y-3.5">
+                  {statSliders.map(({ label, field, icon, value }) => (
+                    <StatSlider key={label} label={label} icon={icon} value={value} onCommit={onRate ? (v) => onRate(field, v) : undefined} />
+                  ))}
+                </div>
+              </div>
+
+              {specTags.length > 0 && (
                 <div>
-                  <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Stats</p>
-                  <div className="space-y-3.5">
-                    {statSliders.map(({ label, field, icon, value }) => (
-                      <StatSlider key={label} label={label} icon={icon} value={value} onCommit={onRate ? (v) => onRate(field, v) : undefined} />
+                  <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Tags</p>
+                  <ul aria-label="Shoe specs" className="flex flex-wrap gap-1.5">
+                    {specTags.map((tag) => (
+                      <li key={tag} className="rounded-full border border-white/15 bg-black/30 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-brand-putty">
+                        {tag}
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
+              )}
 
-                {specTags.length > 0 && (
-                  <div>
-                    <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Tags</p>
-                    <ul aria-label="Shoe specs" className="flex flex-wrap gap-1.5">
-                      {specTags.map((tag) => (
-                        <li key={tag} className="rounded-full border border-white/15 bg-black/30 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-brand-putty">
-                          {tag}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                <div className="flex flex-wrap gap-2 border-t border-white/20 pt-3">
-                  <button type="button" onClick={onEdit} className="flex min-h-9 items-center gap-1.5 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
-                    <Pencil className="h-3 w-3" /> Edit
-                  </button>
-                  <button type="button" aria-pressed={shoe.isFavourite === true} onClick={onToggleFavourite} className="flex min-h-9 items-center gap-1.5 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
-                    <Star className={`h-3 w-3 ${shoe.isFavourite ? 'fill-current' : ''}`} /> {shoe.isFavourite ? 'Unfavourite' : 'Favourite'}
-                  </button>
-                  <button type="button" onClick={onOpenStats} className="min-h-9 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
-                    Full stats
-                  </button>
-                  <button type="button" onClick={onRemove} className="flex min-h-9 items-center gap-1.5 rounded-md border border-brand-red/35 bg-brand-red/8 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-red transition-colors hover:bg-brand-red/[0.14]">
-                    <Trash2 className="h-3 w-3" /> Remove
-                  </button>
-                </div>
+              <div className="flex flex-wrap gap-2 border-t border-white/20 pt-3">
+                <button type="button" aria-pressed={shoe.isFavourite === true} onClick={onToggleFavourite} className="flex min-h-9 items-center gap-1.5 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
+                  <Star className={`h-3 w-3 ${shoe.isFavourite ? 'fill-current' : ''}`} /> {shoe.isFavourite ? 'Unfavourite' : 'Favourite'}
+                </button>
+                <button type="button" onClick={onRemove} className="flex min-h-9 items-center gap-1.5 rounded-md border border-brand-red/35 bg-brand-red/8 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-red transition-colors hover:bg-brand-red/[0.14]">
+                  <Trash2 className="h-3 w-3" /> Remove
+                </button>
+              </div>
               </div>
             </div>
           </motion.div>
@@ -401,8 +365,9 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, onOp
   return (
     prevProps.shoe === nextProps.shoe &&
     prevProps.variantLabel === nextProps.variantLabel &&
-    prevProps.onOpenStats === nextProps.onOpenStats &&
-    prevProps.onEdit === nextProps.onEdit &&
+    prevProps.expanded === nextProps.expanded &&
+    prevProps.dimmed === nextProps.dimmed &&
+    prevProps.onToggleExpand === nextProps.onToggleExpand &&
     prevProps.onToggleFavourite === nextProps.onToggleFavourite &&
     prevProps.onRemove === nextProps.onRemove &&
     prevProps.onRate === nextProps.onRate &&
