@@ -141,22 +141,24 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
         </div>
       )}
       {isInView && (
-        <ShoeImage
-          brand={brand}
-          shoeName={name}
-          imageUrl={imageUrl}
-          slug={slug}
-          className="object-contain transition-transform duration-500 group-hover:scale-[1.035]"
-          transformation={[{
-            height: 220,
-            width: 320,
-            crop: "at_max",
-            cropMode: "pad_resize",
-            format: "png",
-            quality: 82,
-          }]}
-          gender={gender}
-        />
+        <motion.div key="shoe-img" layoutId={`shoe-img-${shoe._id}`} className="relative flex h-full w-full items-center justify-center">
+          <ShoeImage
+            brand={brand}
+            shoeName={name}
+            imageUrl={imageUrl}
+            slug={slug}
+            className="object-contain transition-transform duration-500 group-hover:scale-[1.035]"
+            transformation={[{
+              height: 220,
+              width: 320,
+              crop: "at_max",
+              cropMode: "pad_resize",
+              format: "png",
+              quality: 82,
+            }]}
+            gender={gender}
+          />
+        </motion.div>
       )}
       {hasBrandLogo(brand) && (
         <TooltipProvider>
@@ -189,8 +191,9 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
     <motion.article
       ref={cardRef}
       layout
-      className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-all duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'order-first row-start-1 sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''} ${dimmed ? 'opacity-40 saturate-50' : ''}`}
-      {...(expanded ? {} : { whileHover: { y: -3 } })}
+      transition={{ layout: { type: 'spring', stiffness: 300, damping: 32 } }}
+      className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-[opacity,filter,border-color] duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'order-first row-start-1 sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''} ${dimmed ? 'opacity-40 saturate-50' : ''}`}
+      {...(expanded || dimmed ? {} : { whileHover: { y: -3 } })}
     >
       <div className="flex min-h-11 items-center justify-between gap-3 border-b border-white/20 px-4 py-2.5">
         <h3 className="truncate font-amatic text-2xl tracking-wide text-brand-chalk transition-colors group-hover:text-white">
