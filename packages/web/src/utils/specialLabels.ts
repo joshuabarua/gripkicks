@@ -40,7 +40,7 @@ export function buildSpecialLabels(userShoes: UserShoe[]): Record<string, { type
   if (mostComfy) {
     labels[mostComfy._id] = {
       type: 'most-comfy',
-      icon: createElement(Heart, { className: 'w-3 h-3' }),
+      icon: createElement(Heart, { className: 'w-3 h-3 text-pink-400' }),
     };
   }
 
@@ -56,7 +56,7 @@ export function buildSpecialLabels(userShoes: UserShoe[]): Record<string, { type
   if (mostWorn) {
     labels[mostWorn._id] = {
       type: 'most-worn',
-      icon: createElement(Crown, { className: 'w-3 h-3' }),
+      icon: createElement(Crown, { className: 'w-3 h-3 text-amber-400' }),
     };
   }
 

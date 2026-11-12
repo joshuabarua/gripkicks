@@ -19,8 +19,9 @@ type GenderFilter = 'all' | 'men' | 'women' | 'kids' | 'unisex';
 function ShoeIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <path d="M3 15v-3.5C3 9.7 4.2 8.5 5.9 8.5l2.6-.5 2.5-3.2c.6-.8 1.7-.9 2.4-.2l1.6 1.5 3.9 1.2c1.6.5 2.6 1.9 2.6 3.5V15" />
-      <path d="M3 15h18a1 1 0 0 1 1 1 1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 16 1 1 0 0 1 3 15z" />
+      <path d="M4 16V9.5C4 8 5 7 6.5 7h2L11 3.8c.4-.6 1.2-.7 1.7-.2l1.8 1.8 4 1.4c1.5.5 2.5 1.9 2.5 3.5V14" />
+      <path d="M4 16l17-2v1.5c0 1.4-1.1 2.5-2.5 2.5H6.5A2.5 2.5 0 0 1 4 16z" />
+      <path d="M8.5 7l1 3.5M11.5 5.8l1 3" />
     </svg>
   );
 }
@@ -100,7 +101,7 @@ export function AddShoeDialog({
         >
           <Plus className="w-5 h-5" />
           <ShoeIcon className="w-5 h-5" />
-          <span>Shoe</span>
+          <span className="sr-only">Add shoe</span>
         </motion.button>
       </DialogTrigger>
       <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-2xl shadow-2xl shadow-brand-red/5 rounded-3xl">
