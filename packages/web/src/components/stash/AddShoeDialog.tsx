@@ -8,13 +8,22 @@ import ShoeImage from '@/components/ShoeImage';
 import { BrandLogo } from '@/components/stash/BrandLogo';
 import { PaginatedList } from '@/components/ui/PaginatedList';
 import { LoadingBar } from '@/components/ui/loading';
-import { Footprints, Plus, Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import { groupShoesByModel } from '@/utils/shoeVariants';
 import type { Shoe } from '@/types/api';
 
 type GenderFilter = 'all' | 'men' | 'women' | 'kids' | 'unisex';
+
+function ShoeIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M3 15v-3.5C3 9.7 4.2 8.5 5.9 8.5l2.6-.5 2.5-3.2c.6-.8 1.7-.9 2.4-.2l1.6 1.5 3.9 1.2c1.6.5 2.6 1.9 2.6 3.5V15" />
+      <path d="M3 15h18a1 1 0 0 1 1 1 1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 16 1 1 0 0 1 3 15z" />
+    </svg>
+  );
+}
 
 interface AddShoeDialogProps {
   open: boolean;
@@ -90,10 +99,7 @@ export function AddShoeDialog({
           className="bg-brand-red hover:bg-brand-red/80 text-white font-mono text-lg px-fluid-lg py-fluid-sm rounded-lg shadow-lg shadow-brand-red/20 transition-colors duration-500 flex items-center gap-fluid-sm w-fit mt-fluid-md"
         >
           <Plus className="w-5 h-5" />
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5" aria-hidden="true">
-            <path d="M3 15v-3.5C3 9.7 4.2 8.5 5.9 8.5l2.6-.5 2.5-3.2c.6-.8 1.7-.9 2.4-.2l1.6 1.5 3.9 1.2c1.6.5 2.6 1.9 2.6 3.5V15" />
-            <path d="M3 15h18a1 1 0 0 1 1 1 1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 16 1 1 0 0 1 3 15z" />
-          </svg>
+          <ShoeIcon className="w-5 h-5" />
           <span>Shoe</span>
         </motion.button>
       </DialogTrigger>
@@ -224,7 +230,7 @@ export function AddShoeDialog({
           {groupedSearchResults.length === 0 && !isLoadingMore && !isSearching && (
             <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 px-6 py-10 text-center">
               <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-brand-red/10 flex items-center justify-center">
-                <Footprints className="w-6 h-6 text-brand-red" />
+                <ShoeIcon className="w-6 h-6 text-brand-red" />
               </div>
               <p className="font-mono text-white text-sm mb-1">No shoes match these filters</p>
               <p className="font-mono text-neutral-500 text-xs">

@@ -189,7 +189,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
     <motion.article
       ref={cardRef}
       layout
-      className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-all duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''} ${dimmed ? 'opacity-40 saturate-50' : ''}`}
+      className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-all duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'order-first row-start-1 sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''} ${dimmed ? 'opacity-40 saturate-50' : ''}`}
       {...(expanded ? {} : { whileHover: { y: -3 } })}
     >
       <div className="flex min-h-11 items-center justify-between gap-3 border-b border-white/20 px-4 py-2.5">
