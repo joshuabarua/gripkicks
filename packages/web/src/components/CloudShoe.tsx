@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { memo, useEffect, useId, useRef, useState } from 'react';
+import { memo, useId, useState } from 'react';
 import { ChevronDown, Feather, Shield, Star, Trash2, X, Zap } from 'lucide-react';
 import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo, hasBrandLogo } from "@/components/stash/BrandLogo";
@@ -97,8 +97,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
   const gender = details?.gender;
   const rawLabel = variantLabel?.trim() || details?.variantLabel?.trim() || null;
   const cardLabel = rawLabel && !GENDER_WORDS.has(rawLabel.toLowerCase()) ? rawLabel : null;
-  const [isInView, setIsInView] = useState(false);
-  const cardRef = useRef<HTMLElement>(null);
   const detailsId = useId();
   const reduceMotion = useReducedMotion() ?? false;
   const statSliders = [
@@ -115,24 +113,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
     shoe.shoe?.rubberTechnology?.compound,
   ].filter((tag): tag is string => Boolean(tag?.trim()));
 
-  useEffect(() => {
-    if (isInView) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry) return;
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (cardRef.current) observer.observe(cardRef.current);
-    return () => observer.disconnect();
-  }, [isInView]);
-
   const shoeVisual = (
     <>
       {cardLabel && (
@@ -140,8 +120,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
           {cardLabel}
         </div>
       )}
-      {isInView && (
-        <div className="relative flex h-full w-full items-center justify-center">
+      <div className="relative flex h-full w-full items-center justify-center">
           <ShoeImage
             brand={brand}
             shoeName={name}
@@ -158,8 +137,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
             }]}
             gender={gender}
           />
-        </div>
-      )}
+      </div>
       {hasBrandLogo(brand) && (
         <TooltipProvider>
           <Tooltip delayDuration={150}>
@@ -189,7 +167,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
 
   return (
     <motion.article
-      ref={cardRef}
       layout="position"
       transition={{ layout: { type: 'spring', stiffness: 300, damping: 32 } }}
       className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-[opacity,filter,border-color] duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'order-first row-start-1 sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''} ${dimmed ? 'opacity-40 saturate-50' : ''}`}
