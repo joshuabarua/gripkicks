@@ -141,7 +141,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
         </div>
       )}
       {isInView && (
-        <motion.div key="shoe-img" layoutId={`shoe-img-${shoe._id}`} className="relative flex h-full w-full items-center justify-center">
+        <div className="relative flex h-full w-full items-center justify-center">
           <ShoeImage
             brand={brand}
             shoeName={name}
@@ -158,7 +158,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
             }]}
             gender={gender}
           />
-        </motion.div>
+        </div>
       )}
       {hasBrandLogo(brand) && (
         <TooltipProvider>
@@ -190,7 +190,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
   return (
     <motion.article
       ref={cardRef}
-      layout
+      layout="position"
       transition={{ layout: { type: 'spring', stiffness: 300, damping: 32 } }}
       className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-[opacity,filter,border-color] duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'order-first row-start-1 sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''} ${dimmed ? 'opacity-40 saturate-50' : ''}`}
       {...(expanded || dimmed ? {} : { whileHover: { y: -3 } })}
