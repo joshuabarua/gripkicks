@@ -87,10 +87,14 @@ export function AddShoeDialog({
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="bg-brand-red hover:bg-brand-red/80 text-black font-mono text-lg px-fluid-lg py-fluid-sm rounded-lg shadow-lg shadow-brand-red/20 transition-colors duration-500 flex items-center gap-fluid-sm w-fit mt-fluid-md"
+          className="bg-brand-red hover:bg-brand-red/80 text-white font-mono text-lg px-fluid-lg py-fluid-sm rounded-lg shadow-lg shadow-brand-red/20 transition-colors duration-500 flex items-center gap-fluid-sm w-fit mt-fluid-md"
         >
           <Plus className="w-5 h-5" />
-          <span>Add Shoe</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5" aria-hidden="true">
+            <path d="M3 15v-3.5C3 9.7 4.2 8.5 5.9 8.5l2.6-.5 2.5-3.2c.6-.8 1.7-.9 2.4-.2l1.6 1.5 3.9 1.2c1.6.5 2.6 1.9 2.6 3.5V15" />
+            <path d="M3 15h18a1 1 0 0 1 1 1 1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 16 1 1 0 0 1 3 15z" />
+          </svg>
+          <span>Shoe</span>
         </motion.button>
       </DialogTrigger>
       <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-2xl shadow-2xl shadow-brand-red/5 rounded-3xl">
