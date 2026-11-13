@@ -127,8 +127,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
             slug={slug}
             className="object-contain transition-transform duration-500 group-hover:scale-[1.035]"
             transformation={[{
-              height: 220,
-              width: 320,
+              height: expanded ? 560 : 220,
+              width: expanded ? 800 : 320,
               crop: "at_max",
               cropMode: "pad_resize",
               format: "png",
