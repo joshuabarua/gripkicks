@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { query, type QueryCtx } from "./_generated/server";
+import type { Doc } from "./_generated/dataModel";
 import { footShapeValidator } from "./schema";
 import type { CommunitySignal, ShoeRecommendation } from "../types/shoe";
 import { requireUserAccess } from "./authorization";
@@ -15,6 +16,31 @@ interface PaginatedResult<T> {
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 50;
+
+// Popularity counts owners per shoe, and a shoe cannot have more ratings than
+// owners, so this narrows reads to shoes that can meet a rating threshold.
+async function loadShoesWithOwners(ctx: QueryCtx, minOwners: number) {
+  const popular = await ctx.db
+    .query("popularity")
+    .withIndex("by_count", (q) => q.gte("count", minOwners))
+    .collect();
+
+  const entries = await Promise.all(
+    popular.map(async ({ shoeId }) => {
+      const shoe = await ctx.db.get(shoeId);
+      if (!shoe) return null;
+      const userShoes = await ctx.db
+        .query("userShoes")
+        .withIndex("by_shoeId", (q) => q.eq("shoeId", shoeId))
+        .collect();
+      return { shoe, userShoes };
+    }),
+  );
+
+  return entries.filter(
+    (entry): entry is { shoe: Doc<"shoes">; userShoes: Doc<"userShoes">[] } => entry !== null,
+  );
+}
 
 function avg(values: number[]) {
   return values.length === 0 ? null : values.reduce((a, b) => a + b, 0) / values.length;
@@ -138,26 +164,27 @@ export const getShoeRecommendations = query({
       Math.max(1, args.pageSize ?? DEFAULT_PAGE_SIZE),
     );
 
-    const allShoes = await ctx.db.query("shoes").collect();
+    const ratedShoes = await loadShoesWithOwners(ctx, 3);
+    const allShoes = ratedShoes.map((entry) => entry.shoe);
+    const allUserShoes = ratedShoes.flatMap((entry) => entry.userShoes);
 
-    const allUserShoes = await ctx.db.query("userShoes").collect();
-
-    const usersWithSameProfile = await ctx.db
-      .query("users")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("footShape"), args.footShape),
-          q.eq(q.field("footVolume"), args.footVolume),
-          q.neq(q.field("_id"), args.userId),
-        ),
-      )
-      .collect();
+    const usersWithSameProfile = (
+      await ctx.db
+        .query("users")
+        .withIndex("by_footProfile", (q) =>
+          q.eq("footShape", args.footShape).eq("footVolume", args.footVolume),
+        )
+        .collect()
+    ).filter((user) => user._id !== args.userId);
 
     const soleMateIds = new Set(usersWithSameProfile.map((u) => u._id));
     const currentUserOwnedShoeIds = new Set(
-      allUserShoes
-        .filter((userShoe) => userShoe.userId === args.userId)
-        .map((userShoe) => userShoe.shoeId),
+      (
+        await ctx.db
+          .query("userShoes")
+          .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+          .collect()
+      ).map((userShoe) => userShoe.shoeId),
     );
 
     const shoeRatingsMap = new Map<
@@ -385,7 +412,7 @@ export const getTopShoesForFootShape = query({
     const limit = Math.min(50, Math.max(1, args.limit ?? 20));
     const cursor = args.cursor ?? 0;
 
-    const allShoes = await ctx.db.query("shoes").collect();
+    const allShoes = (await loadShoesWithOwners(ctx, 3)).map((entry) => entry.shoe);
 
     const shoesWithRatings = allShoes
       .filter(
@@ -432,8 +459,9 @@ export const getCommunityTopShoes = query({
     const limit = args.limit ?? 10;
     const minRatings = args.minRatings ?? 3;
 
-    const allShoes = await ctx.db.query("shoes").collect();
-    const allUserShoes = await ctx.db.query("userShoes").collect();
+    const ratedShoes = await loadShoesWithOwners(ctx, minRatings);
+    const allShoes = ratedShoes.map((entry) => entry.shoe);
+    const allUserShoes = ratedShoes.flatMap((entry) => entry.userShoes);
 
     const ratingsByShoe = new Map<
       string,
@@ -541,27 +569,3 @@ export const getCommunityTopShoes = query({
   },
 });
 
-export const getRecommendationCount = query({
-  args: {
-    userId: v.id("users"),
-    footShape: footShapeValidator,
-    footVolume: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await requireUserAccess(ctx, args.userId);
-    const allShoes = await ctx.db.query("shoes").collect();
-    const allUserShoes = await ctx.db.query("userShoes").collect();
-
-    let count = 0;
-    for (const shoe of allShoes) {
-      const ratings = allUserShoes.filter(
-        (us) => us.shoeId === shoe._id && us.comfortScore !== undefined,
-      );
-      if (ratings.length >= 3) {
-        count++;
-      }
-    }
-
-    return count;
-  },
-});

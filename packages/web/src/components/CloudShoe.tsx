@@ -170,7 +170,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
       {...(expanded ? {} : { whileHover: { y: -3 } })}
     >
       <div className="flex min-h-11 items-center justify-between gap-3 border-b border-white/20 px-4 py-2.5">
-        <h3 className="truncate font-amatic text-2xl tracking-wide text-brand-chalk transition-colors group-hover:text-white">
+        <h3 className="truncate lab-title text-base text-brand-chalk transition-colors group-hover:text-white">
           {name}
         </h3>
         <div className="flex items-center gap-1.5">

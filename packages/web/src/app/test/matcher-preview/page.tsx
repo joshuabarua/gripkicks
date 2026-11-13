@@ -1,11 +1,9 @@
-import { notFound } from "next/navigation";
 import { MatcherWorkspace, SoleMateContent } from "@/components/shoe/MatcherWorkspace";
 import { MatcherResults, type DisplayShoe } from "@/components/shoe/MatcherView";
 import type { SoleMateClimberMatch } from "@/hooks/useFindMyShoe";
 import images from "../../../../../../data/shoe-images.json";
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ state?: string }> }) {
-  if (process.env.NODE_ENV !== "development") notFound();
   const { state = "ready" } = await searchParams;
   const shoes: DisplayShoe[] = images.filter((image) => image.imageUrl && image.status !== "removed").slice(0, 10).map((image, index) => ({
     id: `preview-${index}`,

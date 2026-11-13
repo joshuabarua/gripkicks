@@ -8,7 +8,6 @@ import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo } from "@/components/stash/BrandLogo";
 import { RatingIcons } from "@/components/RatingIcons";
 import { useShoeScoring } from "@/hooks/useShoeScoring";
-import { useUserPreferenceLearning } from "@/hooks/useUserPreferenceLearning";
 import { useFootProfile } from "@/hooks/useFootProfile";
 import { MatchScoreTooltip } from "./MatchScoreTooltip";
 import { DataContributionNudge } from "@/components/DataContributionNudge";
@@ -52,8 +51,7 @@ export interface DisplayShoe {
 
 export function MatcherView() {
   const { profile: footProfile } = useFootProfile();
-  const { scoredShoes, isLoading: personalLoading, stashCount, ratedCount } = useShoeScoring();
-  const { userPreferenceProfile } = useUserPreferenceLearning();
+  const { scoredShoes, isLoading: personalLoading, stashCount, ratedCount, userPreferenceProfile } = useShoeScoring();
   const communityShoes = useQuery(api.recommendations.getCommunityTopShoes, { limit: 10 });
 
   const personalTop5: DisplayShoe[] = useMemo(() => {
@@ -224,7 +222,7 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
       {shoes.map((shoe, idx) => (
         <article key={shoe.id} aria-label={`${shoe.brand} ${shoe.name}`} style={riseDelay(2 + Math.min(idx, 8))} className="lab-card lab-card-lift lab-rise min-w-0">
           <div className="flex items-center justify-between gap-3 border-b border-white/6 px-fluid-lg py-2.5">
-            <h3 className="truncate font-amatic text-2xl tracking-wide text-brand-chalk">{shoe.name}</h3>
+            <h3 className="truncate lab-title text-base text-brand-chalk">{shoe.name}</h3>
             <div className="shrink-0 text-right font-mono">
               <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-xs font-semibold" : "text-lg"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
               <p className="lab-label mt-0.5">{mode === "personal" ? hasProfile ? "Match" : "Profile needed" : shoe.secondaryLabel}</p>

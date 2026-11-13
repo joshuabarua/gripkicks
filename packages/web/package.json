@@ -11,7 +11,7 @@
     "dev": "next dev --turbopack -p 3000",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "cd ../.. && eslint packages/web",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",

@@ -20,11 +20,8 @@ const userShoeMutationArgs = {
 async function findUsersByFootProfile(ctx: any, footShape: string, footVolume: string) {
   return await ctx.db
     .query("users")
-    .filter((q: any) =>
-      q.and(
-        q.eq(q.field("footShape"), footShape),
-        q.eq(q.field("footVolume"), footVolume),
-      ),
+    .withIndex("by_footProfile", (q: any) =>
+      q.eq("footShape", footShape).eq("footVolume", footVolume),
     )
     .collect();
 }

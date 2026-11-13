@@ -71,7 +71,8 @@ export default defineSchema({
     ...subscriptionFieldsValidator,
   })
     .index("by_email", ["email"])
-    .index("by_betterAuthId", ["betterAuthId"]),
+    .index("by_betterAuthId", ["betterAuthId"])
+    .index("by_footProfile", ["footShape", "footVolume"]),
 
   // Accounts (for Better Auth)
   accounts: defineTable({

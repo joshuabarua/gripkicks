@@ -8651,29 +8651,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"convex@npm:^1.31.6":
-  version: 1.31.6
-  resolution: "convex@npm:1.31.6"
-  dependencies:
-    esbuild: "npm:0.27.0"
-    prettier: "npm:^3.0.0"
-  peerDependencies:
-    "@auth0/auth0-react": ^2.0.1
-    "@clerk/clerk-react": ^4.12.8 || ^5.0.0
-    react: ^18.0.0 || ^19.0.0-0 || ^19.0.0
-  peerDependenciesMeta:
-    "@auth0/auth0-react":
-      optional: true
-    "@clerk/clerk-react":
-      optional: true
-    react:
-      optional: true
-  bin:
-    convex: bin/main.js
-  checksum: 10c0/7160203c1978cdf4265209a2595c8c15fd1c3e53d86ff9d26b1a44b4525112414622dec83a26611df399f86742c22e4698ef7a4d3ccaf859b243886f31b0a526
-  languageName: node
-  linkType: hard
-
 "convex@npm:^1.32.0":
   version: 1.32.0
   resolution: "convex@npm:1.32.0"
@@ -11202,7 +11179,7 @@ __metadata:
     "@types/react": "npm:^19.0.8"
     "@types/react-dom": "npm:^19.0.3"
     concurrently: "npm:^9.1.2"
-    convex: "npm:^1.31.6"
+    convex: "npm:^1.32.0"
     convex-helpers: "npm:^0.1.111"
     dotenv: "npm:^16.4.7"
     dotenv-cli: "npm:^11.0.0"

@@ -1,27 +1,5 @@
-import { v } from "convex/values";
 import { internalMutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
-
-export const getShoePopularity = query({
-  args: { shoeId: v.id("shoes") },
-  handler: async (ctx, args) => {
-    const popularity = await ctx.db
-      .query("popularity")
-      .withIndex("by_shoeId", (q) => q.eq("shoeId", args.shoeId))
-      .unique();
-
-    const allPopularity = await ctx.db.query("popularity").collect();
-    const totalShoesInDatabase = allPopularity.reduce(
-      (total, row) => total + row.count,
-      0,
-    );
-
-    return {
-      popularityCount: popularity?.count ?? 0,
-      totalShoesInDatabase,
-    };
-  },
-});
 
 export const getAllShoesPopularity = query({
   handler: async (ctx) => {

@@ -97,7 +97,7 @@ export function FirstShoeQuiz({ onPickShoe }: { onPickShoe?: (shoe: Shoe) => voi
       </div>
 
       <div className="mt-fluid-lg">
-        <h3 className="font-amatic text-2xl tracking-wide text-brand-chalk">{question.title}</h3>
+        <h3 className="lab-title text-base text-brand-chalk">{question.title}</h3>
         <div role="radiogroup" aria-label={question.title} className="mt-fluid-md grid gap-2 sm:grid-cols-2">
           {question.options.map((option) => {
             const selected = answers[question.key] === option.value;
@@ -175,7 +175,7 @@ function QuizResults({ results, loading, onRetake, onPickShoe }: { results: Scor
         {results.map(({ shoe, score, reasons }, idx) => (
           <article key={shoe._id} aria-label={`${shoe.brand} ${shoe.name}`} style={riseDelay(1 + Math.min(idx, 8))} className="lab-card lab-card-lift lab-rise min-w-0">
             <div className="flex items-center justify-between gap-3 border-b border-white/6 px-fluid-lg py-2.5">
-              <h3 className="truncate font-amatic text-2xl tracking-wide text-brand-chalk">{shoe.name}</h3>
+              <h3 className="truncate lab-title text-base text-brand-chalk">{shoe.name}</h3>
               <div className="shrink-0 text-right font-mono">
                 <p className="text-lg tabular-nums">{score}%</p>
                 <p className="lab-label mt-0.5">Match</p>

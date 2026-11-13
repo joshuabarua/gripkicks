@@ -15,6 +15,7 @@ vi.mock("@/hooks/useUserData", () => ({ useUserData: mocks.userData }));
 vi.mock("next/navigation", () => ({ usePathname: () => "/", useRouter: () => ({ replace: mocks.replace, push: vi.fn() }) }));
 vi.mock("@/contexts/LoadingContext", () => ({ useLoading: () => ({ showLoader: mocks.showLoader, hideLoader: mocks.hideLoader }) }));
 vi.mock("@/components/ShoeImage", () => ({ default: () => <div /> }));
+vi.mock("@/components/ClimbingExperienceSelect", () => ({ ClimbingExperienceSelect: () => <select aria-label="Climbing experience" /> }));
 
 const shoe: UserShoe = { _id: "stash-1", shoeId: "shoe-1", shoe: { _id: "shoe-1", name: "Origin Women's", modelName: "Origin", brand: "Scarpa", aggressiveness: "flat", stiffness: "medium", climbingDiscipline: "sport", volume: "medium" } };
 const setShoes = (userStashData: UserShoe[] | undefined) => mocks.userData.mockReturnValue({ userData: { name: "Josh Climber" }, userStashData, isLoading: false });

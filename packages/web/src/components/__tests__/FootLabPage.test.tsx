@@ -17,6 +17,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/footlab",
   useRouter: () => ({ replace: mocks.replace, push: mocks.push }),
 }));
+vi.mock("@/components/matcher/FirstShoeQuiz", () => ({ FirstShoeQuiz: () => <div /> }));
 vi.mock("@/lib/api-client", () => ({
   fetchApi: vi.fn(async () => ({ isOk: () => true, isErr: () => false, value: {} })),
 }));

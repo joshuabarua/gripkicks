@@ -1,10 +1,8 @@
-import { notFound } from "next/navigation";
 import { DashboardOverview } from "@/app/dashboard/DashboardPage";
 import type { UserShoe } from "@/types/api";
 import images from "../../../../../../data/shoe-images.json";
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ state?: string }> }) {
-  if (process.env.NODE_ENV !== "development") notFound();
   const { state } = await searchParams;
   const userShoes: UserShoe[] = ([["Boreal", "Dharma"], ["Scarpa", "Drago LV"], ["Mad Rock", "Drone"]] as const).map(([brand, name], index) => {
     const imageUrl = images.find((image) => image.brand === brand && image.name === name)?.imageUrl;
