@@ -1,7 +1,9 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import ShoeImage from "@/components/ShoeImage";
 import { Heart, Target, Zap, Shield } from "lucide-react";
+import { glideTransition, radarMarkerMotion } from "@/lib/motion";
 
 interface RadarMetrics {
   comfort: number;
@@ -37,8 +39,6 @@ interface QuadrantInfo {
   description: string;
   corner: Corner;
   icon: React.ReactNode;
-  borderColor: string;
-  bgColor: string;
 }
 
 const quadrants: Record<QuadrantKey, QuadrantInfo> = {
@@ -47,53 +47,42 @@ const quadrants: Record<QuadrantKey, QuadrantInfo> = {
     description: "Low aggression and all day comfort.",
     corner: "top-left",
     icon: <Heart aria-hidden="true" className="h-4 w-4" />,
-    borderColor: "border-green-400/40",
-    bgColor: "bg-green-400/5",
   },
   "all-rounder": {
     name: "All rounder",
     description: "Balanced comfort and performance.",
     corner: "top-right",
     icon: <Zap aria-hidden="true" className="h-4 w-4" />,
-    borderColor: "border-blue-400/40",
-    bgColor: "bg-blue-400/5",
   },
   aggressive: {
     name: "Aggressive",
-    description: "Downturned shoes for steep terrain.",
+    description: "Downturned with a forgiving fit.",
     corner: "bottom-left",
     icon: <Shield aria-hidden="true" className="h-4 w-4" />,
-    borderColor: "border-brand-red/40",
-    bgColor: "bg-brand-red/5",
   },
   competition: {
     name: "Competition",
-    description: "Specialist shoes for precision and sensitivity.",
+    description: "Downturned and precise for hard climbing.",
     corner: "bottom-right",
     icon: <Target aria-hidden="true" className="h-4 w-4" />,
-    borderColor: "border-red-400/40",
-    bgColor: "bg-red-400/5",
   },
 };
 
 const cornerPositionClass: Record<Corner, string> = {
-  "top-left": "top-12 left-12",
-  "top-right": "top-12 right-12",
-  "bottom-left": "bottom-12 left-12",
-  "bottom-right": "bottom-12 right-12",
+  "top-left": "top-8 left-6 sm:top-12 sm:left-12",
+  "top-right": "top-8 right-6 sm:top-12 sm:right-12",
+  "bottom-left": "bottom-8 left-6 sm:bottom-12 sm:left-12",
+  "bottom-right": "bottom-8 right-6 sm:bottom-12 sm:right-12",
 };
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
+// x: comfort (left) to performance (right). y: versatile (top) to aggressive (bottom).
 function computePosition(metrics: RadarMetrics) {
-  const performanceWeight = metrics.performance + metrics.aggressiveness;
-  const comfortWeight = metrics.comfort + metrics.versatility;
-  const versatilityWeight = metrics.versatility + metrics.comfort;
-  const aggressiveWeight = metrics.aggressiveness + metrics.performance;
-  const x = clamp(performanceWeight / Math.max(performanceWeight + comfortWeight, 0.001), 0.08, 0.92);
-  const y = clamp(1 - aggressiveWeight / Math.max(aggressiveWeight + versatilityWeight, 0.001), 0.08, 0.92);
+  const x = clamp(metrics.performance / Math.max(metrics.performance + metrics.comfort, 0.001), 0.08, 0.92);
+  const y = clamp(metrics.aggressiveness / Math.max(metrics.aggressiveness + metrics.versatility, 0.001), 0.08, 0.92);
   return { x, y };
 }
 
@@ -156,6 +145,7 @@ interface RadarGridProps {
 
 export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confidenceLabel }: RadarGridProps) {
   const userPos = userPosition ? computePosition(userPosition.metrics) : null;
+  const userQuadrant = userPos ? getQuadrantKeyFromPosition(userPos.x, userPos.y) : null;
   const positions = buildPositions(shoes, userPos);
   const quadrantCounts = positions.reduce((counts, p) => {
     counts[p.quadrantKey] += 1;
@@ -165,11 +155,11 @@ export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confi
   return (
     <section aria-label="Shoe radar map" className="space-y-fluid-md">
       <div className="flex flex-wrap justify-between gap-3 font-mono text-sm text-brand-putty">
-        <p>Focus or tap a shoe for details. Scroll the map on smaller screens.</p>
+        <p>Focus or tap a shoe for details.</p>
         <p>Marker size: {confidenceLabel ?? "Confidence"}</p>
       </div>
-      <div role="region" aria-label="Scrollable shoe radar" tabIndex={0} className="overflow-x-auto rounded-2xl border border-white/40">
-        <div className="relative min-w-[680px] bg-brand-surface" style={{ aspectRatio: "16 / 10", minHeight: "560px" }} onMouseLeave={() => onHoverChange?.(null)}>
+      <div className="overflow-hidden rounded-2xl border border-white/40">
+        <div className="relative aspect-[4/5] bg-brand-surface [--marker-scale:0.7] sm:aspect-[16/10] sm:[--marker-scale:1]" onMouseLeave={() => onHoverChange?.(null)}>
           <AxisLabel position="top">More Versatile</AxisLabel>
           <AxisLabel position="bottom">More Aggressive</AxisLabel>
           <AxisLabel position="left">More Comfortable</AxisLabel>
@@ -179,20 +169,22 @@ export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confi
             <div className="absolute left-0 right-0 top-1/2 h-px bg-white/40" />
           </div>
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid grid-cols-2 grid-rows-2">
-            <QuadrantTile quadrant={quadrants.comfort} extraBorder="border-r border-b" />
-            <QuadrantTile quadrant={quadrants["all-rounder"]} extraBorder="border-b" />
-            <QuadrantTile quadrant={quadrants.aggressive} extraBorder="border-r" />
-            <QuadrantTile quadrant={quadrants.competition} extraBorder="" />
+            {(["comfort", "all-rounder", "aggressive", "competition"] as const).map((key) => <QuadrantTile key={key} isUserQuadrant={userQuadrant === key} />)}
           </div>
-          {(Object.keys(quadrants) as QuadrantKey[]).map((key) => <QuadrantCornerLabel key={key} quadrant={quadrants[key]} count={quadrantCounts[key]} />)}
+          {(Object.keys(quadrants) as QuadrantKey[]).map((key) => <QuadrantCornerLabel key={key} quadrant={quadrants[key]} />)}
           <svg aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 z-10 h-full w-full text-brand-putty">
             {positions.map((pos) => <line key={pos.id} x1={pos.baseX * 100} y1={pos.baseY * 100} x2={pos.x * 100} y2={pos.y * 100} stroke="currentColor" strokeWidth="0.15" strokeDasharray="0.6 0.5" />)}
           </svg>
           {userPos && <UserMarker x={userPos.x} y={userPos.y} label={userPosition?.label ?? "YOU"} />}
-          {positions.map((pos, index) => <ShoeMarker key={pos.id} pos={pos} rank={index + 1} isHovered={hoveredId === pos.id} onHover={onHoverChange} />)}
+          <AnimatePresence initial={false}>
+            {positions.map((pos, index) => <ShoeMarker key={pos.id} pos={pos} rank={index + 1} isHovered={hoveredId === pos.id} onHover={onHoverChange} />)}
+          </AnimatePresence>
         </div>
       </div>
-      <p className="font-mono text-sm text-brand-putty">Nearby markers are separated; dashed lines show metric positions. {userPos && "Cyan marker: your preferences. "}Arrows: community aggression compared with brand specification.</p>
+      <ul aria-label="Quadrants" className="grid grid-cols-2 gap-2">
+        {(["comfort", "all-rounder", "aggressive", "competition"] as const).map((key) => <QuadrantLegendItem key={key} quadrant={quadrants[key]} count={quadrantCounts[key]} isUserQuadrant={userQuadrant === key} />)}
+      </ul>
+      <p className="font-mono text-sm text-brand-putty">Nearby markers are separated; dashed lines show metric positions. {userPos && "Cyan marker: your preferences; your quadrant is tinted. "}Arrows: community aggression compared with brand specification.</p>
     </section>
   );
 }
@@ -204,9 +196,9 @@ function ShoeMarker({ pos, rank, isHovered, onHover }: { pos: ReturnType<typeof 
   const arrowMagnitude = clamp(Math.abs(brandDelta), 0, 2);
 
   return (
-    <button type="button" aria-label={`${rank}. ${pos.brand} ${pos.name}. ${pos.primaryScoreLabel ?? "Score"} ${pos.primaryScore}`} aria-expanded={isHovered} onMouseEnter={() => onHover?.(pos.id)} onFocus={() => onHover?.(pos.id)} onBlur={() => onHover?.(null)} onClick={() => onHover?.(pos.id)} onKeyDown={(event) => { if (event.key === "Escape") onHover?.(null); }} className={`absolute rounded-lg ${isHovered ? "z-40" : "z-30"}`} style={{ left: `${pos.x * 100}%`, top: `${pos.y * 100}%`, transform: "translate(-50%, -50%)" }}>
+    <motion.button {...radarMarkerMotion} animate={{ opacity: 1, scale: 1, left: `${pos.x * 100}%`, top: `${pos.y * 100}%` }} type="button" aria-label={`${rank}. ${pos.brand} ${pos.name}. ${pos.primaryScoreLabel ?? "Score"} ${pos.primaryScore}`} aria-expanded={isHovered} onMouseEnter={() => onHover?.(pos.id)} onFocus={() => onHover?.(pos.id)} onBlur={() => onHover?.(null)} onClick={() => onHover?.(pos.id)} onKeyDown={(event) => { if (event.key === "Escape") onHover?.(null); }} className={`absolute rounded-lg ${isHovered ? "z-40" : "z-30"}`} style={{ x: "-50%", y: "-50%" }}>
       <span className="relative block">
-        <span className={`block overflow-hidden rounded-lg bg-black/40 shadow-lg ${rank === 1 || isHovered ? "border-2 border-brand-red" : "border border-white/40"}`} style={{ width: sizePx, height: sizePx }}>
+        <span className={`block overflow-hidden rounded-lg bg-black/40 shadow-lg ${rank === 1 || isHovered ? "border-2 border-brand-red" : "border border-white/40"}`} style={{ width: `calc(${sizePx}px * var(--marker-scale, 1))`, height: `calc(${sizePx}px * var(--marker-scale, 1))` }}>
           <ShoeImage brand={pos.brand} shoeName={pos.name} imageUrl={pos.imageUrl} className="p-1" transformation={[{ height: 80, width: 80, crop: "at_max", format: "png" }]} />
         </span>
         <span className={`absolute -left-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 font-mono text-xs font-semibold ${rank === 1 ? "bg-brand-red text-black" : "bg-brand-soft-surface text-brand-chalk"}`}>{rank}</span>
@@ -223,7 +215,7 @@ function ShoeMarker({ pos, rank, isHovered, onHover }: { pos: ReturnType<typeof 
           </span>
         )}
       </span>
-    </button>
+    </motion.button>
   );
 }
 
@@ -238,22 +230,32 @@ function BrandDriftArrow({ direction, magnitude }: { direction: "up" | "down"; m
 
 function UserMarker({ x, y, label }: { x: number; y: number; label: string }) {
   return (
-    <div className="pointer-events-none absolute z-20" style={{ left: `${x * 100}%`, top: `${y * 100}%`, transform: "translate(-50%, -50%)" }}>
+    <motion.div className="pointer-events-none absolute z-20" initial={false} animate={{ left: `${x * 100}%`, top: `${y * 100}%` }} transition={glideTransition} style={{ x: "-50%", y: "-50%" }}>
       <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-cyan-400 bg-brand-base"><div className="h-3 w-3 rounded-full bg-cyan-400" /></div>
       <div className="absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-cyan-400 px-3 py-1 font-mono text-sm font-semibold text-black">{label}</div>
-    </div>
+    </motion.div>
   );
 }
 
 function AxisLabel({ position, children }: { position: "top" | "bottom" | "left" | "right"; children: React.ReactNode }) {
-  const classes = { top: "top-4 left-1/2 -translate-x-1/2", bottom: "bottom-4 left-1/2 -translate-x-1/2", left: "left-4 top-1/2 -translate-y-1/2", right: "right-4 top-1/2 -translate-y-1/2" };
-  return <div className={`pointer-events-none absolute z-20 font-mono text-sm text-brand-putty ${classes[position]}`}><span style={position === "left" || position === "right" ? { writingMode: "vertical-lr", ...(position === "left" ? { transform: "rotate(180deg)" } : {}) } : undefined}>{children}</span></div>;
+  const classes = { top: "top-2 left-1/2 -translate-x-1/2 sm:top-4", bottom: "bottom-2 left-1/2 -translate-x-1/2 sm:bottom-4", left: "left-1 top-1/2 -translate-y-1/2 sm:left-4", right: "right-1 top-1/2 -translate-y-1/2 sm:right-4" };
+  return <div className={`pointer-events-none absolute z-20 whitespace-nowrap font-mono text-xs text-brand-putty sm:text-sm ${classes[position]}`}><span style={position === "left" || position === "right" ? { writingMode: "vertical-lr", ...(position === "left" ? { transform: "rotate(180deg)" } : {}) } : undefined}>{children}</span></div>;
 }
 
-function QuadrantTile({ quadrant, extraBorder }: { quadrant: QuadrantInfo; extraBorder: string }) {
-  return <div className={`${quadrant.bgColor} ${quadrant.borderColor} ${extraBorder}`} />;
+function QuadrantTile({ isUserQuadrant }: { isUserQuadrant: boolean }) {
+  return <div className={`transition-colors duration-500 ${isUserQuadrant ? "bg-brand-red/8" : ""}`} />;
 }
 
-function QuadrantCornerLabel({ quadrant, count }: { quadrant: QuadrantInfo; count: number }) {
-  return <div title={quadrant.description} className={`pointer-events-none absolute z-20 flex items-center gap-2 rounded-lg border border-white/40 bg-brand-base px-3 py-2 font-mono text-sm text-brand-chalk ${cornerPositionClass[quadrant.corner]}`}>{quadrant.icon}<span>{quadrant.name}</span><span className="tabular-nums text-brand-putty">{count}</span></div>;
+// Sits beneath markers so shoes near the edges are never hidden by a label.
+function QuadrantCornerLabel({ quadrant }: { quadrant: QuadrantInfo }) {
+  return <div aria-hidden="true" className={`lab-title pointer-events-none absolute z-0 text-xs text-brand-putty/50 sm:text-base ${cornerPositionClass[quadrant.corner]}`}>{quadrant.name}</div>;
+}
+
+function QuadrantLegendItem({ quadrant, count, isUserQuadrant }: { quadrant: QuadrantInfo; count: number; isUserQuadrant: boolean }) {
+  return (
+    <li className={`rounded-lg border p-3 font-mono transition-colors duration-500 ${isUserQuadrant ? "border-brand-red/40 bg-brand-red/10" : "border-white/10"}`}>
+      <p className="flex items-center gap-2 text-sm text-brand-chalk">{quadrant.icon}<span>{quadrant.name}</span><span className="ml-auto tabular-nums text-brand-putty">{count}</span></p>
+      <p className="mt-1 hidden text-xs text-brand-putty sm:block">{quadrant.description}{isUserQuadrant ? " Your preferences." : ""}</p>
+    </li>
+  );
 }

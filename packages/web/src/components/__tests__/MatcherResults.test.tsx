@@ -12,9 +12,9 @@ const shoe: DisplayShoe = { ...baseShoe, breakdown: { footTypeCompatibility: 4, 
 const props = { personalShoes: [shoe], communityShoes: [{ ...baseShoe, id: "community-1", name: "Drago LV", secondaryLabel: "12 ratings", totalRatings: 12 }], footProfile: { shape: "Egyptian", volume: "Low" } };
 
 describe("Matcher results", () => {
-  it("keeps comparison views collapsed instead of competing with shoe cards", () => {
+  it("shows the radar map by default and keeps the ratings table collapsed", () => {
     render(<MatcherResults {...props} />);
-    expect(screen.getByText("Radar map").closest("details")).not.toHaveAttribute("open");
+    expect(screen.getByRole("region", { name: "Radar map" })).toBeVisible();
     expect(screen.getByText("Compare ratings").closest("details")).not.toHaveAttribute("open");
     const tile = screen.getByRole("article", { name: "Scarpa Origin Women's" });
     expect(tile).toHaveClass("lab-card", "lab-card-lift", "lab-rise");
@@ -44,6 +44,14 @@ describe("Matcher results", () => {
     fireEvent.click(summary);
     expect(summary.closest("details")).toHaveAttribute("open");
     expect(screen.getByText("Foot shape")).toBeVisible();
+  });
+
+  it("shows weighted match contributions on each card", () => {
+    render(<MatcherResults {...props} />);
+    const card = within(screen.getByRole("article", { name: "Scarpa Origin Women's" }));
+    expect(card.getByRole("img", { name: /Match makeup: Foot shape 24, Volume 16, Preferences 15, Community 12, Overall rating 8/ })).toBeInTheDocument();
+    fireEvent.click(card.getByText("Match details"));
+    expect(card.getByText("Foot shape").closest("div")).toHaveTextContent("+24 / 30");
   });
 
   it("does not show a false empty state while a source is loading", () => {

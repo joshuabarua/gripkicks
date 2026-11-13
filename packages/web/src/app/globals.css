@@ -159,6 +159,12 @@
 	animation-delay: var(--rise-delay, 0ms);
 }
 
+@utility lab-grow {
+	transform-origin: left center;
+	animation: lab-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+	animation-delay: var(--rise-delay, 0ms);
+}
+
 @layer utilities {
 	/* ============================================
    ORIENTATION-BASED DESIGN SYSTEM
@@ -368,6 +374,15 @@
 	}
 }
 
+@keyframes lab-grow {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: none;
+	}
+}
+
 @keyframes lab-fade {
 	from {
 		opacity: 0;
@@ -379,7 +394,8 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.lab-rise,
-	.lab-fade {
+	.lab-fade,
+	.lab-grow {
 		animation: none;
 	}
 }

@@ -3,6 +3,7 @@
 import Link from "@/components/ui/NavLink";
 import { useMemo, useState, type ReactNode } from "react";
 import { useQuery } from "convex/react";
+import { motion } from "framer-motion";
 import { api } from "convex/_generated/api";
 import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo } from "@/components/stash/BrandLogo";
@@ -13,10 +14,10 @@ import { MatchScoreTooltip } from "./MatchScoreTooltip";
 import { DataContributionNudge } from "@/components/DataContributionNudge";
 import { RadarGrid, type RadarShoe, type RadarUserPosition } from "./RadarGrid";
 import type { CommunitySignal, MatchSignals } from "@/types/shoe";
-import { describeMatchSignal } from "@/utils/matchSignals";
 import { toFivePointScale, toHundredPointScale } from "convex/utils/scoring";
 import { MatcherGridSkeleton } from "@/components/ui/skeleton";
-import { riseDelay } from "@/lib/motion";
+import { glideTransition, riseDelay } from "@/lib/motion";
+import { MatchBreakdownBar, MatchBreakdownList } from "./MatchBreakdownBar";
 
 type Mode = "personal" | "community";
 
@@ -138,8 +139,9 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
         </div>
         <div aria-label="Choose recommendation source" className="grid grid-cols-2 gap-2">
           {([["personal", "For you", personalShoes.length, personalLoading], ["community", "Community", communityShoes.length, communityLoading]] as const).map(([value, label, count, loading]) => (
-            <button key={value} type="button" aria-pressed={mode === value} onClick={() => { setMode(value); setHoveredId(null); }} className={mode === value ? `lab-card-active flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3 py-3 font-mono text-xs uppercase tracking-wider text-white` : "lab-button-ghost justify-center"}>
-              {label}<span className="text-sm tabular-nums">{loading ? "…" : count}</span>
+            <button key={value} type="button" aria-pressed={mode === value} onClick={() => { setMode(value); setHoveredId(null); }} className={`relative flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-3 py-3 font-mono text-xs uppercase tracking-wider transition-colors duration-500 ${mode === value ? "text-white" : "text-brand-chalk hover:bg-white/5"}`}>
+              {mode === value && <motion.span layoutId="matcher-mode" aria-hidden="true" transition={glideTransition} className="absolute inset-0 rounded-lg border border-brand-red/40 bg-brand-red/10" />}
+              <span className="relative">{label}</span><span className="relative text-sm tabular-nums">{loading ? "…" : count}</span>
             </button>
           ))}
         </div>
@@ -155,12 +157,12 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
             <h2 id="matches-title" className="font-mono text-xl font-semibold">{activeShoes.length} {mode === "personal" ? "shoe matches" : "top-rated shoes"}</h2>
             <TileGrid shoes={activeShoes} mode={mode} hasProfile={hasProfile} />
           </section>
-          <details className="lab-card lab-rise" style={riseDelay(10)}>
-            <summary className="cursor-pointer rounded-lg p-fluid-lg font-mono text-lg font-semibold hover:bg-white/3">Radar map</summary>
+          <section aria-labelledby="radar-title" className="lab-card lab-rise" style={riseDelay(10)}>
+            <h2 id="radar-title" className="p-fluid-lg font-mono text-lg font-semibold">Radar map</h2>
             <div className="border-t border-white/8 p-fluid-md sm:p-fluid-lg">
               <RadarGrid shoes={toRadarShoes(activeShoes, mode)} hoveredId={hoveredId} onHoverChange={setHoveredId} confidenceLabel={mode === "personal" ? "Match strength" : "Sample size"} {...(mode === "personal" && userPosition ? { userPosition } : {})} />
             </div>
-          </details>
+          </section>
           <details className="lab-card lab-rise" style={riseDelay(11)}>
             <summary className="cursor-pointer rounded-lg p-fluid-lg font-mono text-lg font-semibold hover:bg-white/3">Compare ratings</summary>
             <div className="border-t border-white/8">
@@ -238,12 +240,13 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
           <div className="space-y-4 p-fluid-lg">
             <RatingIcons comfort={shoe.metrics.comfort} performance={shoe.metrics.performance} durability={shoe.metrics.durability} max={5} />
             {shoe.breakdown && (
-              <details className="border-t border-white/8 pt-2">
-                <summary className="min-h-11 cursor-pointer py-3 font-mono text-sm font-medium">Match details</summary>
-                <dl className="space-y-3 pb-2 font-mono text-sm text-brand-putty">
-                  {([["footShape", "Foot shape", shoe.breakdown.footTypeCompatibility], ["volume", "Volume", shoe.breakdown.volumeCompatibility], ["preferences", "Preferences", shoe.breakdown.userPreferenceMatch]] as const).map(([field, label, value]) => <div key={field} className="flex justify-between gap-4"><dt>{label}</dt><dd className="tabular-nums text-brand-chalk">{describeMatchSignal(shoe.signals, field) ?? `${(value * 20).toFixed(0)}%`}</dd></div>)}
-                </dl>
-              </details>
+              <div className="space-y-2 border-t border-white/8 pt-4">
+                <MatchBreakdownBar breakdown={shoe.breakdown} signals={shoe.signals} delayIndex={2 + Math.min(idx, 8)} />
+                <details>
+                  <summary className="min-h-11 cursor-pointer py-3 font-mono text-sm font-medium">Match details</summary>
+                  <MatchBreakdownList breakdown={shoe.breakdown} signals={shoe.signals} />
+                </details>
+              </div>
             )}
             {mode === "community" && <SignalCell signals={shoe.communitySignals ?? []} />}
           </div>
@@ -292,7 +295,7 @@ function MetricCell({ label, value }: { label: string; value: number }) {
     <div className="min-w-0 space-y-2 font-mono text-sm">
       <dt className="wrap-break-word text-brand-putty">{label}</dt>
       <dd className="tabular-nums">{value.toFixed(1)}<span className="text-brand-putty">/5</span></dd>
-      <div aria-hidden="true" className="h-1.5 overflow-hidden rounded-full bg-white/20"><div className="h-full rounded-full bg-brand-red" style={{ width: `${pct}%` }} /></div>
+      <div aria-hidden="true" className="h-1.5 overflow-hidden rounded-full bg-white/20"><div className="lab-grow h-full rounded-full bg-brand-red" style={{ width: `${pct}%` }} /></div>
     </div>
   );
 }

@@ -19,6 +19,14 @@ export const stepMotion = {
   transition: { duration: 0.3, ease: EASE_OUT },
 } as const;
 
+export const glideTransition = { type: "spring", stiffness: 260, damping: 30 } as const;
+
+export const radarMarkerMotion = {
+  initial: { opacity: 0, scale: 0.6 },
+  exit: { opacity: 0, scale: 0.6 },
+  transition: glideTransition,
+} as const;
+
 export const slideUpBarMotion = {
   initial: { y: 100, opacity: 0 },
   animate: { y: 0, opacity: 1 },
