@@ -14,6 +14,7 @@ import { PageSurface } from "@/components/ui/PageSurface";
 import { LabHeader } from "@/components/ui/LabHeader";
 import { riseDelay } from "@/lib/motion";
 import { ToeProfile, VolumeArch, TOE_HEIGHTS, VOLUME_ARCH, type FootShape, type FootVolume } from "@/components/foot/FootGlyphs";
+import { ClimbingExperienceSelect } from "@/components/ClimbingExperienceSelect";
 
 const isRated = (score?: number): score is number => typeof score === "number" && Number.isFinite(score) && score >= 1 && score <= 10;
 
@@ -149,6 +150,10 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
                 ) : (
                   <p className="mt-fluid-md font-mono text-sm leading-relaxed text-brand-putty">No profile saved. Set your shape and volume in Foot Lab using the next step above.</p>
                 )}
+                <div className="mt-fluid-md border-t border-white/6 pt-fluid-md">
+                  <p className="lab-label">Experience</p>
+                  <div className="mt-2"><ClimbingExperienceSelect /></div>
+                </div>
               </section>
             </div>
           </div>

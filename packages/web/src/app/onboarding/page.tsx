@@ -28,6 +28,7 @@ import { FullPageLoading } from "@/components/ui/loading";
 import { stepMotion } from "@/lib/motion";
 import type { Shoe } from "@/types/api";
 import { RatingButton, BackButton } from "@/components/onboarding/OnboardingHelpers";
+import { FirstShoeQuiz } from "@/components/matcher/FirstShoeQuiz";
 
 type ShoeSizeOption = { value: string; label: string };
 const isShoeSizeOption = (
@@ -40,7 +41,7 @@ interface ApiSuccessResponse {
   success: boolean;
 }
 
-type OnboardingStep = "welcome" | "foot-data" | "first-shoe" | "complete";
+type OnboardingStep = "welcome" | "foot-data" | "quiz" | "first-shoe" | "complete";
 type ProfileResponse = {
   footShape?: string | null;
   footVolume?: string | null;
@@ -72,6 +73,7 @@ export default function OnboardingPage() {
       [
         { key: "welcome" },
         { key: "foot-data" },
+        { key: "quiz" },
         { key: "first-shoe" },
         { key: "complete" },
       ] as const,
@@ -105,7 +107,7 @@ export default function OnboardingPage() {
       }
 
       if (savedFootShape && savedFootVolume) {
-        setCurrentStep("first-shoe");
+        setCurrentStep("quiz");
       }
     }
 
@@ -118,7 +120,7 @@ export default function OnboardingPage() {
 
   const handleNext = async () => {
     if (currentStep === "welcome") {
-      setCurrentStep(hasFootProfile ? "first-shoe" : "foot-data");
+      setCurrentStep(hasFootProfile ? "quiz" : "foot-data");
     }
     else if (currentStep === "foot-data") {
       setIsLoading(true);
@@ -202,7 +204,8 @@ export default function OnboardingPage() {
 
   const handlePrevious = () => {
     if (currentStep === "foot-data") setCurrentStep("welcome");
-    else if (currentStep === "first-shoe") setCurrentStep(hasFootProfile ? "welcome" : "foot-data");
+    else if (currentStep === "quiz") setCurrentStep(hasFootProfile ? "welcome" : "foot-data");
+    else if (currentStep === "first-shoe") setCurrentStep("quiz");
   };
 
   const handleSkipOnboarding = () => {
@@ -367,6 +370,25 @@ export default function OnboardingPage() {
                         <ChevronRight className="w-4 h-4" />
                       </motion.button>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === "quiz" && (
+                <div>
+                  <FirstShoeQuiz onPickShoe={(shoe) => {
+                    setSelectedShoe(shoe);
+                    setCurrentStep("first-shoe");
+                  }} />
+                  <div className="mt-6 flex justify-between">
+                    <BackButton onClick={handlePrevious} />
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStep("first-shoe")}
+                      className="font-mono text-xs text-brand-putty/60 transition-colors hover:text-brand-putty"
+                    >
+                      I know my shoe — search instead
+                    </button>
                   </div>
                 </div>
               )}

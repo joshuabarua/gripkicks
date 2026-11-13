@@ -9,6 +9,7 @@ import { BrandLogo } from "@/components/stash/BrandLogo";
 import { MatcherGridSkeleton } from "@/components/ui/skeleton";
 import { riseDelay } from "@/lib/motion";
 import { rankShoesForQuiz, type QuizAnswers, type ScoredShoe } from "@/utils/firstShoeQuiz";
+import type { Shoe } from "@/types/api";
 
 interface QuizOption<T> {
   value: T;
@@ -63,7 +64,7 @@ const QUESTIONS: Array<{
   },
 ];
 
-export function FirstShoeQuiz() {
+export function FirstShoeQuiz({ onPickShoe }: { onPickShoe?: (shoe: Shoe) => void }) {
   const shoes = useQuery(api.shoes.listAll, { limit: 500 });
   const { convexUser } = useCurrentUser();
   const updateUser = useMutation(api.users.update);
@@ -83,7 +84,7 @@ export function FirstShoeQuiz() {
   }, [done, shoes, answers]);
 
   if (done) {
-    return <QuizResults results={results} loading={shoes === undefined} onRetake={() => { setAnswers({}); setStep(0); setDone(false); }} />;
+    return <QuizResults results={results} loading={shoes === undefined} onRetake={() => { setAnswers({}); setStep(0); setDone(false); }} onPickShoe={onPickShoe} />;
   }
 
   const question = QUESTIONS[step]!;
@@ -149,7 +150,7 @@ export function FirstShoeQuiz() {
   );
 }
 
-function QuizResults({ results, loading, onRetake }: { results: ScoredShoe[]; loading: boolean; onRetake: () => void }) {
+function QuizResults({ results, loading, onRetake, onPickShoe }: { results: ScoredShoe[]; loading: boolean; onRetake: () => void; onPickShoe: ((shoe: Shoe) => void) | undefined }) {
   if (loading) return <MatcherGridSkeleton />;
   if (!results.length) {
     return (
@@ -188,11 +189,16 @@ function QuizResults({ results, loading, onRetake }: { results: ScoredShoe[]; lo
               </div>
             </div>
             {reasons.length > 0 && (
-              <ul aria-label="Why this shoe" className="flex flex-wrap gap-1.5 p-fluid-lg">
+              <ul aria-label="Why this shoe" className="flex flex-wrap gap-1.5 p-fluid-lg pb-0">
                 {reasons.map((reason) => (
                   <li key={reason} className="rounded-full border border-white/15 bg-black/30 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-brand-putty">{reason}</li>
                 ))}
               </ul>
+            )}
+            {onPickShoe && (
+              <div className="p-fluid-lg pt-3">
+                <button type="button" onClick={() => onPickShoe(shoe)} className="lab-button-ghost w-full justify-center">Add to my Sanctuary</button>
+              </div>
             )}
           </article>
         ))}
