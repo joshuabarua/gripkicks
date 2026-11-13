@@ -6,6 +6,7 @@ import { useRequireAuth } from "@/lib/auth";
 import { FullPageLoading } from "@/components/ui/loading";
 import { MatcherView } from "@/components/shoe/MatcherView";
 import { MatcherWorkspace, SoleMateContent } from "@/components/shoe/MatcherWorkspace";
+import { FirstShoeQuiz } from "@/components/matcher/FirstShoeQuiz";
 import { useFindMyShoe } from "@/hooks/useFindMyShoe";
 
 export default function MatcherPage() {
@@ -15,10 +16,11 @@ export default function MatcherPage() {
 function SoleSeekPage() {
   const { data: session } = useRequireAuth();
   const searchParams = useSearchParams();
-  const activeTab = searchParams.get("tab") === "mate" ? "mate" : "seek";
+  const tab = searchParams.get("tab");
+  const activeTab = tab === "mate" ? "mate" : tab === "first" ? "first" : "seek";
 
   if (!session?.user) return <FullPageLoading text="Loading matcher" />;
-  return <MatcherWorkspace activeTab={activeTab}>{activeTab === "seek" ? <MatcherView /> : <SoleMateTab />}</MatcherWorkspace>;
+  return <MatcherWorkspace activeTab={activeTab}>{activeTab === "seek" ? <MatcherView /> : activeTab === "first" ? <FirstShoeQuiz /> : <SoleMateTab />}</MatcherWorkspace>;
 }
 
 function SoleMateTab() {

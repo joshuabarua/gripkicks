@@ -79,6 +79,7 @@ export const update = mutation({
     emailVerified: v.optional(v.boolean()),
     footShape: v.optional(footShapeValidator),
     footVolume: v.optional(v.string()),
+    climbingExperience: v.optional(v.string()),
     favoriteShoeId: v.optional(v.union(v.id("shoes"), v.null())),
   },
   handler: async (ctx, args) => {
@@ -334,6 +335,7 @@ export const serviceUpdate = internalMutation({
     isAdmin: v.optional(v.boolean()),
     footShape: v.optional(footShapeValidator),
     footVolume: v.optional(v.string()),
+    climbingExperience: v.optional(v.string()),
     favoriteShoeId: v.optional(v.union(v.id("shoes"), v.null())),
   },
   handler: async (ctx, args) => {

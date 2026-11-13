@@ -66,6 +66,7 @@ export default defineSchema({
     betterAuthId: v.optional(v.string()),
     footShape: v.optional(footShapeValidator),
     footVolume: v.optional(v.string()),
+    climbingExperience: v.optional(v.string()),
     favoriteShoeId: v.optional(v.id("shoes")),
     ...subscriptionFieldsValidator,
   })

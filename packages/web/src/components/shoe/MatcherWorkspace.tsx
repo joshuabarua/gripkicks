@@ -11,10 +11,10 @@ import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo } from "@/components/stash/BrandLogo";
 import type { SoleMateClimberMatch } from "@/hooks/useFindMyShoe";
 
-export function MatcherWorkspace({ activeTab, children }: { activeTab: "seek" | "mate"; children: ReactNode }) {
+export function MatcherWorkspace({ activeTab, children }: { activeTab: "seek" | "mate" | "first"; children: ReactNode }) {
   const tabs = (
     <nav aria-label="Matcher views" className="flex flex-wrap gap-3">
-      {([["seek", "Shoe matches", "/matcher"], ["mate", "Sole Mate", "/matcher?tab=mate"]] as const).map(([tab, label, href]) => (
+      {([["seek", "Shoe matches", "/matcher"], ["mate", "Sole Mate", "/matcher?tab=mate"], ["first", "First shoe", "/matcher?tab=first"]] as const).map(([tab, label, href]) => (
         <Link key={tab} href={href} scroll={false} aria-current={activeTab === tab ? "page" : undefined} className={activeTab === tab ? "lab-card lab-card-active inline-flex min-h-11 items-center rounded-lg px-5 py-3 font-mono text-xs uppercase tracking-wider text-white" : "lab-button-ghost"}>{label}</Link>
       ))}
     </nav>

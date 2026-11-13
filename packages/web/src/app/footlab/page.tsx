@@ -269,6 +269,14 @@ export default function FootLabPage() {
           </div>
         </section>
 
+        <section style={riseDelay(10)} className="lab-card lab-rise mb-16 flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="lab-title text-lg">Don&apos;t know your feet yet?</h2>
+            <p className="font-mono text-sm text-brand-putty mt-0.5">Answer four questions, get shoe picks without measuring your toes.</p>
+          </div>
+          <Link href="/matcher?tab=first" className="lab-button-ghost shrink-0">Take the first-shoe quiz</Link>
+        </section>
+
         {error && (
           <div className="text-red-400 text-sm font-mono bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">{error}</div>
         )}

@@ -111,7 +111,7 @@ export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
   });
 
   app.post("/api/users/update", async (c) => {
-    const { id, name, image, emailVerified, footShape, footVolume, favoriteShoeId } =
+    const { id, name, image, emailVerified, footShape, footVolume, climbingExperience, favoriteShoeId } =
       await c.req.json();
     return withUserIdValidation(c, id, async (user) => {
       return await c.env.runMutation(internal.users.serviceUpdate, {
@@ -121,6 +121,7 @@ export function registerUserRoutes(app: HonoWithConvex<ActionCtx>) {
         ...(emailVerified !== undefined ? { emailVerified } : {}),
         ...(footShape !== undefined ? { footShape } : {}),
         ...(footVolume !== undefined ? { footVolume } : {}),
+        ...(climbingExperience !== undefined ? { climbingExperience } : {}),
         ...(favoriteShoeId !== undefined
           ? {
               favoriteShoeId:
