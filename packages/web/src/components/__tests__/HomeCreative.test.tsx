@@ -16,6 +16,7 @@ vi.mock("next/navigation", () => ({ usePathname: () => "/", useRouter: () => ({ 
 vi.mock("convex/react", () => ({ useQuery: mocks.count }));
 vi.mock("@/hooks/useReducedEffects", () => ({ useReducedEffects: mocks.reducedEffects }));
 vi.mock("@/components/3d/webgl-utils", () => ({ supportsWebGL: mocks.webgl }));
+vi.mock("@/components/ShoeImage", () => ({ default: () => <div /> }));
 vi.mock("next/dynamic", () => ({
   default: (_load: unknown, options?: { loading?: () => React.ReactNode }) =>
     function DynamicScene({ onReady }: { onReady?: () => void }) {
@@ -129,11 +130,33 @@ describe("Homepage clarity", () => {
     expect(links).toHaveLength(4);
     for (const link of links) {
       expect(link).toHaveClass("lab-card", "lab-card-lift", "lab-rise");
-      const svgs = link.querySelectorAll("svg");
-      expect(svgs).toHaveLength(1);
-      expect(svgs[0]).toHaveClass("lucide-arrow-up-right");
-      expect(svgs[0]).toHaveClass("h-5", "w-5");
+      const icons = link.querySelectorAll("svg.lucide");
+      expect(icons).toHaveLength(1);
+      expect(icons[0]).toHaveClass("lucide-arrow-up-right");
+      expect(icons[0]).toHaveClass("h-5", "w-5");
     }
+  });
+
+  it("previews each tool without exposing decorative graphics to assistive tech", () => {
+    render(<HomeCreative />);
+    const links = within(screen.getByRole("region", { name: "Tools" })).getAllByRole("link");
+    expect(links[0]).toHaveAccessibleName(/Matcher/);
+    expect(links[0]).toHaveClass("md:row-span-3");
+    for (const link of links) {
+      const preview = link.firstElementChild;
+      expect(preview).toHaveAttribute("aria-hidden", "true");
+      expect(preview?.querySelector("svg.lucide")).toBeNull();
+    }
+  });
+
+  it("spotlights the focused tool and dims the others", () => {
+    render(<HomeCreative />);
+    const links = within(screen.getByRole("region", { name: "Tools" })).getAllByRole("link");
+    fireEvent.focus(links[1]!);
+    expect(links[1]).toHaveClass("lab-card-active");
+    expect(links[0]).toHaveClass("md:opacity-60");
+    fireEvent.blur(links[1]!);
+    expect(links[0]).not.toHaveClass("md:opacity-60");
   });
 
   it("keeps tool anchor cards compact with lab-title titles", () => {
