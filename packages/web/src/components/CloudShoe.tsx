@@ -16,7 +16,6 @@ interface CloudShoeProps {
   variantLabel?: string | null | undefined;
   specialLabel?: { type: 'most-worn' | 'oldest' | 'most-comfy'; icon: React.ReactNode } | undefined;
   expanded: boolean;
-  dimmed?: boolean;
   onToggleExpand: () => void;
   onToggleFavourite: () => void;
   onRemove: () => void;
@@ -88,7 +87,7 @@ function StatSlider({ label, icon, value, onCommit }: { label: string; icon: Rea
   );
 }
 
-const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expanded, dimmed, onToggleExpand, onToggleFavourite, onRemove, onRate, onUpdateDetails }) => {
+const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expanded, onToggleExpand, onToggleFavourite, onRemove, onRate, onUpdateDetails }) => {
   const details = shoe.shoe ?? shoe.shoeDetails;
   const brand = details?.brand ?? 'Unknown Brand';
   const name = details?.name ?? 'Unknown Shoe';
@@ -167,10 +166,8 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
 
   return (
     <motion.article
-      layout="position"
-      transition={{ layout: { type: 'spring', stiffness: 300, damping: 32 } }}
-      className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-[opacity,filter,border-color] duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'order-first row-start-1 sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''} ${dimmed ? 'opacity-40 saturate-50' : ''}`}
-      {...(expanded || dimmed ? {} : { whileHover: { y: -3 } })}
+      className={`group relative w-full overflow-hidden rounded-xl border border-white/30 bg-brand-surface shadow-lg shadow-black/20 transition-colors duration-300 hover:border-white/50 focus-within:border-white/50 ${expanded ? 'sm:col-span-2 lg:col-span-3 xl:col-span-4' : ''}`}
+      {...(expanded ? {} : { whileHover: { y: -3 } })}
     >
       <div className="flex min-h-11 items-center justify-between gap-3 border-b border-white/20 px-4 py-2.5">
         <h3 className="truncate font-amatic text-2xl tracking-wide text-brand-chalk transition-colors group-hover:text-white">
@@ -346,7 +343,6 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
     prevProps.shoe === nextProps.shoe &&
     prevProps.variantLabel === nextProps.variantLabel &&
     prevProps.expanded === nextProps.expanded &&
-    prevProps.dimmed === nextProps.dimmed &&
     prevProps.onToggleExpand === nextProps.onToggleExpand &&
     prevProps.onToggleFavourite === nextProps.onToggleFavourite &&
     prevProps.onRemove === nextProps.onRemove &&

@@ -65,11 +65,6 @@ describe("Sanctuary content", () => {
     expect(onUpdateDetails).toHaveBeenCalledWith({ condition: "Good" });
   });
 
-  it("dims sibling cards while another is expanded", () => {
-    render(<CloudShoe shoe={shoe} expanded={false} dimmed {...cardProps} />);
-    expect(document.querySelector("article")).toHaveClass("opacity-40");
-  });
-
   it("does not wrap interactive buttons inside a role=button card", () => {
     render(<CloudShoe shoe={shoe} expanded={true} {...cardProps} />);
     for (const el of document.querySelectorAll("[role='button']")) {

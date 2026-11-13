@@ -341,7 +341,6 @@ export default function ShoeSanctuaryPage() {
                     variantLabel={variantLabel}
                     specialLabel={specialLabels[shoe._id]}
                     expanded={expandedShoeId === shoe._id}
-                    dimmed={expandedShoeId !== null && expandedShoeId !== shoe._id}
                     onToggleExpand={() => setExpandedShoeId(expandedShoeId === shoe._id ? null : shoe._id)}
                     onToggleFavourite={() => toggleShoeFavourite(shoe)}
                     onRemove={() => confirmRemoveShoe(shoe)}
