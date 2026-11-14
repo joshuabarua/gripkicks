@@ -18,6 +18,7 @@ import { toFivePointScale, toHundredPointScale } from "convex/utils/scoring";
 import { MatcherGridSkeleton } from "@/components/ui/skeleton";
 import { glideTransition, riseDelay } from "@/lib/motion";
 import { MatchBreakdownBar, MatchBreakdownList } from "./MatchBreakdownBar";
+import { FitChart, type FitMetrics } from "./FitChart";
 
 type Mode = "personal" | "community";
 
@@ -108,8 +109,15 @@ export function MatcherView() {
       versatility: userPreferenceProfile.versatility,
     },
   } : undefined;
+  const fitProfile: FitMetrics | undefined = userPreferenceProfile && userPreferenceProfile.sampleSize > 0 ? {
+    comfort: userPreferenceProfile.comfort,
+    performance: userPreferenceProfile.performance,
+    durability: userPreferenceProfile.durability,
+    aggressiveness: userPreferenceProfile.aggressiveness,
+    versatility: userPreferenceProfile.versatility,
+  } : undefined;
 
-  return <MatcherResults personalShoes={personalTop5} communityShoes={communityTop10} personalLoading={personalLoading} communityLoading={communityShoes === undefined} footProfile={footProfile} userPosition={userPosition} contribution={<DataContributionNudge stashCount={stashCount} ratedCount={ratedCount} />} />;
+  return <MatcherResults personalShoes={personalTop5} communityShoes={communityTop10} personalLoading={personalLoading} communityLoading={communityShoes === undefined} footProfile={footProfile} userPosition={userPosition} fitProfile={fitProfile} contribution={<DataContributionNudge stashCount={stashCount} ratedCount={ratedCount} />} />;
 }
 
 interface MatcherResultsProps {
@@ -119,10 +127,11 @@ interface MatcherResultsProps {
   communityLoading?: boolean;
   footProfile?: { shape: string; volume: string } | null;
   userPosition?: RadarUserPosition | undefined;
+  fitProfile?: FitMetrics | undefined;
   contribution?: ReactNode;
 }
 
-export function MatcherResults({ personalShoes, communityShoes, personalLoading = false, communityLoading = false, footProfile, userPosition, contribution }: MatcherResultsProps) {
+export function MatcherResults({ personalShoes, communityShoes, personalLoading = false, communityLoading = false, footProfile, userPosition, fitProfile, contribution }: MatcherResultsProps) {
   const [mode, setMode] = useState<Mode>("personal");
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const activeShoes = mode === "personal" ? personalShoes : communityShoes;
@@ -155,7 +164,7 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
         <>
           <section aria-labelledby="matches-title" className="lab-rise space-y-fluid-lg" style={riseDelay(1)}>
             <h2 id="matches-title" className="font-mono text-xl font-semibold">{activeShoes.length} {mode === "personal" ? "shoe matches" : "top-rated shoes"}</h2>
-            <TileGrid shoes={activeShoes} mode={mode} hasProfile={hasProfile} />
+            <TileGrid shoes={activeShoes} mode={mode} hasProfile={hasProfile} {...(mode === "personal" && fitProfile ? { fitProfile } : {})} />
           </section>
           <section aria-labelledby="radar-title" className="lab-card lab-rise" style={riseDelay(10)}>
             <h2 id="radar-title" className="p-fluid-lg font-mono text-lg font-semibold">Radar map</h2>
@@ -218,7 +227,7 @@ function signalToneClass(tone: CommunitySignal["tone"]) {
   return "border-white/12 bg-black/30 text-brand-chalk";
 }
 
-function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mode; hasProfile: boolean }) {
+function TileGrid({ shoes, mode, hasProfile, fitProfile }: { shoes: DisplayShoe[]; mode: Mode; hasProfile: boolean; fitProfile?: FitMetrics }) {
   return (
     <div className="grid items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {shoes.map((shoe, idx) => (
@@ -238,7 +247,7 @@ function TileGrid({ shoes, mode, hasProfile }: { shoes: DisplayShoe[]; mode: Mod
             </div>
           </div>
           <div className="space-y-4 p-fluid-lg">
-            <RatingIcons comfort={shoe.metrics.comfort} performance={shoe.metrics.performance} durability={shoe.metrics.durability} max={5} />
+            {fitProfile ? <FitChart shoe={shoe.metrics} you={fitProfile} /> : <RatingIcons comfort={shoe.metrics.comfort} performance={shoe.metrics.performance} durability={shoe.metrics.durability} max={5} />}
             {shoe.breakdown && (
               <div className="space-y-2 border-t border-white/8 pt-4">
                 <MatchBreakdownBar breakdown={shoe.breakdown} signals={shoe.signals} delayIndex={2 + Math.min(idx, 8)} />

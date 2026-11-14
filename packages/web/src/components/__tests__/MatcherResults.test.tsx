@@ -54,6 +54,15 @@ describe("Matcher results", () => {
     expect(card.getByText("Foot shape").closest("div")).toHaveTextContent("+24 / 30");
   });
 
+  it("charts each personal match against the user's ratings", () => {
+    const fitProfile = { comfort: 4, performance: 4, durability: 4, aggressiveness: 4, versatility: 4 };
+    render(<MatcherResults {...props} fitProfile={fitProfile} />);
+    expect(screen.getByRole("img", { name: /Fit against your ratings: Comfort 4\.0 vs your 4\.0/ })).toBeInTheDocument();
+    expect(screen.getByText("Biggest gap").parentElement).toHaveTextContent("Aggressive -2.0");
+    fireEvent.click(screen.getByRole("button", { name: /Community/ }));
+    expect(screen.queryByRole("img", { name: /Fit against your ratings/ })).not.toBeInTheDocument();
+  });
+
   it("does not show a false empty state while a source is loading", () => {
     render(<MatcherResults personalShoes={[]} communityShoes={[]} personalLoading />);
     expect(screen.getByRole("status", { name: "Loading matcher" })).toBeInTheDocument();

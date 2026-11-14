@@ -26,6 +26,6 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ s
   return state.startsWith("mate") ? (
     <MatcherWorkspace activeTab="mate"><SoleMateContent matches={state === "mate-empty" ? [] : matches} hasProfile={state !== "mate-profile"} isLoading={state === "mate-loading"} /></MatcherWorkspace>
   ) : (
-    <MatcherWorkspace activeTab="seek"><MatcherResults personalShoes={state === "empty" ? [] : shoes.slice(0, 5)} communityShoes={state === "empty" ? [] : shoes} personalLoading={state === "loading"} communityLoading={state === "loading"} footProfile={state === "profile" ? null : { shape: "Egyptian", volume: "Low" }} userPosition={{ label: "YOU", metrics: { comfort: 4, performance: 4, aggressiveness: 2, versatility: 4 } }} /></MatcherWorkspace>
+    <MatcherWorkspace activeTab="seek"><MatcherResults personalShoes={state === "empty" ? [] : shoes.slice(0, 5)} communityShoes={state === "empty" ? [] : shoes} personalLoading={state === "loading"} communityLoading={state === "loading"} footProfile={state === "profile" ? null : { shape: "Egyptian", volume: "Low" }} userPosition={{ label: "YOU", metrics: { comfort: 4, performance: 4, aggressiveness: 2, versatility: 4 } }} fitProfile={{ comfort: 4, performance: 4, durability: 3.5, aggressiveness: 2, versatility: 4 }} /></MatcherWorkspace>
   );
 }
