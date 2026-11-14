@@ -4,7 +4,9 @@ import type { Doc } from "./_generated/dataModel";
 import { footShapeValidator } from "./schema";
 import type { CommunitySignal, ShoeRecommendation } from "../types/shoe";
 import { requireUserAccess } from "./authorization";
-import { fitLongevityToScore, sizingDeviationToScore } from "./utils/scoring";
+import { fitLongevityToScore, sizingDeviationToScore, toHundredPointScale } from "./utils/scoring";
+import { aggregateSoleMateRatings, calculateShoeScore, calculateUserPreferenceProfile, preferencesFromProfile } from "./utils/matchScore";
+import { hydrateUserStash } from "./stash";
 
 interface PaginatedResult<T> {
   items: T[];
@@ -26,19 +28,19 @@ async function loadShoesWithOwners(ctx: QueryCtx, minOwners: number) {
     .collect();
 
   const entries = await Promise.all(
-    popular.map(async ({ shoeId }) => {
+    popular.map(async ({ shoeId, count }) => {
       const shoe = await ctx.db.get(shoeId);
       if (!shoe) return null;
       const userShoes = await ctx.db
         .query("userShoes")
         .withIndex("by_shoeId", (q) => q.eq("shoeId", shoeId))
         .collect();
-      return { shoe, userShoes };
+      return { shoe, userShoes, count };
     }),
   );
 
   return entries.filter(
-    (entry): entry is { shoe: Doc<"shoes">; userShoes: Doc<"userShoes">[] } => entry !== null,
+    (entry): entry is { shoe: Doc<"shoes">; userShoes: Doc<"userShoes">[]; count: number } => entry !== null,
   );
 }
 
@@ -187,6 +189,27 @@ export const getShoeRecommendations = query({
       ).map((userShoe) => userShoe.shoeId),
     );
 
+    // Score with the same model as the client Matcher so both tabs agree.
+    const footProfile = { shape: args.footShape, volume: args.footVolume };
+    const learnedProfile = calculateUserPreferenceProfile(await hydrateUserStash(ctx, args.userId));
+    const popularityData = ratedShoes.map((entry) => ({ shoeId: entry.shoe._id as string, count: entry.count }));
+    const soleMateMap = new Map(
+      aggregateSoleMateRatings(
+        allUserShoes.filter((userShoe) => userShoe.userId === args.userId || soleMateIds.has(userShoe.userId)),
+      ).map((aggregate) => [aggregate.shoeId, aggregate]),
+    );
+    const compatByShoe = new Map(
+      await Promise.all(
+        allShoes.map(async (shoe) => {
+          const compat = await ctx.db
+            .query("footShapeCompat")
+            .withIndex("by_shoe", (q) => q.eq("shoeId", shoe._id))
+            .collect();
+          return [shoe._id as string, compat.map((entry) => entry.footShape)] as const;
+        }),
+      ),
+    );
+
     const shoeRatingsMap = new Map<
       string,
       {
@@ -198,7 +221,6 @@ export const getShoeRecommendations = query({
         rawSizingDeviations: number[];
         aggressivenessRatings: number[];
         stiffnessRatings: number[];
-        soleMateRatings: number[];
         soleMateFitLongevityScores: number[];
         soleMateSizingDeviationScores: number[];
         soleMateUsers: Set<string>;
@@ -216,7 +238,6 @@ export const getShoeRecommendations = query({
         rawSizingDeviations: [],
         aggressivenessRatings: [],
         stiffnessRatings: [],
-        soleMateRatings: [],
         soleMateFitLongevityScores: [],
         soleMateSizingDeviationScores: [],
         soleMateUsers: new Set<string>(),
@@ -250,9 +271,6 @@ export const getShoeRecommendations = query({
       }
 
       if (soleMateIds.has(userShoe.userId)) {
-        if (userShoe.comfortScore !== undefined) {
-          existing.soleMateRatings.push(userShoe.comfortScore);
-        }
         if (fitLongevityScore !== null) {
           existing.soleMateFitLongevityScores.push(fitLongevityScore);
         }
@@ -308,20 +326,15 @@ export const getShoeRecommendations = query({
           : avgDurability * 0.85 + fitLongevitySignal * 0.15;
       const sizingSignal = avgSoleMateSizingDeviation ?? avgSizingDeviation;
 
-      const volumeMatch = shoe.volume === args.footVolume ? 15 : 0;
-      const soleMateBonus =
-        ratings.soleMateRatings.length >= 3
-          ? (ratings.soleMateRatings.reduce((a, b) => a + b, 0) /
-            ratings.soleMateRatings.length) *
-          3
-          : 0;
-      const sizingSignalBonus = sizingSignal === null ? 0 : sizingSignal;
-      const ratingScore = (avgComfort + avgPerformance + enrichedDurability) * 2.35;
-
-      const matchScore = Math.min(
-        100,
-        Math.round(volumeMatch + soleMateBonus + ratingScore + sizingSignalBonus),
+      const { totalScore } = calculateShoeScore(
+        { ...shoe, footShapeCompat: compatByShoe.get(shoe._id) ?? [] },
+        footProfile,
+        preferencesFromProfile(learnedProfile),
+        popularityData,
+        learnedProfile,
+        soleMateMap,
       );
+      const matchScore = toHundredPointScale(totalScore, 5);
 
       const isSoleMateMatch =
         ratings.soleMateUsers.size > 0;

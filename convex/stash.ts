@@ -3,7 +3,7 @@ import { mutation, query } from "./_generated/server";
 import { filterUndefinedValues, userShoeFieldsValidator } from "./utils/helpers";
 import { requireUserAccess, requireUserShoeAccess } from "./authorization";
 import { addUserShoe, findUserShoe, removeUserShoe } from "./userShoes";
-import { fitLongevityToScore, sizingDeviationToScore } from "./utils/scoring";
+import { aggregateSoleMateRatings } from "./utils/matchScore";
 
 async function getUserShoesByUserId(ctx: any, userId: any) {
   return await ctx.db
@@ -72,7 +72,7 @@ async function updateShoeRatingAverages(ctx: any, shoeId: any) {
   }
 }
 
-async function hydrateUserStash(ctx: any, userId: any) {
+export async function hydrateUserStash(ctx: any, userId: any) {
   const userShoes = await getUserShoesByUserId(ctx, userId);
 
   if (userShoes.length === 0) {
@@ -225,80 +225,7 @@ export const getSoleMateAggregates = query({
 
     if (matchingUsers.length === 0) return [];
 
-    const aggregates = new Map<
-      string,
-      {
-        comfortTotal: number;
-        comfortCount: number;
-        performanceTotal: number;
-        performanceCount: number;
-        durabilityTotal: number;
-        durabilityCount: number;
-        fitLongevityTotal: number;
-        fitLongevityCount: number;
-        sizingDeviationTotal: number;
-        sizingDeviationCount: number;
-        ownerCount: number;
-      }
-    >();
-
-    for (const user of matchingUsers) {
-      const userShoes = await getUserShoesByUserId(ctx, user._id);
-
-      for (const userShoe of userShoes) {
-        const key = userShoe.shoeId as string;
-        const agg = aggregates.get(key) ?? {
-          comfortTotal: 0,
-          comfortCount: 0,
-          performanceTotal: 0,
-          performanceCount: 0,
-          durabilityTotal: 0,
-          durabilityCount: 0,
-          fitLongevityTotal: 0,
-          fitLongevityCount: 0,
-          sizingDeviationTotal: 0,
-          sizingDeviationCount: 0,
-          ownerCount: 0,
-        };
-        agg.ownerCount += 1;
-        if (userShoe.comfortScore !== undefined) {
-          agg.comfortTotal += userShoe.comfortScore;
-          agg.comfortCount += 1;
-        }
-        if (userShoe.performanceRating !== undefined) {
-          agg.performanceTotal += userShoe.performanceRating;
-          agg.performanceCount += 1;
-        }
-        if (userShoe.durabilityRating !== undefined) {
-          agg.durabilityTotal += userShoe.durabilityRating;
-          agg.durabilityCount += 1;
-        }
-        const fitLongevityScore = fitLongevityToScore(userShoe.fitLongevity);
-        if (fitLongevityScore !== null) {
-          agg.fitLongevityTotal += fitLongevityScore;
-          agg.fitLongevityCount += 1;
-        }
-        const sizingDeviationScore = sizingDeviationToScore(userShoe.sizingDeviation);
-        if (sizingDeviationScore !== null) {
-          agg.sizingDeviationTotal += sizingDeviationScore;
-          agg.sizingDeviationCount += 1;
-        }
-        aggregates.set(key, agg);
-      }
-    }
-
-    return Array.from(aggregates.entries()).map(([shoeId, agg]) => ({
-      shoeId,
-      ownerCount: agg.ownerCount,
-      avgComfort: agg.comfortCount > 0 ? agg.comfortTotal / agg.comfortCount : null,
-      avgPerformance:
-        agg.performanceCount > 0 ? agg.performanceTotal / agg.performanceCount : null,
-      avgDurability:
-        agg.durabilityCount > 0 ? agg.durabilityTotal / agg.durabilityCount : null,
-      avgFitLongevityScore:
-        agg.fitLongevityCount > 0 ? agg.fitLongevityTotal / agg.fitLongevityCount : null,
-      avgSizingDeviationScore:
-        agg.sizingDeviationCount > 0 ? agg.sizingDeviationTotal / agg.sizingDeviationCount : null,
-    }));
+    const userShoes = await Promise.all(matchingUsers.map((user: { _id: string }) => getUserShoesByUserId(ctx, user._id)));
+    return aggregateSoleMateRatings(userShoes.flat());
   },
 });

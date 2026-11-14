@@ -13,7 +13,7 @@ export interface MatchBreakdown {
 
 const ESTIMATED_SHADE = "bg-[repeating-linear-gradient(135deg,rgb(255_255_255/0.35)_0_2px,transparent_2px_5px)]";
 
-// Mirrors the weights in calculateShoeScore: each factor is out of 5, and the
+// Mirrors the weights in calculateShoeScore (convex/utils/matchScore.ts): each factor is out of 5, and the
 // learned bonus adds up to 0.5 points. Values are points out of 100.
 function toFactors(breakdown: MatchBreakdown, signals?: MatchSignals) {
   const factors = [

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Doc } from "convex/_generated/dataModel";
-import { calculateShoeScore } from "@/hooks/useShoeScoring";
+import { calculateShoeScore } from "convex/utils/matchScore";
 
 type Shoe = Doc<"shoes">;
 

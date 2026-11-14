@@ -3,27 +3,11 @@ import { useQuery } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import type { Doc } from 'convex/_generated/dataModel';
 import { useCurrentUser } from './useCurrentUser';
-import {
-  aggressivenessToScore,
-  disciplineToVersatility,
-  toFivePointScale,
-} from 'convex/utils/scoring';
+import { aggressivenessToScore } from 'convex/utils/scoring';
+import { calculateUserPreferenceProfile, type UserPreferenceProfile } from 'convex/utils/matchScore';
 
 type Shoe = Doc<'shoes'>;
 type StashEntry = Doc<'userShoes'> & { shoe?: Shoe | null };
-
-interface UserPreferenceProfile {
-  comfort: number;
-  performance: number;
-  durability: number;
-  aggressiveness: number;
-  versatility: number;
-  preferredBrands: string[];
-  preferredVolumes: string[];
-  preferredDisciplines: string[];
-  confidence: number; // How confident we are in these preferences (0-1)
-  sampleSize: number; // How many shoes this is based on
-}
 
 interface LearningInsights {
   profile: UserPreferenceProfile;
@@ -71,108 +55,6 @@ export function useUserPreferenceLearning() {
     userPreferenceProfile,
     learningInsights,
     isLearningReady: userPreferenceProfile && userPreferenceProfile.sampleSize >= 3,
-  };
-}
-
-function calculateUserPreferenceProfile(userShoes: StashEntry[]): UserPreferenceProfile {
-  const ratedShoes = userShoes.filter(shoe =>
-    shoe.comfortScore && shoe.performanceRating && shoe.durabilityRating
-  );
-
-  if (ratedShoes.length === 0) {
-    // Return default profile if no ratings
-    return {
-      comfort: 3,
-      performance: 3,
-      durability: 3,
-      aggressiveness: 3,
-      versatility: 3,
-      preferredBrands: [],
-      preferredVolumes: [],
-      preferredDisciplines: [],
-      confidence: 0,
-      sampleSize: 0,
-    };
-  }
-
-  // Calculate average ratings
-  const totalComfort = ratedShoes.reduce((sum, shoe) => sum + (shoe.comfortScore || 0), 0);
-  const totalPerformance = ratedShoes.reduce((sum, shoe) => sum + (shoe.performanceRating || 0), 0);
-  const totalDurability = ratedShoes.reduce((sum, shoe) => sum + (shoe.durabilityRating || 0), 0);
-
-  const avgComfort = totalComfort / ratedShoes.length;
-  const avgPerformance = totalPerformance / ratedShoes.length;
-  const avgDurability = totalDurability / ratedShoes.length;
-
-  // Calculate aggressiveness and versatility from shoe attributes
-  const shoeDetails = ratedShoes
-    .map(userShoe => userShoe.shoe)
-    .filter(Boolean) as Shoe[];
-
-  const aggressivenessScores = shoeDetails.map(shoe =>
-    aggressivenessToScore(shoe.aggressiveness, 3),
-  );
-
-  const versatilityScores = shoeDetails.map(shoe =>
-    disciplineToVersatility(shoe.climbingDiscipline, 3),
-  );
-
-  const avgAggressiveness = aggressivenessScores.length > 0
-    ? aggressivenessScores.reduce((sum, score) => sum + score, 0) / aggressivenessScores.length
-    : 3;
-
-  const avgVersatility = versatilityScores.length > 0
-    ? versatilityScores.reduce((sum, score) => sum + score, 0) / versatilityScores.length
-    : 3;
-
-  // Calculate brand preferences
-  const brandCounts: Record<string, number> = {};
-  shoeDetails.forEach(shoe => {
-    brandCounts[shoe.brand] = (brandCounts[shoe.brand] || 0) + 1;
-  });
-
-  const preferredBrands = Object.entries(brandCounts)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 5)
-    .map(([brand]) => brand);
-
-  // Calculate volume preferences
-  const volumeCounts: Record<string, number> = {};
-  shoeDetails.forEach(shoe => {
-    const volume = shoe.volume || 'medium_volume';
-    volumeCounts[volume] = (volumeCounts[volume] || 0) + 1;
-  });
-
-  const preferredVolumes = Object.entries(volumeCounts)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 2)
-    .map(([volume]) => volume);
-
-  // Calculate discipline preferences
-  const disciplineCounts: Record<string, number> = {};
-  shoeDetails.forEach(shoe => {
-    disciplineCounts[shoe.climbingDiscipline] = (disciplineCounts[shoe.climbingDiscipline] || 0) + 1;
-  });
-
-  const preferredDisciplines = Object.entries(disciplineCounts)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 3)
-    .map(([discipline]) => discipline);
-
-  // Calculate confidence based on sample size
-  const confidence = Math.min(1, ratedShoes.length / 10); // Max confidence at 10 shoes
-
-  return {
-    comfort: toFivePointScale(avgComfort),
-    performance: toFivePointScale(avgPerformance),
-    durability: toFivePointScale(avgDurability),
-    aggressiveness: avgAggressiveness,
-    versatility: avgVersatility,
-    preferredBrands,
-    preferredVolumes,
-    preferredDisciplines,
-    confidence,
-    sampleSize: ratedShoes.length,
   };
 }
 
