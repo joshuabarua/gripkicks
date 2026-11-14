@@ -6,6 +6,7 @@ import ShoeImage from "@/components/ShoeImage";
 import { TOE_HEIGHTS, VOLUME_ARCH, type FootShape, type FootVolume } from "@/components/foot/FootGlyphs";
 import { useAnimationsEnabled } from "@/stores/useAppStore";
 import { glideTransition } from "@/lib/motion";
+import type { PreviewShoe } from "./useToolStatus";
 
 // Steps through `length` frames while the preview is on screen. Reduced motion
 // (OS setting or the app toggle) and an active (hovered or focused) card hold
@@ -44,11 +45,12 @@ function ToeBars({ shape, className }: { shape: FootShape; className: string }) 
   );
 }
 
-export function FootLabPreview({ active }: { active: boolean }) {
+// A saved profile holds the preview on the user's own shape and volume.
+export function FootLabPreview({ active, profile }: { active: boolean; profile?: { shape: FootShape; volume: FootVolume } | null }) {
   const ref = useRef<HTMLDivElement>(null);
-  const step = usePreviewStep(ref, SHAPES.length * VOLUMES.length, active);
-  const shape = SHAPES[step % SHAPES.length]!;
-  const volume = VOLUMES[step % VOLUMES.length]!;
+  const step = usePreviewStep(ref, SHAPES.length * VOLUMES.length, active || !!profile);
+  const shape = profile?.shape ?? SHAPES[step % SHAPES.length]!;
+  const volume = profile?.volume ?? VOLUMES[step % VOLUMES.length]!;
 
   return (
     <div ref={ref} aria-hidden="true" className="grid h-28 grid-cols-2 items-end gap-4 rounded-md border border-white/6 bg-black/40 px-4 pb-3 pt-4">
@@ -67,22 +69,23 @@ export function FootLabPreview({ active }: { active: boolean }) {
   );
 }
 
-const SANCTUARY_SHOES = [
+const SANCTUARY_SHOES: PreviewShoe[] = [
   { brand: "Scarpa", name: "Drago LV", imageUrl: "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/scarpa/drago_lv_side_profile.png" },
   { brand: "Black Diamond", name: "Focus", imageUrl: "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/black_diamond/focus_side_profile.png" },
   { brand: "Boreal", name: "Dharma", imageUrl: "https://ik.imagekit.io/ie871bk0r/gripkicks/imgs/shoes/boreal/dharma_side_profile.png" },
 ];
 
-export function SanctuaryPreview({ active }: { active: boolean }) {
+export function SanctuaryPreview({ active, shoes }: { active: boolean; shoes?: PreviewShoe[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const spread = usePreviewStep(ref, 2, active, 1) === 1;
+  const fan = shoes?.length ? shoes : SANCTUARY_SHOES;
 
   return (
     <div ref={ref} aria-hidden="true" className="relative flex h-28 items-center justify-center overflow-hidden rounded-md border border-white/6 bg-black/40">
-      {SANCTUARY_SHOES.map((shoe, index) => {
-        const offset = index - 1;
+      {fan.map((shoe, index) => {
+        const offset = index - (fan.length - 1) / 2;
         return (
-          <motion.div key={shoe.name} initial={false} animate={{ x: offset * (spread ? 84 : 26), rotate: offset * (spread ? 4 : 10), y: spread ? 0 : Math.abs(offset) * 6 }} transition={glideTransition} className={`absolute h-20 w-28 rounded-md border bg-brand-charcoal p-1.5 shadow-lg shadow-black/40 ${offset === 0 ? "z-10 border-white/20" : "border-white/8"}`}>
+          <motion.div key={`${shoe.brand}-${shoe.name}`} initial={false} animate={{ x: offset * (spread ? 84 : 26), rotate: offset * (spread ? 4 : 10), y: spread ? 0 : Math.abs(offset) * 6 }} transition={glideTransition} className={`absolute h-20 w-28 rounded-md border bg-brand-charcoal p-1.5 shadow-lg shadow-black/40 ${Math.abs(offset) < 1 ? "z-10 border-white/20" : "border-white/8"}`}>
             <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} context="thumbnail" className="h-full w-full" transformation={[{ height: 80, width: 112, crop: "at_max", format: "png" }]} />
           </motion.div>
         );

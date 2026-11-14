@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { useCallback, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import Link from "@/components/ui/NavLink";
 import dynamic from "next/dynamic";
 import { ArrowUpRight, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
@@ -17,6 +17,7 @@ import { BrandLogo, brandLogoNames } from "@/components/stash/BrandLogo";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getBrandDescription } from "@/utils/sanctuaryDescriptions";
 import { FootLabPreview, MatcherPreview, SanctuaryPreview, SoleMatePreview } from "./ToolPreviews";
+import { useToolStatus, type ToolStatus } from "./useToolStatus";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
@@ -232,11 +233,12 @@ function HowItWorksSection() {
 
 function ToolsSection() {
   const [activeHref, setActiveHref] = useState<string | null>(null);
-  const tools = [
-    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher", Preview: MatcherPreview, featured: true },
-    { title: "Foot Lab", copy: "Set your foot shape and volume.", href: "/footlab", Preview: FootLabPreview },
-    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash", Preview: SanctuaryPreview },
-    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate", Preview: SoleMatePreview },
+  const status = useToolStatus();
+  const tools: Array<{ title: string; copy: string; href: keyof ToolStatus["labels"]; preview: (active: boolean) => ReactNode; featured?: boolean }> = [
+    { title: "Matcher", copy: "Compare shoe matches and community ratings.", href: "/matcher", preview: (active: boolean) => <MatcherPreview active={active} />, featured: true },
+    { title: "Foot Lab", copy: "Set your foot shape and volume.", href: "/footlab", preview: (active: boolean) => <FootLabPreview active={active} profile={status?.footProfile ?? null} /> },
+    { title: "Sanctuary", copy: "Your shoes, sizes and fit ratings.", href: "/stash", preview: (active: boolean) => <SanctuaryPreview active={active} {...(status?.stashShoes.length ? { shoes: status.stashShoes } : {})} /> },
+    { title: "Sole Mate", copy: "Shoes rated by climbers with your foot profile.", href: "/matcher?tab=mate", preview: (active: boolean) => <SoleMatePreview active={active} /> },
   ];
 
   return (
@@ -247,7 +249,7 @@ function ToolsSection() {
           <span aria-hidden="true" className="h-px flex-1 bg-white/10" />
         </div>
         <div className="grid gap-4 md:grid-cols-2" onMouseLeave={() => setActiveHref(null)}>
-          {tools.map(({ Preview, ...tool }, index) => {
+          {tools.map((tool, index) => {
             const isActive = activeHref === tool.href;
             const isDimmed = activeHref !== null && !isActive;
             return (
@@ -260,13 +262,19 @@ function ToolsSection() {
                 style={{ "--rise-delay": `${index * 50}ms` } as CSSProperties}
                 className={`lab-card lab-card-lift lab-rise group flex min-h-28 min-w-0 flex-col justify-between gap-fluid-md p-fluid-lg focus-visible:outline-brand-chalk ${tool.featured ? "md:row-span-3" : ""} ${isActive ? "lab-card-active" : ""} ${isDimmed ? "md:opacity-60" : ""}`}
               >
-                <Preview active={isActive} />
+                {tool.preview(isActive)}
                 <div>
                   <div className="flex items-center justify-between gap-4">
                     <h3 className="wrap-break-word lab-title text-fluid-lg text-white">{tool.title}</h3>
                     <ArrowUpRight aria-hidden="true" className="h-5 w-5 shrink-0 text-brand-chalk transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transform-none" />
                   </div>
                   <p className="mt-2 max-w-sm font-mono text-sm leading-relaxed text-brand-putty">{tool.copy}</p>
+                  {status && (
+                    <p className="lab-label mt-3 flex items-center gap-2">
+                      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand-red" />
+                      <span className="text-brand-chalk">{status.labels[tool.href]}</span>
+                    </p>
+                  )}
                 </div>
               </Link>
             );

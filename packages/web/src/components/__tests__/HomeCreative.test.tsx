@@ -2,6 +2,7 @@ import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { getFunctionName } from "convex/server";
 import HomeCreative from "@/app/home-designs/HomeCreative";
 
 const mocks = vi.hoisted(() => ({
@@ -122,6 +123,33 @@ describe("Homepage clarity", () => {
     expect(screen.getByRole("heading", { name: "How it works" })).toBeInTheDocument();
     expect(screen.queryByText("GET STARTED")).toBeNull();
     expect(screen.queryByText("YOUR DASHBOARD")).toBeNull();
+  });
+
+  it("hides account status from visitors", () => {
+    render(<HomeCreative />);
+    expect(screen.queryByText(/shoes rated|Needs foot profile/)).toBeNull();
+  });
+
+  it("shows each tool's status for signed-in climbers", () => {
+    mocks.session.mockReturnValue({ data: { user: { id: "auth-1" } } });
+    const stash = [
+      { shoe: { brand: "Scarpa", name: "Drago" }, comfortScore: 8, performanceRating: 8, durabilityRating: 7 },
+      { shoe: { brand: "La Sportiva", name: "Solution" } },
+    ];
+    const results: Record<string, unknown> = {
+      "users:findByBetterAuthId": { _id: "user-1", footShape: "greek", footVolume: "medium" },
+      "stash:getUserStash": stash,
+      "stash:getSoleMateUserCount": 4,
+      "users:getCount": { count: 24 },
+    };
+    mocks.count.mockImplementation((query: unknown, args: unknown) => (args === "skip" ? undefined : results[getFunctionName(query as never)]));
+    render(<HomeCreative />);
+
+    const tools = screen.getByRole("region", { name: "Tools" });
+    expect(within(tools).getByRole("link", { name: /Matcher/ })).toHaveTextContent("1/3 shoes rated");
+    expect(within(tools).getByRole("link", { name: /Foot Lab/ })).toHaveTextContent("greek · medium");
+    expect(within(tools).getByRole("link", { name: /Sanctuary/ })).toHaveTextContent("2 shoes");
+    expect(within(tools).getByRole("link", { name: /Sole Mate/ })).toHaveTextContent("3 climbers with your profile");
   });
 
   it("keeps link arrows beside tool titles", () => {
