@@ -8,34 +8,14 @@ import type { Id } from "convex/_generated/dataModel";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { fetchApi } from "@/lib/api-client";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ChevronRight,
-} from "lucide-react";
-import Link from "@/components/ui/NavLink";
-import ShoeImage from "@/components/ShoeImage";
-import { ShoeSearch } from "@/components/ShoeSearch";
-import { shoeSizes } from "@/constants/shoe-data";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { FullPageLoading } from "@/components/ui/loading";
 import { stepMotion } from "@/lib/motion";
 import type { Shoe } from "@/types/api";
-import { RatingButton, BackButton } from "@/components/onboarding/OnboardingHelpers";
-import { FirstShoeQuiz } from "@/components/matcher/FirstShoeQuiz";
-
-type ShoeSizeOption = { value: string; label: string };
-const isShoeSizeOption = (
-  size: (typeof shoeSizes)[number],
-): size is ShoeSizeOption => {
-  return "value" in size;
-};
+import { WelcomeStep } from "@/components/onboarding/WelcomeStep";
+import { FootDataStep } from "@/components/onboarding/FootDataStep";
+import { QuizStep } from "@/components/onboarding/QuizStep";
+import { FirstShoeStep, type ShoeFormData } from "@/components/onboarding/FirstShoeStep";
+import { CompleteStep } from "@/components/onboarding/CompleteStep";
 
 interface ApiSuccessResponse {
   success: boolean;
@@ -54,9 +34,9 @@ export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>("welcome");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedShoe, setSelectedShoe] = useState<Shoe | null>(null);
-  const [shoeFormData, setShoeFormData] = useState({
+  const [shoeFormData, setShoeFormData] = useState<ShoeFormData>({
     size: "",
-    condition: "new" as string,
+    condition: "new",
     comfort: 5,
     performance: 5,
     notes: "",
@@ -251,377 +231,44 @@ export default function OnboardingPage() {
 
           <AnimatePresence mode="wait">
             <motion.div key={currentStep} {...stepMotion}>
-              {currentStep === "welcome" && (
-                <div className="text-center">
-                  <h1 className="lab-title text-fluid-4xl mb-10">
-                    WELCOME
-                  </h1>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleNext}
-                    className="lab-button w-full"
-                  >
-                    LET&apos;S GET STARTED
-                  </motion.button>
-                </div>
-              )}
+              {currentStep === "welcome" && <WelcomeStep onNext={handleNext} />}
 
               {currentStep === "foot-data" && (
-                <div className="lab-card p-fluid-xl">
-                  <h2 className="lab-title text-fluid-2xl mb-8">FOOT SHAPE</h2>
-
-                  <div className="space-y-6">
-                    <div>
-                      <Label className="lab-label font-mono">
-                        Select shape
-                      </Label>
-                      <div className="grid grid-cols-2 gap-3 mt-3">
-                        {[
-                          {
-                            value: "egyptian",
-                            label: "Egyptian",
-                            desc: "Big toe longest",
-                          },
-                          {
-                            value: "roman",
-                            label: "Roman",
-                            desc: "First 3 toes even",
-                          },
-                          {
-                            value: "greek",
-                            label: "Greek",
-                            desc: "Second toe longest",
-                          },
-                          {
-                            value: "germanic",
-                            label: "Germanic",
-                            desc: "Big toe, others even",
-                          },
-                          {
-                            value: "celtic",
-                            label: "Celtic",
-                            desc: "Big & 2nd toe even",
-                          },
-                        ].map((shape) => (
-                          <motion.button
-                            key={shape.value}
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.99 }}
-                            onClick={() => setFootShape(shape.value)}
-                            className={`lab-card w-full p-3 text-left transition-all ${footShape === shape.value
-                                ? "lab-card-active hal-glow"
-                                : ""
-                              }`}
-                          >
-                            <div className="font-mono font-medium text-brand-chalk text-sm">
-                              {shape.label}
-                            </div>
-                            <div className="font-mono text-xs text-brand-putty/60 mt-1 leading-tight">
-                              {shape.desc}
-                            </div>
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="lab-label font-mono">
-                        Foot volume
-                      </Label>
-                      <div className="grid grid-cols-3 gap-3 mt-3">
-                        {[
-                          { value: "low", label: "Low", desc: "Narrow" },
-                          { value: "medium", label: "Medium", desc: "Average" },
-                          { value: "high", label: "High", desc: "Wide" },
-                        ].map((volume) => (
-                          <motion.button
-                            key={volume.value}
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.99 }}
-                            onClick={() => setFootVolume(volume.value)}
-                            className={`lab-card w-full p-3 text-center transition-all ${footVolume === volume.value
-                                ? "lab-card-active hal-glow"
-                                : ""
-                              }`}
-                          >
-                            <div className="font-mono font-medium text-brand-chalk text-sm">
-                              {volume.label}
-                            </div>
-                            <div className="font-mono text-xs text-brand-putty/60 mt-1 leading-tight">
-                              {volume.desc}
-                            </div>
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between pt-4">
-                      <BackButton onClick={handlePrevious} />
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleNext}
-                        disabled={!footShape || !footVolume || isLoading}
-                        className="lab-button"
-                      >
-                        {isLoading ? "SAVING..." : "NEXT"}{" "}
-                        <ChevronRight className="w-4 h-4" />
-                      </motion.button>
-                    </div>
-                  </div>
-                </div>
+                <FootDataStep
+                  footShape={footShape}
+                  footVolume={footVolume}
+                  isLoading={isLoading}
+                  onFootShapeChange={setFootShape}
+                  onFootVolumeChange={setFootVolume}
+                  onNext={handleNext}
+                  onBack={handlePrevious}
+                />
               )}
 
               {currentStep === "quiz" && (
-                <div>
-                  <FirstShoeQuiz onPickShoe={(shoe) => {
+                <QuizStep
+                  onPickShoe={(shoe) => {
                     setSelectedShoe(shoe);
                     setCurrentStep("first-shoe");
-                  }} />
-                  <div className="mt-6 flex justify-between">
-                    <BackButton onClick={handlePrevious} />
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep("first-shoe")}
-                      className="font-mono text-xs text-brand-putty/60 transition-colors hover:text-brand-putty"
-                    >
-                      I know my shoe — search instead
-                    </button>
-                  </div>
-                </div>
+                  }}
+                  onSearchInstead={() => setCurrentStep("first-shoe")}
+                  onBack={handlePrevious}
+                />
               )}
 
               {currentStep === "first-shoe" && (
-                <div className="lab-card p-fluid-xl">
-                  <h2 className="lab-title text-fluid-2xl mb-8">
-                    ADD YOUR FIRST SHOE
-                  </h2>
-
-                  <div className="space-y-6">
-                    <div className="space-y-2">
-                      <Label className="lab-label font-mono">
-                        Search shoes
-                      </Label>
-                      <div className="mt-2">
-                        <ShoeSearch
-                          onShoeSelect={setSelectedShoe}
-                          selectedShoe={selectedShoe}
-                        />
-                      </div>
-                    </div>
-
-                    {selectedShoe && (
-                      <div className="lab-card lab-card-active p-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-20 h-20 bg-black/40 rounded-lg border border-white/6 overflow-hidden">
-                            <ShoeImage
-                              brand={selectedShoe.brand}
-                              shoeName={selectedShoe.name}
-                              className="w-full h-full object-contain p-2"
-                              {...(selectedShoe.imageUrl
-                                ? { imageUrl: selectedShoe.imageUrl }
-                                : {})}
-                              {...(selectedShoe.slug
-                                ? { slug: selectedShoe.slug }
-                                : {})}
-                            />
-                          </div>
-                          <div>
-                            <h3 className="font-mono font-semibold text-brand-chalk">
-                              {selectedShoe.name}
-                            </h3>
-                            <p className="lab-label font-mono text-brand-putty/50">
-                              {selectedShoe.brand}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {selectedShoe && (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label className="lab-label font-mono">
-                              Size
-                            </Label>
-                            <Select
-                              value={shoeFormData.size}
-                              onValueChange={(value) =>
-                                setShoeFormData({
-                                  ...shoeFormData,
-                                  size: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger className="rounded-lg bg-black border border-white/6 text-brand-chalk h-12 focus:border-brand-red">
-                                <SelectValue placeholder="Select size" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-brand-surface border-white/6">
-                                {shoeSizes
-                                  .filter(isShoeSizeOption)
-                                  .map((size) => (
-                                    <SelectItem
-                                      key={size.value}
-                                      value={size.value}
-                                    >
-                                      {size.label}
-                                    </SelectItem>
-                                  ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label className="lab-label font-mono">
-                              Condition
-                            </Label>
-                            <Select
-                              value={shoeFormData.condition}
-                              onValueChange={(value: string) =>
-                                setShoeFormData({
-                                  ...shoeFormData,
-                                  condition: value,
-                                })
-                              }
-                            >
-                              <SelectTrigger className="rounded-lg bg-black border border-white/6 text-brand-chalk h-12 focus:border-brand-red">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="bg-brand-surface border-white/6">
-                                <SelectItem value="new">New</SelectItem>
-                                <SelectItem value="like-new">
-                                  Like New
-                                </SelectItem>
-                                <SelectItem value="good">Good</SelectItem>
-                                <SelectItem value="worn">Worn</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label className="lab-label font-mono">
-                              Comfort
-                            </Label>
-                            <div className="flex items-center gap-2 mt-2">
-                              {[1, 2, 3, 4, 5].map((rating) => (
-                                <RatingButton
-                                  key={rating}
-                                  rating={rating}
-                                  currentRating={shoeFormData.comfort}
-                                  onRatingChange={(rating) =>
-                                    setShoeFormData({
-                                      ...shoeFormData,
-                                      comfort: rating,
-                                    })
-                                  }
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <Label className="lab-label font-mono">
-                              Performance
-                            </Label>
-                            <div className="flex items-center gap-2 mt-2">
-                              {[1, 2, 3, 4, 5].map((rating) => (
-                                <RatingButton
-                                  key={rating}
-                                  rating={rating}
-                                  currentRating={shoeFormData.performance}
-                                  onRatingChange={(rating) =>
-                                    setShoeFormData({
-                                      ...shoeFormData,
-                                      performance: rating,
-                                    })
-                                  }
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label className="lab-label font-mono">
-                            Notes (optional)
-                          </Label>
-                          <Textarea
-                            id="notes"
-                            value={shoeFormData.notes}
-                            onChange={(e) =>
-                              setShoeFormData({
-                                ...shoeFormData,
-                                notes: e.target.value,
-                              })
-                            }
-                            placeholder="Any additional notes about this shoe..."
-                            rows={3}
-                            className="rounded-lg bg-black border border-white/6 text-brand-chalk placeholder:text-brand-putty/30 focus:border-brand-red"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="flex justify-between pt-4">
-                      <BackButton onClick={handlePrevious} />
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleNext}
-                        disabled={
-                          !selectedShoe || !shoeFormData.size || isLoading
-                        }
-                        className="lab-button"
-                      >
-                        {isLoading ? "COMPLETING..." : "COMPLETE SETUP"}{" "}
-                      </motion.button>
-                    </div>
-                  </div>
-                </div>
+                <FirstShoeStep
+                  selectedShoe={selectedShoe}
+                  shoeFormData={shoeFormData}
+                  isLoading={isLoading}
+                  onShoeSelect={setSelectedShoe}
+                  onShoeFormDataChange={setShoeFormData}
+                  onNext={handleNext}
+                  onBack={handlePrevious}
+                />
               )}
 
-              {currentStep === "complete" && (
-                <div className="text-center">
-                  <h1 className="lab-title text-fluid-4xl mb-10">
-                    ALL SET
-                  </h1>
-
-                  <div className="grid md:grid-cols-3 gap-4 mb-10">
-                    {[
-                      {
-                        href: "/footlab",
-                        label: "Foot Lab",
-                      },
-                      { href: "/stash", label: "My Shoes" },
-                      { href: "/matcher", label: "Matcher" },
-                    ].map((item) => (
-                      <Link key={item.href} href={item.href}>
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="lab-card p-6 flex flex-col items-center gap-3 cursor-pointer"
-                        >
-                          <span className="font-mono text-lg text-brand-chalk">
-                            {item.label}
-                          </span>
-                        </motion.div>
-                      </Link>
-                    ))}
-                  </div>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleFinish}
-                    className="lab-button w-full"
-                  >
-                    GO TO SHOE SANCTUARY
-                  </motion.button>
-                </div>
-              )}
+              {currentStep === "complete" && <CompleteStep onFinish={handleFinish} />}
             </motion.div>
           </AnimatePresence>
         </div>
