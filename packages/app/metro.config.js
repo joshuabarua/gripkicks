@@ -21,10 +21,17 @@ config.resolver.nodeModulesPaths = [
 // `convex/_generated/*` is the repo's Convex folder, not the `convex` npm
 // package (which owns `convex/react`, `convex/server`, ...).
 const defaultResolve = config.resolver.resolveRequest;
+const threeModule = path.resolve(__dirname, 'node_modules/three/build/three.module.js');
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (moduleName.startsWith('convex/_generated/')) {
     const target = path.join(convexDir, moduleName.slice('convex/'.length));
     return context.resolveRequest(context, target, platform);
+  }
+  // three's CommonJS entry (picked for R3F's require() calls) calls Node's
+  // process.emitWarning, which crashes on device. Always use the ES module build,
+  // which also keeps a single copy of three for R3F and the GLTF loader.
+  if (moduleName === 'three') {
+    return { type: 'sourceFile', filePath: threeModule };
   }
   return (defaultResolve ?? context.resolveRequest)(context, moduleName, platform);
 };
