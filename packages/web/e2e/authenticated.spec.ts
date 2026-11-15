@@ -123,9 +123,10 @@ function escapeRegExp(text: string) {
 async function openShoeCard(page: Page, shoeName: string) {
   const name = escapeRegExp(shoeName);
   const hide = page.getByRole("button", { name: new RegExp(`^Hide details for .*${name}$`) }).first();
-  if (!(await hide.isVisible().catch(() => false))) {
-    await page.getByRole("button", { name: new RegExp(`^Show details for .*${name}$`) }).first().click();
-  }
+  const show = page.getByRole("button", { name: new RegExp(`^Show details for .*${name}$`) }).first();
+  // The card can take a moment to appear (a new shoe arrives already expanded).
+  await expect(hide.or(show)).toBeVisible();
+  if (!(await hide.isVisible())) await show.click();
   await expect(hide).toBeVisible();
   return page.locator("article").filter({ has: hide });
 }
