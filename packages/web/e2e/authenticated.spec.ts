@@ -54,6 +54,12 @@ async function storeAuthState(
 }
 
 async function gotoAuthenticated(page: Page, path: string) {
+  // Record auth and API responses so a failure can say which call went wrong.
+  const apiCalls: string[] = [];
+  page.on("response", (response) => {
+    const url = new URL(response.url());
+    if (url.pathname.startsWith("/api/")) apiCalls.push(`${response.status()} ${url.host}${url.pathname}`);
+  });
   await page.goto(path);
   // The menu button only renders for signed-in users.
   const authenticatedNav = page.getByRole("button", { name: /^(Open|Close) menu$/ });
@@ -70,7 +76,11 @@ async function gotoAuthenticated(page: Page, path: string) {
     if (!recovered) {
       // Say what loaded instead (a Cloudflare page, the signed-out site, an error).
       const body = (await page.locator("body").innerText().catch(() => "")).replace(/\s+/g, " ").slice(0, 300);
-      throw new Error(`Signed-in menu never appeared on ${page.url()} (title: "${await page.title()}"). Page text: ${body}`);
+      const cookies = (await page.context().cookies()).map((c) => `${c.name}@${c.domain}`).join(", ");
+      throw new Error(
+        `Signed-in menu never appeared on ${page.url()} (title: "${await page.title()}"). Page text: ${body}\n` +
+          `API calls: ${apiCalls.slice(-15).join(" | ") || "none"}\nCookies (names only): ${cookies || "none"}`,
+      );
     }
   }
 }
@@ -162,7 +172,7 @@ test.describe("authenticated staging critical paths", () => {
       await expect(page.getByRole("heading", { level: 1, name: /FOOT LAB/i })).toBeVisible();
 
       const profileResponse = await page.request.get("/api/v1/profile", { headers: bypassHeaders });
-      expect(profileResponse.ok()).toBe(true);
+      expect(profileResponse.ok(), `GET /api/v1/profile returned ${profileResponse.status()}: ${(await profileResponse.text()).slice(0, 200)}`).toBe(true);
       const profilePayload = (await profileResponse.json()) as {
         data?: { footShape?: string; footVolume?: string };
         footShape?: string;
