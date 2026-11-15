@@ -12,12 +12,12 @@ import { useReducedEffects } from "@/hooks/useReducedEffects";
 import { CommunityMilestone } from "@/components/CommunityMilestone";
 import { supportsWebGL } from "@/components/3d/webgl-utils";
 import { PageSurface } from "@/components/ui/PageSurface";
-import { CompareArrows, ScoreTag, ToeProfile } from "@/components/foot/FootGlyphs";
 import { BrandLogo, brandLogoNames } from "@/components/stash/BrandLogo";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getBrandDescription } from "@/utils/sanctuaryDescriptions";
 import { FootLabPreview, MatcherPreview, SanctuaryPreview, SoleMatePreview } from "./ToolPreviews";
 import { useToolStatus, type ToolStatus } from "./useToolStatus";
+import { HowItWorksSection } from "./HowItWorks";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
@@ -197,35 +197,6 @@ function BrandsSection() {
             ))}
           </div>
         </TooltipProvider>
-      </div>
-    </section>
-  );
-}
-
-function HowItWorksSection() {
-  const steps = [
-    { title: "Map your foot", copy: "Set your foot shape and volume.", glyph: <div className="w-20"><ToeProfile shape="egyptian" active height={48} /></div> },
-    { title: "Rate your shoes", copy: "Record size, comfort, performance and durability.", glyph: <div className="w-20"><ScoreTag active height={48} /></div> },
-    { title: "Compare fits", copy: "Check catalog matches and ratings from climbers with your foot profile.", glyph: <div className="w-20"><CompareArrows active height={48} /></div> },
-  ];
-
-  return (
-    <section id="home-steps" aria-labelledby="steps-title" className="scroll-mt-14 border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
-      <div className="mx-auto max-w-(--fluid-container-xl)">
-        <h2 id="steps-title" className="mb-fluid-2xl lab-title text-fluid-2xl">How it works</h2>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-4">
-          {steps.map((step, index) => (
-            <article key={step.title} style={{ "--rise-delay": `${index * 50}ms` } as CSSProperties} className="lab-card lab-card-lift lab-rise flex min-h-60 flex-col justify-center gap-fluid-xl p-fluid-xl">
-              <div className="flex items-center gap-fluid-lg">
-                <div className="shrink-0">{step.glyph}</div>
-                <div className="min-w-0">
-                  <h3 className="wrap-break-word lab-title text-fluid-lg text-white">{step.title}</h3>
-                  <p className="mt-fluid-md font-mono text-sm leading-relaxed text-brand-putty">{step.copy}</p>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
       </div>
     </section>
   );

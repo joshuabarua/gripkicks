@@ -199,25 +199,54 @@ describe("Homepage clarity", () => {
     }
   });
 
-  it("restyles step cards as lab tiles while retaining lab-title headings and mono copy", () => {
+  it("lays out the steps as one linked track with lab-title headings and mono copy", () => {
     render(<HomeCreative />);
     const stepsRegion = screen.getByRole("region", { name: "How it works" });
     expect(stepsRegion).toHaveClass("bg-black");
     const section = within(stepsRegion);
     expect(section.getByRole("heading", { name: "How it works" })).toHaveClass("lab-title");
     expect(section.queryByText(/three simple steps/i)).toBeNull();
-    const articles = section.getAllByRole("article");
-    expect(articles).toHaveLength(3);
-    for (const article of articles) {
-      expect(article).toHaveClass("lab-card", "lab-card-lift", "lab-rise");
-    }
+    const steps = section.getAllByRole("listitem");
+    expect(steps).toHaveLength(3);
     for (const label of ["01", "02", "03"]) {
       expect(section.queryByText(label)).toBeNull();
     }
-    for (const title of ["Map your foot", "Rate your shoes", "Compare fits"]) {
+    const hrefs = { "Map your foot": "/footlab", "Rate your shoes": "/stash", "Compare fits": "/matcher" };
+    for (const [title, href] of Object.entries(hrefs)) {
       expect(section.getByRole("heading", { name: title })).toHaveClass("lab-title");
+      expect(section.getByRole("link", { name: new RegExp(title) })).toHaveAttribute("href", href);
     }
-    expect(section.getByText("Set your foot shape and volume.")).toHaveClass("font-mono");
+    expect(section.getByText("Shape and volume decide which lasts fit you.")).toHaveClass("font-mono");
+  });
+
+  it("starts visitors at the first step without account status", () => {
+    render(<HomeCreative />);
+    const section = within(screen.getByRole("region", { name: "How it works" }));
+    expect(section.getByRole("link", { name: /Map your foot/ })).toHaveAttribute("aria-current", "step");
+    expect(section.queryByText(/Not set|shoes rated/)).toBeNull();
+  });
+
+  it("tracks a signed-in climber's progress and points at the next step", () => {
+    mocks.session.mockReturnValue({ data: { user: { id: "auth-1" } } });
+    const results: Record<string, unknown> = {
+      "users:findByBetterAuthId": { _id: "user-1", footShape: "greek", footVolume: "medium" },
+      "stash:getUserStash": [{ shoe: { brand: "Scarpa", name: "Drago" }, comfortScore: 8, performanceRating: 8, durabilityRating: 7 }],
+      "stash:getSoleMateUserCount": 4,
+      "users:getCount": { count: 24 },
+    };
+    mocks.count.mockImplementation((query: unknown, args: unknown) => (args === "skip" ? undefined : results[getFunctionName(query as never)]));
+    render(<HomeCreative />);
+
+    const section = within(screen.getByRole("region", { name: "How it works" }));
+    const foot = section.getByRole("link", { name: /Map your foot/ });
+    expect(foot).toHaveTextContent("greek · medium");
+    expect(foot).toHaveTextContent("(done)");
+    expect(foot).not.toHaveAttribute("aria-current");
+    const rate = section.getByRole("link", { name: /Rate your shoes/ });
+    expect(rate).toHaveTextContent("1/3 shoes rated");
+    expect(rate).toHaveAttribute("aria-current", "step");
+    expect(rate).toHaveClass("lab-card-active");
+    expect(section.getByRole("link", { name: /Compare fits/ })).toHaveTextContent("3 climbers with your profile");
   });
 
   it("removes the GRIP KICKS intro and account sections", () => {

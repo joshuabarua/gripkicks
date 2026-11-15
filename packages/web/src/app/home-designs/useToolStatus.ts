@@ -10,9 +10,13 @@ export interface PreviewShoe {
   imageUrl?: string;
 }
 
+// Rated shoes the Matcher needs before it has learned your preferences.
+export const RATINGS_NEEDED = 3;
+
 export interface ToolStatus {
   footProfile: { shape: FootShape; volume: FootVolume } | null;
   stashShoes: PreviewShoe[];
+  ratedCount: number;
   labels: Record<"/matcher" | "/footlab" | "/stash" | "/matcher?tab=mate", string>;
 }
 
@@ -38,9 +42,10 @@ export function useToolStatus(): ToolStatus | null {
 
   return {
     footProfile: hasProfile ? { shape: shape!, volume: volume! } : null,
+    ratedCount: rated,
     stashShoes: stash.flatMap((entry) => (entry.shoe ? [{ brand: entry.shoe.brand, name: entry.shoe.name, ...(entry.shoe.imageUrl ? { imageUrl: entry.shoe.imageUrl } : {}) }] : [])).slice(0, 3),
     labels: {
-      "/matcher": !hasProfile ? "Needs foot profile" : rated >= 3 ? "Preferences learned" : `${rated}/3 shoes rated`,
+      "/matcher": !hasProfile ? "Needs foot profile" : rated >= RATINGS_NEEDED ? "Preferences learned" : `${rated}/${RATINGS_NEEDED} shoes rated`,
       "/footlab": hasProfile ? `${shape} · ${volume}` : "Not set",
       "/stash": `${stash.length} ${stash.length === 1 ? "shoe" : "shoes"}`,
       "/matcher?tab=mate": !hasProfile ? "Needs foot profile" : `${climbers} ${climbers === 1 ? "climber" : "climbers"} with your profile`,
