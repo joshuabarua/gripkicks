@@ -2,7 +2,7 @@ export const colors = {
   background: '#0a0a0a',
   foreground: '#f0ede5',
 
-  card: '#1a1a1a',
+  card: '#2d2d2d',
   'card-foreground': '#f0ede5',
 
   popover: '#1a1a1a',
@@ -11,11 +11,11 @@ export const colors = {
   primary: '#f0ede5',
   'primary-foreground': '#0a0a0a',
 
-  secondary: '#8f8a73',
-  'secondary-foreground': '#f0ede5',
+  secondary: '#c8bfb3',
+  'secondary-foreground': '#c8bfb3',
 
   muted: '#262626',
-  'muted-foreground': '#8f8a73',
+  'muted-foreground': 'rgba(200, 191, 179, 0.6)',
 
   accent: '#f45b5b',
   'accent-foreground': '#ffffff',
@@ -38,6 +38,13 @@ export const colors = {
     green: '#788c5d',
     border: 'rgba(255, 255, 255, 0.06)',
   },
+
+  // lab-card-active
+  active: {
+    border: 'rgba(244, 91, 91, 0.4)',
+    background: 'rgba(244, 91, 91, 0.1)',
+  },
+  ghostBorder: 'rgba(255, 255, 255, 0.1)',
 
   chart: {
     '1': '#f45b5b',

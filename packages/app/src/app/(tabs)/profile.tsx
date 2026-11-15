@@ -1,15 +1,13 @@
 import { View } from 'react-native';
+import Constants from 'expo-constants';
 import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/layout';
-import { Text, Button, Card } from '@/components/ui';
+import { Button, Card, Label, Text, Title } from '@/components/ui';
+import { Rise } from '@/components/lab/Rise';
 import { signOut } from '@/lib/auth';
 import { posthog } from '@/lib/posthog';
 import { posthogLogger } from '@/lib/posthog-logger';
-import {
-  FootProfileRows,
-  TabScreen,
-  useTabUser,
-} from '@/components/TabScreenLayout';
+import { FootProfileSummary, TabScreen, useTabUser } from '@/components/TabScreenLayout';
 
 export default function ProfileScreen() {
   const { user, convexUser, router } = useTabUser();
@@ -23,79 +21,55 @@ export default function ProfileScreen() {
     }
   };
 
+  const initial = (user?.name || user?.email || '?').charAt(0).toUpperCase();
+
   return (
     <TabScreen title="Profile">
-      <Card style={{ padding: spacing.lg, gap: spacing.md, alignItems: 'center' }}>
-        <View
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: 40,
-            backgroundColor: colors.muted,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Text variant="2xl" weight="bold">
-            {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || '?'}
-          </Text>
-        </View>
-        <Text variant="xl" weight="semibold">
-          {user?.name || 'Guest'}
-        </Text>
-        {user?.email && (
-          <Text variant="sm" color="secondary">
-            {user.email}
-          </Text>
-        )}
-      </Card>
+      <Rise index={1}>
+        <Card style={{ padding: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+          <View style={{ width: 56, height: 56, borderRadius: 28, borderWidth: 1, borderColor: user ? colors.brand.red : colors.ghostBorder, alignItems: 'center', justifyContent: 'center' }}>
+            <Text variant="xl">{initial}</Text>
+          </View>
+          <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+            <Title variant="lg" numberOfLines={1}>{user?.name || 'Guest'}</Title>
+            {user?.email ? <Text variant="sm" color="secondary" numberOfLines={1}>{user.email}</Text> : null}
+          </View>
+        </Card>
+      </Rise>
 
-      <View style={{ gap: spacing.md }}>
+      <Rise index={2}>
         <Card style={{ padding: spacing.lg, gap: spacing.md }}>
-          <Text variant="lg" weight="semibold">
-            Foot Profile
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Title variant="base">Foot profile</Title>
+            {convexUser?.footShape && convexUser?.footVolume ? (
+              <Button variant="ghost" onPress={() => router.push('/foot-lab')}>Edit</Button>
+            ) : null}
+          </View>
           {convexUser?.footShape && convexUser?.footVolume ? (
-            <FootProfileRows
-              footShape={convexUser.footShape}
-              footVolume={convexUser.footVolume}
-            />
+            <FootProfileSummary footShape={convexUser.footShape} footVolume={convexUser.footVolume} />
           ) : (
-            <View style={{ gap: spacing.sm }}>
-              <Text variant="sm" color="secondary">
-                No foot profile set yet
-              </Text>
-              <Button size="sm" onPress={() => router.push('/foot-lab')}>
-                Set Foot Profile
-              </Button>
+            <View style={{ gap: spacing.md }}>
+              <Text variant="sm" color="secondary">Not set</Text>
+              <Button variant="ghost" onPress={() => router.push('/foot-lab')} style={{ alignSelf: 'flex-start' }}>Open Foot Lab</Button>
             </View>
           )}
         </Card>
+      </Rise>
 
+      <Rise index={3}>
         <Card style={{ padding: spacing.lg, gap: spacing.md }}>
-          <Text variant="lg" weight="semibold">
-            Account
-          </Text>
-          {!user ? (
-            <Button onPress={() => router.push('/login')}>
-              Sign In
-            </Button>
+          <Title variant="base">Account</Title>
+          {user ? (
+            <Button variant="danger" onPress={handleSignOut} style={{ alignSelf: 'flex-start' }}>Sign out</Button>
           ) : (
-            <Button variant="destructive" onPress={handleSignOut}>
-              Sign Out
-            </Button>
+            <Button onPress={() => router.push('/login')} style={{ alignSelf: 'flex-start' }}>Sign in</Button>
           )}
         </Card>
+      </Rise>
 
-        <Card style={{ padding: spacing.lg, gap: spacing.md }}>
-          <Text variant="lg" weight="semibold">
-            App
-          </Text>
-          <Text variant="sm" color="secondary">
-            Version 1.0.0
-          </Text>
-        </Card>
-      </View>
+      <Rise index={4}>
+        <Label style={{ textAlign: 'center', marginTop: spacing.sm }}>Version {Constants.expoConfig?.version ?? '1.0.0'}</Label>
+      </Rise>
     </TabScreen>
   );
 }

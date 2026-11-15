@@ -1,61 +1,40 @@
+import { View } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/theme/colors';
+import { fonts } from '@/theme/typography';
 
-function icon(name: keyof typeof Ionicons.glyphMap, color: string) {
-  return <Ionicons name={name} size={24} color={color} />;
+type IconName = keyof typeof Ionicons.glyphMap;
+
+// Active tab gets the red monolith bar above its icon; labels stay chalk, never red.
+function tabIcon(name: IconName, activeName: IconName) {
+  return function TabIcon({ color, focused }: { color: string; focused: boolean }) {
+    return (
+      <View style={{ alignItems: 'center' }}>
+        <View style={{ position: 'absolute', top: -8, width: 18, height: 2, borderRadius: 1, backgroundColor: focused ? colors.brand.red : 'transparent' }} />
+        <Ionicons name={focused ? activeName : name} size={22} color={color} />
+      </View>
+    );
+  };
 }
-
-const screenOptions = {
-  tabBarStyle: {
-    backgroundColor: colors.card,
-    borderTopColor: colors.border,
-    borderTopWidth: 1,
-  },
-  tabBarActiveTintColor: colors.accent,
-  tabBarInactiveTintColor: colors['muted-foreground'],
-  headerStyle: { backgroundColor: colors.background },
-  headerTintColor: colors.foreground,
-};
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={screenOptions}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }: { color: string }) => icon('home', color),
-        }}
-      />
-      <Tabs.Screen
-        name="stash"
-        options={{
-          title: 'Sanctuary',
-          tabBarIcon: ({ color }: { color: string }) => icon('footsteps', color),
-        }}
-      />
-      <Tabs.Screen
-        name="foot-lab"
-        options={{
-          title: 'Foot Lab',
-          tabBarIcon: ({ color }: { color: string }) => icon('scan', color),
-        }}
-      />
-      <Tabs.Screen
-        name="matcher"
-        options={{
-          title: 'Matcher',
-          tabBarIcon: ({ color }: { color: string }) => icon('search', color),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }: { color: string }) => icon('person', color),
-        }}
-      />
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: { backgroundColor: colors.background, borderTopColor: colors.border, borderTopWidth: 1 },
+        tabBarActiveTintColor: colors.foreground,
+        tabBarInactiveTintColor: 'rgba(200, 191, 179, 0.5)',
+        tabBarLabelStyle: { fontFamily: fonts.regular, fontSize: 10, letterSpacing: 1, textTransform: 'uppercase' },
+        sceneStyle: { backgroundColor: colors.background },
+      }}
+    >
+      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: tabIcon('grid-outline', 'grid') }} />
+      <Tabs.Screen name="stash" options={{ title: 'Sanctuary', tabBarIcon: tabIcon('cloud-outline', 'cloud') }} />
+      <Tabs.Screen name="foot-lab" options={{ title: 'Foot Lab', tabBarIcon: tabIcon('footsteps-outline', 'footsteps') }} />
+      <Tabs.Screen name="matcher" options={{ title: 'Matcher', tabBarIcon: tabIcon('git-compare-outline', 'git-compare') }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: tabIcon('person-outline', 'person') }} />
     </Tabs>
   );
 }

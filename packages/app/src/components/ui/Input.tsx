@@ -1,45 +1,38 @@
-import React from 'react';
-import {
-  TextInput,
-  type TextInputProps,
-  type ViewStyle,
-  type TextStyle,
-} from 'react-native';
+import React, { useState } from 'react';
+import { TextInput, type TextInputProps } from 'react-native';
 import { colors } from '@/theme/colors';
 import { radii, spacing } from '@/theme/layout';
 import { fontSizes, fonts } from '@/theme/typography';
 
-interface InputProps extends TextInputProps {
-  style?: ViewStyle & TextStyle;
-}
-
-export const Input = React.forwardRef<TextInput, InputProps>(
-  ({ style, editable, ...props }, ref) => {
-    return (
-      <TextInput
-        ref={ref}
-        editable={editable}
-        placeholderTextColor={colors['muted-foreground']}
-        style={[
-          {
-            height: 44,
-            borderRadius: radii.md,
-            borderWidth: 1,
-            borderColor: colors.input,
-            backgroundColor: 'transparent',
-            paddingHorizontal: spacing.md,
-            paddingVertical: spacing.sm,
-            fontSize: fontSizes.base,
-            fontFamily: fonts.regular,
-            color: colors.foreground,
-          },
-          editable === false && { opacity: 0.5 },
-          style,
-        ]}
-        {...props}
-      />
-    );
-  }
-);
+// Lab form input: black field, faint border, red border while focused.
+export const Input = React.forwardRef<TextInput, TextInputProps>(({ style, editable, onFocus, onBlur, ...props }, ref) => {
+  const [focused, setFocused] = useState(false);
+  return (
+    <TextInput
+      ref={ref}
+      editable={editable}
+      placeholderTextColor={colors['muted-foreground']}
+      selectionColor={colors.brand.red}
+      onFocus={(e) => { setFocused(true); onFocus?.(e); }}
+      onBlur={(e) => { setFocused(false); onBlur?.(e); }}
+      style={[
+        {
+          height: 48,
+          borderRadius: radii.lg,
+          borderWidth: 1,
+          borderColor: focused ? colors.brand.red : colors.border,
+          backgroundColor: '#000',
+          paddingHorizontal: spacing.md,
+          fontSize: fontSizes.base,
+          fontFamily: fonts.regular,
+          color: colors.foreground,
+        },
+        editable === false && { opacity: 0.5 },
+        style,
+      ]}
+      {...props}
+    />
+  );
+});
 
 Input.displayName = 'Input';

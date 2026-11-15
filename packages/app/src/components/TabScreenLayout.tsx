@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { View, ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
@@ -7,165 +7,146 @@ import { api } from 'convex/_generated/api';
 import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/layout';
 import { useSession } from '@/lib/auth';
-import { Text, Button, Card, Badge } from '@/components/ui';
+import { Button, Card, Label, Text, Title } from '@/components/ui';
+import { LabHeader } from '@/components/lab/LabHeader';
+import { Rise } from '@/components/lab/Rise';
+import { ShoeThumb } from '@/components/lab/ShoeThumb';
+import { ToeBars, VolumeArch, isFootShape, isFootVolume } from '@/components/lab/FootGlyphs';
 
 export function useTabUser() {
   const session = useSession();
   const router = useRouter();
   const user = session.data?.user;
   const betterAuthId = user?.id;
-  const convexUser = useQuery(
-    api.users.findByBetterAuthId,
-    betterAuthId ? { betterAuthId } : 'skip',
-  );
+  const convexUser = useQuery(api.users.findByBetterAuthId, betterAuthId ? { betterAuthId } : 'skip');
 
   return { session, user, betterAuthId, convexUser, router };
 }
 
+// Page shell: black canvas, 16px gutters, LabHeader on top.
 export function TabScreen({
   title,
-  subtitle,
+  description,
+  cloudy,
   children,
 }: {
   title: string;
-  subtitle?: string;
+  description?: string;
+  cloudy?: boolean;
   children: ReactNode;
 }) {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      <ScrollView contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg }}>
-        <View style={{ gap: spacing.sm }}>
-          <Text variant="3xl" weight="bold" color="accent">
-            {title}
-          </Text>
-          {subtitle ? (
-            <Text variant="lg" color="secondary">
-              {subtitle}
-            </Text>
-          ) : null}
-        </View>
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.md, paddingTop: spacing.lg, paddingBottom: spacing['2xl'], gap: spacing.md }}>
+        <LabHeader title={title} description={description} cloudy={cloudy} />
         {children}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// Signed-out or missing-prerequisite state: one active panel with a single action.
 export function PromptScreen({
   title,
+  label = 'Sign in',
   description,
-  actionLabel = 'Sign In',
+  actionLabel = 'Sign in',
   onAction,
 }: {
   title: string;
+  label?: string;
   description?: string;
   actionLabel?: string;
   onAction: () => void;
 }) {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          padding: spacing.lg,
-          gap: spacing.lg,
-          alignItems: 'center',
-        }}
-      >
-        <Text variant="xl" weight="semibold" align="center">
-          {title}
-        </Text>
-        {description ? (
-          <Text variant="sm" color="secondary" align="center">
-            {description}
-          </Text>
-        ) : null}
-        <Button onPress={onAction}>{actionLabel}</Button>
-      </View>
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', padding: spacing.md }}>
+      <Rise>
+        <Card active style={{ padding: spacing.lg, gap: spacing.md }}>
+          <Label>{label}</Label>
+          <Title variant="xl">{title}</Title>
+          {description ? <Text variant="sm" color="secondary">{description}</Text> : null}
+          <Button onPress={onAction} style={{ alignSelf: 'flex-start' }}>{actionLabel}</Button>
+        </Card>
+      </Rise>
     </SafeAreaView>
   );
 }
 
-export function EmptyStateCard({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
+export function EmptyStateCard({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
   return (
-    <Card style={{ padding: spacing.lg, gap: spacing.md, alignItems: 'center' }}>
-      <Text variant="lg" weight="semibold">
-        {title}
-      </Text>
-      <Text variant="sm" color="secondary" align="center">
-        {description}
-      </Text>
+    <Card style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl, gap: spacing.sm }}>
+      <Text weight="medium">{title}</Text>
+      {description ? <Text variant="sm" color="secondary">{description}</Text> : null}
+      {action ? <View style={{ marginTop: spacing.sm, alignSelf: 'flex-start' }}>{action}</View> : null}
     </Card>
   );
 }
 
-export function ShoeListCard({
+// One shoe: image, brand label, name, specs, and an optional right-hand value.
+export function ShoeRow({
   name,
   brand,
-  aggressiveness,
-  volume,
-  climbingDiscipline,
-  weightedScore,
+  imageUrl,
+  details,
+  value,
+  valueLabel,
+  score,
+  onPress,
 }: {
   name?: string;
   brand?: string;
-  aggressiveness?: string;
-  volume?: string;
-  climbingDiscipline?: string;
-  weightedScore?: number;
+  imageUrl?: string | null;
+  details?: Array<string | undefined>;
+  value?: string;
+  valueLabel?: string;
+  // 0–1, drawn as a red bar (accent is never used for text).
+  score?: number;
+  onPress?: () => void;
 }) {
+  const specs = (details ?? []).filter(Boolean).join(' · ');
   return (
-    <Card style={{ padding: spacing.lg, gap: spacing.sm }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <Text variant="lg" weight="semibold">
-          {name ?? 'Unknown shoe'}
-        </Text>
-        {brand ? <Badge variant="secondary">{brand}</Badge> : null}
+    <Card onPress={onPress} accessibilityLabel={onPress ? `${brand ?? ''} ${name ?? ''}`.trim() : undefined} style={{ padding: spacing.md, flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+      <ShoeThumb imageUrl={imageUrl} />
+      <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+        {brand ? <Label numberOfLines={1}>{brand}</Label> : null}
+        <Text weight="medium" numberOfLines={1}>{name ?? 'Unknown shoe'}</Text>
+        {specs ? <Text variant="xs" color="secondary" numberOfLines={1} style={{ textTransform: 'capitalize' }}>{specs}</Text> : null}
+        {score !== undefined ? (
+          <View accessibilityLabel={`Match ${Math.round(score * 100)} percent`} style={{ marginTop: 6, height: 3, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+            <View style={{ width: `${Math.max(4, Math.min(100, score * 100))}%`, height: '100%', backgroundColor: colors.brand.red }} />
+          </View>
+        ) : null}
       </View>
-      <Text variant="sm" color="secondary">
-        {aggressiveness} · {volume} · {climbingDiscipline}
-      </Text>
-      {weightedScore ? (
-        <Text variant="sm" color="accent" weight="semibold">
-          Match score: {weightedScore.toFixed(1)}
-        </Text>
+      {value ? (
+        <View style={{ alignItems: 'flex-end' }}>
+          <Text variant="sm">{value}</Text>
+          {valueLabel ? <Text variant="xs" color="secondary">{valueLabel}</Text> : null}
+        </View>
       ) : null}
     </Card>
   );
 }
 
-export function FootProfileRows({
-  footShape,
-  footVolume,
-}: {
-  footShape: string;
-  footVolume: string;
-}) {
+// Saved foot profile with the same toe and arch glyphs as the web.
+export function FootProfileSummary({ footShape, footVolume }: { footShape: string; footVolume: string }) {
+  const shape = footShape.toLowerCase();
+  const volume = footVolume.toLowerCase();
   return (
-    <View style={{ gap: spacing.sm }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text color="secondary">Shape</Text>
-        <Text weight="semibold" style={{ textTransform: 'capitalize' }}>
-          {footShape}
-        </Text>
+    <View style={{ gap: spacing.md }}>
+      <View style={{ flexDirection: 'row', gap: spacing.lg, alignItems: 'flex-end' }}>
+        <View style={{ flex: 1 }}>{isFootShape(shape) ? <ToeBars shape={shape} active height={48} /> : null}</View>
+        <View style={{ flex: 1 }}>{isFootVolume(volume) ? <VolumeArch volume={volume} active height={40} /> : null}</View>
       </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text color="secondary">Volume</Text>
-        <Text weight="semibold" style={{ textTransform: 'capitalize' }}>
-          {footVolume}
-        </Text>
+      <View style={{ flexDirection: 'row', gap: spacing.lg, borderTopWidth: 1, borderTopColor: colors.border, paddingTop: spacing.md }}>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Label>Shape</Label>
+          <Text weight="medium" style={{ textTransform: 'uppercase' }}>{footShape}</Text>
+        </View>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Label>Volume</Label>
+          <Text weight="medium" style={{ textTransform: 'uppercase' }}>{footVolume}</Text>
+        </View>
       </View>
     </View>
   );

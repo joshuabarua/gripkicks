@@ -3,7 +3,8 @@ import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/layout';
-import { Text, Button, Input, Card } from '@/components/ui';
+import { Button, Card, Input, Label, Text, Title } from '@/components/ui';
+import { Rise } from '@/components/lab/Rise';
 import { signIn, signUp } from '@/lib/auth';
 import { posthog } from '@/lib/posthog';
 import { posthogLogger } from '@/lib/posthog-logger';
@@ -51,81 +52,64 @@ export default function LoginScreen() {
   const isValid = email && password && (mode === 'signin' || name);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <View style={{ flex: 1, justifyContent: 'center', padding: spacing.lg, gap: spacing.lg }}>
-          <View style={{ gap: spacing.sm, alignItems: 'center' }}>
-            <Text variant="3xl" weight="bold" color="accent">
-              {mode === 'signin' ? 'Welcome back' : 'Join the crew'}
-            </Text>
-            <Text variant="base" color="secondary">
-              {mode === 'signin'
-                ? 'Sign in to your GripKicks account'
-                : 'Create your GripKicks account'}
-            </Text>
-          </View>
+    <SafeAreaView edges={['bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: 'center', padding: spacing.md, gap: spacing.lg }}>
+          <Rise>
+            <Title variant="4xl">{mode === 'signin' ? 'Sign in' : 'Sign up'}</Title>
+          </Rise>
 
-          <Card style={{ padding: spacing.lg, gap: spacing.md }}>
-            {mode === 'signup' && (
+          <Rise index={1}>
+            <Card style={{ padding: spacing.lg, gap: spacing.md }}>
+              {mode === 'signup' && (
+                <View style={{ gap: spacing.sm }}>
+                  <Label>Name</Label>
+                  <Input placeholder="Your name" autoCapitalize="words" autoComplete="name" textContentType="name" value={name} onChangeText={setName} />
+                </View>
+              )}
+
               <View style={{ gap: spacing.sm }}>
-                <Text variant="sm" weight="medium">
-                  Name
-                </Text>
+                <Label>Email</Label>
                 <Input
-                  placeholder="Your name"
-                  autoCapitalize="words"
-                  value={name}
-                  onChangeText={setName}
+                  placeholder="you@example.com"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  textContentType="emailAddress"
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={setEmail}
                 />
               </View>
-            )}
 
-            <View style={{ gap: spacing.sm }}>
-              <Text variant="sm" weight="medium">
-                Email
-              </Text>
-              <Input
-                placeholder="you@example.com"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
+              <View style={{ gap: spacing.sm }}>
+                <Label>Password</Label>
+                <Input
+                  placeholder="••••••••"
+                  secureTextEntry
+                  autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
+                  textContentType={mode === 'signin' ? 'password' : 'newPassword'}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+              </View>
 
-            <View style={{ gap: spacing.sm }}>
-              <Text variant="sm" weight="medium">
-                Password
-              </Text>
-              <Input
-                placeholder="••••••••"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-              />
-            </View>
+              {error ? (
+                <View accessibilityRole="alert" style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center', borderLeftWidth: 2, borderLeftColor: colors.brand.red, paddingLeft: spacing.sm }}>
+                  <Text variant="sm">{error}</Text>
+                </View>
+              ) : null}
 
-            {error ? (
-              <Text variant="sm" color="destructive">
-                {error}
-              </Text>
-            ) : null}
+              <Button onPress={handleSubmit} disabled={!isValid} loading={loading}>
+                {mode === 'signin' ? 'Sign in' : 'Sign up'}
+              </Button>
+            </Card>
+          </Rise>
 
-            <Button onPress={handleSubmit} disabled={loading || !isValid}>
-              {loading
-                ? mode === 'signin' ? 'Signing in...' : 'Signing up...'
-                : mode === 'signin' ? 'Sign In' : 'Sign Up'}
-            </Button>
-
+          <Rise index={2}>
             <Button variant="ghost" onPress={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(''); }}>
-              <Text variant="sm" color="secondary">
-                {mode === 'signin' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-              </Text>
+              {mode === 'signin' ? 'Create an account' : 'I have an account'}
             </Button>
-          </Card>
+          </Rise>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

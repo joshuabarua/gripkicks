@@ -1,24 +1,19 @@
-import { Platform } from 'react-native';
-
+// DM Mono for everything; So Cloudy only for the Sanctuary title (matches web).
+// Custom fonts carry their own weight, so pick a family instead of fontWeight.
 export const fonts = {
-  regular: Platform.select({
-    ios: 'System',
-    android: 'sans-serif',
-    default: 'System',
-  }),
-  medium: Platform.select({
-    ios: 'System',
-    android: 'sans-serif-medium',
-    default: 'System',
-  }),
-  bold: Platform.select({
-    ios: 'System',
-    android: 'sans-serif',
-    default: 'System',
-  }),
+  regular: 'DMMono-Regular',
+  medium: 'DMMono-Medium',
+  display: 'SoCloudy',
 } as const;
 
+export const fontSources = {
+  [fonts.regular]: require('../../assets/fonts/DMMono-Regular.ttf'),
+  [fonts.medium]: require('../../assets/fonts/DMMono-Medium.ttf'),
+  [fonts.display]: require('../../assets/fonts/SoCloudy.otf'),
+};
+
 export const fontSizes = {
+  '2xs': 11,
   xs: 12,
   sm: 14,
   base: 16,
@@ -32,15 +27,14 @@ export const fontSizes = {
 
 export const lineHeights = {
   none: 1,
-  tight: 0.9,
-  snug: 0.95,
-  normal: 1.2,
-  relaxed: 1.4,
+  tight: 1.1,
+  normal: 1.35,
+  relaxed: 1.55,
 } as const;
 
-export const fontWeights = {
-  normal: '400' as const,
-  medium: '500' as const,
-  semibold: '600' as const,
-  bold: '700' as const,
-};
+// lab-title: tracking 0.04em; lab-label: tracking 0.18em.
+export const tracking = {
+  title: 0.04,
+  label: 0.18,
+  button: 0.08,
+} as const;

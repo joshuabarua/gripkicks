@@ -1,117 +1,71 @@
-import React from 'react';
-import {
-  Pressable,
-  type PressableProps,
-  type ViewStyle,
-  type TextStyle,
-} from 'react-native';
+import React, { type ReactNode } from 'react';
+import { ActivityIndicator, Pressable, View, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
 import { colors } from '@/theme/colors';
-import { fontSizes, fontWeights, fonts } from '@/theme/typography';
+import { fonts, fontSizes, tracking } from '@/theme/typography';
 import { radii, spacing } from '@/theme/layout';
 import { Text } from './Text';
 
-type ButtonVariant = 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
+// primary = lab-button (red), ghost = lab-button-ghost, danger = ghost with a red border.
+type ButtonVariant = 'primary' | 'ghost' | 'danger';
 
-interface ButtonProps extends PressableProps {
+interface ButtonProps extends Omit<PressableProps, 'style' | 'children'> {
   variant?: ButtonVariant;
-  size?: ButtonSize;
-  children: React.ReactNode;
+  loading?: boolean;
+  icon?: ReactNode;
+  style?: StyleProp<ViewStyle>;
+  children: ReactNode;
 }
 
-export function Button({
-  variant = 'default',
-  size = 'default',
-  children,
-  disabled,
-  style,
-  ...props
-}: ButtonProps) {
-  const sizeStyles: Record<ButtonSize, ViewStyle> = {
-    default: { paddingVertical: spacing.sm, paddingHorizontal: spacing.md, height: 44 },
-    sm: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, height: 36 },
-    lg: { paddingVertical: spacing.sm, paddingHorizontal: spacing.xl, height: 48 },
-    icon: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
-  };
-
-  const getVariantStyle = (pressed: boolean): ViewStyle => {
-    const base: ViewStyle = {
-      borderRadius: radii.md,
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'row',
-      gap: spacing.xs,
-      opacity: disabled ? 0.5 : 1,
-    };
-
-    switch (variant) {
-      case 'default':
-        return {
-          ...base,
-          backgroundColor: pressed ? `${colors.primary}e6` : colors.primary,
-        };
-      case 'destructive':
-        return {
-          ...base,
-          backgroundColor: pressed ? `${colors.destructive}e6` : colors.destructive,
-        };
-      case 'outline':
-        return {
-          ...base,
-          backgroundColor: pressed ? colors.muted : 'transparent',
-          borderWidth: 1,
-          borderColor: colors.border,
-        };
-      case 'secondary':
-        return {
-          ...base,
-          backgroundColor: pressed ? `${colors.secondary}b3` : colors.secondary,
-        };
-      case 'ghost':
-        return {
-          ...base,
-          backgroundColor: pressed ? colors.muted : 'transparent',
-        };
-      case 'link':
-        return { ...base, backgroundColor: 'transparent' };
-      default:
-        return base;
-    }
-  };
-
-  const textColor: Record<ButtonVariant, string> = {
-    default: colors['primary-foreground'],
-    destructive: colors['destructive-foreground'],
-    outline: colors.foreground,
-    secondary: colors['secondary-foreground'],
-    ghost: colors.foreground,
-    link: colors.primary,
-  };
-
-  const textSize: Record<ButtonSize, number> = {
-    default: fontSizes.sm,
-    sm: fontSizes.xs,
-    lg: fontSizes.base,
-    icon: fontSizes.sm,
-  };
-
-  const labelStyle: TextStyle = {
-    fontFamily: fonts.medium,
-    fontSize: textSize[size],
-    fontWeight: fontWeights.medium,
-    color: textColor[variant],
-  };
+export function Button({ variant = 'primary', loading, icon, disabled, style, children, ...props }: ButtonProps) {
+  const isPrimary = variant === 'primary';
+  const inactive = disabled || loading;
+  const labelSize = isPrimary ? fontSizes.base : fontSizes.xs;
 
   return (
     <Pressable
-      disabled={disabled}
-      style={({ pressed }) => [sizeStyles[size], getVariantStyle(pressed), style as ViewStyle]}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !!inactive, busy: !!loading }}
+      disabled={inactive}
+      style={({ pressed }) => [
+        {
+          minHeight: 44,
+          borderRadius: radii.lg,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: spacing.sm,
+          paddingHorizontal: isPrimary ? spacing.lg : 20,
+          paddingVertical: 12,
+          opacity: inactive ? 0.5 : 1,
+          transform: [{ scale: pressed ? 0.97 : 1 }],
+        },
+        isPrimary
+          ? { backgroundColor: pressed ? 'rgba(244, 91, 91, 0.8)' : colors.brand.red }
+          : {
+              borderWidth: 1,
+              borderColor: variant === 'danger' ? colors.active.border : pressed ? 'rgba(255,255,255,0.2)' : colors.ghostBorder,
+              backgroundColor: pressed ? 'rgba(255,255,255,0.05)' : 'transparent',
+            },
+        style,
+      ]}
       {...props}
     >
+      {loading ? <ActivityIndicator size="small" color={isPrimary ? '#fff' : colors.foreground} /> : icon}
       {typeof children === 'string' ? (
-        <Text style={labelStyle}>{children}</Text>
+        <Text
+          color={isPrimary ? 'white' : 'primary'}
+          style={{
+            fontFamily: isPrimary ? fonts.regular : fonts.medium,
+            fontSize: labelSize,
+            lineHeight: Math.round(labelSize * 1.3),
+            textTransform: 'uppercase',
+            letterSpacing: isPrimary ? 0 : labelSize * tracking.button,
+          }}
+        >
+          {children}
+        </Text>
       ) : (
-        children
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>{children}</View>
       )}
     </Pressable>
   );

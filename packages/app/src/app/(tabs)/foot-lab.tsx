@@ -1,178 +1,114 @@
-import { useState } from 'react';
-import { View, Pressable } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View } from 'react-native';
 import { useMutation } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import { posthog } from '@/lib/posthog';
 import { posthogLogger } from '@/lib/posthog-logger';
-import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/layout';
-import { Text, Button, Card } from '@/components/ui';
+import { Button, Card, Label, Text } from '@/components/ui';
+import { Rise } from '@/components/lab/Rise';
+import { SectionHeading } from '@/components/lab/LabHeader';
 import {
-  FootProfileRows,
-  PromptScreen,
-  TabScreen,
-  useTabUser,
-} from '@/components/TabScreenLayout';
-
-const FOOT_SHAPES = ['egyptian', 'roman', 'greek', 'germanic', 'celtic'] as const;
-const FOOT_VOLUMES = ['low', 'medium', 'high'] as const;
-
-type FootShape = typeof FOOT_SHAPES[number];
-type FootVolume = typeof FOOT_VOLUMES[number];
-
-function OptionChip({
-  label,
-  selected,
-  onPress,
-}: {
-  label: string;
-  selected: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={{
-        paddingVertical: spacing.sm,
-        paddingHorizontal: spacing.md,
-        borderRadius: 999,
-        backgroundColor: selected ? colors.accent : colors.muted,
-        borderWidth: 1,
-        borderColor: selected ? colors.accent : colors.border,
-      }}
-    >
-      <Text
-        variant="sm"
-        weight="medium"
-        color={selected ? 'inverse' : 'secondary'}
-        style={{ textTransform: 'capitalize' }}
-      >
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
-
-function OptionSelectionCard<T extends string>({
-  title,
-  description,
-  options,
-  selected,
-  onSelect,
-}: {
-  title: string;
-  description: string;
-  options: readonly T[];
-  selected: T | undefined;
-  onSelect: (option: T) => void;
-}) {
-  return (
-    <Card style={{ padding: spacing.lg, gap: spacing.lg }}>
-      <View style={{ gap: spacing.sm }}>
-        <Text variant="lg" weight="semibold">
-          {title}
-        </Text>
-        <Text variant="sm" color="secondary">
-          {description}
-        </Text>
-      </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-        {options.map((option) => (
-          <OptionChip
-            key={option}
-            label={option}
-            selected={selected === option}
-            onPress={() => onSelect(option)}
-          />
-        ))}
-      </View>
-    </Card>
-  );
-}
+  FOOT_SHAPES,
+  FOOT_VOLUMES,
+  ToeBars,
+  VolumeArch,
+  isFootShape,
+  isFootVolume,
+  type FootShape,
+  type FootVolume,
+} from '@/components/lab/FootGlyphs';
+import { PromptScreen, TabScreen, useTabUser } from '@/components/TabScreenLayout';
 
 export default function FootLabScreen() {
   const { betterAuthId, convexUser, router } = useTabUser();
   const updateUser = useMutation(api.users.update);
 
-  const [footShape, setFootShape] = useState<FootShape | undefined>(
-    convexUser?.footShape as FootShape | undefined,
-  );
-  const [footVolume, setFootVolume] = useState<FootVolume | undefined>(
-    convexUser?.footVolume as FootVolume | undefined,
-  );
+  const savedShape = convexUser?.footShape?.toLowerCase();
+  const savedVolume = convexUser?.footVolume?.toLowerCase();
+  const [footShape, setFootShape] = useState<FootShape | undefined>();
+  const [footVolume, setFootVolume] = useState<FootVolume | undefined>();
   const [saving, setSaving] = useState(false);
 
+  // Start from the saved profile once it loads.
+  useEffect(() => {
+    if (isFootShape(savedShape)) setFootShape((current) => current ?? savedShape);
+    if (isFootVolume(savedVolume)) setFootVolume((current) => current ?? savedVolume);
+  }, [savedShape, savedVolume]);
+
   if (!betterAuthId) {
-    return (
-      <PromptScreen
-        title="Sign in to save your foot profile"
-        onAction={() => router.push('/login')}
-      />
-    );
+    return <PromptScreen title="Foot Lab" description="Sign in to save your foot shape and volume." onAction={() => router.push('/login')} />;
   }
 
   const handleSave = async () => {
     if (!convexUser?._id || !footShape || !footVolume) return;
     setSaving(true);
     try {
-      await updateUser({
-        id: convexUser._id,
-        footShape,
-        footVolume,
-      });
-      posthog?.capture('foot_profile_saved', {
-        foot_shape: footShape,
-        foot_volume: footVolume,
-      });
+      await updateUser({ id: convexUser._id, footShape, footVolume });
+      posthog?.capture('foot_profile_saved', { foot_shape: footShape, foot_volume: footVolume });
       posthogLogger.footProfileSaved();
     } finally {
       setSaving(false);
     }
   };
 
-  const canSave =
-    footShape &&
-    footVolume &&
-    (footShape !== convexUser?.footShape || footVolume !== convexUser?.footVolume);
+  const changed = !!footShape && !!footVolume && (footShape !== savedShape || footVolume !== savedVolume);
+  const saved = !!footShape && footShape === savedShape && footVolume === savedVolume;
 
   return (
-    <TabScreen
-      title="Foot Lab"
-      subtitle="Set your foot profile for better recommendations"
-    >
-      <OptionSelectionCard
-        title="Foot Shape"
-        description="Which shape best matches your toes?"
-        options={FOOT_SHAPES}
-        selected={footShape}
-        onSelect={setFootShape}
-      />
+    <TabScreen title="Foot Lab" description="Set your foot shape and volume.">
+      <Rise index={1}>
+        <SectionHeading title="Shape" />
+      </Rise>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+        {FOOT_SHAPES.map((shape, index) => {
+          const selected = footShape === shape;
+          return (
+            <Rise key={shape} index={2 + index} style={{ width: '48.5%' }}>
+              <Card
+                active={selected}
+                onPress={() => setFootShape(shape)}
+                accessibilityLabel={`${shape} foot shape`}
+                accessibilityState={{ selected }}
+                style={{ padding: spacing.md, gap: spacing.sm }}
+              >
+                <ToeBars shape={shape} active={selected} height={52} />
+                <Text weight="medium" variant="sm" style={{ textTransform: 'uppercase' }}>{shape}</Text>
+              </Card>
+            </Rise>
+          );
+        })}
+      </View>
 
-      <OptionSelectionCard
-        title="Foot Volume"
-        description="How wide is your foot in climbing shoes?"
-        options={FOOT_VOLUMES}
-        selected={footVolume}
-        onSelect={setFootVolume}
-      />
+      <Rise index={7}>
+        <SectionHeading title="Volume" />
+      </Rise>
+      <Rise index={8} style={{ flexDirection: 'row', gap: spacing.sm }}>
+        {FOOT_VOLUMES.map((volume) => {
+          const selected = footVolume === volume;
+          return (
+            <View key={volume} style={{ flex: 1 }}>
+              <Card
+                active={selected}
+                onPress={() => setFootVolume(volume)}
+                accessibilityLabel={`${volume} volume`}
+                accessibilityState={{ selected }}
+                style={{ padding: spacing.md, gap: spacing.sm }}
+              >
+                <VolumeArch volume={volume} active={selected} height={36} />
+                <Text weight="medium" variant="sm" style={{ textTransform: 'uppercase' }}>{volume}</Text>
+              </Card>
+            </View>
+          );
+        })}
+      </Rise>
 
-      {canSave && (
-        <Button onPress={handleSave} disabled={saving}>
-          {saving ? 'Saving...' : 'Save Profile'}
+      <Rise index={9} style={{ marginTop: spacing.sm, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md }}>
+        <Label>{saved ? 'Saved' : changed ? 'Unsaved changes' : 'Pick a shape and volume'}</Label>
+        <Button onPress={handleSave} disabled={!changed} loading={saving}>
+          {saving ? 'Saving' : 'Save'}
         </Button>
-      )}
-
-      {convexUser?.footShape && convexUser?.footVolume && (
-        <Card style={{ padding: spacing.lg, gap: spacing.md }}>
-          <Text variant="sm" color="secondary">
-            Saved profile
-          </Text>
-          <FootProfileRows
-            footShape={convexUser.footShape}
-            footVolume={convexUser.footVolume}
-          />
-        </Card>
-      )}
+      </Rise>
     </TabScreen>
   );
 }
