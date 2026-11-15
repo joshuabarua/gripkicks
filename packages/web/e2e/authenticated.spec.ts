@@ -7,6 +7,12 @@ const userPassword = process.env["E2E_USER_PASSWORD"];
 const adminEmail = process.env["E2E_ADMIN_EMAIL"];
 const adminPassword = process.env["E2E_ADMIN_PASSWORD"];
 const shoeQuery = process.env["E2E_SHOE_QUERY"];
+// Cloudflare blocks headless browsers as content bots. A WAF skip rule lets
+// requests carrying this secret header through; it is only sent to the site
+// under test, never to third-party hosts.
+const BYPASS_HEADER = "x-gripkicks-e2e";
+const bypassToken = process.env["E2E_CF_BYPASS_TOKEN"];
+const bypassHeaders: Record<string, string> = bypassToken ? { [BYPASS_HEADER]: bypassToken } : {};
 const stagingConfigured = Boolean(
   runAuthenticated &&
     baseUrl &&
@@ -37,7 +43,7 @@ async function storeAuthState(
     `${baseUrl}/api/auth/sign-in/email`,
     {
       data: { email, password },
-      headers: { Origin: baseUrl! },
+      headers: { Origin: baseUrl!, ...bypassHeaders },
     },
   );
   if (!response.ok()) {
@@ -126,6 +132,14 @@ test.describe("authenticated staging critical paths", () => {
     !stagingConfigured,
     "Set E2E_RUN_AUTHENTICATED=true, E2E_BASE_URL, and member/admin credentials to run staging mutations.",
   );
+
+  test.beforeEach(async ({ context }) => {
+    if (!bypassToken) return;
+    const siteOrigin = new URL(baseUrl!).origin;
+    await context.route(`${siteOrigin}/**`, (route) =>
+      route.continue({ headers: { ...route.request().headers(), ...bypassHeaders } }),
+    );
+  });
 
   test.beforeAll(async ({ browser }) => {
     await storeAuthState(browser, userEmail!, userPassword!, memberStatePath);
