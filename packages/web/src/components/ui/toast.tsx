@@ -271,7 +271,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
                   toast.onRetry?.();
                   onClose();
                 }}
-                className="text-xs font-mono text-brand-red hover:text-white transition-colors duration-500"
+                className="text-xs font-mono text-brand-chalk underline decoration-brand-red underline-offset-4 hover:text-white transition-colors duration-500"
               >
                 Retry
               </button>

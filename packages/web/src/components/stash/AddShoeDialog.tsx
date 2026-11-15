@@ -123,7 +123,7 @@ export function AddShoeDialog({
           whileFocus="hover"
           whileTap="tap"
           variants={addButtonVariants}
-          className="group relative mt-fluid-md inline-flex min-h-11 w-fit items-center gap-3 overflow-hidden rounded-lg bg-brand-red py-2 pl-2 pr-5 font-mono text-sm uppercase tracking-wider text-white shadow-lg shadow-brand-red/25 transition-[background-color,box-shadow] duration-500 hover:shadow-brand-red/40 focus-visible:outline-brand-chalk"
+          className="group relative mt-fluid-md inline-flex min-h-11 w-fit items-center gap-3 overflow-hidden rounded-lg bg-brand-red py-2 pl-2 pr-5 font-mono text-sm uppercase tracking-wider text-brand-base shadow-lg shadow-brand-red/25 transition-[background-color,box-shadow] duration-500 hover:shadow-brand-red/40 focus-visible:outline-brand-chalk"
         >
           {/* Sheen that sweeps across on hover. */}
           <span
@@ -243,7 +243,7 @@ export function AddShoeDialog({
                         <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
                           {group.variants.length > 1 ? variantLabel || "Standard" : "Add shoe"}
                         </p>
-                        <p className="font-mono text-sm text-white transition-colors group-hover:text-brand-red">
+                        <p className="font-mono text-sm text-white decoration-brand-red underline-offset-4 group-hover:underline">
                           {shoe.name}
                         </p>
                       </div>

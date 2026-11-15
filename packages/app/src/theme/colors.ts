@@ -15,7 +15,7 @@ export const colors = {
   'secondary-foreground': '#c8bfb3',
 
   muted: '#262626',
-  'muted-foreground': 'rgba(200, 191, 179, 0.6)',
+  'muted-foreground': 'rgba(200, 191, 179, 0.75)',
 
   accent: '#f45b5b',
   'accent-foreground': '#ffffff',

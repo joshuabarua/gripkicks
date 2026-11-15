@@ -79,7 +79,7 @@ export function AccountDeletion() {
   };
 
   return (
-    <div className="lab-card max-w-2xl border-red-500/20 p-fluid-lg">
+    <div className="lab-card max-w-2xl border-status-danger/40 p-fluid-lg">
       <h3 className="lab-title text-fluid-xl text-brand-chalk flex items-center gap-2">
         <AlertTriangle className="h-6 w-6 text-red-500" />
         Delete Account
@@ -89,9 +89,9 @@ export function AccountDeletion() {
       </p>
       <div className="mt-6">
         <div className="space-y-4">
-          <div className="p-4 rounded-lg border border-red-500/20 bg-red-500/10">
-            <h4 className="font-semibold text-red-400 mb-2 font-mono">Warning:</h4>
-            <ul className="text-sm text-red-300/80 space-y-1 list-disc list-inside font-mono">
+          <div className="p-4 rounded-lg border border-status-danger/40 bg-status-danger/10">
+            <h4 className="font-semibold text-brand-chalk mb-2 font-mono">Warning:</h4>
+            <ul className="text-sm text-brand-putty space-y-1 list-disc list-inside font-mono marker:text-status-danger">
               <li>This will permanently delete your account</li>
               <li>All your profile data will be removed</li>
               <li>Your shoe collection and preferences will be lost</li>

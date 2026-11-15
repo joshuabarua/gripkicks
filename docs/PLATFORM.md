@@ -179,9 +179,9 @@ The canonical roadmap and backlog are stored in Convex and managed from the **Ba
 ## 7. Design System
 
 - **Theme:** Editorial × Precision Tool — climbing magazine meets engineering
-- **Colors:** Dark, warm, focused — black backgrounds, orange-500 accents
-- **Typography:** Tanker (display), Sora (body), So Cloudy (Sanctuary only)
-- **Cards:** `bg-neutral-900 border-neutral-800 rounded-3xl`
+- **Colors:** black backgrounds, red `brand-red` (`#f45b5b`) accent for shapes, borders and buttons only
+- **Typography:** DM Mono (headings via `lab-title`, body via `font-mono`), So Cloudy (Sanctuary only)
+- **Cards:** `lab-card` (see `docs/design-system.md`)
 - **Motion:** Page load fade-up, stagger children, hover lift
 
 ---

@@ -1,5 +1,6 @@
 'use client';
 
+import { StatusMessage } from "@/components/ui/status-message";
 import { useState, useEffect, useCallback } from 'react';
 import { Loader2, Check } from 'lucide-react';
 import { useRequireAuth } from '@/lib/auth';
@@ -277,7 +278,7 @@ export default function FootLabPage() {
         </div>
 
         {error && (
-          <div className="text-red-400 text-sm font-mono bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">{error}</div>
+          <StatusMessage tone="danger" className="mb-6">{error}</StatusMessage>
         )}
       </div>
 

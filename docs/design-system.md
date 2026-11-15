@@ -92,6 +92,15 @@ black canvas, charcoal cards:
   (`decoration-brand-red underline-offset-4`), hover underline to chalk.
 - **Form input**: `rounded-lg bg-black border-white/6 h-12`, red focus
   border/ring.
+- **Status message** (errors, warnings, success, notices): `StatusMessage` from
+  `components/ui/status-message.tsx` with `tone="danger" | "warning" | "success" | "info"`.
+  The tone colours only the border, tint and icon (`status-*` tokens in
+  `globals.css`); text stays chalk, with an optional title and putty detail.
+  Always keep the icon or a word with the colour, since red and green are hard
+  to tell apart. Danger messages get `role="alert"`.
+- **Contrast**: the `lab-button` label is `text-brand-base` on red (6.1:1;
+  white was 3.2:1). `lab-label` uses `text-brand-putty/75` so 11px labels pass
+  4.5:1 on cards and the page.
 
 ## Editorial Pages
 

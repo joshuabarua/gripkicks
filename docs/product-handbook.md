@@ -167,12 +167,11 @@ Approachable for everyday climbers, not just technical users.
 
 | Role                | Font      | Class                                      |
 | ------------------- | --------- | ------------------------------------------ |
-| Display / Headlines | Tanker    | `font-tanker`                              |
-| Body / UI           | Sora      | `font-sora`                                |
+| Headings            | DM Mono   | `lab-title` (uppercase)                    |
+| Body / UI           | DM Mono   | `font-mono`                                |
 | Stash page only     | So Cloudy | `font-so-cloudy` (intentional cloud theme) |
 
-**Never use**: `font-mono` for visible UI labels. Reserve it only for actual
-code/technical values if ever needed.
+Sora, Basteleur and Tanker are no longer loaded or used.
 
 ### Section Labels
 

@@ -58,6 +58,11 @@
 	--color-brand-putty: rgb(var(--brand-putty-rgb));
 	--color-brand-charcoal: rgb(var(--brand-charcoal-rgb));
 
+	--color-status-danger: rgb(var(--brand-red-rgb));
+	--color-status-warning: #e0a63a;
+	--color-status-success: #8fb36a;
+	--color-status-info: rgb(var(--brand-blue-rgb));
+
 	--color-background: hsl(var(--background));
 	--color-foreground: hsl(var(--foreground));
 
@@ -130,7 +135,7 @@
 }
 
 @utility lab-button {
-	@apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-red px-6 py-3 font-mono text-lg uppercase text-white transition-colors duration-500 hover:bg-brand-red/80 focus-visible:outline-brand-red;
+	@apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-red px-6 py-3 font-mono text-lg uppercase text-brand-base transition-colors duration-500 hover:bg-brand-red/80 focus-visible:outline-brand-red;
 }
 
 @utility lab-button-ghost {
@@ -138,7 +143,7 @@
 }
 
 @utility lab-label {
-	@apply font-mono text-[11px] uppercase tracking-[0.18em] text-brand-putty/60;
+	@apply font-mono text-[11px] uppercase tracking-[0.18em] text-brand-putty/75;
 }
 
 @utility lab-title {
@@ -737,21 +742,21 @@ a {
 	0%,
 	100% {
 		box-shadow:
-			0 0 8px rgba(244, 91, 91, 0.15),
-			0 0 24px rgba(244, 91, 91, 0.05);
+			0 0 8px rgb(var(--brand-red-rgb) / 0.15),
+			0 0 24px rgb(var(--brand-red-rgb) / 0.05);
 	}
 	50% {
 		box-shadow:
-			0 0 16px rgba(244, 91, 91, 0.3),
-			0 0 48px rgba(244, 91, 91, 0.1);
+			0 0 16px rgb(var(--brand-red-rgb) / 0.3),
+			0 0 48px rgb(var(--brand-red-rgb) / 0.1);
 	}
 }
 
 .hal-glow,
 .lab-card-active {
 	box-shadow:
-		0 0 8px rgba(244, 91, 91, 0.15),
-		0 0 24px rgba(244, 91, 91, 0.05);
+		0 0 8px rgb(var(--brand-red-rgb) / 0.15),
+		0 0 24px rgb(var(--brand-red-rgb) / 0.05);
 }
 
 .hal-glow-animate {
@@ -763,8 +768,8 @@ a {
 }
 .hal-glow-hover:hover {
 	box-shadow:
-		0 0 12px rgba(244, 91, 91, 0.25),
-		0 0 40px rgba(244, 91, 91, 0.08);
+		0 0 12px rgb(var(--brand-red-rgb) / 0.25),
+		0 0 40px rgb(var(--brand-red-rgb) / 0.08);
 }
 
 .monolith-card {
@@ -779,7 +784,7 @@ a {
 	top: 0;
 	width: 2px;
 	height: 100%;
-	background: #f45b5b;
+	background: rgb(var(--brand-red-rgb));
 	transform: scaleY(0);
 	transform-origin: top;
 	transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
@@ -817,7 +822,7 @@ a {
 	left: 0;
 	width: 100%;
 	height: 1px;
-	background: linear-gradient(90deg, #f45b5b, transparent);
+	background: linear-gradient(90deg, rgb(var(--brand-red-rgb)), transparent);
 	transform: scaleX(0);
 	transform-origin: left;
 	transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);

@@ -1,5 +1,10 @@
 # Brand Direction Guide
 
+> Historical concept doc. The current tokens, fonts and rules live in
+> `docs/design-system.md` and `packages/web/src/app/globals.css`: red accent
+> `#f45b5b`, DM Mono for all UI text, So Cloudy only in Sanctuary. Sora is no
+> longer used.
+
 This doc turns the retro-futurist climbing concept into a practical visual
 system for GripKicks.
 

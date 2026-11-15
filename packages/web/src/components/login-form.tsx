@@ -1,4 +1,5 @@
 "use client";
+import { StatusMessage } from "@/components/ui/status-message";
 import Link from "@/components/ui/NavLink";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -85,9 +86,7 @@ export function LoginForm() {
           </Label>
         </div>
         {error && (
-          <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-sm text-red-400">
-            {error}
-          </div>
+          <StatusMessage tone="danger">{error}</StatusMessage>
         )}
         <motion.button
           whileHover={{ scale: 1.01 }}

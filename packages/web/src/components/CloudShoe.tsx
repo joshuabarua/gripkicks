@@ -343,7 +343,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
               <button type="button" aria-pressed={shoe.isFavourite === true} onClick={onToggleFavourite} className="flex min-h-9 items-center gap-1.5 rounded-md border border-white/20 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-white/5">
                 <Star className={`h-3 w-3 ${shoe.isFavourite ? 'fill-current' : ''}`} /> {shoe.isFavourite ? 'Unfavourite' : 'Favourite'}
               </button>
-              <button type="button" onClick={onRemove} className="flex min-h-9 items-center gap-1.5 rounded-md border border-brand-red/35 bg-brand-red/8 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-red transition-colors hover:bg-brand-red/[0.14]">
+              <button type="button" onClick={onRemove} className="flex min-h-9 items-center gap-1.5 rounded-md border border-brand-red/35 bg-brand-red/8 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-chalk transition-colors hover:bg-brand-red/[0.14]">
                 <Trash2 className="h-3 w-3" /> Remove
               </button>
             </motion.div>

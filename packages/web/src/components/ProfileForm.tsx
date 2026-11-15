@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusMessage } from "@/components/ui/status-message";
 import React, { useState, useEffect } from "react";
 import { useMutation, useAsync } from "@/hooks/useAsync";
 import { fetchApi } from "@/lib/api-client";
@@ -9,7 +10,7 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingBar } from "@/components/ui/loading";
-import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useFormChange } from "@/hooks/useFormChange";
 
 const profileSchema = z.object({
@@ -133,45 +134,18 @@ export function ProfileForm({
               />
             </div>
 
-            {validationError && (
-              <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-sm text-red-400">
-                <AlertCircle className="h-4 w-4" />
-                {validationError}
-              </div>
-            )}
+            {validationError && <StatusMessage tone="danger">{validationError}</StatusMessage>}
 
             {isError && error && (
-              <div
-                className={`flex items-center gap-2 rounded-lg border p-3 font-mono text-sm ${getErrorSeverity(error) === "error"
-                  ? "border-red-500/20 bg-red-500/10 text-red-400"
-                  : getErrorSeverity(error) === "warning"
-                    ? "border-yellow-500/20 bg-yellow-500/10 text-yellow-300"
-                    : "border-blue-500/20 bg-blue-500/10 text-blue-300"
-                  }`}
+              <StatusMessage
+                tone={{ error: "danger", warning: "warning", info: "info" }[getErrorSeverity(error)] as "danger" | "warning" | "info"}
+                title={{ error: "Error", warning: "Warning", info: "Notice" }[getErrorSeverity(error)]}
               >
-                <AlertCircle className="h-4 w-4" />
-                <div>
-                  <p className="font-medium">
-                    {getErrorSeverity(error) === "error"
-                      ? "Error"
-                      : getErrorSeverity(error) === "warning"
-                        ? "Warning"
-                        : "Notice"}
-                  </p>
-                  <p className="mt-1">{getErrorDisplayMessage(error)}</p>
-                </div>
-              </div>
+                {getErrorDisplayMessage(error)}
+              </StatusMessage>
             )}
 
-            {isSuccess && (
-              <div className="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 p-3 font-mono text-sm text-green-400">
-                <CheckCircle2 className="h-4 w-4" />
-                <div>
-                  <p className="font-medium">Success</p>
-                  <p className="mt-1">Profile updated successfully!</p>
-                </div>
-              </div>
-            )}
+            {isSuccess && <StatusMessage tone="success" title="Success">Profile updated successfully!</StatusMessage>}
 
             <div className="flex gap-2 pt-2">
               <button type="submit" disabled={isLoading} className="lab-button flex-1">

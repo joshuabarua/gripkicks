@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusMessage } from "@/components/ui/status-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "@/components/ui/NavLink";
@@ -143,9 +144,7 @@ export function SignupForm() {
           />
         </div>
         {error && (
-          <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-sm text-red-400">
-            {error}
-          </div>
+          <StatusMessage tone="danger">{error}</StatusMessage>
         )}
         <motion.button
           whileHover={{ scale: 1.01 }}

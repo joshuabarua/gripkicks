@@ -18,8 +18,8 @@ experience.
 
 Technical/precise with fluidity/organic elements. The UI leverages an
 orientation-based fluid responsive design system, avoiding rigid breakpoints for
-a seamless scaling experience. The visual language includes a bold orange accent
-(`hsl(17, 83%, 54%)`), distinct custom typography (uppercase DM Mono headings via `lab-title`, DM Mono
+a seamless scaling experience. The visual language includes a bold red accent
+(`brand-red`, `#f45b5b`), distinct custom typography (uppercase DM Mono headings via `lab-title`, DM Mono
 body; so-cloudy only in Sanctuary), and engaging interactive states like 3D
 perspective hovers and slow-spinning gradients. It balances high-precision data
 display with organic, flowing interactions.
@@ -36,7 +36,7 @@ display with organic, flowing interactions.
    stiffness, volume) cleanly and clearly, maintaining a slick and modern
    aesthetic that feels like a premium tool rather than a basic spreadsheet.
 4. **Bold Contrast**: Leverage the dark/light mode foundations, ensuring the
-   primary orange accent pops and draws attention to key interactions, while
+   primary red accent pops and draws attention to key interactions, while
    letting the 3D models and shoe imagery take center stage.
 5. **Two-Font Typography**: Headings use the `lab-title` utility (uppercase
    DM Mono); use DM Mono (`font-mono`) for all body copy, labels, data and
@@ -48,9 +48,11 @@ display with organic, flowing interactions.
 1. **No Marketing Fluff**: No numbered feature lists (01/02/03), no "Precision
    fit system", no "Smart Match", no promotional copy. Use minimal placeholder
    text like "Layout test. No marketing copy."
-2. **No Accent-Colored Text**: The orange/red accent (`brand-red`) is for
+2. **No Accent-Colored Text**: The red accent (`brand-red`) is for
    shapes, borders, buttons only. Never use it on body text, headings, or
-   marketing copy.
+   marketing copy. Errors and status use `StatusMessage`
+   (`components/ui/status-message.tsx`): the tone shows in the border, tint and
+   icon, and the text stays chalk or putty.
 3. **Minimal Copy**: Strip all "weird ass fluff" — mission statements, value
    propositions, founder stories, FAQ sections. Keep only functional UI labels.
    The About page may keep a short personal note from the founder.

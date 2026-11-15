@@ -5,7 +5,7 @@ import { fonts, fontSizes, tracking } from '@/theme/typography';
 import { radii, spacing } from '@/theme/layout';
 import { Text } from './Text';
 
-// primary = lab-button (red), ghost = lab-button-ghost, danger = ghost with a red border.
+// primary = lab-button (red, near-black label for 6:1 contrast), ghost = lab-button-ghost, danger = ghost with a red border.
 type ButtonVariant = 'primary' | 'ghost' | 'danger';
 
 interface ButtonProps extends Omit<PressableProps, 'style' | 'children'> {
@@ -50,10 +50,10 @@ export function Button({ variant = 'primary', loading, icon, disabled, style, ch
       ]}
       {...props}
     >
-      {loading ? <ActivityIndicator size="small" color={isPrimary ? '#fff' : colors.foreground} /> : icon}
+      {loading ? <ActivityIndicator size="small" color={isPrimary ? colors.background : colors.foreground} /> : icon}
       {typeof children === 'string' ? (
         <Text
-          color={isPrimary ? 'white' : 'primary'}
+          color={isPrimary ? 'inverse' : 'primary'}
           style={{
             fontFamily: isPrimary ? fonts.regular : fonts.medium,
             fontSize: labelSize,
