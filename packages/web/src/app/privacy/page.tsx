@@ -29,7 +29,7 @@ const collected: Array<{ data: string; why: string; kept: string }> = [
   { data: 'Shoe collection', why: 'The shoes you own or have tried.', kept: ACCOUNT_LIFETIME },
   {
     data: 'Usage analytics',
-    why: 'Pages you visit, clicks, and sign-up and Sanctuary events, with browser, device type and approximate location from your IP address. Linked to your email once you sign up.',
+    why: 'Pages you visit, clicks, sign-up and Sanctuary events, and page load performance, with browser and device type. Your IP address is hashed and discarded. Linked to your account ID after sign-up, never to your name or email. No cookies or local storage.',
     kept: 'Stored by PostHog in the EU. Account deletion does not remove it yet; email us and we will delete it.',
   },
 ];

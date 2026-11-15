@@ -28,8 +28,10 @@ describe("PrivacyPage", () => {
       expect(within(table).getByRole("rowheader", { name: row })).toBeInTheDocument();
     }
     expect(within(table).getByText(/PostHog in the EU/)).toBeInTheDocument();
+    expect(within(table).getByText(/never to your name or email\. No cookies or local storage\./)).toBeInTheDocument();
     expect(screen.queryByText(/hidden tracking/i)).toBeNull();
     expect(screen.queryByText(/device fingerprints/i)).toBeNull();
+    expect(within(table).queryByText(/location/i)).toBeNull();
   });
 
   it("offers deletion, a data copy by email and a contact address", () => {

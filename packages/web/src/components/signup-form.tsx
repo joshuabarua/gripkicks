@@ -195,12 +195,11 @@ export function SignupForm() {
                     reason: ctx.error.message,
                   });
                 },
-                onSuccess: () => {
+                onSuccess: (ctx) => {
                   track(analyticsEvents.signupSucceeded, { method: "email" });
-                  identify(email, {
-                    email,
-                    signup_method: "email",
-                  });
+                  // Link analytics to the account ID only; never send the email to PostHog.
+                  const userId = (ctx.data as { user?: { id?: string } } | null)?.user?.id;
+                  if (userId) identify(userId, { signup_method: "email" });
                   router.replace(callbackUrl, { transitionTypes: ["page-nav"] });
                 },
               },

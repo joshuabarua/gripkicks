@@ -21,6 +21,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       api_host:
         process.env["NEXT_PUBLIC_POSTHOG_HOST"] || "https://eu.i.posthog.com",
       person_profiles: "identified_only",
+      // No cookies or local storage: PostHog hashes visitors server-side, so no
+      // consent banner is needed. The project must have cookieless mode enabled
+      // in PostHog settings or these events are dropped.
+      cookieless_mode: "always",
       capture_pageview: true,
       capture_pageleave: true,
     });
