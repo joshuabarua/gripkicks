@@ -1,20 +1,13 @@
-import { View, type ColorValue } from 'react-native';
+import type { ColorValue } from 'react-native';
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/theme/colors';
 import { fonts } from '@/theme/typography';
+import { TabIcon, type TabGlyph } from '@/components/TabIcons';
 
-type IconName = keyof typeof Ionicons.glyphMap;
-
-// Active tab gets the red monolith bar above its icon; labels stay chalk, never red.
-function tabIcon(name: IconName, activeName: IconName) {
-  return function TabIcon({ color, focused }: { color: ColorValue; focused: boolean }) {
-    return (
-      <View style={{ alignItems: 'center' }}>
-        <View style={{ position: 'absolute', top: -8, width: 18, height: 2, borderRadius: 1, backgroundColor: focused ? colors.brand.red : 'transparent' }} />
-        <Ionicons name={focused ? activeName : name} size={22} color={color as string} />
-      </View>
-    );
+// Active tab gets the red monolith bar and a red-filled glyph; labels stay chalk, never red.
+function tabIcon(name: TabGlyph) {
+  return function Icon({ color, focused }: { color: ColorValue; focused: boolean }) {
+    return <TabIcon name={name} color={color as string} focused={focused} />;
   };
 }
 
@@ -30,11 +23,11 @@ export default function TabLayout() {
         sceneStyle: { backgroundColor: colors.background },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: tabIcon('grid-outline', 'grid') }} />
-      <Tabs.Screen name="stash" options={{ title: 'Sanctuary', tabBarIcon: tabIcon('cloud-outline', 'cloud') }} />
-      <Tabs.Screen name="foot-lab" options={{ title: 'Foot Lab', tabBarIcon: tabIcon('footsteps-outline', 'footsteps') }} />
-      <Tabs.Screen name="matcher" options={{ title: 'Matcher', tabBarIcon: tabIcon('git-compare-outline', 'git-compare') }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: tabIcon('person-outline', 'person') }} />
+      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: tabIcon('home') }} />
+      <Tabs.Screen name="stash" options={{ title: 'Sanctuary', tabBarIcon: tabIcon('sanctuary') }} />
+      <Tabs.Screen name="foot-lab" options={{ title: 'Foot Lab', tabBarIcon: tabIcon('footLab') }} />
+      <Tabs.Screen name="matcher" options={{ title: 'Matcher', tabBarIcon: tabIcon('matcher') }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: tabIcon('profile') }} />
     </Tabs>
   );
 }
