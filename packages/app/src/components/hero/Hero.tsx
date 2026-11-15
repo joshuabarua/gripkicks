@@ -77,7 +77,7 @@ function Wordmark({ source, position }: { source: number; position: [number, num
 }
 
 function Shoe({ still, drag }: { still: boolean; drag: React.MutableRefObject<DragState> }) {
-  const gltf = useLoader(GLTFLoader, require('../../../assets/hero/HeroShoe.glb') as string) as unknown as {
+  const gltf = useLoader(GLTFLoader, require('../../../assets/hero/HeroShoeMobile.glb') as string) as unknown as {
     nodes: Record<string, THREE.Object3D>;
   };
   const node = gltf.nodes['CimbingShoe'] as THREE.Mesh | undefined;

@@ -56,9 +56,10 @@ function FloatingShoe({ imageUrl, slot, index, width, height }: { imageUrl: stri
     <Animated.View
       entering={FadeIn.duration(600).delay((index % 5) * 50).reduceMotion(ReduceMotion.System)}
       exiting={FadeOut.duration(350)}
-      style={{ position: 'absolute', left: (slot.x / 100) * width, top: (slot.y / 100) * height, opacity: 0.32 }}
+      style={{ position: 'absolute', left: (slot.x / 100) * width, top: (slot.y / 100) * height }}
     >
-      <Animated.View style={style}>
+      {/* Opacity lives on the inner view so the entering fade does not overwrite it. */}
+      <Animated.View style={[{ opacity: 0.14 }, style]}>
         <ShoeThumb imageUrl={imageUrl} width={slot.size} height={Math.round(slot.size * 0.7)} framed={false} />
       </Animated.View>
     </Animated.View>
