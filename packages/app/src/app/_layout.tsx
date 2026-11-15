@@ -45,12 +45,10 @@ function PostHogIdentity({ children }: { children: ReactNode }) {
       return;
     }
 
-    posthogClient.identify(user.id, {
-      ...(user.email ? { email: user.email } : {}),
-      ...(user.name ? { name: user.name } : {}),
-    });
+    // Account ID only: the Privacy page promises we never send name or email.
+    posthogClient.identify(user.id);
     identifiedUserId.current = user.id;
-  }, [posthogClient, user?.email, user?.id, user?.name]);
+  }, [posthogClient, user?.id]);
 
   return (
     <PostHogErrorBoundary fallback={ErrorFallback}>

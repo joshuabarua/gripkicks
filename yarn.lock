@@ -7323,12 +7323,12 @@ __metadata:
     better-auth: "npm:1.4.17"
     convex: "npm:^1.32.0"
     expo: "npm:~52.0.46"
-    expo-application: "npm:^58.1.2"
+    expo-application: "npm:~6.0.2"
     expo-constants: "npm:~17.0.8"
-    expo-device: "npm:^58.0.5"
-    expo-file-system: "npm:^58.0.13"
+    expo-device: "npm:~7.0.3"
+    expo-file-system: "npm:~18.0.12"
     expo-linking: "npm:~7.0.5"
-    expo-localization: "npm:^58.0.5"
+    expo-localization: "npm:~16.0.1"
     expo-network: "npm:~7.0.5"
     expo-router: "npm:~4.0.21"
     expo-secure-store: "npm:~14.0.1"
@@ -7339,7 +7339,7 @@ __metadata:
     react-native-reanimated: "npm:~3.16.1"
     react-native-safe-area-context: "npm:4.12.0"
     react-native-screens: "npm:~4.4.0"
-    react-native-svg: "npm:^15.16.1"
+    react-native-svg: "npm:15.8.0"
     typescript: "npm:^7.0.2"
   languageName: unknown
   linkType: soft
@@ -10354,12 +10354,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-application@npm:^58.1.2":
-  version: 58.1.2
-  resolution: "expo-application@npm:58.1.2"
+"expo-application@npm:~6.0.2":
+  version: 6.0.2
+  resolution: "expo-application@npm:6.0.2"
   peerDependencies:
     expo: "*"
-  checksum: 10c0/73928e60fea00d0f786154a7204b7c98b410667fd669121d7b0e65da07a44deeefaf76b05910db47b6631807990036cf522b6acdb1781741dfd5d7afbb279063
+  checksum: 10c0/f631846dab4096db4ab191f40ff1839965df38fb48ad71b4392a2fa5b9588601d988b61a27116a4a402b67598872c6ba17e7031c24019ce226c1f17ab6af66c6
   languageName: node
   linkType: hard
 
@@ -10392,24 +10392,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-device@npm:^58.0.5":
-  version: 58.0.5
-  resolution: "expo-device@npm:58.0.5"
+"expo-device@npm:~7.0.3":
+  version: 7.0.3
+  resolution: "expo-device@npm:7.0.3"
   dependencies:
     ua-parser-js: "npm:^0.7.33"
   peerDependencies:
     expo: "*"
-  checksum: 10c0/387e9ea5624202e86f57232452f691509ff357069452a4ba59f9d54e153ec1510455f1118221b77c41b99165b45e2b669f0c75e9322702c12a1599341f2cf3a6
-  languageName: node
-  linkType: hard
-
-"expo-file-system@npm:^58.0.13":
-  version: 58.0.13
-  resolution: "expo-file-system@npm:58.0.13"
-  peerDependencies:
-    expo: "*"
-    react-native: "*"
-  checksum: 10c0/e68fb7b8ee0b99c0683037f9754e90d176bcfae4ce823f3e2c1fcede9cebf4428a420e529c870b10af3e6b3a2160933b652b700ca68d57f08960512764868c66
+  checksum: 10c0/a404e9dc1fcc65de8c629d31e046f3cac6904ff3c5c016642fcd2a04c2e29dc0e6bc03ec98082e3c287bbe045ee10594927bdc124e04c2cd25bf58f55c61d172
   languageName: node
   linkType: hard
 
@@ -10460,15 +10450,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-localization@npm:^58.0.5":
-  version: 58.0.5
-  resolution: "expo-localization@npm:58.0.5"
+"expo-localization@npm:~16.0.1":
+  version: 16.0.1
+  resolution: "expo-localization@npm:16.0.1"
   dependencies:
     rtl-detect: "npm:^1.0.2"
   peerDependencies:
     expo: "*"
     react: "*"
-  checksum: 10c0/ea82b918a84ad9a5fd3eb220b5bd0f08cfa6960c99dbfdc27a1ae9fde1e37466415bb37e887617c44ae4a1196076c51badb2389952642f7ff70ef5bed4eb93da
+  checksum: 10c0/7ea9c9c2b6573afefacdc14e694ecb455aa946e25595b139a5525fd698caf9d00e5653bf4265209064c2b8fe62050f9df54cf96599e7d50f7d24374b4bdd2624
   languageName: node
   linkType: hard
 
@@ -15169,16 +15159,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-svg@npm:^15.16.1":
-  version: 15.16.1
-  resolution: "react-native-svg@npm:15.16.1"
+"react-native-svg@npm:15.8.0":
+  version: 15.8.0
+  resolution: "react-native-svg@npm:15.8.0"
   dependencies:
     css-select: "npm:^5.1.0"
     css-tree: "npm:^1.1.3"
+    warn-once: "npm:0.1.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/0f7bc6e09718dc225c7fd1af94b9aa61d7e29b3f6f1756f96cefb6e19725f0667a5f9274532f8bfe5afc28e7be5bcf45f98b9a73629b649fdbcfced99645094c
+  checksum: 10c0/03d2cb19c799da6ba41dea0dc414338d01a55549ea4e4a370315c8ec34e1c6de430a62b538f099423060edc8bea6df134f765bde862770059404617c3c296af8
   languageName: node
   linkType: hard
 
@@ -18100,7 +18091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"warn-once@npm:^0.1.0, warn-once@npm:^0.1.1":
+"warn-once@npm:0.1.1, warn-once@npm:^0.1.0, warn-once@npm:^0.1.1":
   version: 0.1.1
   resolution: "warn-once@npm:0.1.1"
   checksum: 10c0/f531e7b2382124f51e6d8f97b8c865246db8ab6ff4e53257a2d274e0f02b97d7201eb35db481843dc155815e154ad7afb53b01c4d4db15fb5aa073562496aff7
