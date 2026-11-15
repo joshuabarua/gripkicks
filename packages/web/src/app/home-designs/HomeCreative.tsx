@@ -18,6 +18,7 @@ import { getBrandDescription } from "@/utils/sanctuaryDescriptions";
 import { FootLabPreview, MatcherPreview, SanctuaryPreview, SoleMatePreview } from "./ToolPreviews";
 import { useToolStatus, type ToolStatus } from "./useToolStatus";
 import { HowItWorksSection } from "./HowItWorks";
+import { FitShoeBackdrop } from "@/components/foot/FitShoeBackdrop";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
   ssr: false,
@@ -92,17 +93,23 @@ export default function HomeCreative() {
     <PageSurface className="relative antialiased selection:bg-brand-red selection:text-black">
       <div aria-hidden="true" className="grain-overlay-animated" />
       <HeroSection isReducedEffects={isReducedEffects} />
-      {sections.map((section, i) => (
-        <motion.div
-          key={i}
-          initial={isReducedEffects ? false : { opacity: 0, y: 32 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-          transition={{ duration: 0.7, delay: i * 0.08, ease: "easeOut" }}
-        >
-          {section}
-        </motion.div>
-      ))}
+      {/* Shoes drift behind everything below the hero; sections are see-through. */}
+      <div className="relative">
+        <FitShoeBackdrop layout="sticky" />
+        <div className="relative z-10">
+          {sections.map((section, i) => (
+            <motion.div
+              key={i}
+              initial={isReducedEffects ? false : { opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: "easeOut" }}
+            >
+              {section}
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </PageSurface>
   );
 }
@@ -129,7 +136,7 @@ function VideoSection() {
   };
 
   return (
-    <section aria-label="GripKicks video" className="border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
+    <section aria-label="GripKicks video" className="border-t border-white/6 px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div className="mx-auto max-w-(--fluid-container-xl)">
         <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-[3rem] border border-white/6">
           <video
@@ -172,7 +179,7 @@ function VideoSection() {
 
 function BrandsSection() {
   return (
-    <section id="home-brands" aria-labelledby="brands-title" className="border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
+    <section id="home-brands" aria-labelledby="brands-title" className="border-t border-white/6 px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div className="mx-auto max-w-(--fluid-container-xl)">
         <div className="mb-fluid-xl flex items-center gap-fluid-lg">
           <h2 id="brands-title" className="lab-title text-fluid-2xl">Brands</h2>
@@ -213,7 +220,7 @@ function ToolsSection() {
   ];
 
   return (
-    <section id="home-tools" aria-labelledby="tools-title" className="scroll-mt-14 border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
+    <section id="home-tools" aria-labelledby="tools-title" className="scroll-mt-14 border-t border-white/6 px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div className="mx-auto max-w-(--fluid-container-xl)">
         <div className="mb-fluid-xl flex items-center gap-fluid-lg">
           <h2 id="tools-title" className="lab-title text-fluid-2xl">Tools</h2>

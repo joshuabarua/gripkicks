@@ -57,7 +57,15 @@ function assignSlots(shoes: ShowcaseShoe[], previous: Record<string, number>) {
   return next;
 }
 
-function Backdrop({ footShape, footVolume }: { footShape: FootShape | null; footVolume: FootVolume | null }) {
+type BackdropProps = {
+  footShape?: FootShape | null;
+  footVolume?: FootVolume | null;
+  // "fixed" covers the whole viewport. "sticky" fills its positioned parent and
+  // keeps the shoes in view only while that parent is on screen.
+  layout?: "fixed" | "sticky";
+};
+
+function Backdrop({ footShape = null, footVolume = null, layout = "fixed" }: BackdropProps) {
   const result = useShowcase(footShape, footVolume);
   // Hold the last set while a new selection loads, so shoes swap rather than blink out.
   const [shoes, setShoes] = useState<ShowcaseShoe[]>([]);
@@ -67,9 +75,8 @@ function Backdrop({ footShape, footVolume }: { footShape: FootShape | null; foot
     setSlots(assignSlots(result, slots));
   }
 
-  return (
-    <div aria-hidden="true" data-testid="fit-shoe-backdrop" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      <AnimatePresence>
+  const field = (
+    <AnimatePresence>
         {shoes.map((shoe) => {
           const index = slots[shoe._id] ?? 0;
           const slot = SLOTS[index % SLOTS.length]!;
@@ -101,7 +108,19 @@ function Backdrop({ footShape, footVolume }: { footShape: FootShape | null; foot
             </motion.div>
           );
         })}
-      </AnimatePresence>
+    </AnimatePresence>
+  );
+
+  if (layout === "sticky") {
+    return (
+      <div aria-hidden="true" data-testid="fit-shoe-backdrop" className="pointer-events-none absolute inset-0 z-0">
+        <div className="sticky top-0 h-svh overflow-hidden">{field}</div>
+      </div>
+    );
+  }
+  return (
+    <div aria-hidden="true" data-testid="fit-shoe-backdrop" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      {field}
     </div>
   );
 }
@@ -118,7 +137,7 @@ class SilentBoundary extends Component<{ children: ReactNode }, { failed: boolea
   }
 }
 
-export function FitShoeBackdrop(props: { footShape: FootShape | null; footVolume: FootVolume | null }) {
+export function FitShoeBackdrop(props: BackdropProps) {
   return (
     <SilentBoundary>
       <Backdrop {...props} />

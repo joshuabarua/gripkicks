@@ -15,6 +15,7 @@ import { LabHeader } from "@/components/ui/LabHeader";
 import { riseDelay } from "@/lib/motion";
 import { ToeProfile, VolumeArch, TOE_HEIGHTS, VOLUME_ARCH, type FootShape, type FootVolume } from "@/components/foot/FootGlyphs";
 import { ClimbingExperienceSelect } from "@/components/ClimbingExperienceSelect";
+import { FitShoeBackdrop } from "@/components/foot/FitShoeBackdrop";
 
 const isRated = (score?: number): score is number => typeof score === "number" && Number.isFinite(score) && score >= 1 && score <= 10;
 
@@ -49,8 +50,9 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
   const glyphVolume = footProfile?.volume && footProfile.volume.toLowerCase() in VOLUME_ARCH ? footProfile.volume.toLowerCase() as FootVolume : undefined;
 
   return (
-    <PageSurface aria-busy={isLoading}>
-      <div className="lab-container">
+    <PageSurface aria-busy={isLoading} className="relative">
+      <FitShoeBackdrop footShape={glyphShape ?? null} footVolume={glyphVolume ?? null} />
+      <div className="lab-container relative z-10">
         <LabHeader title="Dashboard" description={`Hey ${firstName}`} />
 
         {isLoading ? (

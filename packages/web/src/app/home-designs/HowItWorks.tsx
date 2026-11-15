@@ -76,7 +76,7 @@ export function HowItWorksSection() {
   const nextIndex = steps.findIndex((step) => !step.done);
 
   return (
-    <section id="home-steps" aria-labelledby="steps-title" className="scroll-mt-14 border-t border-white/6 bg-black px-fluid-md py-fluid-3xl md:px-fluid-xl">
+    <section id="home-steps" aria-labelledby="steps-title" className="scroll-mt-14 border-t border-white/6 px-fluid-md py-fluid-3xl md:px-fluid-xl">
       <div className="mx-auto max-w-(--fluid-container-xl)">
         <div className="mb-fluid-xl flex items-center gap-fluid-lg">
           <h2 id="steps-title" className="lab-title text-fluid-2xl">How it works</h2>

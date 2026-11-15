@@ -18,6 +18,7 @@ vi.mock("convex/react", () => ({ useQuery: mocks.count }));
 vi.mock("@/hooks/useReducedEffects", () => ({ useReducedEffects: mocks.reducedEffects }));
 vi.mock("@/components/3d/webgl-utils", () => ({ supportsWebGL: mocks.webgl }));
 vi.mock("@/components/ShoeImage", () => ({ default: () => <div /> }));
+vi.mock("@/components/foot/FitShoeBackdrop", () => ({ FitShoeBackdrop: () => null }));
 vi.mock("next/dynamic", () => ({
   default: (_load: unknown, options?: { loading?: () => React.ReactNode }) =>
     function DynamicScene({ onReady }: { onReady?: () => void }) {
@@ -202,7 +203,7 @@ describe("Homepage clarity", () => {
   it("lays out the steps as one linked track with lab-title headings and mono copy", () => {
     render(<HomeCreative />);
     const stepsRegion = screen.getByRole("region", { name: "How it works" });
-    expect(stepsRegion).toHaveClass("bg-black");
+    expect(stepsRegion).not.toHaveClass("bg-black"); // see-through so the floating shoes show
     const section = within(stepsRegion);
     expect(section.getByRole("heading", { name: "How it works" })).toHaveClass("lab-title");
     expect(section.queryByText(/three simple steps/i)).toBeNull();

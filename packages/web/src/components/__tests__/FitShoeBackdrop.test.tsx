@@ -41,6 +41,15 @@ describe("FitShoeBackdrop", () => {
     expect(solutionSpot()).toBe(before);
   });
 
+  it("can stick to its section instead of covering the viewport", () => {
+    render(<FitShoeBackdrop layout="sticky" />);
+    const backdrop = screen.getByTestId("fit-shoe-backdrop");
+    expect(backdrop).toHaveClass("absolute", "inset-0");
+    expect(backdrop).not.toHaveClass("fixed");
+    expect(backdrop.firstElementChild).toHaveClass("sticky", "top-0");
+    expect(shoesShown()).toEqual(["Drago", "Solution"]);
+  });
+
   it("holds the previous shoes while a new selection loads", () => {
     const { rerender } = render(<FitShoeBackdrop footShape={null} footVolume={null} />);
     mocks.useQuery.mockReturnValue(undefined);
