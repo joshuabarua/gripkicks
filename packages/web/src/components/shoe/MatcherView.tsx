@@ -278,8 +278,7 @@ function Leaderboard({ shoes, mode, hoveredId, onHoverChange }: { shoes: Display
             <div className="min-w-0">
               <h3 className="wrap-break-word font-mono text-base font-semibold">{shoe.name}</h3>
               <div className="mt-1 flex items-center gap-2">
-                <BrandLogo brand={shoe.brand} size="sm" className="shrink-0" />
-                <span className="font-mono text-xs text-brand-putty">{shoe.brand}</span>
+                <BrandLogo brand={shoe.brand} size="sm" tooltip className="shrink-0" />
               </div>
             </div>
           </div>
