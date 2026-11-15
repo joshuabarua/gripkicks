@@ -33,6 +33,7 @@ import type * as utils_bulkUpsert from "../utils/bulkUpsert.js";
 import type * as utils_enrichment from "../utils/enrichment.js";
 import type * as utils_enrichmentScoring from "../utils/enrichmentScoring.js";
 import type * as utils_helpers from "../utils/helpers.js";
+import type * as utils_matchScore from "../utils/matchScore.js";
 import type * as utils_scoring from "../utils/scoring.js";
 import type * as utils_shoeVariants from "../utils/shoeVariants.js";
 
@@ -68,6 +69,7 @@ declare const fullApi: ApiFromModules<{
   "utils/enrichment": typeof utils_enrichment;
   "utils/enrichmentScoring": typeof utils_enrichmentScoring;
   "utils/helpers": typeof utils_helpers;
+  "utils/matchScore": typeof utils_matchScore;
   "utils/scoring": typeof utils_scoring;
   "utils/shoeVariants": typeof utils_shoeVariants;
 }>;
