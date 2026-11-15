@@ -8,6 +8,7 @@ import { Rise } from '@/components/lab/Rise';
 import { ShoeThumb } from '@/components/lab/ShoeThumb';
 import { FitChart } from '@/components/matcher/FitChart';
 import { MatchBreakdownBar, MatchBreakdownList } from '@/components/matcher/MatchBreakdown';
+import { RadarGrid, type RadarShoe } from '@/components/matcher/RadarGrid';
 import { EmptyStateCard, PromptScreen, TabScreen, useTabUser } from '@/components/TabScreenLayout';
 import { useMatcherData, type DisplayShoe, type MatcherMode, type Metrics, type SoleMateClimber } from '@/hooks/useMatcherData';
 import type { CommunitySignal } from '../../../../../types/shoe';
@@ -101,6 +102,18 @@ function ShoeMatches({ data, onOpen }: { data: Data; onOpen: Open }) {
             </Rise>
           ))}
           <Rise index={11}>
+            <Card>
+              <Text weight="medium" variant="lg" style={{ padding: spacing.lg }}>Radar map</Text>
+              <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.08)', padding: spacing.md }}>
+                <RadarGrid
+                  shoes={toRadarShoes(shoes, mode)}
+                  confidenceLabel={mode === 'personal' ? 'Match strength' : 'Sample size'}
+                  {...(mode === 'personal' && data.fitProfile ? { you: data.fitProfile } : {})}
+                />
+              </View>
+            </Card>
+          </Rise>
+          <Rise index={12}>
             <Leaderboard shoes={shoes} mode={mode} />
           </Rise>
           {mode === 'personal' && !data.hasProfile ? (
@@ -113,6 +126,31 @@ function ShoeMatches({ data, onOpen }: { data: Data; onOpen: Open }) {
       )}
     </>
   );
+}
+
+// Same marker data as the web toRadarShoes (MatcherView.tsx).
+function toRadarShoes(shoes: DisplayShoe[], mode: MatcherMode): RadarShoe[] {
+  return shoes.map((s) => {
+    const traits: Array<[string, number]> = [
+      ['Comfort', s.metrics.comfort],
+      ['Performance', s.metrics.performance],
+      ['Durability', s.metrics.durability],
+      ['Aggressive', s.metrics.aggressiveness],
+    ];
+    const [label, value] = traits.sort((a, b) => b[1] - a[1])[0]!;
+    return {
+      id: s.id,
+      brand: s.brand,
+      name: s.name,
+      ...(s.imageUrl ? { imageUrl: s.imageUrl } : {}),
+      primaryScore: s.primaryScore,
+      primaryScoreLabel: mode === 'personal' ? 'Match' : 'Score',
+      subtitle: s.secondaryLabel,
+      confidence: mode === 'personal' ? Math.min(1, s.primaryScore / 100) : Math.min(1, Math.log10((s.totalRatings ?? 0) + 1) / Math.log10(50)),
+      topTrait: { label, value },
+      metrics: s.metrics,
+    };
+  });
 }
 
 function MatchTile({ shoe, rank, mode, hasProfile, fitProfile }: { shoe: DisplayShoe; rank: number; mode: MatcherMode; hasProfile: boolean; fitProfile?: Metrics }) {
