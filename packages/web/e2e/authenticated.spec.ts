@@ -55,7 +55,8 @@ async function storeAuthState(
 
 async function gotoAuthenticated(page: Page, path: string) {
   await page.goto(path);
-  const authenticatedNav = page.locator("div.nav-button");
+  // The menu button only renders for signed-in users.
+  const authenticatedNav = page.getByRole("button", { name: /^(Open|Close) menu$/ });
   const settled = await authenticatedNav
     .waitFor({ state: "visible", timeout: 15_000 })
     .then(() => true)
@@ -96,33 +97,32 @@ async function saveFootProfile(
   await page.waitForURL((url) => url.pathname === "/dashboard");
 }
 
-async function removeShoe(page: Page, shoeName: string) {
-  const editDialog = page.getByRole("dialog").filter({ hasText: "Edit Shoe Stats" });
-  if (await editDialog.isVisible().catch(() => false)) {
-    page.once("dialog", (dialog) => void dialog.accept());
-    await editDialog
-      .getByRole("button", { name: "Remove shoe" })
-      .or(editDialog.locator("button:has(svg.lucide-trash2)"))
-      .dispatchEvent("click");
-    await expect(page.getByText("Shoe removed from your sanctuary")).toBeVisible();
-    return;
+function escapeRegExp(text: string) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Opens the Sanctuary card for a shoe (if it isn't already) and returns it.
+async function openShoeCard(page: Page, shoeName: string) {
+  const name = escapeRegExp(shoeName);
+  const hide = page.getByRole("button", { name: new RegExp(`^Hide details for .*${name}$`) }).first();
+  if (!(await hide.isVisible().catch(() => false))) {
+    await page.getByRole("button", { name: new RegExp(`^Show details for .*${name}$`) }).first().click();
   }
+  await expect(hide).toBeVisible();
+  return page.locator("article").filter({ has: hide });
+}
 
+async function removeShoe(page: Page, shoeName: string) {
   await page.keyboard.press("Escape");
-  const shoeCardText = page.getByText(shoeName, { exact: true }).last();
-  if (!(await shoeCardText.isVisible().catch(() => false))) return;
+  const name = escapeRegExp(shoeName);
+  const toggle = page.getByRole("button", { name: new RegExp(`^(Show|Hide) details for .*${name}$`) }).first();
+  if (!(await toggle.isVisible().catch(() => false))) return;
 
-  await shoeCardText.click();
-  const statsDialog = page
-    .getByRole("dialog")
-    .filter({ hasText: "Shoe Rank" })
-    .filter({ hasText: shoeName });
-  await expect(statsDialog).toBeVisible();
-  page.once("dialog", (dialog) => void dialog.accept());
-  await statsDialog
-    .getByRole("button", { name: "Remove shoe" })
-    .or(statsDialog.locator("button:has(svg.lucide-trash2)"))
-    .click();
+  const card = await openShoeCard(page, shoeName);
+  await card.getByRole("button", { name: "Remove" }).click();
+  const confirmDialog = page.getByRole("dialog", { name: "Remove shoe?" });
+  await expect(confirmDialog).toBeVisible();
+  await confirmDialog.getByRole("button", { name: "Remove" }).click();
   await expect(page.getByText("Shoe removed from your sanctuary")).toBeVisible();
 }
 
@@ -172,8 +172,8 @@ test.describe("authenticated staging critical paths", () => {
       let changed = false;
 
       if (originalShape && originalVolume) {
-        await expect(footShapeButton(page, originalShape)).toHaveClass(/border-brand-red/);
-        await expect(footVolumeButton(page, originalVolume)).toHaveClass(/border-brand-red/);
+        await expect(footShapeButton(page, originalShape)).toHaveAttribute("aria-pressed", "true");
+        await expect(footVolumeButton(page, originalVolume)).toHaveAttribute("aria-pressed", "true");
       }
 
       try {
@@ -185,8 +185,8 @@ test.describe("authenticated staging critical paths", () => {
           await expect(page.getByRole("heading", { level: 1, name: /FOOT LAB/i })).toBeVisible();
           const restoreProfileResponse = await page.request.get("/api/v1/profile");
           expect(restoreProfileResponse.ok()).toBe(true);
-          await expect(footShapeButton(page, nextShape)).toHaveClass(/border-brand-red/);
-          await expect(footVolumeButton(page, nextVolume)).toHaveClass(/border-brand-red/);
+          await expect(footShapeButton(page, nextShape)).toHaveAttribute("aria-pressed", "true");
+          await expect(footVolumeButton(page, nextVolume)).toHaveAttribute("aria-pressed", "true");
           await saveFootProfile(page, originalShape, originalVolume);
         }
       }
@@ -215,25 +215,15 @@ test.describe("authenticated staging critical paths", () => {
         await expect(page.getByText("Shoe added to your sanctuary!")).toBeVisible();
         await expect(addDialog).not.toBeVisible();
 
-        const shoeCardText = page.getByText(shoeName, { exact: true }).last();
-        await expect(shoeCardText).toBeVisible();
-        await shoeCardText.click();
+        // A newly added shoe opens expanded; edit its condition inline.
+        const card = await openShoeCard(page, shoeName);
+        await card.getByLabel("Condition").selectOption("Good");
 
-        const statsDialog = page
-          .getByRole("dialog")
-          .filter({ hasText: "Shoe Rank" })
-          .filter({ hasText: shoeName });
-        await expect(statsDialog).toBeVisible();
-        await statsDialog
-          .getByRole("button", { name: "Edit shoe" })
-          .or(statsDialog.locator("button:has(svg.lucide-square-pen)"))
-          .click();
-
-        const editDialog = page.getByRole("dialog").filter({ hasText: "Edit Shoe Stats" });
-        await expect(editDialog).toBeVisible();
-        await editDialog.locator("#condition").selectOption("Good");
-        await editDialog.getByRole("button", { name: "Save Changes" }).dispatchEvent("click");
-        await expect(page.getByText("Shoe updated successfully!")).toBeVisible();
+        // The change should survive a reload.
+        await page.reload();
+        await expect(page.getByRole("heading", { level: 1, name: /Shoe\s+Sanctuary/i })).toBeVisible();
+        const reloadedCard = await openShoeCard(page, shoeName);
+        await expect(reloadedCard.getByLabel("Condition")).toHaveValue("Good");
       } finally {
         if (added) await removeShoe(page, shoeName);
       }
@@ -244,7 +234,7 @@ test.describe("authenticated staging critical paths", () => {
       await expect(page.getByRole("heading", { level: 1, name: "MATCHER" })).toBeVisible();
       await page.getByRole("button", { name: /^Community/ }).click();
       await expect(
-        page.getByText(/Community Top Rated|Not enough community ratings yet/i).first(),
+        page.getByText(/Community ratings|Not enough community ratings yet/i).first(),
       ).toBeVisible();
     });
 
