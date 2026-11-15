@@ -5,6 +5,8 @@ const config = getDefaultConfig(__dirname);
 const convexDir = path.resolve(__dirname, '../../convex');
 
 config.resolver.sourceExts.push('cjs');
+// 3D models for the Home hero.
+config.resolver.assetExts.push('glb');
 // better-auth (and other modern packages) expose subpaths only through package.json "exports".
 config.resolver.unstable_enablePackageExports = true;
 // Metro only bundles watched files; the monorepo defaults skip the root convex/ folder.

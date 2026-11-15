@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
+import Animated, { useAnimatedRef, useScrollOffset } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
@@ -12,6 +13,7 @@ import { LabHeader } from '@/components/lab/LabHeader';
 import { Rise } from '@/components/lab/Rise';
 import { ShoeThumb } from '@/components/lab/ShoeThumb';
 import { ToeBars, VolumeArch, isFootShape, isFootVolume } from '@/components/lab/FootGlyphs';
+import { ScrollOffsetContext } from '@/components/lab/InView';
 
 export function useTabUser() {
   const session = useSession();
@@ -28,19 +30,35 @@ export function TabScreen({
   title,
   description,
   cloudy,
+  hero,
+  backdrop,
   children,
 }: {
-  title: string;
+  title?: string;
   description?: string;
   cloudy?: boolean;
+  // Full-bleed block above the page content (Home's 3D hero).
+  hero?: ReactNode;
+  // Decorative layer fixed behind the scrolling content.
+  backdrop?: ReactNode;
   children: ReactNode;
 }) {
+  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const offset = useScrollOffset(scrollRef);
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.background }}>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.md, paddingTop: spacing.lg, paddingBottom: spacing['2xl'], gap: spacing.md }}>
-        <LabHeader title={title} description={description} cloudy={cloudy} />
-        {children}
-      </ScrollView>
+      <ScrollOffsetContext.Provider value={offset}>
+        {backdrop}
+        <Animated.ScrollView
+          ref={scrollRef}
+          scrollEventThrottle={16}
+          contentContainerStyle={{ paddingHorizontal: spacing.md, paddingTop: hero ? 0 : spacing.lg, paddingBottom: spacing['2xl'], gap: spacing.md }}
+        >
+          {hero ? <View style={{ marginHorizontal: -spacing.md }}>{hero}</View> : null}
+          {title ? <LabHeader title={title} description={description} cloudy={cloudy} /> : null}
+          {children}
+        </Animated.ScrollView>
+      </ScrollOffsetContext.Provider>
     </SafeAreaView>
   );
 }
