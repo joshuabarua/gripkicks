@@ -5,6 +5,8 @@ import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/layout';
 import { Text, Button, Input, Card } from '@/components/ui';
 import { signIn, signUp } from '@/lib/auth';
+import { posthog } from '@/lib/posthog';
+import { posthogLogger } from '@/lib/posthog-logger';
 import { useRouter } from 'expo-router';
 
 export default function LoginScreen() {
@@ -25,6 +27,8 @@ export default function LoginScreen() {
         if (result.error) {
           setError(result.error.message || 'Sign in failed');
         } else {
+          posthog?.capture('user_signed_in');
+          posthogLogger.authenticationCompleted('sign_in');
           router.back();
         }
       } else {
@@ -32,6 +36,8 @@ export default function LoginScreen() {
         if (result.error) {
           setError(result.error.message || 'Sign up failed');
         } else {
+          posthog?.capture('user_signed_up');
+          posthogLogger.authenticationCompleted('sign_up');
           router.back();
         }
       }
