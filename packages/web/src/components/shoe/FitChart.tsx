@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { glideTransition } from "@/lib/motion";
+import { pathMorphTransition } from "@/lib/motion";
 
 export interface FitMetrics {
   comfort: number;
@@ -66,8 +66,8 @@ export function FitChart({ shoe, you }: { shoe: FitMetrics; you: FitMetrics }) {
             </g>
           );
         })}
-        <motion.path initial={{ d: COLLAPSED }} animate={{ d: shapePath(shoe) }} transition={glideTransition} strokeWidth="1.5" strokeLinejoin="round" className="fill-brand-red/30 stroke-brand-red" />
-        <motion.path initial={{ d: COLLAPSED }} animate={{ d: shapePath(you) }} transition={{ ...glideTransition, delay: 0.1 }} fill="none" strokeWidth="1.5" strokeDasharray="3 2" strokeLinejoin="round" className="stroke-brand-chalk" />
+        <motion.path initial={{ d: COLLAPSED }} animate={{ d: shapePath(shoe) }} transition={pathMorphTransition} strokeWidth="1.5" strokeLinejoin="round" className="fill-brand-red/30 stroke-brand-red" />
+        <motion.path initial={{ d: COLLAPSED }} animate={{ d: shapePath(you) }} transition={{ ...pathMorphTransition, delay: 0.1 }} fill="none" strokeWidth="1.5" strokeDasharray="3 2" strokeLinejoin="round" className="stroke-brand-chalk" />
         {AXES.map(({ key, label: axis }, index) => {
           const [x, y] = point(index, shoe[key]);
           return (

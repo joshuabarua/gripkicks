@@ -21,6 +21,10 @@ export const stepMotion = {
 
 export const glideTransition = { type: "spring", stiffness: 260, damping: 30 } as const;
 
+// For morphing SVG path strings (`d`). Springs produce NaN frames when framer
+// interpolates path strings, so paths use a timed ease instead.
+export const pathMorphTransition = { duration: 0.5, ease: EASE_OUT } as const;
+
 export const radarMarkerMotion = {
   initial: { opacity: 0, scale: 0.6 },
   exit: { opacity: 0, scale: 0.6 },

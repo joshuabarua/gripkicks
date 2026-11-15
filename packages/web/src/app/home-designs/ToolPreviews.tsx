@@ -5,7 +5,7 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import ShoeImage from "@/components/ShoeImage";
 import { TOE_HEIGHTS, VOLUME_ARCH, type FootShape, type FootVolume } from "@/components/foot/FootGlyphs";
 import { useAnimationsEnabled } from "@/stores/useAppStore";
-import { glideTransition } from "@/lib/motion";
+import { glideTransition, pathMorphTransition } from "@/lib/motion";
 import type { PreviewShoe } from "./useToolStatus";
 
 // Steps through `length` frames while the preview is on screen. Reduced motion
@@ -61,7 +61,7 @@ export function FootLabPreview({ active, profile }: { active: boolean; profile?:
       <div className="space-y-2">
         <svg viewBox="0 0 80 52" className="h-14 w-full">
           <line x1="8" y1="46" x2="72" y2="46" strokeWidth="1" className="stroke-white/15" />
-          <motion.path initial={false} animate={{ d: VOLUME_ARCH[volume] }} transition={glideTransition} fill="none" strokeWidth="3" strokeLinecap="round" className="stroke-brand-chalk" />
+          <motion.path initial={false} animate={{ d: VOLUME_ARCH[volume] }} transition={pathMorphTransition} fill="none" strokeWidth="3" strokeLinecap="round" className="stroke-brand-chalk" />
         </svg>
         <p className="lab-label">Volume <span className="text-brand-chalk">{volume}</span></p>
       </div>
