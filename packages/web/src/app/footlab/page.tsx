@@ -16,6 +16,7 @@ import { LabHeader } from '@/components/ui/LabHeader';
 import { riseDelay, expandMotion, slideUpBarMotion } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 import { FirstShoeQuiz } from '@/components/matcher/FirstShoeQuiz';
+import { FitShoeBackdrop } from '@/components/foot/FitShoeBackdrop';
 
 const footProfileSchema = z.object({
   footShape: z.enum(['egyptian', 'roman', 'greek', 'germanic', 'celtic']),
@@ -174,8 +175,9 @@ export default function FootLabPage() {
   }
 
   return (
-    <PageSurface className="pb-32">
-      <div className="lab-container">
+    <PageSurface className="relative pb-32">
+      <FitShoeBackdrop footShape={selectedFootShape} footVolume={selectedFootVolume} />
+      <div className="lab-container relative z-10">
         <LabHeader title="Foot Lab" description="Set your foot shape and volume." />
 
         {showOnboardingPrompt && (

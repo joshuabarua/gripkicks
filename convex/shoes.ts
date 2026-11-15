@@ -12,6 +12,7 @@ import {
 } from "./utils/backfills";
 import { bulkUpsertShoesByBrand, bulkUpsertShoeValidator } from "./utils/bulkUpsert";
 import { deleteUserShoesForShoe } from "./userShoes";
+import { normalizeVolume } from "./utils/scoring";
 import { requireAdmin } from "./authorization";
 
 export const list = query({
@@ -156,6 +157,51 @@ export const getCompatibleWithFootShape = query({
     );
 
     return shoes.filter(Boolean);
+  },
+});
+
+// A small set of catalog shoes with images for the Foot Lab background. With no
+// selection it samples the catalog; with a foot shape and/or volume it returns
+// only shoes that fit, one per model.
+export const fitShowcase = query({
+  args: {
+    footShape: v.optional(footShapeValidator),
+    footVolume: v.optional(v.string()),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const limit = Math.min(24, Math.max(1, Math.floor(args.limit ?? 14)));
+    const volume = normalizeVolume(args.footVolume);
+
+    const candidates = args.footShape
+      ? await Promise.all(
+          (await ctx.db
+            .query("footShapeCompat")
+            .withIndex("by_footShape", (q) => q.eq("footShape", args.footShape!))
+            .collect()
+          ).map((entry) => ctx.db.get(entry.shoeId)),
+        )
+      : await ctx.db.query("shoes").take(300);
+
+    const seenModels = new Set<string>();
+    return candidates
+      .filter((shoe): shoe is NonNullable<typeof shoe> => !!shoe?.imageUrl)
+      .filter((shoe) => !volume || normalizeVolume(shoe.volume) === volume)
+      .sort((a, b) => (b.totalRatings ?? 0) - (a.totalRatings ?? 0) || a.name.localeCompare(b.name))
+      .filter((shoe) => {
+        const model = `${shoe.brand}:${shoe.modelName ?? shoe.name}`;
+        if (seenModels.has(model)) return false;
+        seenModels.add(model);
+        return true;
+      })
+      .slice(0, limit)
+      .map((shoe) => ({
+        _id: shoe._id,
+        brand: shoe.brand,
+        name: shoe.name,
+        imageUrl: shoe.imageUrl!,
+        ...(shoe.gender ? { gender: shoe.gender } : {}),
+      }));
   },
 });
 

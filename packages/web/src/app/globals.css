@@ -924,6 +924,30 @@ video {
 	}
 }
 
+/* Foot Lab background shoes: slow, alternating drift with a slight tilt. */
+.fit-shoe-float {
+	animation: fit-shoe-float 24s ease-in-out infinite alternate;
+	transform: rotate(var(--tilt, 0deg));
+}
+
+@keyframes fit-shoe-float {
+	0% {
+		transform: translate3d(0, 0, 0) rotate(var(--tilt, 0deg));
+	}
+	50% {
+		transform: translate3d(18px, -26px, 0) rotate(calc(var(--tilt, 0deg) * -0.5));
+	}
+	100% {
+		transform: translate3d(-14px, 14px, 0) rotate(var(--tilt, 0deg));
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.fit-shoe-float {
+		animation: none;
+	}
+}
+
 @keyframes page-rain-fall {
 	from {
 		transform: translate3d(var(--rain-x), -12vh, 0) rotate(var(--rain-from));
