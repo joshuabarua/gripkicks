@@ -109,6 +109,11 @@ export const auth = betterAuth({
     ...getAllowedOrigins(),
     "http://localhost:8000",
     "http://192.168.0.71:8000",
+    // Mobile app: the expo() plugin turns the app's expo-origin header into the
+    // request origin. Custom schemes match by prefix. Browsers can never send
+    // these origins, so they do not weaken CSRF protection for the website.
+    "gripkicks://", // installed app (scheme in packages/app/app.json)
+    "exp://", // Expo Go during development
   ],
   secret: betterAuthSecret,
   baseURL: authBaseUrl,
