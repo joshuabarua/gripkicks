@@ -63,7 +63,15 @@ async function gotoAuthenticated(page: Page, path: string) {
     .catch(() => false);
   if (!settled) {
     await page.reload();
-    await expect(authenticatedNav).toBeVisible({ timeout: 30_000 });
+    const recovered = await authenticatedNav
+      .waitFor({ state: "visible", timeout: 30_000 })
+      .then(() => true)
+      .catch(() => false);
+    if (!recovered) {
+      // Say what loaded instead (a Cloudflare page, the signed-out site, an error).
+      const body = (await page.locator("body").innerText().catch(() => "")).replace(/\s+/g, " ").slice(0, 300);
+      throw new Error(`Signed-in menu never appeared on ${page.url()} (title: "${await page.title()}"). Page text: ${body}`);
+    }
   }
 }
 
@@ -153,7 +161,7 @@ test.describe("authenticated staging critical paths", () => {
       await gotoAuthenticated(page, "/footlab");
       await expect(page.getByRole("heading", { level: 1, name: /FOOT LAB/i })).toBeVisible();
 
-      const profileResponse = await page.request.get("/api/v1/profile");
+      const profileResponse = await page.request.get("/api/v1/profile", { headers: bypassHeaders });
       expect(profileResponse.ok()).toBe(true);
       const profilePayload = (await profileResponse.json()) as {
         data?: { footShape?: string; footVolume?: string };
@@ -183,7 +191,7 @@ test.describe("authenticated staging critical paths", () => {
         if (changed && originalShape && originalVolume) {
           await page.goto("/footlab");
           await expect(page.getByRole("heading", { level: 1, name: /FOOT LAB/i })).toBeVisible();
-          const restoreProfileResponse = await page.request.get("/api/v1/profile");
+          const restoreProfileResponse = await page.request.get("/api/v1/profile", { headers: bypassHeaders });
           expect(restoreProfileResponse.ok()).toBe(true);
           await expect(footShapeButton(page, nextShape)).toHaveAttribute("aria-pressed", "true");
           await expect(footVolumeButton(page, nextVolume)).toHaveAttribute("aria-pressed", "true");
