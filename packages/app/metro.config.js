@@ -9,6 +9,12 @@ config.resolver.sourceExts.push('cjs');
 config.resolver.unstable_enablePackageExports = true;
 // Metro only bundles watched files; the monorepo defaults skip the root convex/ folder.
 config.watchFolders = [...(config.watchFolders ?? []), convexDir];
+// The app keeps its own React 19.3 in packages/app/node_modules; the web app's
+// React sits at the repo root. Always resolve the app's copy first.
+config.resolver.nodeModulesPaths = [
+  path.resolve(__dirname, 'node_modules'),
+  path.resolve(__dirname, '../../node_modules'),
+];
 
 // `convex/_generated/*` is the repo's Convex folder, not the `convex` npm
 // package (which owns `convex/react`, `convex/server`, ...).

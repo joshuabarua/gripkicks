@@ -5,7 +5,10 @@ import { radii, spacing } from '@/theme/layout';
 import { fontSizes, fonts } from '@/theme/typography';
 
 // Lab form input: black field, faint border, red border while focused.
-export const Input = React.forwardRef<TextInput, TextInputProps>(({ style, editable, onFocus, onBlur, ...props }, ref) => {
+// React 19: ref is a regular prop, no forwardRef needed.
+type InputProps = TextInputProps & { ref?: React.Ref<React.ComponentRef<typeof TextInput>> };
+
+export function Input({ ref, style, editable, onFocus, onBlur, ...props }: InputProps) {
   const [focused, setFocused] = useState(false);
   return (
     <TextInput
@@ -33,6 +36,4 @@ export const Input = React.forwardRef<TextInput, TextInputProps>(({ style, edita
       {...props}
     />
   );
-});
-
-Input.displayName = 'Input';
+}

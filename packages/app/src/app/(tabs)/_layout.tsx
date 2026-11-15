@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, type ColorValue } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/theme/colors';
@@ -8,11 +8,11 @@ type IconName = keyof typeof Ionicons.glyphMap;
 
 // Active tab gets the red monolith bar above its icon; labels stay chalk, never red.
 function tabIcon(name: IconName, activeName: IconName) {
-  return function TabIcon({ color, focused }: { color: string; focused: boolean }) {
+  return function TabIcon({ color, focused }: { color: ColorValue; focused: boolean }) {
     return (
       <View style={{ alignItems: 'center' }}>
         <View style={{ position: 'absolute', top: -8, width: 18, height: 2, borderRadius: 1, backgroundColor: focused ? colors.brand.red : 'transparent' }} />
-        <Ionicons name={focused ? activeName : name} size={22} color={color} />
+        <Ionicons name={focused ? activeName : name} size={22} color={color as string} />
       </View>
     );
   };
