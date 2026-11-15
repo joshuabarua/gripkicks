@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { View, Pressable } from 'react-native';
 import { useMutation } from 'convex/react';
 import { api } from 'convex/_generated/api';
+import { posthog } from '@/lib/posthog';
+import { posthogLogger } from '@/lib/posthog-logger';
 import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/layout';
 import { Text, Button, Card } from '@/components/ui';
@@ -118,6 +120,11 @@ export default function FootLabScreen() {
         footShape,
         footVolume,
       });
+      posthog?.capture('foot_profile_saved', {
+        foot_shape: footShape,
+        foot_volume: footVolume,
+      });
+      posthogLogger.footProfileSaved();
     } finally {
       setSaving(false);
     }

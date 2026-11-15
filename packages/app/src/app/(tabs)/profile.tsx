@@ -3,6 +3,8 @@ import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/layout';
 import { Text, Button, Card } from '@/components/ui';
 import { signOut } from '@/lib/auth';
+import { posthog } from '@/lib/posthog';
+import { posthogLogger } from '@/lib/posthog-logger';
 import {
   FootProfileRows,
   TabScreen,
@@ -11,6 +13,15 @@ import {
 
 export default function ProfileScreen() {
   const { user, convexUser, router } = useTabUser();
+
+  const handleSignOut = async () => {
+    const result = await signOut();
+    if (!result.error) {
+      posthog?.capture('user_signed_out');
+      posthogLogger.authenticationCompleted('sign_out');
+      posthog?.reset();
+    }
+  };
 
   return (
     <TabScreen title="Profile">
@@ -70,7 +81,7 @@ export default function ProfileScreen() {
               Sign In
             </Button>
           ) : (
-            <Button variant="destructive" onPress={() => signOut()}>
+            <Button variant="destructive" onPress={handleSignOut}>
               Sign Out
             </Button>
           )}
