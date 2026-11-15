@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import CloudShoe from "@/components/CloudShoe";
+import { RemoveShoeDialog } from "@/components/stash/RemoveShoeDialog";
 import { getBrandDescription } from "@/utils/sanctuaryDescriptions";
 import type { UserShoe } from "@/types/api";
 
@@ -49,13 +50,38 @@ describe("Sanctuary content", () => {
     expect(onRemove).toHaveBeenCalled();
   });
 
-  it("reveals a slider on click and saves on click out", () => {
+  it("offers ready sliders that save when released", () => {
     render(<CloudShoe shoe={shoe} expanded={true} {...cardProps} />);
-    fireEvent.click(screen.getByRole("button", { name: "Edit Comfort rating" }));
     const slider = screen.getByRole("slider", { name: "Comfort rating" });
+    expect(slider).toHaveAttribute("aria-valuetext", "Not rated");
     fireEvent.change(slider, { target: { value: "8" } });
-    fireEvent.blur(slider);
+    expect(onRate).not.toHaveBeenCalled();
+    fireEvent.pointerUp(slider);
     expect(onRate).toHaveBeenCalledWith("comfortScore", 8);
+    expect(screen.getByText("8/10")).toBeInTheDocument();
+  });
+
+  it("saves keyboard rating changes once per key press", () => {
+    render(<CloudShoe shoe={{ ...shoe, durabilityRating: 4 }} expanded={true} {...cardProps} />);
+    const slider = screen.getByRole("slider", { name: "Durability rating" });
+    fireEvent.change(slider, { target: { value: "5" } });
+    fireEvent.keyUp(slider, { key: "ArrowRight" });
+    expect(onRate).toHaveBeenCalledTimes(1);
+    expect(onRate).toHaveBeenCalledWith("durabilityRating", 5);
+  });
+
+  it("closes on Escape and returns focus to the card", () => {
+    const { rerender } = render(<CloudShoe shoe={shoe} expanded={true} {...cardProps} />);
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onToggleExpand).toHaveBeenCalledTimes(1);
+    rerender(<CloudShoe shoe={shoe} expanded={false} {...cardProps} />);
+    expect(screen.getByRole("button", { name: "Show details for Scarpa Drago" })).toHaveFocus();
+  });
+
+  it("ignores Escape while collapsed", () => {
+    render(<CloudShoe shoe={shoe} expanded={false} {...cardProps} />);
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onToggleExpand).not.toHaveBeenCalled();
   });
 
   it("saves size and condition from inline selects", () => {
@@ -112,5 +138,25 @@ describe("Sanctuary content", () => {
     rerender(<CloudShoe shoe={updated} expanded={true} {...cardProps} />);
     expect(screen.getByText("Updated product description.")).toBeInTheDocument();
     expect(screen.getAllByText("8/10").length).toBeGreaterThan(0);
+  });
+});
+
+describe("Remove shoe dialog", () => {
+  it("names the shoe and only removes on confirm", () => {
+    const onCancel = vi.fn();
+    const onConfirm = vi.fn();
+    render(<RemoveShoeDialog shoe={shoe} onCancel={onCancel} onConfirm={onConfirm} />);
+    const dialog = screen.getByRole("dialog", { name: "Remove shoe?" });
+    expect(dialog).toHaveTextContent("Scarpa Drago and its ratings will be removed");
+    fireEvent.click(screen.getByRole("button", { name: "Keep it" }));
+    expect(onCancel).toHaveBeenCalled();
+    expect(onConfirm).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+    expect(onConfirm).toHaveBeenCalledWith(shoe);
+  });
+
+  it("stays closed with no pending shoe", () => {
+    render(<RemoveShoeDialog shoe={null} onCancel={vi.fn()} onConfirm={vi.fn()} />);
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 });

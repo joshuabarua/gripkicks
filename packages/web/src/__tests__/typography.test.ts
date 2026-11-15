@@ -6,6 +6,7 @@ const SRC_ROOT = path.resolve(__dirname, "..");
 const SO_CLOUDY_ALLOWED = new Set([
   "app/stash/StashPage.tsx",
   "components/stash/AddShoeDialog.tsx",
+  "components/stash/RemoveShoeDialog.tsx",
   "components/EditShoeDialog.tsx",
   "components/ShoeStatsModal/index.tsx",
   "app/layout.tsx",

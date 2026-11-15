@@ -40,3 +40,17 @@ export const menuCloseTransition = {
   type: "tween",
   ease: [0.76, 0, 0.24, 1],
 } as const;
+
+// Card that grows into a wider panel while siblings glide to new spots.
+export const cardLayoutTransition = { duration: 0.45, ease: EASE_OUT } as const;
+
+// Details that rise in one after another once a card has finished growing.
+export const revealGroup = {
+  hidden: {},
+  show: { transition: { delayChildren: 0.28, staggerChildren: 0.04 } },
+} as const;
+
+export const revealItem = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE_OUT } },
+} as const;

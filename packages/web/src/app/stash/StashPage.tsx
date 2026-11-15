@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useMutation } from "convex/react";
+import { LayoutGroup } from "framer-motion";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { useRequireAuth } from "@/lib/auth";
@@ -18,6 +19,7 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { SanctuaryGridSkeleton, StatsStripSkeleton } from "@/components/ui/skeleton";
 import { buildSpecialLabels } from "@/utils/specialLabels";
 import { AddShoeDialog } from "@/components/stash/AddShoeDialog";
+import { RemoveShoeDialog } from "@/components/stash/RemoveShoeDialog";
 import { useStashData } from "@/hooks/useStashData";
 import { StatsStrip } from "@/components/stash/StatsStrip";
 import CloudShoe from "@/components/CloudShoe";
@@ -34,6 +36,7 @@ export default function ShoeSanctuaryPage() {
   const { showLoader, hideLoader } = useLoading();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [expandedShoeId, setExpandedShoeId] = useState<string | null>(null);
+  const [pendingRemoval, setPendingRemoval] = useState<UserShoe | null>(null);
   const [dialogSearchQuery, setDialogSearchQuery] = useState("");
   const [dialogSelectedBrand, setDialogSelectedBrand] = useState<string>("all");
   const [dialogSelectedGender, setDialogSelectedGender] = useState<
@@ -197,10 +200,10 @@ export default function ShoeSanctuaryPage() {
   }, [toggleFavourite, setUserShoes, toast]);
 
   const confirmRemoveShoe = useCallback((shoe: UserShoe) => {
-    if (confirm("Are you sure you want to remove this shoe from your sanctuary?")) {
-      removeShoeFromStash(shoe._id);
-    }
-  }, [removeShoeFromStash]);
+    setPendingRemoval(null);
+    if (expandedShoeId === shoe._id) setExpandedShoeId(null);
+    void removeShoeFromStash(shoe._id);
+  }, [expandedShoeId, removeShoeFromStash]);
 
   useEffect(() => {
     if (sessionLoading) {
@@ -333,7 +336,8 @@ export default function ShoeSanctuaryPage() {
             )}
 
             {!isPageLoading && userShoes.length > 0 && (
-              <div className="lab-rise grid items-start gap-fluid-lg sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={riseDelay(3)}>
+              <LayoutGroup>
+              <div className="lab-rise grid grid-flow-row-dense items-start gap-fluid-lg sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={riseDelay(3)}>
                 {flatShoes.map(({ item: shoe, variantLabel }) => (
                   <CloudShoe
                     key={shoe._id}
@@ -343,17 +347,19 @@ export default function ShoeSanctuaryPage() {
                     expanded={expandedShoeId === shoe._id}
                     onToggleExpand={() => setExpandedShoeId(expandedShoeId === shoe._id ? null : shoe._id)}
                     onToggleFavourite={() => toggleShoeFavourite(shoe)}
-                    onRemove={() => confirmRemoveShoe(shoe)}
+                    onRemove={() => setPendingRemoval(shoe)}
                     onRate={(field, value) => rateShoe(shoe, field, value)}
                     onUpdateDetails={(fields) => updateShoeDetails(shoe, fields)}
                   />
                 ))}
               </div>
+              </LayoutGroup>
             )}
           </div>
         </section>
       </div>
 
+      <RemoveShoeDialog shoe={pendingRemoval} onCancel={() => setPendingRemoval(null)} onConfirm={confirmRemoveShoe} />
     </div>
   );
 }
