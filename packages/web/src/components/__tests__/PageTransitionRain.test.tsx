@@ -18,12 +18,12 @@ vi.mock("react", async (importOriginal) => {
 });
 
 describe("PageTransitionRain", () => {
-  it("renders 36 hidden named boundaries keyed to pathname", () => {
+  it("renders 12 hidden named boundaries keyed to pathname", () => {
     const { container, rerender } = render(<PageTransitionRain />);
     const boundaries = container.querySelectorAll("[data-vt-name]");
-    expect(boundaries).toHaveLength(36);
+    expect(boundaries).toHaveLength(12);
     const names = [...boundaries].map((el) => el.getAttribute("data-vt-name"));
-    expect(names).toEqual(Array.from({ length: 36 }, (_, i) => `page-rain-${i}`));
+    expect(names).toEqual(Array.from({ length: 12 }, (_, i) => `page-rain-${i}`));
     for (const el of boundaries) {
       expect(el.getAttribute("data-vt-update")).toBe('{"page-nav":"page-rain","default":"none"}');
       const span = el.querySelector("span");
@@ -34,7 +34,7 @@ describe("PageTransitionRain", () => {
     navState.pathname = "/privacy";
     rerender(<PageTransitionRain />);
     expect(container.querySelectorAll("[data-vt-name] span")[0]?.textContent).toBe("/privacy");
-    expect(container.querySelectorAll("[data-vt-name]")).toHaveLength(36);
+    expect(container.querySelectorAll("[data-vt-name]")).toHaveLength(12);
   });
 
   it("preloads the five distinct optimized WebP assets for no-preference only", () => {
@@ -55,13 +55,13 @@ describe("PageTransitionRain", () => {
   it("injects per-name CSS that hides extras on portrait phones and reduced motion", () => {
     const { container } = render(<PageTransitionRain />);
     const css = container.querySelector("style")?.textContent ?? "";
-    for (let i = 0; i < 36; i++) {
+    for (let i = 0; i < 12; i++) {
       expect(css).toContain(`::view-transition-group(page-rain-${i})`);
     }
     const portraitRules = css.match(/orientation: portrait/g) ?? [];
-    expect(portraitRules).toHaveLength(15);
+    expect(portraitRules).toHaveLength(5);
     const reducedRules = css.match(/prefers-reduced-motion: reduce/g) ?? [];
-    expect(reducedRules).toHaveLength(36);
+    expect(reducedRules).toHaveLength(12);
     expect(css).toContain(`--cover-delay:${PAGE_TRANSITION_TIMING.coverDelayMs}ms`);
     expect(css).toContain(`--reveal-delay:${PAGE_TRANSITION_TIMING.revealDelayMs}ms`);
     expect(css).toContain("rain-blue.webp");
@@ -72,41 +72,25 @@ describe("PageTransitionRain", () => {
     expect(css).toContain("inset:0 auto auto 0");
     expect(css).toMatch(/width:clamp\(32px,calc\(var\(--rain-size\)\*\.12vw\),calc\(var\(--rain-size\)\*1px\)\)!important/);
     expect(css).toMatch(/height:clamp\(32px,calc\(var\(--rain-size\)\*\.12vw\),calc\(var\(--rain-size\)\*1px\)\)!important/);
-    expect(css).toContain("--rain-size:70}");
+    expect(css).toContain("--rain-size:91}");
     expect(css).not.toMatch(/--rain-size:\d+px/);
   });
 
-  it("builds three deterministic copies inside the transition budget", () => {
-    expect(RAIN_PIECES).toHaveLength(36);
-    expect(RAIN_PIECES.filter((piece) => piece.mobile)).toHaveLength(21);
-    for (let copy = 0; copy < 3; copy++) {
-      for (let i = 0; i < 12; i++) {
-        const base = RAIN_PIECES[i]!;
-        const piece = RAIN_PIECES[copy * 12 + i]!;
-        expect(piece.asset).toBe(base.asset);
-        expect(piece.size).toBe(base.size);
-        expect(piece.mobile).toBe(base.mobile);
-        expect(piece.x).toBe(3 + ((base.x - 3 + copy * 11) % 88));
-        expect(piece.delayMs).toBe(base.delayMs + copy * 50);
-        expect(piece.durationMs).toBe(base.durationMs + copy * 30);
-        expect(piece.rotateFrom).toBe(base.rotateFrom + copy * 37);
-        expect(piece.rotateTo).toBe(base.rotateTo + copy * 37);
-        expect(piece.drift).toBe(copy % 2 === 1 ? -base.drift : base.drift);
-      }
-    }
-    expect(Math.max(...RAIN_PIECES.map((piece) => piece.delayMs + piece.durationMs))).toBeLessThanOrEqual(2300);
-    for (const piece of RAIN_PIECES) {
-      expect(piece.durationMs).toBeGreaterThanOrEqual(850);
-    }
+  it("drops one wave of twelve pieces that lands as the curtain lifts", () => {
+    expect(RAIN_PIECES).toHaveLength(12);
+    expect(RAIN_PIECES.filter((piece) => piece.mobile)).toHaveLength(7);
     expect(PAGE_TRANSITION_TIMING).toEqual({
-      coverDelayMs: 120,
-      coverDurationMs: 600,
-      revealDelayMs: 1220,
-      revealDurationMs: 600,
+      coverDelayMs: 0,
+      coverDurationMs: 450,
+      revealDelayMs: 530,
+      revealDurationMs: 450,
     });
-    expect(
-      PAGE_TRANSITION_TIMING.revealDelayMs -
-        (PAGE_TRANSITION_TIMING.coverDelayMs + PAGE_TRANSITION_TIMING.coverDurationMs),
-    ).toBe(500);
+    const curtainEnd = PAGE_TRANSITION_TIMING.revealDelayMs + PAGE_TRANSITION_TIMING.revealDurationMs;
+    expect(curtainEnd).toBeLessThanOrEqual(1000);
+    expect(PAGE_TRANSITION_TIMING.revealDelayMs - PAGE_TRANSITION_TIMING.coverDurationMs).toBe(80);
+    expect(Math.max(...RAIN_PIECES.map((piece) => piece.delayMs + piece.durationMs))).toBeLessThanOrEqual(curtainEnd);
+    expect(RAIN_PIECES.slice(0, 7).every((piece) => piece.delayMs < 0)).toBe(true);
+    expect(RAIN_PIECES.slice(7).every((piece) => piece.delayMs > 0)).toBe(true);
+    expect(Math.min(...RAIN_PIECES.map((piece) => piece.size))).toBeGreaterThanOrEqual(60);
   });
 });

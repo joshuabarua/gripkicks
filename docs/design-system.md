@@ -170,25 +170,28 @@ in `src/lib/motion.ts`.
   (`:root:active-view-transition-type(page-nav)`): the
   `::view-transition-group(vt-trigger)` group carries the brand-red curtain —
   viewport-sized, `transform: none`, `z-index: 0`, clipping out with
-  `page-wipe-out` (600ms, 1220ms delay) — while `::view-transition-old(root)`
-  clips top→bottom off screen (600ms, 120ms delay) ahead of it and the root
+  `page-wipe-out` (450ms, 530ms delay) — while `::view-transition-old(root)`
+  clips top→bottom off screen (450ms, no delay) ahead of it and the root
   group keeps `opacity: 1` at `z-index: 1`. The `::view-transition` overlay
   itself stays viewport-sized and transparent with no animation so it can clip
   the whole stage without cutting off the rain. The gap between the old root
-  finishing at 720ms and the curtain reveal starting at 1220ms holds a 500ms
-  full-red plateau; the curtain finishes at ~1820ms. All four timings come
+  finishing at 450ms and the curtain reveal starting at 530ms holds an 80ms
+  full-red plateau; the curtain finishes at ~980ms, so the whole transition
+  runs about one second. All four timings come
   from `PAGE_TRANSITION_TIMING` in `src/lib/transition-rain.ts`, exported as
   scoped custom properties by the generated CSS — no duplicated literals.
-  Painted above everything (`z-index: 2`) are thirty-six `page-rain-*` groups
+  Painted above everything (`z-index: 2`) are twelve `page-rain-*` groups
   from `PageTransitionRain`
   (`src/components/ui/PageTransitionRain.tsx`, same hidden-pathname boundary
-  pattern as `WipeTrigger`): three staggered copies of a twelve-piece
-  climbing-hold and rock set (`public/imgs/transition/rain-*.webp`,
+  pattern as `WipeTrigger`): one wave of larger climbing-hold and rock
+  pieces (`public/imgs/transition/rain-*.webp`,
   descriptors and generated CSS in `src/lib/transition-rain.ts`) fall through
   the shared `page-rain-fall` keyframe with modest rotation and no bounce.
-  Lead pieces are already falling during the first 120ms before the old root
-  covers, the tail burst keeps raining ~0.4s after the curtain ends, and the
-  last piece lands at ~2190ms. Twenty-one pieces show on portrait phones;
+  Seven lead pieces are already falling when the wipe starts and five tail
+  pieces drop in behind them; the last piece lands with the curtain at
+  ~980ms. Keep the set small: every rain group is snapshotted before the
+  transition starts, which freezes the page on slow devices. Seven pieces show
+  on portrait phones;
   reduced motion hides all rain and the curtain. The reveal runs on
   the curtain group rather than `::view-transition-new(root)` because
   React-started transitions never produce a `new(root)` pseudo. Internal links route through
@@ -198,8 +201,9 @@ in `src/lib/motion.ts`.
   Untyped updates (Suspense reveals, data refreshes, browser back/forward) don't
   animate — the trigger boundary resolves `default: "none"`, so no view
   transition starts at all and no root crossfade needs suppressing.
-  `lab-rise`/`lab-fade` entrances run normally beneath the curtain, so the new
-  page is visible under the rain-only tail. Reduced motion disables the
+  `lab-rise`/`lab-fade` entrances run normally beneath the curtain and overlap
+  the reveal, so the new page is still settling as the curtain lifts. Don't
+  pause them during the transition: the reveal would show an empty page. Reduced motion disables the
   overlay and its animations. Unsupported browsers navigate without animation.
 - Don't put `lab-rise` on an element that framer also transforms (the CSS fill
   overrides framer's transform). Put `lab-rise` on a wrapper.

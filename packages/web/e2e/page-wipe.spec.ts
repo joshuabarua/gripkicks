@@ -318,7 +318,7 @@ test("wipe holds full red between the old root exit and the overlay reveal", asy
       contentType: "image/png",
     });
 
-    expect(snapshot.holdMs).toBeGreaterThanOrEqual(500);
+    expect(snapshot.holdMs).toBe(80);
     const oldParts = insetParts(snapshot.snap?.oldClip ?? "");
     expect(oldParts[0]).toBe(100);
     expect(oldParts.slice(1).every((part) => part === 0)).toBe(true);
@@ -361,8 +361,8 @@ type RainProbe = {
 
 test.describe("transition rain", () => {
   for (const viewport of [
-    { name: "desktop", size: { width: 1440, height: 900 }, expected: 36, maxPiece: 100 },
-    { name: "mobile", size: { width: 390, height: 844 }, expected: 21, maxPiece: 46 },
+    { name: "desktop", size: { width: 1440, height: 900 }, expected: 12, maxPiece: 130 },
+    { name: "mobile", size: { width: 390, height: 844 }, expected: 7, maxPiece: 60 },
   ]) {
     test(`paints ${viewport.expected} falling holds before and after the wipe (${viewport.name})`, async ({ page }, testInfo) => {
       await page.emulateMedia({ reducedMotion: "no-preference" });
@@ -441,7 +441,7 @@ test.describe("transition rain", () => {
 
       try {
         await page.locator("footer").getByRole("link", { name: "Privacy" }).click();
-        for (const t of [60, 300, 1900]) {
+        for (const t of [60, 300, 700, 900, 990]) {
           if (t !== 60) {
             await page.evaluate((phase) =>
               (window as Window & { freezePhase?: (t: number) => void }).freezePhase!(phase), t,
@@ -476,7 +476,7 @@ test.describe("transition rain", () => {
             piece.x >= 0 && piece.x <= viewport.size.width && piece.y >= 0 && piece.y <= viewport.size.height,
           );
 
-        for (const t of [60, 300, 1900]) {
+        for (const t of [60, 300, 700, 900]) {
           const active = activeAt(t);
           expect(active).toHaveLength(viewport.expected);
           for (const piece of active) {
@@ -489,27 +489,30 @@ test.describe("transition rain", () => {
             expect(piece.height).toBeGreaterThanOrEqual(32);
             expect(piece.height).toBeLessThanOrEqual(viewport.maxPiece);
             expect(piece.animationName).toBe("page-rain-fall");
-            expect(piece.duration).toBeGreaterThanOrEqual(850);
+            expect(piece.duration).toBeGreaterThanOrEqual(700);
             expect(!(piece.x === 0 && piece.y === 0)).toBe(true);
           }
           const xs = new Set(active.map((piece) => Math.round(piece.x)));
           const ys = new Set(active.map((piece) => Math.round(piece.y)));
           expect(xs.size).toBeGreaterThan(5);
-          expect(ys.size).toBeGreaterThan(5);
+          expect(ys.size).toBeGreaterThanOrEqual(viewport.expected >= 12 ? 5 : 4);
         }
 
         const leadsAt60 = activeAt(60).filter((piece) => indexOf(piece) <= 6);
         const tailsAt60 = activeAt(60).filter((piece) => indexOf(piece) >= 7);
-        const leadsAt1900 = activeAt(1900).filter((piece) => indexOf(piece) <= 6);
-        const tailsAt1900 = activeAt(1900).filter((piece) => indexOf(piece) >= 7);
+        const leadsAt900 = activeAt(900).filter((piece) => indexOf(piece) <= 6);
+        const tailsAt700 = activeAt(700).filter((piece) => indexOf(piece) >= 7);
         expect(inside(leadsAt60).length).toBeGreaterThanOrEqual(2);
         expect(tailsAt60.every((piece) => piece.y < 0)).toBe(true);
-        expect(insetParts(probe.clips[60]?.oldClip ?? "inset(100%)").every((part) => part === 0)).toBe(true);
-        expect(inside(tailsAt1900).length).toBeGreaterThanOrEqual(1);
-        expect(leadsAt1900.every((piece) => piece.y > viewport.size.height)).toBe(true);
-        expect((probe.clips[1900]?.curtainClip ?? "").startsWith("inset(100%")).toBe(true);
-        expect((probe.labStates[1900] ?? []).length).toBeGreaterThan(0);
-        expect((probe.labStates[1900] ?? []).every((state) => state !== "paused")).toBe(true);
+        // The old page starts wiping off straight away, with no lead-in delay.
+        const oldTopAt60 = insetParts(probe.clips[60]?.oldClip ?? "inset(0%)")[0] ?? 0;
+        expect(oldTopAt60).toBeGreaterThan(0);
+        expect(oldTopAt60).toBeLessThan(100);
+        expect(inside(tailsAt700).length).toBeGreaterThanOrEqual(1);
+        expect(leadsAt900.every((piece) => piece.y > viewport.size.height)).toBe(true);
+        expect((probe.clips[990]?.curtainClip ?? "").startsWith("inset(100%")).toBe(true);
+        expect((probe.labStates[990] ?? []).length).toBeGreaterThan(0);
+        expect((probe.labStates[990] ?? []).every((state) => state !== "paused")).toBe(true);
         for (const lead of activeAt(60).filter((piece) => indexOf(piece) <= 6)) {
           const later = (probe.frames[300] ?? []).find((piece) => piece.name === lead.name);
           if (later) {
@@ -552,7 +555,7 @@ test.describe("transition rain", () => {
     });
   }
 
-  test("keeps thirty-six stable boundaries across repeated navigations", async ({ page }) => {
+  test("keeps twelve stable rain boundaries across repeated navigations", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/about");
@@ -563,7 +566,7 @@ test.describe("transition rain", () => {
     await page.locator("footer").getByRole("link", { name: "About" }).click();
     await expect(page).toHaveURL(/\/about$/);
     await expect(page.locator(".nav-menu")).toHaveCount(0);
-    expect(await spans()).toBe(37);
+    expect(await spans()).toBe(13);
     expect(await page.locator("footer").getByRole("link", { name: "Privacy" }).count()).toBe(1);
   });
 });
