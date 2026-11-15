@@ -19,7 +19,7 @@ import { SanctuaryCard, type RatingField, type SanctuaryEntry } from '@/componen
 function ShoeIcon() {
   return (
     <Svg width={20} height={20} viewBox="0 0 24 24">
-      <G transform="translate(0 -1)" fill="none" stroke={colors.background} strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+      <G transform="translate(0 -1)" fill="none" stroke="#fff" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
         <Path d="M5 17.5C3.6 16.6 3.4 12.8 5 10.6l2.4-1.4c1.4 1 3.2 1.2 4.6.6 3.5.6 7.2 2.8 9 6.4-1.2.7-2.8.6-4.6.2-2.9-.5-6.4.2-9.4 1.2-.7.2-1.4.2-2-.1z" />
         <Path d="M5.3 15.5c3.7-1 8.2-1.4 11.7-.9 1.4.2 2.7.7 3.6 1.3" />
         <Path d="M11.6 10l.8 4.5M14.6 10.6l.7 3.8" />
@@ -55,7 +55,7 @@ function AddShoeButton({ onPress }: { onPress: () => void }) {
           <Ionicons name="add" size={12} color={colors.brand.red} />
         </View>
       </View>
-      <Text color="inverse" style={{ fontFamily: fonts.regular, fontSize: 16, textTransform: 'uppercase' }}>Add shoe</Text>
+      <Text color="white" style={{ fontFamily: fonts.regular, fontSize: 16, textTransform: 'uppercase' }}>Add shoe</Text>
     </Pressable>
   );
 }

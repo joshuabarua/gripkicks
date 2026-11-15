@@ -98,9 +98,9 @@ black canvas, charcoal cards:
   `globals.css`); text stays chalk, with an optional title and putty detail.
   Always keep the icon or a word with the colour, since red and green are hard
   to tell apart. Danger messages get `role="alert"`.
-- **Contrast**: the `lab-button` label is `text-brand-base` on red (6.1:1;
-  white was 3.2:1). `lab-label` uses `text-brand-putty/75` so 11px labels pass
-  4.5:1 on cards and the page.
+- **Contrast**: red buttons keep a white label by design (3.2:1, so keep the
+  label at 16px or larger and never put small text on red). `lab-label` uses
+  `text-brand-putty/75` so 11px labels pass 4.5:1 on cards and the page.
 
 ## Editorial Pages
 
