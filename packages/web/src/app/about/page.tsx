@@ -1,54 +1,48 @@
-'use client';
-
 import Image from 'next/image';
-import LiquidGlassBackdrop from '@/components/brand/LiquidGlassBackdrop';
-import WordmarkWatermark from '@/components/brand/WordmarkWatermark';
+import { ArrowUpRight } from 'lucide-react';
+import { PageSurface } from '@/components/ui/PageSurface';
+import { LabHeader } from '@/components/ui/LabHeader';
 import { riseDelay } from '@/lib/motion';
+
+const CONTACT_EMAIL = 'gripkicksofficial@gmail.com';
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-black text-brand-chalk overflow-x-hidden selection:bg-brand-red selection:text-black">
-      <section className="relative flex min-h-[55vh] items-center px-fluid-lg md:px-fluid-xl pt-fluid-3xl pb-fluid-3xl overflow-hidden">
-        <LiquidGlassBackdrop align="center" />
-        <WordmarkWatermark lines={['ABOUT']} align="right" />
+    <PageSurface>
+      <div className="lab-container">
+        <LabHeader title="About" />
 
-        <div className="relative z-10 max-w-4xl mx-auto w-full">
-          <div className="lab-rise" style={riseDelay(0)}>
-            <h1 className="lab-title text-fluid-4xl mb-8 text-brand-chalk text-center">
-              ABOUT
-            </h1>
+        <article
+          className="lab-card lab-rise grid md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
+          style={riseDelay(1)}
+        >
+          <div className="relative aspect-[4/5] border-b border-white/6 md:aspect-auto md:min-h-[30rem] md:border-b-0 md:border-r">
+            <Image
+              src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? ''}/gripkicks/imgs/web_assets/josh.jpg`}
+              alt="Josh sitting on a crash mat in a bouldering gym"
+              fill
+              loading="eager"
+              sizes="(min-width: 768px) 40vw, 100vw"
+              className="object-cover object-[50%_30%]"
+            />
           </div>
-        </div>
-      </section>
 
-      <section className="bg-brand-surface px-fluid-lg py-fluid-3xl md:px-fluid-xl">
-        <div className="max-w-6xl mx-auto">
-          <div
-            className="lab-rise rounded-3xl border border-white/6 bg-black p-fluid-xl"
-            style={riseDelay(2)}
-          >
-            <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
-              <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:aspect-[3/4] sm:h-auto sm:w-1/2">
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? ""}/gripkicks/imgs/web_assets/josh.jpg`}
-                  alt="Josh"
-                  fill
-                  sizes="(min-width: 640px) 50vw, 100vw"
-                  className="object-contain"
-                />
-              </div>
-              <div className="space-y-6 font-mono text-fluid-lg text-brand-putty/80 leading-relaxed">
-                <p>I&apos;m Josh, a climber and developer with awkward-shaped feet.</p>
-                <p>Every shoe I&apos;ve owned could have fit a little better: heels slipping off on hooks, air gaps in the toe box. GripKicks is my attempt to find the right pair, and to help other climbers find theirs.</p>
-                <p>It&apos;s free and stays free. I don&apos;t sell your data or keep anything I don&apos;t need.</p>
-                <p>Ideas or feedback: <a href="mailto:gripkicksofficial@gmail.com" className="text-brand-chalk underline decoration-brand-red underline-offset-4 transition-colors duration-500 hover:decoration-brand-chalk">gripkicksofficial@gmail.com</a></p>
+          <div className="flex flex-col justify-center gap-fluid-md p-fluid-xl font-mono text-fluid-base leading-relaxed text-brand-putty">
+            <p className="text-fluid-lg text-brand-chalk">I&apos;m Josh, a climber and developer with awkward-shaped feet.</p>
+            <p>Every shoe I&apos;ve owned could have fit a little better: heels slipping off on hooks, air gaps in the toe box. GripKicks is my attempt to find the right pair, and to help other climbers find theirs.</p>
+            <p>It&apos;s free and stays free. I don&apos;t sell your data or keep anything I don&apos;t need.</p>
+            <p>— Josh</p>
 
-                <p>— Josh</p>
-              </div>
+            <div className="mt-fluid-sm flex flex-wrap items-center gap-x-fluid-md gap-y-3 border-t border-white/6 pt-fluid-md">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="lab-button-ghost group">
+                Send feedback
+                <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transform-none" />
+              </a>
+              <span className="select-all text-sm text-brand-putty/70">{CONTACT_EMAIL}</span>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </article>
+      </div>
+    </PageSurface>
   );
 }

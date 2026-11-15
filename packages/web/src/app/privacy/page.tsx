@@ -1,160 +1,157 @@
-'use client';
-
-import LiquidGlassBackdrop from '@/components/brand/LiquidGlassBackdrop';
-import WordmarkWatermark from '@/components/brand/WordmarkWatermark';
+import type { ReactNode } from 'react';
+import Link from '@/components/ui/NavLink';
+import { PageSurface } from '@/components/ui/PageSurface';
+import { LabHeader } from '@/components/ui/LabHeader';
 import { riseDelay } from '@/lib/motion';
 
-function SectionHeader({ heading, riseIndex }: { heading: string; riseIndex: number }) {
-  return (
-    <div className="lab-rise" style={riseDelay(riseIndex)}>
-      <h2 className="lab-title text-fluid-2xl mb-12 text-brand-chalk">
-        {heading}
-      </h2>
-    </div>
-  );
-}
+const CONTACT_EMAIL = 'gripkicksofficial@gmail.com';
+const LAST_UPDATED = '15 November 2026';
 
-const promises = [
+const sections = [
+  { id: 'short', title: 'In short' },
+  { id: 'collect', title: 'What we collect' },
+  { id: 'services', title: 'Who handles it' },
+  { id: 'choices', title: 'Your choices' },
+] as const;
+
+const principles = [
+  { title: 'Not for sale', body: 'We do not sell or rent your personal data, and we do not share it for advertising.' },
+  { title: 'Yours to delete', body: 'Deleting your account removes your profile, foot profile, shoes and ratings from our database.' },
+  { title: 'Only what is needed', body: 'We keep what it takes to run your account and match shoes, plus usage analytics to fix and improve the app.' },
+];
+
+const ACCOUNT_LIFETIME = 'Until you delete your account';
+
+const collected: Array<{ data: string; why: string; kept: string }> = [
+  { data: 'Account basics', why: 'Name and email, so you can sign in and we can reach you.', kept: ACCOUNT_LIFETIME },
+  { data: 'Foot profile', why: 'Shape and volume, to match you with shoes and with climbers whose feet are like yours.', kept: ACCOUNT_LIFETIME },
+  { data: 'Shoe ratings', why: 'Size, comfort, performance and durability, to power recommendations.', kept: ACCOUNT_LIFETIME },
+  { data: 'Shoe collection', why: 'The shoes you own or have tried.', kept: ACCOUNT_LIFETIME },
   {
-    title: 'YOUR DATA BELONGS TO YOU',
-    body: 'Your foot profile, shoe ratings, and preferences belong to you. Export or delete them anytime.',
-  },
-  {
-    title: 'ZERO DATA RESELLING',
-    body: 'We do not sell or share your personal data with third parties.',
-  },
-  {
-    title: 'PERMANENT DELETION',
-    body: 'Deleting your account removes your data permanently.',
-  },
-  {
-    title: 'MINIMAL COLLECTION',
-    body: 'We collect only what is needed to match shoes: your foot shape, your shoe ratings, and basic account info.',
-  },
-  {
-    title: 'TRANSPARENT USE',
-    body: 'Your ratings feed aggregate recommendations. Your foot profile matches you with similar climbers.',
-  },
-  {
-    title: 'COMMUNITY BENEFIT ONLY',
-    body: 'Aggregated, anonymized data improves recommendations. Your individual data is never shared without your consent.',
+    data: 'Usage analytics',
+    why: 'Pages you visit, clicks, and sign-up and Sanctuary events, with browser, device type and approximate location from your IP address. Linked to your email once you sign up.',
+    kept: 'Stored by PostHog in the EU. Account deletion does not remove it yet; email us and we will delete it.',
   },
 ];
 
+const services = [
+  { name: 'Convex', role: 'Database for your account, foot profile, shoes and ratings.' },
+  { name: 'Render', role: 'Runs the GripKicks API that handles sign-in and account changes.' },
+  { name: 'PostHog (EU)', role: 'Usage analytics.' },
+  { name: 'ImageKit', role: 'Serves shoe images. No personal data.' },
+];
+
+function Section({ id, title, index, children }: { id: string; title: string; index: number; children: ReactNode }) {
+  return (
+    <section id={id} aria-labelledby={`${id}-title`} className="lab-rise scroll-mt-24" style={riseDelay(index)}>
+      <div className="mb-fluid-md flex items-center gap-fluid-lg">
+        <h2 id={`${id}-title`} className="lab-title text-fluid-xl">{title}</h2>
+        <span aria-hidden="true" className="h-px flex-1 bg-white/10" />
+      </div>
+      {children}
+    </section>
+  );
+}
+
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-black text-brand-chalk overflow-x-hidden selection:bg-brand-red selection:text-black">
-      <section className="relative flex min-h-[80vh] items-center px-fluid-lg md:px-fluid-xl pt-fluid-3xl pb-fluid-3xl overflow-hidden">
-        <LiquidGlassBackdrop align="right" />
-        <WordmarkWatermark lines={['PRIVACY']} align="right" />
-        <div className="absolute top-12 left-12 w-24 h-24 border-l-2 border-t-2 border-white/6" />
-        <div className="absolute bottom-12 right-12 w-24 h-24 border-r-2 border-b-2 border-white/6" />
+    <PageSurface>
+      <div className="lab-container">
+        <LabHeader title="Privacy" description={`Last updated ${LAST_UPDATED}.`} />
 
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="lab-rise" style={riseDelay(0)}>
-            <h1 className="lab-title text-fluid-4xl mb-8 text-brand-chalk">
-              PRIVACY
-            </h1>
-          </div>
-
-          <p
-            className="lab-rise font-mono text-fluid-2xl text-brand-putty/70 max-w-2xl leading-relaxed"
-            style={riseDelay(1)}
-          >
-            How GripKicks handles your data.
-          </p>
-        </div>
-      </section>
-
-      <section className="px-fluid-lg md:px-fluid-xl py-fluid-3xl bg-brand-surface">
-        <div className="max-w-4xl mx-auto">
-          <div className="lab-rise" style={riseDelay(2)}>
-            <h2 className="lab-title text-fluid-2xl mb-8">
-              TL;DR
-            </h2>
-          </div>
-
-          <div
-            className="lab-rise bg-black border border-brand-red/20 rounded-3xl p-fluid-xl"
-            style={riseDelay(3)}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { value: '0%', label: 'Data sold to third parties' },
-                { value: '100%', label: 'Yours to delete anytime' },
-                { value: 'ZERO', label: 'Hidden tracking or profiling' },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="font-mono text-fluid-5xl text-brand-chalk mb-2">{stat.value}</div>
-                  <p className="font-mono text-fluid-sm text-brand-putty/50">{stat.label}</p>
-                </div>
+        <div className="grid gap-fluid-2xl lg:grid-cols-[11rem_minmax(0,1fr)]">
+          <nav aria-label="Privacy sections" className="hidden lg:block">
+            <ul className="lab-rise sticky top-24 space-y-1 border-l border-white/10" style={riseDelay(1)}>
+              {sections.map((section) => (
+                <li key={section.id}>
+                  <a
+                    href={`#${section.id}`}
+                    className="-ml-px block border-l border-transparent py-1.5 pl-4 font-mono text-xs uppercase tracking-wider text-brand-putty transition-colors duration-300 hover:border-brand-red hover:text-brand-chalk focus-visible:outline-brand-chalk"
+                  >
+                    {section.title}
+                  </a>
+                </li>
               ))}
-            </div>
-          </div>
-        </div>
-      </section>
+            </ul>
+          </nav>
 
-      <section className="px-fluid-lg md:px-fluid-xl py-fluid-3xl">
-        <div className="max-w-4xl mx-auto">
-          <SectionHeader heading="OUR PROMISES" riseIndex={4} />
+          <div className="space-y-fluid-2xl">
+            <Section id="short" title="In short" index={1}>
+              <ul className="grid gap-4 md:grid-cols-3">
+                {principles.map((item) => (
+                  <li key={item.title} className="lab-card p-fluid-lg">
+                    <h3 className="lab-title text-base text-white">{item.title}</h3>
+                    <p className="mt-2 font-mono text-sm leading-relaxed text-brand-putty">{item.body}</p>
+                  </li>
+                ))}
+              </ul>
+            </Section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {promises.map((promise, i) => (
-              <div
-                key={promise.title}
-                style={riseDelay(5 + i)}
-                className="lab-rise bg-brand-surface border border-white/6 rounded-3xl p-8 group hover:border-brand-red/20 transition-colors"
-              >
-                <h3 className="lab-title text-base mb-3 text-brand-chalk">{promise.title}</h3>
-                <p className="font-mono text-fluid-sm text-brand-putty/60 leading-relaxed">{promise.body}</p>
+            <Section id="collect" title="What we collect" index={2}>
+              <div className="lab-card">
+                <table className="w-full text-left font-mono text-sm">
+                  <thead className="hidden md:table-header-group">
+                    <tr className="border-b border-white/6">
+                      <th scope="col" className="lab-label w-[22%] px-fluid-lg py-3 font-normal">Data</th>
+                      <th scope="col" className="lab-label px-fluid-lg py-3 font-normal">Why</th>
+                      <th scope="col" className="lab-label w-[28%] px-fluid-lg py-3 font-normal">How long</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {collected.map((row) => (
+                      <tr key={row.data} className="block border-b border-white/6 px-fluid-lg py-4 last:border-b-0 md:table-row md:p-0">
+                        <th scope="row" className="block font-normal text-brand-chalk md:table-cell md:px-fluid-lg md:py-4 md:align-top">{row.data}</th>
+                        <td className="mt-1 block leading-relaxed text-brand-putty md:mt-0 md:table-cell md:px-fluid-lg md:py-4 md:align-top">{row.why}</td>
+                        <td className="mt-2 block text-xs leading-relaxed text-brand-putty/70 md:mt-0 md:table-cell md:px-fluid-lg md:py-4 md:align-top md:text-sm">{row.kept}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <p className="mt-4 font-mono text-sm leading-relaxed text-brand-putty/80">
+                We don&apos;t collect contacts, photos, precise location, or anything else that isn&apos;t needed to run GripKicks.
+              </p>
+            </Section>
 
-      <section className="px-fluid-lg md:px-fluid-xl py-fluid-3xl bg-brand-surface">
-        <div className="max-w-4xl mx-auto">
-          <SectionHeader heading="WHAT WE COLLECT" riseIndex={11} />
+            <Section id="services" title="Who handles it" index={3}>
+              <dl className="lab-card divide-y divide-white/6">
+                {services.map((service) => (
+                  <div key={service.name} className="grid gap-1 px-fluid-lg py-4 font-mono text-sm sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-fluid-md">
+                    <dt className="text-brand-chalk">{service.name}</dt>
+                    <dd className="text-brand-putty">{service.role}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Section>
 
-          <div className="space-y-4">
-            {[
-              { what: 'Account basics', why: 'Name and email so you can log in and we can reach you', kept: 'Until you delete your account' },
-              { what: 'Foot profile', why: 'Shape and volume to match you with similar climbers', kept: 'Until you delete your account' },
-              { what: 'Shoe ratings', why: 'Comfort, performance, and fit scores to power recommendations', kept: 'Until you delete your account' },
-              { what: 'Shoe collection', why: 'Track which shoes you own or have tried', kept: 'Until you delete your account' },
-            ].map((row, i) => (
-              <div
-                key={row.what}
-                style={riseDelay(12 + i)}
-                className="lab-rise bg-black border border-white/6 rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-4"
-              >
-                <div>
-                  <p className="font-mono text-fluid-xs uppercase tracking-[0.2em] text-brand-putty/40 mb-1">What</p>
-                  <p className="font-mono text-brand-chalk font-medium">{row.what}</p>
+            <Section id="choices" title="Your choices" index={4}>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="lab-card flex flex-col justify-between gap-fluid-md p-fluid-lg">
+                  <div>
+                    <h3 className="lab-title text-base text-white">Delete your account</h3>
+                    <p className="mt-2 font-mono text-sm leading-relaxed text-brand-putty">Profile, then Danger Zone.</p>
+                  </div>
+                  <Link href="/profile" className="lab-button-ghost self-start">Open profile</Link>
                 </div>
-                <div>
-                  <p className="font-mono text-fluid-xs uppercase tracking-[0.2em] text-brand-putty/40 mb-1">Why</p>
-                  <p className="font-mono text-brand-putty/60 text-fluid-sm">{row.why}</p>
+                <div className="lab-card flex flex-col justify-between gap-fluid-md p-fluid-lg">
+                  <div>
+                    <h3 className="lab-title text-base text-white">Get a copy</h3>
+                    <p className="mt-2 font-mono text-sm leading-relaxed text-brand-putty">Email us and we&apos;ll send your data.</p>
+                  </div>
+                  <a href={`mailto:${CONTACT_EMAIL}?subject=Data%20request`} className="lab-button-ghost self-start">Request data</a>
                 </div>
-                <div>
-                  <p className="font-mono text-fluid-xs uppercase tracking-[0.2em] text-brand-putty/40 mb-1">How long</p>
-                  <p className="font-mono text-brand-putty/60 text-fluid-sm">{row.kept}</p>
+                <div className="lab-card flex flex-col justify-between gap-fluid-md p-fluid-lg">
+                  <div>
+                    <h3 className="lab-title text-base text-white">Questions</h3>
+                    <p className="mt-2 break-all font-mono text-sm leading-relaxed text-brand-putty">{CONTACT_EMAIL}</p>
+                  </div>
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="lab-button-ghost self-start">Email us</a>
                 </div>
               </div>
-            ))}
-          </div>
-
-          <div
-            className="lab-rise mt-8 bg-brand-red/5 border border-brand-red/20 rounded-2xl p-6"
-            style={riseDelay(16)}
-          >
-            <p className="font-mono text-fluid-sm text-brand-putty/60">
-              <span className="text-brand-chalk font-medium">What we don&apos;t collect:</span> browsing habits, location data, device fingerprints, contacts, photos, or anything else not needed to match climbing shoes.
-            </p>
+            </Section>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </PageSurface>
   );
 }

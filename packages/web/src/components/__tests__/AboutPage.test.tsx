@@ -19,8 +19,7 @@ vi.mock("framer-motion", () => ({
   motion: new Proxy({}, { get: () => Stub }),
   AnimatePresence: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
 }));
-vi.mock("@/components/brand/LiquidGlassBackdrop", () => ({ default: () => null }));
-vi.mock("@/components/brand/WordmarkWatermark", () => ({ default: () => null }));
+vi.mock("next/image", () => ({ default: ({ fill, ...props }: React.ImgHTMLAttributes<HTMLImageElement> & { fill?: boolean }) => { void fill; return React.createElement("img", props); } }));
 
 const paragraphs = [
   "I'm Josh, a climber and developer with awkward-shaped feet.",
@@ -29,9 +28,10 @@ const paragraphs = [
 ];
 
 describe("AboutPage", () => {
-  it("renders the hero and the personal paragraphs", () => {
+  it("renders the lab header and the personal paragraphs", () => {
     render(<AboutPage />);
-    expect(screen.getByRole("heading", { name: "ABOUT" })).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { level: 1, name: "About" });
+    expect(heading).toHaveClass("lab-title");
     for (const paragraph of paragraphs) {
       expect(screen.getByText(paragraph)).toBeInTheDocument();
     }
@@ -41,10 +41,11 @@ describe("AboutPage", () => {
   it("renders the contact link and author sign-off", () => {
     render(<AboutPage />);
 
-    expect(screen.getByRole("link", { name: "gripkicksofficial@gmail.com" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Send feedback/ })).toHaveAttribute(
       "href",
       "mailto:gripkicksofficial@gmail.com",
     );
+    expect(screen.getByText("gripkicksofficial@gmail.com")).toBeInTheDocument();
     expect(screen.getByText("— Josh")).toBeInTheDocument();
   });
 });
