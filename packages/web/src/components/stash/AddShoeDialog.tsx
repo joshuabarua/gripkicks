@@ -16,12 +16,33 @@ import type { Shoe } from '@/types/api';
 
 type GenderFilter = 'all' | 'men' | 'women' | 'kids' | 'unisex';
 
+const addButtonVariants = {
+  rest: { scale: 1 },
+  hover: { scale: 1.03 },
+  tap: { scale: 0.97 },
+};
+// The shoe kicks up on hover; the plus badge spins.
+const addIconVariants = {
+  rest: { rotate: 0, y: 0 },
+  hover: { rotate: -14, y: -2, transition: { type: 'spring' as const, stiffness: 400, damping: 12 } },
+  tap: { rotate: -4, y: 0 },
+};
+const addPlusVariants = {
+  rest: { rotate: 0, scale: 1 },
+  hover: { rotate: 90, scale: 1.15, transition: { type: 'spring' as const, stiffness: 300, damping: 15 } },
+  tap: { rotate: 90, scale: 0.9 },
+};
+
 function ShoeIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <path d="M4 16V9.5C4 8 5 7 6.5 7h2L11 3.8c.4-.6 1.2-.7 1.7-.2l1.8 1.8 4 1.4c1.5.5 2.5 1.9 2.5 3.5V14" />
-      <path d="M4 16l17-2v1.5c0 1.4-1.1 2.5-2.5 2.5H6.5A2.5 2.5 0 0 1 4 16z" />
-      <path d="M8.5 7l1 3.5M11.5 5.8l1 3" />
+    // Climbing shoe in profile: downturned pointed toe, rand, two straps, heel tab.
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <g transform="translate(0 -1)">
+        <path d="M5 17.5C3.6 16.6 3.4 12.8 5 10.6l2.4-1.4c1.4 1 3.2 1.2 4.6.6 3.5.6 7.2 2.8 9 6.4-1.2.7-2.8.6-4.6.2-2.9-.5-6.4.2-9.4 1.2-.7.2-1.4.2-2-.1z" />
+        <path d="M5.3 15.5c3.7-1 8.2-1.4 11.7-.9 1.4.2 2.7.7 3.6 1.3" />
+        <path d="M11.6 10l.8 4.5M14.6 10.6l.7 3.8" />
+        <path d="M5 10.6l-.4-2.4c1.2 0 2 .3 2.8 1" />
+      </g>
     </svg>
   );
 }
@@ -95,13 +116,32 @@ export function AddShoeDialog({
     >
       <DialogTrigger asChild>
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="bg-brand-red hover:bg-brand-red/80 text-white font-mono text-lg px-fluid-lg py-fluid-sm rounded-lg shadow-lg shadow-brand-red/20 transition-colors duration-500 flex items-center gap-fluid-sm w-fit mt-fluid-md"
+          type="button"
+          initial="rest"
+          animate="rest"
+          whileHover="hover"
+          whileFocus="hover"
+          whileTap="tap"
+          variants={addButtonVariants}
+          className="group relative mt-fluid-md inline-flex min-h-11 w-fit items-center gap-3 overflow-hidden rounded-lg bg-brand-red py-2 pl-2 pr-5 font-mono text-sm uppercase tracking-wider text-white shadow-lg shadow-brand-red/25 transition-[background-color,box-shadow] duration-500 hover:shadow-brand-red/40 focus-visible:outline-brand-chalk"
         >
-          <Plus className="w-5 h-5" />
-          <ShoeIcon className="w-5 h-5" />
-          <span className="sr-only">Add shoe</span>
+          {/* Sheen that sweeps across on hover. */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-linear-to-r from-transparent via-white/25 to-transparent opacity-0 transition-[left,opacity] duration-700 ease-out group-hover:left-[120%] group-hover:opacity-100 motion-reduce:hidden"
+          />
+          <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-black/20">
+            <motion.span variants={addIconVariants} className="flex">
+              <ShoeIcon className="h-5 w-5" />
+            </motion.span>
+            <motion.span
+              variants={addPlusVariants}
+              className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-white text-brand-red"
+            >
+              <Plus aria-hidden="true" className="h-3 w-3" strokeWidth={3} />
+            </motion.span>
+          </span>
+          <span className="relative">Add shoe</span>
         </motion.button>
       </DialogTrigger>
       <DialogContent className="bg-neutral-950 text-white border border-neutral-800 max-w-2xl shadow-2xl shadow-brand-red/5 rounded-3xl">
