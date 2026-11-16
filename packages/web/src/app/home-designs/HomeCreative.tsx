@@ -47,7 +47,7 @@ function HeroLoadCover({ ready }: { ready: boolean }) {
           className="absolute inset-x-0 bottom-0 bg-brand-red transition-[height] duration-500 ease-out motion-reduce:transition-none"
           style={{ height: `${fill}%` }}
         />
-        <span className="lab-label relative mix-blend-difference">Loading</span>
+        <span className="lab-label relative text-white!">Loading</span>
       </div>
     </div>
   );
