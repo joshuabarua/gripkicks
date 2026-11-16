@@ -1,5 +1,6 @@
 'use client';
 
+import { formatSize } from "@/constants/shoe-sizes";
 import { motion } from 'framer-motion';
 
 interface AdditionalInfoProps {
@@ -23,7 +24,7 @@ export default function AdditionalInfo({ size, condition, purchaseDate }: Additi
       {size && (
         <div className="flex justify-between">
           <span className="text-neutral-400 font-mono text-sm">Size</span>
-          <span className="font-medium text-white font-mono text-sm">{size}</span>
+          <span className="font-medium text-white font-mono text-sm">{formatSize(size)}</span>
         </div>
       )}
       {condition && (

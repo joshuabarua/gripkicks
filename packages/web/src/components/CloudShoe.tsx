@@ -9,7 +9,8 @@ import type { UserShoe } from "@/types/api";
 import { getBrandDescription, getShoeDescription } from "@/utils/sanctuaryDescriptions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { RatingIcons } from "@/components/RatingIcons";
-import { conditions, shoeSizes } from "@/constants/shoe-data";
+import { conditions } from "@/constants/shoe-data";
+import { SizePicker } from "@/components/SizePicker";
 import { cardLayoutTransition, revealGroup, revealItem } from "@/lib/motion";
 
 interface CloudShoeProps {
@@ -256,19 +257,10 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
 
           {expanded ? (
             <motion.div key="fit" variants={revealGroup} initial={reduceMotion ? false : 'hidden'} animate="show" className="grid grid-cols-2 gap-3 p-4">
-              <motion.div variants={revealItem}>
-                <label htmlFor={`${detailsId}-size`} className={labelClass}>Size</label>
-                <div className="relative mt-1.5">
-                  <select id={`${detailsId}-size`} value={shoe.size || ''} onChange={(e) => onUpdateDetails?.({ size: e.target.value })} className={selectClass}>
-                    <option value="">Select</option>
-                    {shoeSizes.map((option) => (
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-brand-putty" />
-                </div>
+              <motion.div variants={revealItem} className="col-span-2">
+                <SizePicker value={shoe.size} onChange={(size) => onUpdateDetails?.({ size })} />
               </motion.div>
-              <motion.div variants={revealItem}>
+              <motion.div variants={revealItem} className="col-span-2">
                 <label htmlFor={`${detailsId}-condition`} className={labelClass}>Condition</label>
                 <div className="relative mt-1.5">
                   <select id={`${detailsId}-condition`} value={shoe.condition || ''} onChange={(e) => onUpdateDetails?.({ condition: e.target.value })} className={selectClass}>

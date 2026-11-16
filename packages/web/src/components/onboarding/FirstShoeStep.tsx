@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import ShoeImage from "@/components/ShoeImage";
 import { ShoeSearch } from "@/components/ShoeSearch";
-import { shoeSizes } from "@/constants/shoe-data";
+import { SizePicker } from "@/components/SizePicker";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -13,13 +13,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import type { Shoe } from "@/types/api";
 import { RatingButton, BackButton } from "@/components/onboarding/OnboardingHelpers";
-
-type ShoeSizeOption = { value: string; label: string };
-const isShoeSizeOption = (
-  size: (typeof shoeSizes)[number],
-): size is ShoeSizeOption => {
-  return "value" in size;
-};
 
 export interface ShoeFormData {
   size: string;
@@ -98,36 +91,11 @@ export function FirstShoeStep({
         {selectedShoe && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="lab-label font-mono">
-                  Size
-                </Label>
-                <Select
-                  value={shoeFormData.size}
-                  onValueChange={(value) =>
-                    onShoeFormDataChange({
-                      ...shoeFormData,
-                      size: value,
-                    })
-                  }
-                >
-                  <SelectTrigger className="rounded-lg bg-black border border-white/6 text-brand-chalk h-12 focus:border-brand-red">
-                    <SelectValue placeholder="Select size" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-brand-surface border-white/6">
-                    {shoeSizes
-                      .filter(isShoeSizeOption)
-                      .map((size) => (
-                        <SelectItem
-                          key={size.value}
-                          value={size.value}
-                        >
-                          {size.label}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <SizePicker
+                className="col-span-2"
+                value={shoeFormData.size}
+                onChange={(size) => onShoeFormDataChange({ ...shoeFormData, size })}
+              />
               <div className="space-y-2">
                 <Label className="lab-label font-mono">
                   Condition

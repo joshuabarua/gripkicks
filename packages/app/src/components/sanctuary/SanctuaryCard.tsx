@@ -6,9 +6,11 @@ import { colors } from '@/theme/colors';
 import { radii, spacing } from '@/theme/layout';
 import { Button, Label, Text, Title } from '@/components/ui';
 import { ShoeThumb } from '@/components/lab/ShoeThumb';
-import { conditions, shoeSizes } from '@/constants/shoe-data';
+import { conditions } from '@/constants/shoe-data';
+import { formatSize } from '@/constants/shoe-sizes';
 import { OptionSheet } from './OptionSheet';
 import { RatingSlider } from './RatingSlider';
+import { SizePicker } from './SizePicker';
 
 // Mobile port of packages/web/src/components/CloudShoe.tsx: tap a shoe to open
 // it, then rate it, set size and condition, favourite or remove it.
@@ -64,7 +66,7 @@ export function SanctuaryCard({
   onToggleFavourite: () => void;
   onRemove: () => void;
 }) {
-  const [sheet, setSheet] = useState<'size' | 'condition' | null>(null);
+  const [sheet, setSheet] = useState<'condition' | null>(null);
   const name = entry.shoe?.name ?? 'Unknown shoe';
   const brand = entry.shoe?.brand ?? 'Unknown brand';
   const ratings: Array<{ label: string; field: RatingField; value?: number; icon: keyof typeof Ionicons.glyphMap }> = [
@@ -103,6 +105,7 @@ export function SanctuaryCard({
         <View style={{ aspectRatio: 16 / 10, backgroundColor: colors.brand.charcoal, padding: expanded ? spacing.lg : spacing.md, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.2)' }}>
           <ShoeThumb imageUrl={entry.shoe?.imageUrl} width={320} height={200} framed={false} style={{ width: '100%', height: '100%' }} />
           <Label style={{ position: 'absolute', left: 12, bottom: 10 }}>{brand}</Label>
+          {entry.size ? <Label style={{ position: 'absolute', right: 12, bottom: 10 }}>{formatSize(entry.size)}</Label> : null}
         </View>
         {!expanded ? (
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.md }}>
@@ -125,10 +128,8 @@ export function SanctuaryCard({
 
       {expanded ? (
         <Animated.View entering={FadeIn.duration(250).delay(120).reduceMotion(ReduceMotion.System)} exiting={FadeOut.duration(150)} style={{ padding: spacing.md, gap: spacing.lg }}>
-          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-            <Picker label="Size" value={entry.size} placeholder="Select" onPress={() => setSheet('size')} />
-            <Picker label="Condition" value={entry.condition} placeholder="Select condition" onPress={() => setSheet('condition')} />
-          </View>
+          <SizePicker value={entry.size} onChange={(size) => onUpdate({ size })} />
+          <Picker label="Condition" value={entry.condition} placeholder="Select condition" onPress={() => setSheet('condition')} />
           <View style={{ gap: spacing.md }}>
             {ratings.map((r) => (
               <RatingSlider key={r.field} label={r.label} value={r.value} icon={<Ionicons name={r.icon} size={14} color="rgba(244,91,91,0.8)" />} onCommit={(v) => onRate(r.field, v)} />
@@ -159,7 +160,6 @@ export function SanctuaryCard({
         </Animated.View>
       ) : null}
 
-      <OptionSheet visible={sheet === 'size'} title="Size" options={shoeSizes} value={entry.size} onSelect={(size) => onUpdate({ size })} onClose={() => setSheet(null)} />
       <OptionSheet visible={sheet === 'condition'} title="Condition" options={conditions} value={entry.condition} onSelect={(condition) => onUpdate({ condition })} onClose={() => setSheet(null)} />
     </Animated.View>
   );
@@ -167,7 +167,7 @@ export function SanctuaryCard({
 
 function Picker({ label, value, placeholder, onPress }: { label: string; value?: string; placeholder: string; onPress: () => void }) {
   return (
-    <View style={{ flex: 1, gap: 6 }}>
+    <View style={{ gap: 6 }}>
       <Label>{label}</Label>
       <Pressable
         accessibilityRole="button"

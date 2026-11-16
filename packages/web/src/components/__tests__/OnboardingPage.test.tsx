@@ -74,7 +74,7 @@ describe("OnboardingPage", () => {
     expect(await screen.findByRole("heading", { name: "ADD YOUR FIRST SHOE" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Pick Origin" }));
-    fireEvent.change(screen.getAllByRole("combobox")[0]!, { target: { value: "US Y10 / UK 9.5 / EU 27.5" } });
+    fireEvent.click(screen.getByRole("radio", { name: "EU 40.5" }));
     fireEvent.click(screen.getByRole("button", { name: /COMPLETE SETUP/ }));
 
     await waitFor(() =>
@@ -82,7 +82,7 @@ describe("OnboardingPage", () => {
     );
     expect(mocks.mutation).toHaveBeenCalledWith({
       userShoeId: "user-shoe-1",
-      size: "US Y10 / UK 9.5 / EU 27.5",
+      size: "EU 40.5",
       condition: "new",
       comfortScore: 5,
       performanceRating: 5,

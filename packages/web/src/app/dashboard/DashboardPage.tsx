@@ -16,6 +16,7 @@ import { riseDelay } from "@/lib/motion";
 import { ToeProfile, VolumeArch, TOE_HEIGHTS, VOLUME_ARCH, type FootShape, type FootVolume } from "@/components/foot/FootGlyphs";
 import { ClimbingExperienceSelect } from "@/components/ClimbingExperienceSelect";
 import { FitShoeBackdrop } from "@/components/foot/FitShoeBackdrop";
+import { formatSize } from "@/constants/shoe-sizes";
 
 const isRated = (score?: number): score is number => typeof score === "number" && Number.isFinite(score) && score >= 1 && score <= 10;
 
@@ -112,7 +113,7 @@ export function DashboardOverview({ firstName, userShoes, footProfile, isLoading
                             <div className="min-w-0 flex-1">
                               <BrandLogo brand={brand} size="sm" />
                               <h3 className="mt-1 truncate font-mono text-sm font-semibold text-brand-chalk">{name}</h3>
-                              {shoe.size && <p className="mt-1 font-mono text-sm text-brand-putty">Size {shoe.size}</p>}
+                              {shoe.size && <p className="mt-1 font-mono text-sm text-brand-putty">Size {formatSize(shoe.size)}</p>}
                             </div>
                             <div className="shrink-0 text-right font-mono">
                               <p className="text-sm text-brand-chalk">{isRated(shoe.comfortScore) ? `${shoe.comfortScore}/10` : "Not rated"}</p>

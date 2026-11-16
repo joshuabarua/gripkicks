@@ -8,7 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Save, HelpCircle, ChevronDown, Trash2 } from 'lucide-react';
-import { shoeSizes, conditions, type ShoeSizeOption } from '@/constants/shoe-data';
+import { conditions } from '@/constants/shoe-data';
+import { SizePicker } from '@/components/SizePicker';
 import type { UserShoe } from '@/types/api';
 import type { EditFormData } from '@/schemas/shoe-schema';
 
@@ -63,30 +64,8 @@ export default function EditShoeDialog({
 
             <div className="space-y-6 px-5 py-6 sm:space-y-8 sm:px-8 sm:py-8 overflow-y-auto flex-1 min-h-0">
               <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="size" className="text-neutral-400 font-mono text-xs">Size</Label>
-                  <select
-                    id="size"
-                    value={editForm.size || ''}
-                    onChange={(e) => setEditForm({ ...editForm, size: e.target.value })}
-                    className="w-full px-4 py-3 bg-neutral-900 text-white border border-white/6 rounded-lg focus:border-brand-red/50 focus:outline-hidden focus:ring-1 focus:ring-brand-red/20 transition-colors"
-                  >
-                    <option value="">Select size</option>
-                    {shoeSizes.map((size: ShoeSizeOption, index) => {
-                      if ('separator' in size && size.separator) {
-                        return (
-                          <option key={`separator-${index}`} disabled className="text-neutral-600">
-                            {size.label}
-                          </option>
-                        );
-                      }
-                      return (
-                        <option key={size.value} value={size.value}>
-                          {size.label}
-                        </option>
-                      );
-                    })}
-                  </select>
+                <div className="md:col-span-2">
+                  <SizePicker value={editForm.size} onChange={(size) => setEditForm({ ...editForm, size })} />
                 </div>
 
                 <div className="space-y-2">
