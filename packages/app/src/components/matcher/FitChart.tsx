@@ -39,7 +39,7 @@ function shapePath(metrics: Metrics) {
 
 const ring = (v: number): Metrics => ({ comfort: v, performance: v, durability: v, aggressiveness: v, versatility: v });
 
-export function biggestGap(shoe: Metrics, you: Metrics) {
+function biggestGap(shoe: Metrics, you: Metrics) {
   return AXES.map(({ key, label }) => ({ label, delta: shoe[key] - you[key] })).reduce((widest, axis) =>
     Math.abs(axis.delta) > Math.abs(widest.delta) ? axis : widest,
   );

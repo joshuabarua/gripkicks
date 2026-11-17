@@ -81,3 +81,4 @@ stack-inventory.md
 
 # Scratch files (screenshots, probes, blender artifacts, shoe image pipeline)
 temp/
+.fallow/cache.bin

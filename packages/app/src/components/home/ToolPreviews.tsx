@@ -61,7 +61,7 @@ function Toe({ height, max, fill, outline }: { height: number; max: number; fill
 }
 
 // Toe bars as springy Views (heights glide between foot shapes).
-export function AnimatedToeBars({ shape, height = 56, fill = colors.brand.red, outline }: { shape: FootShape; height?: number; fill?: string; outline?: boolean }) {
+function AnimatedToeBars({ shape, height = 56, fill = colors.brand.red, outline }: { shape: FootShape; height?: number; fill?: string; outline?: boolean }) {
   return (
     <View style={{ height, flexDirection: 'row', alignItems: 'flex-end', gap: height * 0.09 }}>
       {TOE_HEIGHTS[shape].map((h, i) => (

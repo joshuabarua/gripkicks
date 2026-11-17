@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { AlertCircle, AlertTriangle, CheckCircle2, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type StatusTone = "danger" | "warning" | "success" | "info";
+type StatusTone = "danger" | "warning" | "success" | "info";
 
 const TONES: Record<StatusTone, { icon: typeof AlertCircle; frame: string; iconClass: string }> = {
   danger: { icon: AlertCircle, frame: "border-status-danger/40 bg-status-danger/10", iconClass: "text-status-danger" },

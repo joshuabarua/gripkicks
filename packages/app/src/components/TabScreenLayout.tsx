@@ -101,51 +101,6 @@ export function EmptyStateCard({ title, description, action }: { title: string; 
   );
 }
 
-// One shoe: image, brand label, name, specs, and an optional right-hand value.
-export function ShoeRow({
-  name,
-  brand,
-  imageUrl,
-  details,
-  value,
-  valueLabel,
-  score,
-  onPress,
-}: {
-  name?: string;
-  brand?: string;
-  imageUrl?: string | null;
-  details?: Array<string | undefined>;
-  value?: string;
-  valueLabel?: string;
-  // 0–1, drawn as a red bar (accent is never used for text).
-  score?: number;
-  onPress?: () => void;
-}) {
-  const specs = (details ?? []).filter(Boolean).join(' · ');
-  return (
-    <Card onPress={onPress} accessibilityLabel={onPress ? `${brand ?? ''} ${name ?? ''}`.trim() : undefined} style={{ padding: spacing.md, flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-      <ShoeThumb imageUrl={imageUrl} />
-      <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
-        {brand ? <Label numberOfLines={1}>{brand}</Label> : null}
-        <Text weight="medium" numberOfLines={1}>{name ?? 'Unknown shoe'}</Text>
-        {specs ? <Text variant="xs" color="secondary" numberOfLines={1} style={{ textTransform: 'capitalize' }}>{specs}</Text> : null}
-        {score !== undefined ? (
-          <View accessibilityLabel={`Match ${Math.round(score * 100)} percent`} style={{ marginTop: 6, height: 3, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
-            <View style={{ width: `${Math.max(4, Math.min(100, score * 100))}%`, height: '100%', backgroundColor: colors.brand.red }} />
-          </View>
-        ) : null}
-      </View>
-      {value ? (
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text variant="sm">{value}</Text>
-          {valueLabel ? <Text variant="xs" color="secondary">{valueLabel}</Text> : null}
-        </View>
-      ) : null}
-    </Card>
-  );
-}
-
 // Saved foot profile with the same toe and arch glyphs as the web.
 export function FootProfileSummary({ footShape, footVolume }: { footShape: string; footVolume: string }) {
   const shape = footShape.toLowerCase();

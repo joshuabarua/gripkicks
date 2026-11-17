@@ -104,9 +104,8 @@ black canvas, charcoal cards:
 
 ## Editorial Pages
 
-About and Privacy keep an editorial look: `LiquidGlassBackdrop`,
-`WordmarkWatermark`, `rounded-3xl` cards, alternating `bg-brand-surface`
-sections. They still use fluid type (`text-fluid-9xl` titles, `text-fluid-5xl`
+About and Privacy keep an editorial look: `rounded-3xl` cards and alternating
+`bg-brand-surface` sections. They still use fluid type (`text-fluid-9xl` titles, `text-fluid-5xl`
 section heads), fluid padding (`px-fluid-lg md:px-fluid-xl`, `py-fluid-3xl`),
 putty body text and `lab-rise` entrances. About keeps a short personal note
 (constraint 3 exemption).

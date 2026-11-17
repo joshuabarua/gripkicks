@@ -33,9 +33,6 @@ vi.mock("@/components/ui/label", () => ({
 vi.mock("@/components/ui/card", () => ({
   Card: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   CardContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  CardDescription: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  CardHeader: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  CardTitle: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
 
 

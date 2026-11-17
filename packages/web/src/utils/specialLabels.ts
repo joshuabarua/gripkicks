@@ -4,7 +4,7 @@ import type { UserShoe } from '@/types/api';
 
 export type SpecialLabelType = 'most-worn' | 'oldest' | 'most-comfy';
 
-export function findMostComfy(userShoes: UserShoe[]): UserShoe | undefined {
+function findMostComfy(userShoes: UserShoe[]): UserShoe | undefined {
   if (userShoes.length <= 1) return undefined;
   const mostComfy = userShoes.reduce((prev, current) =>
     (current.comfortScore || 0) > (prev.comfortScore || 0) ? current : prev
@@ -12,7 +12,7 @@ export function findMostComfy(userShoes: UserShoe[]): UserShoe | undefined {
   return mostComfy.comfortScore && mostComfy.comfortScore > 0 ? mostComfy : undefined;
 }
 
-export function findOldest(userShoes: UserShoe[]): UserShoe | undefined {
+function findOldest(userShoes: UserShoe[]): UserShoe | undefined {
   if (userShoes.length <= 1) return undefined;
   const shoesWithDate = userShoes.filter((shoe) => shoe.purchaseDate);
   if (shoesWithDate.length === 0) return undefined;
@@ -21,7 +21,7 @@ export function findOldest(userShoes: UserShoe[]): UserShoe | undefined {
   );
 }
 
-export function findMostWorn(userShoes: UserShoe[]): UserShoe | undefined {
+function findMostWorn(userShoes: UserShoe[]): UserShoe | undefined {
   if (userShoes.length <= 1) return undefined;
   const shoesWithCondition = userShoes.filter((shoe) => shoe.condition);
   if (shoesWithCondition.length === 0) return undefined;

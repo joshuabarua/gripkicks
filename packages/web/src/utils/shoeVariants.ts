@@ -81,7 +81,7 @@ interface GroupedVariant<T> {
   variantLabel: string | null;
 }
 
-export interface ShoeVariantGroup<T> {
+interface ShoeVariantGroup<T> {
   brand: string;
   baseName: string;
   groupKey: string;

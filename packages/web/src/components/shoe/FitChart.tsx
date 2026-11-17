@@ -39,7 +39,7 @@ function shapePath(metrics: FitMetrics) {
 
 const COLLAPSED = shapePath({ comfort: 0, performance: 0, durability: 0, aggressiveness: 0, versatility: 0 });
 
-export function biggestGap(shoe: FitMetrics, you: FitMetrics) {
+function biggestGap(shoe: FitMetrics, you: FitMetrics) {
   return AXES.map(({ key, label }) => ({ label, delta: shoe[key] - you[key] }))
     .reduce((widest, axis) => (Math.abs(axis.delta) > Math.abs(widest.delta) ? axis : widest));
 }

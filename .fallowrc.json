@@ -3,19 +3,41 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
-    "**/*.spec.tsx",
     "**/__tests__/**",
     "scripts/**",
-    "convex/_generated/**"
+    "convex/_generated/**",
+    "workers/**"
   ],
   "ignoreExports": [
     {
       "file": "packages/web/src/hooks/useFootProfile.ts",
-      "exports": ["normalizeBackendFootProfile"]
+      "exports": [
+        "normalizeBackendFootProfile"
+      ]
     },
     {
       "file": "packages/web/src/hooks/useShoeScoring.ts",
-      "exports": ["calculateShoeScore"]
+      "exports": [
+        "calculateShoeScore"
+      ]
+    },
+    {
+      "file": "packages/web/src/lib/transition-rain.ts",
+      "exports": [
+        "PAGE_TRANSITION_TIMING"
+      ]
+    },
+    {
+      "file": "packages/web/src/utils/firstShoeQuiz.ts",
+      "exports": [
+        "scoreShoeForQuiz"
+      ]
     }
+  ],
+  "ignoreBinaries": [
+    "ngrok"
+  ],
+  "ignoreDependencies": [
+    "expo-system-ui"
   ]
 }
