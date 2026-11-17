@@ -61,7 +61,7 @@ function HeroSection({ isReducedEffects }: { isReducedEffects: boolean }) {
   const ready = sceneReady || webgl === false;
 
   return (
-    <section id="home-hero" aria-label="Interactive climbing shoe" aria-busy={!ready} className="relative h-[calc(100svh-3.5rem)] min-h-[360px] overflow-hidden">
+    <section id="home-hero" aria-label="Interactive climbing shoe" aria-busy={!ready} className="relative h-[calc(100svh-3rem)] min-h-[360px] overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,#171c27_0%,transparent_65%)]">
         {!isReducedEffects && webgl && (
           <EtherField className="absolute inset-0 h-full w-full" speed={0.7} ambientColor="#171c27" accentColor="#ff5a3d" />
