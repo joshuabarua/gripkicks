@@ -93,6 +93,7 @@ export function FirstShoeStep({
             <div className="grid grid-cols-2 gap-4">
               <SizePicker
                 className="col-span-2"
+                defaultOpen
                 value={shoeFormData.size}
                 onChange={(size) => onShoeFormDataChange({ ...shoeFormData, size })}
               />

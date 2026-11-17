@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { RatingIcons } from "@/components/RatingIcons";
 import { conditions } from "@/constants/shoe-data";
 import { SizePicker } from "@/components/SizePicker";
+import { PickerOption, PickerPanel } from "@/components/ui/GridPicker";
 import { cardLayoutTransition, revealGroup, revealItem } from "@/lib/motion";
 
 interface CloudShoeProps {
@@ -33,52 +34,85 @@ const specialLabelTitles = {
   'most-worn': 'Most worn shoe in your collection',
 } as const;
 
-function StatSlider({ label, icon, value, onCommit }: { label: string; icon: React.ReactNode; value: number | undefined; onCommit: ((value: number) => void) | undefined }) {
-  // Draft holds the dragged value until the saved rating comes back.
-  const [draft, setDraft] = useState<number | null>(null);
-  const [prevValue, setPrevValue] = useState(value);
-  if (value !== prevValue) {
-    setPrevValue(value);
-    setDraft(null);
-  }
-  const shown = draft ?? value;
-  const pct = shown === undefined ? 0 : Math.min(10, Math.max(0, shown)) * 10;
+type StatField = 'comfortScore' | 'performanceRating' | 'durabilityRating';
+type OpenField = 'size' | StatField | null;
 
-  const committed = useRef<number | null>(null);
-  const commit = () => {
-    if (draft === null || draft === value || draft === committed.current) return;
-    committed.current = draft;
-    onCommit?.(draft);
-  };
+interface Stat {
+  label: string;
+  field: StatField;
+  icon: React.ReactNode;
+  value: number | undefined;
+}
+
+const RATING_VALUES = Array.from({ length: 11 }, (_, i) => i);
+
+// Each stat is a tile showing its rating; tapping one opens a 0-10 grid below
+// the row, which closes again once a number is picked.
+function StatsEditor({ stats, openField, onOpenChange, onRate }: { stats: Stat[]; openField: OpenField; onOpenChange: (field: OpenField) => void; onRate: ((field: StatField, value: number) => void) | undefined }) {
+  // A picked value shows at once and is dropped when the saved rating comes back.
+  const [drafts, setDrafts] = useState<Partial<Record<StatField, number>>>({});
+  const savedKey = stats.map(({ value }) => value ?? '').join('|');
+  const [prevKey, setPrevKey] = useState(savedKey);
+  if (savedKey !== prevKey) {
+    setPrevKey(savedKey);
+    setDrafts({});
+  }
+  const panelId = useId();
+  const active = stats.find(({ field }) => field === openField);
+  const shownFor = (stat: Stat) => drafts[stat.field] ?? stat.value;
 
   return (
-    <div>
-      <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1.5 font-mono text-xs text-brand-putty">
-          <span className="text-brand-red/80">{icon}</span>
-          {label}
-        </span>
-        <span className="font-mono text-xs text-brand-chalk">{shown !== undefined ? `${shown}/10` : 'Not rated'}</span>
+    <div className="space-y-2">
+      <div className="grid grid-cols-3 gap-2">
+        {stats.map((stat) => {
+          const shown = shownFor(stat);
+          const isOpen = openField === stat.field;
+          const pct = shown === undefined ? 0 : Math.min(10, Math.max(0, shown)) * 10;
+          return (
+            <button
+              key={stat.field}
+              type="button"
+              disabled={!onRate}
+              aria-expanded={isOpen}
+              aria-controls={panelId}
+              aria-label={`${stat.label} rating: ${shown !== undefined ? `${shown} out of 10` : 'not rated'}`}
+              onClick={() => onOpenChange(isOpen ? null : stat.field)}
+              className={`min-w-0 rounded-md border p-2.5 text-left transition-colors duration-300 disabled:cursor-default ${isOpen ? 'border-brand-red bg-brand-red/15' : 'border-white/15 enabled:hover:border-white/40'}`}
+            >
+              <span className="flex items-center gap-1.5 font-mono text-[11px] text-brand-putty">
+                <span className="shrink-0 text-brand-red/80">{stat.icon}</span>
+                <span className="truncate">{stat.label}</span>
+              </span>
+              <span className="mt-1.5 block font-mono text-sm tabular-nums text-brand-chalk">{shown !== undefined ? `${shown}/10` : '\u2014'}</span>
+              <span aria-hidden="true" className="mt-2 block h-1 overflow-hidden rounded-full bg-white/10">
+                <span className="block h-full rounded-full bg-brand-red/70 transition-[width] duration-500" style={{ width: `${pct}%` }} />
+              </span>
+            </button>
+          );
+        })}
       </div>
-      <input
-        type="range"
-        min={0}
-        max={10}
-        step={1}
-        value={shown ?? 0}
-        disabled={!onCommit}
-        aria-label={`${label} rating`}
-        aria-valuetext={shown !== undefined ? `${shown} out of 10` : 'Not rated'}
-        data-unrated={shown === undefined || undefined}
-        onChange={(e) => setDraft(Number(e.target.value))}
-        onPointerDown={() => { if (shown === undefined) setDraft(0); }}
-        onPointerUp={commit}
-        onKeyUp={commit}
-        onBlur={commit}
-        style={{ '--fill': `${pct}%` } as React.CSSProperties}
-        className="mt-2 h-4 w-full cursor-pointer appearance-none bg-transparent outline-none disabled:cursor-default focus-visible:[&::-webkit-slider-thumb]:ring-2 focus-visible:[&::-webkit-slider-thumb]:ring-brand-chalk/60 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-brand-chalk [&::-moz-range-track]:h-1 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-[linear-gradient(to_right,rgb(244_91_91/0.7)_var(--fill),rgb(255_255_255/0.1)_var(--fill))] [&::-webkit-slider-runnable-track]:h-1 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[linear-gradient(to_right,rgb(244_91_91/0.7)_var(--fill),rgb(255_255_255/0.1)_var(--fill))] [&::-webkit-slider-thumb]:-mt-[5px] [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-brand-chalk [&::-webkit-slider-thumb]:transition-transform hover:[&::-webkit-slider-thumb]:scale-125 data-unrated:[&::-webkit-slider-thumb]:bg-white/30 data-unrated:[&::-moz-range-thumb]:bg-white/30"
-      />
-      <div className="mt-1 flex justify-between font-mono text-[10px] text-brand-putty/60"><span>0</span><span>10</span></div>
+      {active && onRate && (
+        <PickerPanel id={panelId} onClose={() => onOpenChange(null)}>
+          <div role="radiogroup" aria-label={`${active.label} rating`} className="grid grid-cols-6 gap-1.5 sm:grid-cols-11">
+            {RATING_VALUES.map((rating) => (
+              <PickerOption
+                key={rating}
+                selected={shownFor(active) === rating}
+                label={`${active.label} ${rating} out of 10`}
+                onSelect={() => {
+                  if (shownFor(active) !== rating) {
+                    setDrafts((current) => ({ ...current, [active.field]: rating }));
+                    onRate(active.field, rating);
+                  }
+                  onOpenChange(null);
+                }}
+              >
+                {rating}
+              </PickerOption>
+            ))}
+          </div>
+        </PickerPanel>
+      )}
     </div>
   );
 }
@@ -94,12 +128,12 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
   const cardLabel = rawLabel && !GENDER_WORDS.has(rawLabel.toLowerCase()) ? rawLabel : null;
   const detailsId = useId();
   const reduceMotion = useReducedMotion() ?? false;
-  const statSliders = [
+  const stats: Stat[] = [
     { label: 'Comfort', field: 'comfortScore' as const, value: shoe.comfortScore, icon: <Feather className="h-3.5 w-3.5" /> },
     { label: 'Performance', field: 'performanceRating' as const, value: shoe.performanceRating, icon: <Zap className="h-3.5 w-3.5" /> },
     { label: 'Durability', field: 'durabilityRating' as const, value: shoe.durabilityRating, icon: <Shield className="h-3.5 w-3.5" /> },
   ];
-  const hasRatings = statSliders.some(({ value }) => value !== undefined);
+  const hasRatings = stats.some(({ value }) => value !== undefined);
   const specTags = [
     shoe.shoe?.aggressiveness,
     shoe.shoe?.climbingDiscipline,
@@ -107,6 +141,10 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
     shoe.shoe?.volume ? `${shoe.shoe.volume} volume` : undefined,
     shoe.shoe?.rubberTechnology?.compound,
   ].filter((tag): tag is string => Boolean(tag?.trim()));
+
+  // Only one grid (size or a rating) is open at a time.
+  const [openField, setOpenField] = useState<OpenField>(null);
+  if (!expanded && openField) setOpenField(null);
 
   const articleRef = useRef<HTMLElement>(null);
   const showButtonRef = useRef<HTMLButtonElement>(null);
@@ -124,12 +162,16 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || event.defaultPrevented) return;
       if (document.querySelector('[role="dialog"], [role="alertdialog"]')) return;
+      if (openField) {
+        setOpenField(null);
+        return;
+      }
       restoreFocusRef.current = true;
       onToggleExpand();
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [expanded, onToggleExpand]);
+  }, [expanded, onToggleExpand, openField]);
 
   useEffect(() => {
     if (expanded) {
@@ -258,7 +300,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
           {expanded ? (
             <motion.div key="fit" variants={revealGroup} initial={reduceMotion ? false : 'hidden'} animate="show" className="grid grid-cols-2 gap-3 p-4">
               <motion.div variants={revealItem} className="col-span-2">
-                <SizePicker value={shoe.size} onChange={(size) => onUpdateDetails?.({ size })} />
+                <SizePicker value={shoe.size} onChange={(size) => onUpdateDetails?.({ size })} open={openField === 'size'} onOpenChange={(open) => setOpenField(open ? 'size' : null)} />
               </motion.div>
               <motion.div variants={revealItem} className="col-span-2">
                 <label htmlFor={`${detailsId}-condition`} className={labelClass}>Condition</label>
@@ -311,11 +353,7 @@ const CloudShoe = memo<CloudShoeProps>(({ shoe, variantLabel, specialLabel, expa
 
             <motion.div variants={revealItem}>
               <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-brand-putty/85">Stats</p>
-              <div className="space-y-3.5">
-                {statSliders.map(({ label, field, icon, value }) => (
-                  <StatSlider key={label} label={label} icon={icon} value={value} onCommit={onRate ? (v) => onRate(field, v) : undefined} />
-                ))}
-              </div>
+              <StatsEditor stats={stats} openField={openField} onOpenChange={setOpenField} onRate={onRate} />
             </motion.div>
 
             {specTags.length > 0 && (

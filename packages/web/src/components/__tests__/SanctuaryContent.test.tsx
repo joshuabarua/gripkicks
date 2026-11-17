@@ -50,24 +50,48 @@ describe("Sanctuary content", () => {
     expect(onRemove).toHaveBeenCalled();
   });
 
-  it("offers ready sliders that save when released", () => {
+  it("opens a rating grid from the value and closes it once a number is picked", () => {
     render(<CloudShoe shoe={shoe} expanded={true} {...cardProps} />);
-    const slider = screen.getByRole("slider", { name: "Comfort rating" });
-    expect(slider).toHaveAttribute("aria-valuetext", "Not rated");
-    fireEvent.change(slider, { target: { value: "8" } });
-    expect(onRate).not.toHaveBeenCalled();
-    fireEvent.pointerUp(slider);
+    const comfort = screen.getByRole("button", { name: "Comfort rating: not rated" });
+    expect(comfort).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("radiogroup", { name: "Comfort rating" })).toBeNull();
+    fireEvent.click(comfort);
+    expect(comfort).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(screen.getByRole("radio", { name: "Comfort 8 out of 10" }));
     expect(onRate).toHaveBeenCalledWith("comfortScore", 8);
-    expect(screen.getByText("8/10")).toBeInTheDocument();
+    expect(screen.queryByRole("radiogroup", { name: "Comfort rating" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Comfort rating: 8 out of 10" })).toHaveTextContent("8/10");
   });
 
-  it("saves keyboard rating changes once per key press", () => {
+  it("does not save again when the current rating is picked", () => {
     render(<CloudShoe shoe={{ ...shoe, durabilityRating: 4 }} expanded={true} {...cardProps} />);
-    const slider = screen.getByRole("slider", { name: "Durability rating" });
-    fireEvent.change(slider, { target: { value: "5" } });
-    fireEvent.keyUp(slider, { key: "ArrowRight" });
+    fireEvent.click(screen.getByRole("button", { name: "Durability rating: 4 out of 10" }));
+    expect(screen.getByRole("radio", { name: "Durability 4 out of 10" })).toHaveAttribute("aria-checked", "true");
+    fireEvent.click(screen.getByRole("radio", { name: "Durability 4 out of 10" }));
+    expect(onRate).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Durability rating: 4 out of 10" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Durability 5 out of 10" }));
     expect(onRate).toHaveBeenCalledTimes(1);
     expect(onRate).toHaveBeenCalledWith("durabilityRating", 5);
+  });
+
+  it("keeps only one grid open at a time", () => {
+    render(<CloudShoe shoe={shoe} expanded={true} {...cardProps} />);
+    fireEvent.click(screen.getByRole("button", { name: "Size: not set" }));
+    expect(screen.getByRole("radiogroup", { name: "Size system" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Performance rating: not rated" }));
+    expect(screen.queryByRole("radiogroup", { name: "Size system" })).toBeNull();
+    expect(screen.getByRole("radiogroup", { name: "Performance rating" })).toBeInTheDocument();
+  });
+
+  it("closes an open grid on Escape before closing the card", () => {
+    render(<CloudShoe shoe={shoe} expanded={true} {...cardProps} />);
+    fireEvent.click(screen.getByRole("button", { name: "Comfort rating: not rated" }));
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("radiogroup", { name: "Comfort rating" })).toBeNull();
+    expect(onToggleExpand).not.toHaveBeenCalled();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onToggleExpand).toHaveBeenCalledTimes(1);
   });
 
   it("closes on Escape and returns focus to the card", () => {
@@ -84,7 +108,20 @@ describe("Sanctuary content", () => {
     expect(onToggleExpand).not.toHaveBeenCalled();
   });
 
-  it("saves size and condition from inline selects", () => {
+  it("saves a size picked from the grid and closes it", () => {
+    const onUpdateDetails = vi.fn();
+    render(<CloudShoe shoe={{ ...shoe, size: "EU 40" }} expanded={true} onUpdateDetails={onUpdateDetails} {...cardProps} />);
+    const size = screen.getByRole("button", { name: "Size: EU 40" });
+    expect(screen.queryByRole("radio", { name: "EU 40.5" })).toBeNull();
+    fireEvent.click(size);
+    expect(screen.getByRole("radio", { name: "EU 40" })).toHaveAttribute("aria-checked", "true");
+    fireEvent.click(screen.getByRole("radio", { name: "UK" }));
+    fireEvent.click(screen.getByRole("radio", { name: "UK 7.5" }));
+    expect(onUpdateDetails).toHaveBeenCalledWith({ size: "UK 7.5" });
+    expect(screen.queryByRole("radio", { name: "UK 7.5" })).toBeNull();
+  });
+
+  it("saves condition from the inline select", () => {
     const onUpdateDetails = vi.fn();
     render(<CloudShoe shoe={shoe} expanded={true} onUpdateDetails={onUpdateDetails} {...cardProps} />);
     fireEvent.change(screen.getByLabelText("Condition"), { target: { value: "Good" } });
