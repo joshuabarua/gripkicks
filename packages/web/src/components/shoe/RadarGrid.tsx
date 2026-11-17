@@ -139,11 +139,13 @@ interface RadarGridProps {
   shoes: RadarShoe[];
   userPosition?: RadarUserPosition;
   hoveredId?: string | null;
+  selectedId?: string | null;
   onHoverChange?: (id: string | null) => void;
+  onSelect?: (id: string) => void;
   confidenceLabel?: string;
 }
 
-export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confidenceLabel }: RadarGridProps) {
+export function RadarGrid({ shoes, userPosition, hoveredId, selectedId, onHoverChange, onSelect, confidenceLabel }: RadarGridProps) {
   const userPos = userPosition ? computePosition(userPosition.metrics) : null;
   const userQuadrant = userPos ? getQuadrantKeyFromPosition(userPos.x, userPos.y) : null;
   const positions = buildPositions(shoes, userPos);
@@ -177,7 +179,7 @@ export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confi
           </svg>
           {userPos && <UserMarker x={userPos.x} y={userPos.y} label={userPosition?.label ?? "YOU"} />}
           <AnimatePresence initial={false}>
-            {positions.map((pos, index) => <ShoeMarker key={pos.id} pos={pos} rank={index + 1} isHovered={hoveredId === pos.id} onHover={onHoverChange} />)}
+            {positions.map((pos, index) => <ShoeMarker key={pos.id} pos={pos} rank={index + 1} isHovered={hoveredId === pos.id} isSelected={selectedId === pos.id} onHover={onHoverChange} onSelect={onSelect} />)}
           </AnimatePresence>
         </div>
       </div>
@@ -189,16 +191,16 @@ export function RadarGrid({ shoes, userPosition, hoveredId, onHoverChange, confi
   );
 }
 
-function ShoeMarker({ pos, rank, isHovered, onHover }: { pos: ReturnType<typeof buildPositions>[number]; rank: number; isHovered: boolean; onHover?: ((id: string | null) => void) | undefined }) {
+function ShoeMarker({ pos, rank, isHovered, isSelected, onHover, onSelect }: { pos: ReturnType<typeof buildPositions>[number]; rank: number; isHovered: boolean; isSelected: boolean; onHover?: ((id: string | null) => void) | undefined; onSelect?: ((id: string) => void) | undefined }) {
   const sizePx = 52 + Math.round(clamp(pos.confidence, 0, 1) * 32);
   const brandDelta = pos.brandAggressiveness !== undefined ? pos.metrics.aggressiveness - pos.brandAggressiveness : 0;
   const showBrandArrow = Math.abs(brandDelta) >= 0.3;
   const arrowMagnitude = clamp(Math.abs(brandDelta), 0, 2);
 
   return (
-    <motion.button {...radarMarkerMotion} animate={{ opacity: 1, scale: 1, left: `${pos.x * 100}%`, top: `${pos.y * 100}%` }} type="button" aria-label={`${rank}. ${pos.brand} ${pos.name}. ${pos.primaryScoreLabel ?? "Score"} ${pos.primaryScore}`} aria-expanded={isHovered} onMouseEnter={() => onHover?.(pos.id)} onFocus={() => onHover?.(pos.id)} onBlur={() => onHover?.(null)} onClick={() => onHover?.(pos.id)} onKeyDown={(event) => { if (event.key === "Escape") onHover?.(null); }} className={`absolute rounded-lg ${isHovered ? "z-40" : "z-30"}`} style={{ x: "-50%", y: "-50%" }}>
+    <motion.button {...radarMarkerMotion} animate={{ opacity: 1, scale: 1, left: `${pos.x * 100}%`, top: `${pos.y * 100}%` }} type="button" aria-label={`${rank}. ${pos.brand} ${pos.name}. ${pos.primaryScoreLabel ?? "Score"} ${pos.primaryScore}`} aria-expanded={isHovered} aria-pressed={onSelect ? isSelected : undefined} onMouseEnter={() => onHover?.(pos.id)} onFocus={() => onHover?.(pos.id)} onBlur={() => onHover?.(null)} onClick={() => (onSelect ? onSelect(pos.id) : onHover?.(pos.id))} onKeyDown={(event) => { if (event.key === "Escape") onHover?.(null); }} className={`absolute rounded-lg ${isHovered ? "z-40" : isSelected ? "z-[35]" : "z-30"}`} style={{ x: "-50%", y: "-50%" }}>
       <span className="relative block">
-        <span className={`block overflow-hidden rounded-lg bg-black/40 shadow-lg ${rank === 1 || isHovered ? "border-2 border-brand-red" : "border border-white/40"}`} style={{ width: `calc(${sizePx}px * var(--marker-scale, 1))`, height: `calc(${sizePx}px * var(--marker-scale, 1))` }}>
+        <span className={`block overflow-hidden rounded-lg bg-black/40 shadow-lg ${(onSelect ? isSelected : rank === 1) || isHovered ? "border-2 border-brand-red" : "border border-white/40"}`} style={{ width: `calc(${sizePx}px * var(--marker-scale, 1))`, height: `calc(${sizePx}px * var(--marker-scale, 1))` }}>
           <ShoeImage brand={pos.brand} shoeName={pos.name} imageUrl={pos.imageUrl} className="p-1" transformation={[{ height: 80, width: 80, crop: "at_max", format: "png" }]} />
         </span>
         <span className={`absolute -left-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 font-mono text-xs font-semibold ${rank === 1 ? "bg-brand-red text-black" : "bg-brand-soft-surface text-brand-chalk"}`}>{rank}</span>

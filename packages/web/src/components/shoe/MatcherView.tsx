@@ -1,21 +1,20 @@
 "use client";
 
 import Link from "@/components/ui/NavLink";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
 import { api } from "convex/_generated/api";
 import ShoeImage from "@/components/ShoeImage";
 import { BrandLogo } from "@/components/stash/BrandLogo";
-import { RatingIcons } from "@/components/RatingIcons";
 import { useShoeScoring } from "@/hooks/useShoeScoring";
 import { useFootProfile } from "@/hooks/useFootProfile";
-import { MatchScoreTooltip } from "./MatchScoreTooltip";
 import { DataContributionNudge } from "@/components/DataContributionNudge";
 import { RadarGrid, type RadarShoe, type RadarUserPosition } from "./RadarGrid";
 import type { CommunitySignal, MatchSignals } from "@/types/shoe";
 import { toFivePointScale, toHundredPointScale } from "convex/utils/scoring";
 import { MatcherGridSkeleton } from "@/components/ui/skeleton";
+import { X } from "lucide-react";
 import { glideTransition, riseDelay } from "@/lib/motion";
 import { MatchBreakdownBar, MatchBreakdownList } from "./MatchBreakdownBar";
 import { FitChart, type FitMetrics } from "./FitChart";
@@ -134,7 +133,26 @@ interface MatcherResultsProps {
 export function MatcherResults({ personalShoes, communityShoes, personalLoading = false, communityLoading = false, footProfile, userPosition, fitProfile, contribution }: MatcherResultsProps) {
   const [mode, setMode] = useState<Mode>("personal");
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const isWide = useIsWide();
   const activeShoes = mode === "personal" ? personalShoes : communityShoes;
+  const selectedIndex = Math.max(0, activeShoes.findIndex((shoe) => shoe.id === selectedId));
+  const selected = activeShoes[selectedIndex];
+  const select = (id: string) => {
+    setSelectedId(id);
+    setSheetOpen(true);
+  };
+
+  useEffect(() => {
+    if (isWide || !sheetOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSheetOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isWide, sheetOpen]);
+
   const isLoading = mode === "personal" ? personalLoading : communityLoading;
   const hasProfile = !!(footProfile?.shape && footProfile.volume);
 
@@ -148,7 +166,7 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
         </div>
         <div aria-label="Choose recommendation source" className="grid grid-cols-2 gap-2">
           {([["personal", "For you", personalShoes.length, personalLoading], ["community", "Community", communityShoes.length, communityLoading]] as const).map(([value, label, count, loading]) => (
-            <button key={value} type="button" aria-pressed={mode === value} onClick={() => { setMode(value); setHoveredId(null); }} className={`relative flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-3 py-3 font-mono text-xs uppercase tracking-wider transition-colors duration-500 ${mode === value ? "text-white" : "text-brand-chalk hover:bg-white/5"}`}>
+            <button key={value} type="button" aria-pressed={mode === value} onClick={() => { setMode(value); setHoveredId(null); setSelectedId(null); setSheetOpen(false); }} className={`relative flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-3 py-3 font-mono text-xs uppercase tracking-wider transition-colors duration-500 ${mode === value ? "text-white" : "text-brand-chalk hover:bg-white/5"}`}>
               {mode === value && <motion.span layoutId="matcher-mode" aria-hidden="true" transition={glideTransition} className="absolute inset-0 rounded-lg border border-brand-red/40 bg-brand-red/10" />}
               <span className="relative">{label}</span><span className="relative text-sm tabular-nums">{loading ? "…" : count}</span>
             </button>
@@ -161,24 +179,23 @@ export function MatcherResults({ personalShoes, communityShoes, personalLoading 
       ) : !activeShoes.length ? (
         <EmptyState mode={mode} hasFootProfile={hasProfile} />
       ) : (
-        <>
-          <section aria-labelledby="matches-title" className="lab-rise space-y-fluid-lg" style={riseDelay(1)}>
+        <div className="grid items-start gap-fluid-lg xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+          {/* Both columns are sticky so whichever is shorter stays in view while the other scrolls. */}
+          <section aria-labelledby="matches-title" className="lab-rise space-y-fluid-md xl:sticky xl:top-16" style={riseDelay(1)}>
             <h2 id="matches-title" className="font-mono text-xl font-semibold">{activeShoes.length} {mode === "personal" ? "shoe matches" : "top-rated shoes"}</h2>
-            <TileGrid shoes={activeShoes} mode={mode} hasProfile={hasProfile} {...(mode === "personal" && fitProfile ? { fitProfile } : {})} />
+            <RankedList shoes={activeShoes} mode={mode} hasProfile={hasProfile} selectedId={selected?.id ?? null} hoveredId={hoveredId} onSelect={select} onHoverChange={setHoveredId} />
           </section>
-          <section aria-labelledby="radar-title" className="lab-card lab-rise" style={riseDelay(10)}>
-            <h2 id="radar-title" className="p-fluid-lg font-mono text-lg font-semibold">Radar map</h2>
-            <div className="border-t border-white/8 p-fluid-md sm:p-fluid-lg">
-              <RadarGrid shoes={toRadarShoes(activeShoes, mode)} hoveredId={hoveredId} onHoverChange={setHoveredId} confidenceLabel={mode === "personal" ? "Match strength" : "Sample size"} {...(mode === "personal" && userPosition ? { userPosition } : {})} />
-            </div>
-          </section>
-          <details className="lab-card lab-rise" style={riseDelay(11)}>
-            <summary className="cursor-pointer rounded-lg p-fluid-lg font-mono text-lg font-semibold hover:bg-white/3">Compare ratings</summary>
-            <div className="border-t border-white/8">
-              <Leaderboard shoes={activeShoes} mode={mode} hoveredId={hoveredId} onHoverChange={setHoveredId} />
-            </div>
-          </details>
-        </>
+          <div className="space-y-fluid-lg xl:sticky xl:top-16">
+            {!isWide && sheetOpen && <button type="button" aria-label="Close shoe details" onClick={() => setSheetOpen(false)} className="fixed inset-0 z-30 bg-black/60" />}
+            {selected && <ShoeDetail shoe={selected} rank={selectedIndex + 1} mode={mode} hasProfile={hasProfile} isWide={isWide} open={sheetOpen} onClose={() => setSheetOpen(false)} {...(mode === "personal" && fitProfile ? { fitProfile } : {})} />}
+            <section aria-labelledby="radar-title" className="lab-card lab-rise" style={riseDelay(3)}>
+              <h2 id="radar-title" className="p-fluid-lg font-mono text-lg font-semibold">Radar map</h2>
+              <div className="border-t border-white/8 p-fluid-md sm:p-fluid-lg">
+                <RadarGrid shoes={toRadarShoes(activeShoes, mode)} hoveredId={hoveredId} selectedId={selected?.id ?? null} onHoverChange={setHoveredId} onSelect={select} confidenceLabel={mode === "personal" ? "Match strength" : "Sample size"} {...(mode === "personal" && userPosition ? { userPosition } : {})} />
+              </div>
+            </section>
+          </div>
+        </div>
       )}
 
       {!contribution && !hasProfile && !isLoading && activeShoes.length > 0 && mode === "personal" && (
@@ -227,73 +244,121 @@ function signalToneClass(tone: CommunitySignal["tone"]) {
   return "border-white/12 bg-black/30 text-brand-chalk";
 }
 
-function TileGrid({ shoes, mode, hasProfile, fitProfile }: { shoes: DisplayShoe[]; mode: Mode; hasProfile: boolean; fitProfile?: FitMetrics }) {
+const WIDE_QUERY = "(min-width: 80rem)";
+
+// Matches Tailwind's xl breakpoint, where the detail panel sits beside the list
+// instead of sliding up as a sheet.
+function useIsWide() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia(WIDE_QUERY);
+      query.addEventListener("change", onChange);
+      return () => query.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia(WIDE_QUERY).matches,
+    () => true,
+  );
+}
+
+function ScoreBlock({ shoe, mode, hasProfile }: { shoe: DisplayShoe; mode: Mode; hasProfile: boolean }) {
+  const needsProfile = mode === "personal" && !hasProfile;
   return (
-    <div className="grid items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      {shoes.map((shoe, idx) => (
-        <article key={shoe.id} aria-label={`${shoe.brand} ${shoe.name}`} style={riseDelay(2 + Math.min(idx, 8))} className="lab-card lab-card-lift lab-rise min-w-0">
-          <div className="flex items-center justify-between gap-3 border-b border-white/6 px-fluid-lg py-2.5">
-            <h3 className="truncate lab-title text-base text-brand-chalk">{shoe.name}</h3>
-            <div className="shrink-0 text-right font-mono">
-              <p className={`tabular-nums ${mode === "personal" && !hasProfile ? "text-xs font-semibold" : "text-lg"}`}>{mode === "personal" && !hasProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
-              <p className="lab-label mt-0.5">{mode === "personal" ? hasProfile ? "Match" : "Profile needed" : shoe.secondaryLabel}</p>
-            </div>
-          </div>
-          <div className="relative h-48 border-b border-white/6 bg-black/40 p-fluid-lg sm:h-56">
-            <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="h-full w-full" transformation={[{ height: 280, width: 400, crop: "at_max", format: "png" }]} />
-            <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 font-mono text-sm font-semibold text-brand-chalk">{idx + 1}</span>
-            <div className="absolute bottom-3 left-3 flex h-7 w-24 items-center justify-start px-1">
-              <BrandLogo brand={shoe.brand} size="sm" tooltip />
-            </div>
-          </div>
-          <div className="space-y-4 p-fluid-lg">
-            {fitProfile ? <FitChart shoe={shoe.metrics} you={fitProfile} /> : <RatingIcons comfort={shoe.metrics.comfort} performance={shoe.metrics.performance} durability={shoe.metrics.durability} max={5} />}
-            {shoe.breakdown && (
-              <div className="space-y-2 border-t border-white/8 pt-4">
-                <MatchBreakdownBar breakdown={shoe.breakdown} signals={shoe.signals} delayIndex={2 + Math.min(idx, 8)} />
-                <details>
-                  <summary className="min-h-11 cursor-pointer py-3 font-mono text-sm font-medium">Match details</summary>
-                  <MatchBreakdownList breakdown={shoe.breakdown} signals={shoe.signals} />
-                </details>
-              </div>
-            )}
-            {mode === "community" && <SignalCell signals={shoe.communitySignals ?? []} />}
-          </div>
-        </article>
-      ))}
+    <div className="shrink-0 text-right font-mono">
+      <p className={`tabular-nums ${needsProfile ? "text-xs font-semibold" : "text-lg"}`}>{needsProfile ? "Set profile" : `${shoe.primaryScore}${mode === "personal" ? "%" : "/100"}`}</p>
+      <p className="lab-label mt-0.5">{mode === "personal" ? hasProfile ? "Match" : "Profile needed" : shoe.secondaryLabel}</p>
     </div>
   );
 }
 
-function Leaderboard({ shoes, mode, hoveredId, onHoverChange }: { shoes: DisplayShoe[]; mode: Mode; hoveredId: string | null; onHoverChange: (id: string | null) => void }) {
+interface RankedListProps {
+  shoes: DisplayShoe[];
+  mode: Mode;
+  hasProfile: boolean;
+  selectedId: string | null;
+  hoveredId: string | null;
+  onSelect: (id: string) => void;
+  onHoverChange: (id: string | null) => void;
+}
+
+function RankedList({ shoes, mode, hasProfile, selectedId, hoveredId, onSelect, onHoverChange }: RankedListProps) {
   return (
-    <div className="divide-y divide-white/6">
-      {shoes.map((shoe, idx) => (
-        <article key={shoe.id} tabIndex={0} aria-label={`Compare ${shoe.brand} ${shoe.name}`} onMouseEnter={() => onHoverChange(shoe.id)} onMouseLeave={() => onHoverChange(null)} onFocus={() => onHoverChange(shoe.id)} onBlur={() => onHoverChange(null)} className={`grid items-center gap-fluid-lg p-fluid-lg transition-colors xl:grid-cols-[minmax(0,1.3fr)_minmax(0,2fr)_auto] ${hoveredId === shoe.id ? "bg-white/4" : "hover:bg-white/4"}`}>
-          <div className="flex min-w-0 items-center gap-4">
-            <span className="font-mono text-base tabular-nums text-brand-putty">{idx + 1}</span>
-            <div className="h-14 w-16 shrink-0 overflow-hidden rounded-lg border border-white/6 bg-black/40">
-              <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="p-2" transformation={[{ height: 56, width: 64, crop: "at_max", format: "png" }]} />
-            </div>
-            <div className="min-w-0">
-              <h3 className="wrap-break-word font-mono text-base font-semibold">{shoe.name}</h3>
-              <div className="mt-1 flex items-center gap-2">
-                <BrandLogo brand={shoe.brand} size="sm" tooltip className="shrink-0" />
+    <ol className="space-y-2">
+      {shoes.map((shoe, idx) => {
+        const isSelected = shoe.id === selectedId;
+        return (
+          <li key={shoe.id}>
+            <article aria-label={`${shoe.brand} ${shoe.name}`} style={riseDelay(2 + Math.min(idx, 8))} onMouseEnter={() => onHoverChange(shoe.id)} onMouseLeave={() => onHoverChange(null)} className={`lab-card lab-card-lift lab-rise grid min-w-0 grid-cols-[1.5rem_3.5rem_minmax(0,1fr)_auto] items-center gap-3 p-3 sm:grid-cols-[1.5rem_4.5rem_minmax(0,1fr)_auto] sm:gap-4 ${isSelected ? "lab-card-active" : hoveredId === shoe.id ? "border-white/20" : ""}`}>
+              <span className="text-center font-mono text-base tabular-nums text-brand-putty">{idx + 1}</span>
+              <div className="h-14 overflow-hidden rounded-lg border border-white/6 bg-black/40">
+                <ShoeImage brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="p-1.5" transformation={[{ height: 56, width: 72, crop: "at_max", format: "png" }]} />
               </div>
-            </div>
+              <div className="min-w-0 space-y-1.5">
+                <BrandLogo brand={shoe.brand} size="sm" />
+                <h3 className="font-mono text-base font-semibold leading-snug">
+                  {/* The button's hit area is stretched over the whole row. */}
+                  <button type="button" aria-pressed={isSelected} onClick={() => onSelect(shoe.id)} onFocus={() => onHoverChange(shoe.id)} onBlur={() => onHoverChange(null)} className="wrap-break-word text-left outline-none after:absolute after:inset-0 after:rounded-lg focus-visible:after:outline-2 focus-visible:after:outline-brand-red">{shoe.name}</button>
+                </h3>
+                {shoe.breakdown && <MatchBreakdownBar breakdown={shoe.breakdown} signals={shoe.signals} delayIndex={2 + Math.min(idx, 8)} showLabel={false} />}
+              </div>
+              <ScoreBlock shoe={shoe} mode={mode} hasProfile={hasProfile} />
+            </article>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+interface ShoeDetailProps {
+  shoe: DisplayShoe;
+  rank: number;
+  mode: Mode;
+  hasProfile: boolean;
+  fitProfile?: FitMetrics;
+  isWide: boolean;
+  open: boolean;
+  onClose: () => void;
+}
+
+// Beside the list on wide screens; a sheet that slides up from the bottom on narrow ones.
+function ShoeDetail({ shoe, rank, mode, hasProfile, fitProfile, isWide, open, onClose }: ShoeDetailProps) {
+  return (
+    <section aria-label="Selected shoe" inert={!isWide && !open} className={`lab-card max-xl:fixed max-xl:inset-x-0 max-xl:bottom-0 max-xl:mb-0! max-xl:z-40 max-xl:max-h-[85svh] max-xl:overflow-y-auto max-xl:rounded-b-none max-xl:border-white/20 ${open ? "max-xl:translate-y-0" : "max-xl:translate-y-full"}`}>
+      <header className="flex items-center justify-between gap-3 border-b border-white/6 px-fluid-lg py-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black/70 font-mono text-sm font-semibold text-brand-chalk">{rank}</span>
+          <div className="min-w-0 space-y-1">
+            <h3 className="truncate lab-title text-base text-brand-chalk">{shoe.name}</h3>
+            <BrandLogo brand={shoe.brand} size="sm" tooltip />
           </div>
-          <dl className="grid grid-cols-3 gap-4">
-            <MetricCell label="Comfort" value={shoe.metrics.comfort} />
-            <MetricCell label="Performance" value={shoe.metrics.performance} />
-            <MetricCell label="Durability" value={shoe.metrics.durability} />
-          </dl>
-          <div className="font-mono">
-            {mode === "personal" && shoe.breakdown ? <MatchScoreTooltip score={shoe.primaryScore / 20} breakdown={shoe.breakdown} {...(shoe.signals ? { signals: shoe.signals } : {})} /> : <p className="text-lg font-semibold tabular-nums">{shoe.primaryScore}/100</p>}
+        </div>
+        <div className="flex items-center gap-3">
+          <ScoreBlock shoe={shoe} mode={mode} hasProfile={hasProfile} />
+          <button type="button" aria-label="Close shoe details" onClick={onClose} className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 text-brand-chalk hover:bg-white/5 xl:hidden"><X aria-hidden="true" className="h-4 w-4" /></button>
+        </div>
+      </header>
+      <div className="grid gap-fluid-lg p-fluid-lg md:grid-cols-[11rem_minmax(0,1fr)] xl:grid-cols-[10rem_auto_minmax(0,1fr)]">
+        <div className="h-40 rounded-lg border border-white/6 bg-black/40 p-3">
+          <ShoeImage key={shoe.id} brand={shoe.brand} shoeName={shoe.name} imageUrl={shoe.imageUrl} className="h-full w-full" transformation={[{ height: 280, width: 400, crop: "at_max", format: "png" }]} />
+        </div>
+        <div className="min-w-0 space-y-4">
+          {fitProfile ? <FitChart shoe={shoe.metrics} you={fitProfile} /> : (
+            <dl className="grid grid-cols-3 gap-4">
+              <MetricCell label="Comfort" value={shoe.metrics.comfort} />
+              <MetricCell label="Performance" value={shoe.metrics.performance} />
+              <MetricCell label="Durability" value={shoe.metrics.durability} />
+            </dl>
+          )}
+          {mode === "community" && <SignalCell signals={shoe.communitySignals ?? []} />}
+        </div>
+        {shoe.breakdown && (
+          <div className="min-w-0 md:col-span-2 xl:col-span-1">
+            <p className="lab-label mb-3">Match details</p>
+            <MatchBreakdownList breakdown={shoe.breakdown} signals={shoe.signals} />
           </div>
-          {shoe.communitySignals?.length ? <div className="xl:col-span-3"><SignalCell signals={shoe.communitySignals} /></div> : null}
-        </article>
-      ))}
-    </div>
+        )}
+      </div>
+    </section>
   );
 }
 

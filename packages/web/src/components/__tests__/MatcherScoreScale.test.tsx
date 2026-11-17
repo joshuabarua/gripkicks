@@ -23,7 +23,7 @@ it("displays real 8/10 community ratings as 80/100, not 159/100", async () => {
   const card = within(screen.getByRole("article", { name: "Scarpa Test Shoe" }));
   expect(card.getByText("80/100")).toBeVisible();
   expect(card.queryByText("159/100")).toBeNull();
-  fireEvent.click(screen.getByText("Compare ratings", { exact: true }));
+  fireEvent.click(card.getByRole("button", { name: "Test Shoe" }));
   expect(screen.getAllByText("4.0")).toHaveLength(2);
   expect(screen.getByText("3.9")).toBeVisible();
 });

@@ -30,13 +30,13 @@ function toFactors(breakdown: MatchBreakdown, signals?: MatchSignals) {
   return factors;
 }
 
-export function MatchBreakdownBar({ breakdown, signals, delayIndex = 0 }: { breakdown: MatchBreakdown; signals?: MatchSignals | undefined; delayIndex?: number }) {
+export function MatchBreakdownBar({ breakdown, signals, delayIndex = 0, showLabel = true }: { breakdown: MatchBreakdown; signals?: MatchSignals | undefined; delayIndex?: number; showLabel?: boolean }) {
   const factors = toFactors(breakdown, signals);
   const label = factors.map((factor) => `${factor.label} ${factor.estimated ? "estimated" : Math.round(factor.points)}`).join(", ");
 
   return (
     <div className="space-y-2">
-      <p aria-hidden="true" className="lab-label">Match makeup</p>
+      {showLabel && <p aria-hidden="true" className="lab-label">Match makeup</p>}
       <div role="img" aria-label={`Match makeup: ${label}`} className="flex h-2 overflow-hidden rounded-full bg-white/10">
         <div className="lab-grow flex h-full w-full" style={riseDelay(delayIndex, 60)}>
           {factors.map((factor) => (
