@@ -10,6 +10,7 @@ import { signIn, safeCallbackPath } from "@/lib/auth";
 import { useState } from "react";
 import { motion } from 'framer-motion';
 import { GoogleIcon } from '@/components/GoogleIcon';
+import { dropShoes, riseShoes } from "@/lib/shoe-field";
 
 export function LoginForm() {
   const router = useRouter();
@@ -102,11 +103,13 @@ export function LoginForm() {
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
+                  dropShoes();
                 },
                 onResponse: () => {
                   setLoading(false);
                 },
                 onError: (ctx) => {
+                  riseShoes();
                   setError(ctx.error.message);
                 },
                 onSuccess: () => {
@@ -135,11 +138,13 @@ export function LoginForm() {
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
+                  dropShoes();
                 },
                 onResponse: () => {
                   setLoading(false);
                 },
                 onError: (ctx) => {
+                  riseShoes();
                   setError(
                     ctx.error.message ||
                       "Google login is currently unavailable.",

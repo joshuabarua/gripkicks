@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { GoogleIcon } from '@/components/GoogleIcon';
+import { dropShoes, riseShoes } from "@/lib/shoe-field";
 import { analyticsEvents, identify, track } from "@/lib/analytics";
 
 const signupSchema = z
@@ -183,11 +184,13 @@ export function SignupForm() {
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
+                  dropShoes();
                 },
                 onResponse: () => {
                   setLoading(false);
                 },
                 onError: (ctx) => {
+                  riseShoes();
                   setError(ctx.error.message);
                   track(analyticsEvents.signupFailed, {
                     method: "email",
@@ -229,11 +232,13 @@ export function SignupForm() {
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
+                  dropShoes();
                 },
                 onResponse: () => {
                   setLoading(false);
                 },
                 onError: (ctx) => {
+                  riseShoes();
                   const message =
                     ctx.error.message ||
                     "Google signup is currently unavailable. Try email for now.";
